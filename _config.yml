@@ -1,5 +1,6 @@
-title: HON's Wiki
-description:
+name: "HON's Wiki"
+title: null
+description: null
 
 optional_front_matter:
     remove_originals: true
