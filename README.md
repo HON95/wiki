@@ -1,7 +1,5 @@
-# wiki
-HON's public personal wiki
+# HON's Wiki
 
-## Areas
+### Areas
 
-- [**Configuration Notes**](config/)
-- [Configuration Notes](config/README.md)
+- [Configuration Notes](config/)
