@@ -1,3 +1,9 @@
-# HON's Wiki
+---
+title: TEST 123
+layout: default
+nav_order: 1
+has_children: true
+---
 
-**WIP**
+# wiki
+*HON's public personal wiki*
