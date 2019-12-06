@@ -1,5 +1,10 @@
 ---
 title: Debian Server Configuration
+breadcrumbs:
+- title: Home
+  url: /
+- title: Configuration Notes
+  url: /config/
 ---
 {% include header.md %}
 
