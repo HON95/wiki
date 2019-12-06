@@ -1,6 +1,6 @@
 <hr />
 <p align="center">
-    <em><a href="{{ site.github.repository_url }}">{{ site.github.repository_nwo }}</a></em>
-    |
-    <em><a href="issues_url">{{ site.github.Report a problem }}</a></em>
+    <a href="{{ site.github.repository_url }}">{{ site.github.repository_nwo }}</a>
+    /
+    <a href="{{ site.github.issues_url }}">Report a problem</a>
 </p>
