@@ -4,7 +4,9 @@ title: Debian TEST 123
 # Debian Server Configuration
 {:.no_toc}
 
-# Contents
+{% include ../links_child.md %}
+
+## Contents
 {:.no_toc}
 - ToC
 {:toc}
