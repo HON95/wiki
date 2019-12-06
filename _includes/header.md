@@ -2,7 +2,7 @@
 {:.no_toc}
 
 {% for crumb in page.breadcrumbs %}
-/ <a href="{{ crumb.url }}">{{ crumb.title }}</a>
+/ [{{ crumb.title }}]({{ crumb.url }})
 {% endfor %}
 / {{ page.title }}
 

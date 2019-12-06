@@ -5,6 +5,7 @@ description: null
 permalink: pretty
 
 readme_index:
+    enabled: false
     remove_originals: true
 
 optional_front_matter:
