@@ -2,5 +2,10 @@ name: "HON's Wiki"
 title: null
 description: null
 
+permalink: pretty
+
+readme_index:
+    remove_originals: true
+
 optional_front_matter:
     remove_originals: true
