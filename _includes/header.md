@@ -1,4 +1,4 @@
-# {{ site.title }} | {{ page.title }}
+# {{ site.name }} | {{ page.title }}
 {:.no_toc}
 
 {% for crumb in page.breadcrumbs %}
