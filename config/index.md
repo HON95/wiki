@@ -1,11 +1,15 @@
-# Configuration Notes
+---
+title: Configuration Notes
+breadcrumbs:
+- title: Home
+  url: /
+---
+{% include header.md %}
 
-@[:markdown](links.md)
-
-### Debian Server
+# Debian Server
 - [Test](debian-server/test.md)
 
-### PC
+# PC
 aaaaaaaaaaa
 
-@[:markdown](../footer.md)
+{% include footer.md %}
