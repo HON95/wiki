@@ -1,15 +1,7 @@
 ---
-title: Debian TEST 123
+title: Debian Server Configuration
 ---
-# Debian Server Configuration
-{:.no_toc}
-
 {% include header.md %}
-
-## Contents
-{:.no_toc}
-- ToC
-{:toc}
 
 # One
 AAAAAAAAAAAAAAAAAAAAAAAAA
