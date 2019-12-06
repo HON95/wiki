@@ -4,4 +4,4 @@
 
 - [Configuration Notes](config/)
 
-@[:markdown](footer.md)
+{% include footer.md %}

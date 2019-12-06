@@ -1,12 +1,10 @@
-# {{ title }} | {{ page.title }}
+# {{ site.title }} | {{ page.title }}
 {:.no_toc}
 
-<ol class="breadcrumb">
-  {% for crumb in page.breadcrumbs %}
-    <li class="breadcrumb-item"><a href="{{ crumb.url }}">{{ crumb.title }}</a></li>
-  {% endfor %}
-  <li class="breadcrumb-item active">{{ page.title }}</li>
-</ol>
+{% for crumb in page.breadcrumbs %}
+/ <a href="{{ crumb.url }}">{{ crumb.title }}</a>
+{% endfor %}
+/ {{ page.title }}
 
 ## Contents
 {:.no_toc}
