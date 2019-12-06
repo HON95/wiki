@@ -1,7 +1,3 @@
 # HON's Wiki
 
-### Areas
-
-- [Configuration Notes](config/)
-
-{% include footer.md %}
+Build and hosted with GitHub Pages.
