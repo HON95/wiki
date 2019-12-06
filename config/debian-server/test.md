@@ -1,18 +1,24 @@
+---
+title: Debian TEST 123
+---
 # Debian Server Configuration
+{:.no_toc}
 
-## Contents
+# Contents
 {:.no_toc}
 - ToC
 {:toc}
 
-## One
+# One
 AAAAAAAAAAAAAAAAAAAAAAAAA
 
-### One A
+## One A
 AAAAAAAAAAAAAAAAAAAAAAAAA
 
-#### One AA
+### One AA
 AAAAAAAAAAAAAAAAAAAAAAAAA
 
-## Two
+# Two
 AAAAAAAAAAAAAAAAAAAAAAAAA
+
+{% include footer.md %}
