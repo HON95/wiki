@@ -10,7 +10,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using: Kubuntu 19.10+
+### Using
+Kubuntu 19.10+
 
 ## Installation
 

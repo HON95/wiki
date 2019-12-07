@@ -10,7 +10,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using: 2950 (G9); R310, R610, R710 (G11); R720 (G12)
+### Using
+2950 (G9); R310, R610, R710 (G11); R720 (G12)
 
 ## Firmware Upgrades
 

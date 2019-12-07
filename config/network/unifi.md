@@ -10,7 +10,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using: UniFi AP AC (different variants) with controller v5
+### Using
+UniFi AP AC (different variants) with controller v5
 
 ## Access Points
 

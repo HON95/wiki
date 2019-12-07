@@ -10,7 +10,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using: Linksys LGS326
+### Using
+Linksys LGS326
 
 **TODO**
 

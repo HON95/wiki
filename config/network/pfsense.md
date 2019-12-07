@@ -10,7 +10,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using: pfSense v2
+### Using
+pfSense v2
 
 ## Initial Setup
 

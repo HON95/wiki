@@ -10,7 +10,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using: Cisco Catalyst 2960G and 3750G
+### Using
+Cisco Catalyst 2960G and 3750G
 
 ## Initial Configuration
 
