@@ -201,10 +201,10 @@ Cisco Catalyst 2960G and 3750G
   - It may leak information.
   - Disable globally: `no cdp run`
 - VTP:
-  - It may cause BTP bombs.
+  - It may fuck up the trunks when an out-of-sync VTP switch joins.
   - Disable globally: `vtp mode (off | transparent)`
 - DTP:
-  - It may enable switch spoofing and VLAN hopping.
+  - It may facilitate switch spoofing and VLAN hopping.
   - Disable it for each switch port: `switchport nonegotiate`
 - UDLD:
   - Generally only useful for fiber.
@@ -212,7 +212,7 @@ Cisco Catalyst 2960G and 3750G
 
 #### Spanning Tree
 
-- Enable BPDU guard globally to automatically enable it om ports with portfast.
+- Enable BPDU guard globally to automatically enable it om ports with portfast. Or don't.
 - Only enable loop guard for links which may become uni-directional and which have UDLD enabled.
 
 ## Resources
