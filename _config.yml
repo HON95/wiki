@@ -10,3 +10,5 @@ readme_index:
 
 optional_front_matter:
     remove_originals: true
+
+google_analytics_id: UA-154149655-1
