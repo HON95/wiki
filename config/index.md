@@ -6,10 +6,10 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-# Debian Server
+## Debian Server
 - [Test](debian-server/test.md)
 
-# PC
+## PC
 aaaaaaaaaaa
 
 {% include footer.md %}
