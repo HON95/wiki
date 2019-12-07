@@ -217,11 +217,17 @@ TFTP_OPTIONS="--create --secure"
 - Bring a device online or offline: `zpool (online|offline) <pool> <device>`
 - Re-add device that got wiped: Take it offline and then online again.
 
+### Tuning
+
+
+
 ### Extra Notes
 
-- ECC memory is recommended but not required. It helps prevent data corruption in memory. It does however not affect data corruption on disk.
-- Does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC.
+- ECC memory is recommended but not required. It helps prevent data corruption in memory, where ZFS provides no redundancy. It does not affect data corruption on disk, however.
+- It does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC.
 - A dedicated disk (e.g. an NVMe SSD) can be used as a secondary read cache. This is termed L2ARC (level 2 ARC). Only frequently accessed blocks are cached. The memory requirement will increase based on the size of the L2ARC. It should only be considered for pools with high read traffic, slow disks and lots of memory available.
-- A dedicated disk (e.g. an NVMe SSD) can be used for the ZIL (ZFS intent log) (which is used for synchronized writes). The disk is then termed SLOG (secondary log). The disk must be able to handle lots of writes. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
+- A dedicated disk (e.g. an NVMe SSD) can be used for the ZFS intent log (ZIL), which is used for synchronized writes. This is termed SLOG (separate intent log). The disk must be able to handle lots of writes. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
+- Intel Optane is a perfect choice as both L2ARCs and SLOGs due to its high throughput, low latency and high durability.
+- Some SSD models come with a build-in cache. Make sure it actually flushes it on power loss.
 
 {% include footer.md %}
