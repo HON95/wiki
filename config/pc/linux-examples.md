@@ -27,6 +27,8 @@ Debian 10 Buster
   - By UID: `find / -user <UID>`
   - Without a user: `find / -nouser`
   - With setuid permission bit: `find / -perm /4000`
+- Recursive search and replace: `find <dir> \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/123/456/g'`
+  - `\( -type d -name .git -prune \) -o` skips `.git` directories and can be excluded outside of git repos.
 
 ### Fun
 
