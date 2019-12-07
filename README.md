@@ -1,3 +1,3 @@
 # HON's Wiki
 
-Build and hosted with GitHub Pages.
+Built and hosted with GitHub Pages.
