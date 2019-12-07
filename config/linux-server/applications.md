@@ -58,7 +58,7 @@ Debian 10 Buster
    - This may mute the "No subnet declaration for ..." verbose error on some distros.
    - In `/etc/default/isc-dhcp-server`, add the interfaces (space-separated) to `INTERFACESv4` and `INTERFACESv6`.
 
-## NTPD
+## ntpd
 
 ### Setup
 
@@ -199,14 +199,32 @@ TFTP_OPTIONS="--create --secure"
 
 ## ZFS
 
-**TODO** Tuning and best practices.
+### Features
+
+- Filesystem and physical storage decoupled
+- Always consistent
+- Intent log
+- Synchronous or asynchronous
+- Everything checksummed
+- Compression
+- Deduplication
+- Encryption
+- Snapshots
+- Copy-on-write (CoW)
+- Clones
+- Caching
+- Log-strucrured filesystem
+- Tunable
 
 ### Setup
+**TODO**: Check if this is still annoying.
 
 1. Enable the `contrib` and `non-free` repo areas. (Don't use any backports repo.)
-2. Install (it might give errors): `zfs-dkms zfsutils-linux zfs-zed`
-3. Load the ZFS module: `modprobe zfs`
-4. Fix the ZFS install: `apt install`
+1. Install (it might give errors): `zfs-dkms zfsutils-linux zfs-zed`
+1. Load the ZFS module: `modprobe zfs`
+1. Fix the ZFS install: `apt install`
+1. Check that the cron scrub script exists.
+  - If not, add one which runs `/usr/lib/zfs-linux/scrub`. It'll scrub all disks. Run it e.g. monthly or every 2 weeks.
 
 ### Usage
 
@@ -217,9 +235,33 @@ TFTP_OPTIONS="--create --secure"
 - Bring a device online or offline: `zpool (online|offline) <pool> <device>`
 - Re-add device that got wiped: Take it offline and then online again.
 
+### Best Practices and Suggestions
+
+- As far as possible, use raw disks and HBA disk controllers (or RAID controllers in IT mode).
+- Always use `/etc/disk/by-id/X`, not `/dev/sdX`.
+- Always manually set the correct ashift for pools.
+  - Should be the log-2 of the physical block/sector size of the device.
+  - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).
+  - Check the physical block size with `smartctl -i <dev>`.
+- Always enable compression. Worst case it does nothing.
+- Consider using quotas and reservations.
+- Make sure regular automatic scrubs are enabled. There should be a cron job/script or something. Run it e.g. every 2 weeks or monthly.
+- Snapshots are great for increments backups. They're easy to send places too. If the dataset is encrypted then so is the snapshot.
+
 ### Tuning
 
-
+- Very frequent reads:
+  - E.g. for a static web root.
+  - Set `atime=off` to disable updating the access time for files.
+- Database:
+  - Use different datasets for the DB data and DB WAL if possible.
+  - Use an appropriate recordsize with `recordsize=<size>`.
+    - InnoDB should use 16k for data files and 128k on log files.
+    - PostgreSQL should use 8k for both data and WAL.
+  - Disable caching with `primarycache=metadata`. DMBSes handle caching themselves.
+    - For InnoDB.
+  - Disable the ZIL with `logbias=throughput` to prevent writing twice.
+    - For both InnoDB and PostgreSQL.
 
 ### Extra Notes
 
