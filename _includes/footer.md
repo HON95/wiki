@@ -2,5 +2,5 @@
 <p align="center">
     <a href="{{ site.github.repository_url }}">{{ site.github.repository_nwo }}</a>
     |
-    <p>{% raw %}{% github_edit_link "Edit" %}{% endraw %}</p>
+    <a href="{% raw %}{% github_edit_link %}{% endraw %}">Edit</a>
 </p>
