@@ -6,6 +6,7 @@ breadcrumbs:
   url: /
 - title: Configuration Notes
   url: /config/
+- title: IoT
 ---
 {% include header.md %}
 
