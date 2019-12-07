@@ -2,16 +2,14 @@
 {:.no_toc}
 
 {% if page.breadcrumbs %}
-> {% strip %}
-    {% for crumb in page.breadcrumbs %}
+> {% for crumb in page.breadcrumbs -%}
         {% if crumb.url %}
         [{{ crumb.title }}]({{ crumb.url }})
         {% else %}
         {{ crumb.title }}
         {% endif %}
         /
-    {% endfor %}
-    {{ page.title }}
+    {%- endfor %}{{ page.title }}
 {% endif %}
 
 {% if page.toc_enable %}
