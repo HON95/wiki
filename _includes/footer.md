@@ -4,3 +4,8 @@
     |
     <a href="{% raw %}{% github_edit_link %}{% endraw %}">Edit</a>
 </p>
+
+{% raw %}{% github_edit_link %}{% endraw %}
+{% raw %}{% github_edit_link "EDITTT" %}{% endraw %}
+{% github_edit_link %}
+{% github_edit_link "Hello" %}
