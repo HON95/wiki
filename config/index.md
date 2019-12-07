@@ -6,10 +6,31 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Debian Server
-- [Test](debian-server/test.md)
+## Linux Server
+
+- [Notes](linux-server/notes.md)
+- [Debian Server](linux-server/debian-server.html)
+- [Applications](linux-server/applications)
+- [Troubleshooting](linux-server/troubleshooting/)
 
 ## PC
-aaaaaaaaaaa
+
+- [](pc/)
+
+## IoT
+
+- [](iot/)
+
+## Network
+
+- [](network/)
+
+## Hardware
+
+- [](hardware/)
+
+## Hosting Providers
+
+- [](hosting-providers)
 
 {% include footer.md %}
