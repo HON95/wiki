@@ -8,29 +8,47 @@ breadcrumbs:
 
 ## Linux Server
 
-- [Notes](linux-server/notes.md)
-- [Debian Server](linux-server/debian-server.html)
-- [Applications](linux-server/applications)
+- [Notes](linux-server/notes/)
+- [Debian Server](linux-server/debian-server/)
+- [Applications](linux-server/applications/)
 - [Troubleshooting](linux-server/troubleshooting/)
 
 ## PC
 
-- [](pc/)
+- [Common Applications](pc/common-applications/)
+- [Kubuntu](pc/kubuntu/)
+- [Linux Applications](pc/linux-applications/)
+- [Linux Examples](pc/linux-examples/)
+- [Windows](pc/windows/)
+- [Windows Applications](pc/windows-applications/)
 
 ## IoT
 
-- [](iot/)
+- [Raspberry Pi](iot/raspberry-pi/)
 
 ## Network
 
-- [](network/)
+- [Notes](network/notes/)
+- [Brocade ICX Switches](network/brocade-icx/)
+- [Cisco Catalyst Switches (IOS)](network/cisco-catalyst-ios/)
+- [Linksys LGS Switches](network/linksys-lgs/)
+- [Linux Router](network/linux-router/)
+- [Mikrotik Switches (SwOS)](network/mikrotik-swos/)
+- [pfSense](network/pfsense/)
+- [UniFi](network/unifi/)
+- [VyOS](network/vyos/)
 
 ## Hardware
 
-- [](hardware/)
+- [Dell PowerEdge](hardware/dell-poweredge/)
+- [Dell OptiPlex](hardware/dell-optiplex/)
+- [Clevo](hardware/clevo/)
 
 ## Hosting Providers
 
-- [](hosting-providers)
+- [Bluehost](hosting-providers/bluehost/)
+- [One.com](hosting-providers/one-com/)
+- [Terrahost](hosting-providers/terrahost/)
+- [Webhuset](hosting-providers/webhuset/)
 
 {% include footer.md %}

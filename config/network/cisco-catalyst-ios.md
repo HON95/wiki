@@ -1,5 +1,5 @@
 ---
-title: Cisco Catalyst (IOS) Switches
+title: Cisco Catalyst Switches (IOS)
 toc_enable: yes
 breadcrumbs:
 - title: Home

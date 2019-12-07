@@ -1,5 +1,5 @@
 ---
-title: Switches Common
+title: Network Notes
 toc_enable: yes
 breadcrumbs:
 - title: Home

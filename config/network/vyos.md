@@ -1,5 +1,5 @@
 ---
-title: Mikrotik Switches (SwOS)
+title: VyOS
 toc_enable: yes
 breadcrumbs:
 - title: Home
@@ -10,7 +10,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using: Mikrotik CSS326-24G-2S+RM
+Using: **TODO**
 
 **TODO**
 
