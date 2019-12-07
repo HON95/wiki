@@ -32,28 +32,27 @@ breadcrumbs:
 
 ### Config
 
-{% code title="~/.ssh/config" %}
 ```text
+# File: ~/.ssh/config
 
 # Use special user and key
 host github.com
     User git
     IdentityFile ~/.ssh/id_rsa_artorias
 ```
-{% endcode %}
 
 ## Vim
 
 ### Config
 
-{% code title="~/.vimrc" %}
 ```text
+" File: ~/.vimrc
+
 " Global: /etc/vim/vimrc
 
 " Better YAML indentation
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 ```
-{% endcode %}
 
 ## VS Code
 
@@ -63,9 +62,9 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 ### Config
 
-{% code title="~/.config/Code/user/settings.json" %}
 ```javascript
-// Windows: %APPDATA%\Code\User\settings.json
+// Linux file: ~/.config/Code/user/settings.json
+// Windows file: %APPDATA%\Code\User\settings.json
 
 {
 "files.encoding": "utf8",
@@ -90,6 +89,5 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 "html.autoClosingTags": false,
 }
 ```
-{% endcode %}
 
 {% include footer.md %}

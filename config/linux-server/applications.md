@@ -107,12 +107,12 @@ Using: Debian 10 Buster
 
 #### Examples
 
-{% code title="smtp\_header\_checks" %}
 ```text
-/^From:\s*.*\S+@node\.example\.bet.*.*$/ REPLACE From: "Node" <node@ample.net>
+# File: smtp_header_checks
+
+/^From:\s*.*\S+@node\.example\.bet.*.*$/ REPLACE From: "Node" <node@example.net>
 /^To:\s*.*\S+@node\.example\.net.*$/ REPLACE To: "Someone" <someone@example.net>
 ```
-{% endcode %}
 
 ### Usage
 
@@ -142,14 +142,14 @@ Using H. Peter Anvin's TFTP server \(tftpd-hpa\).
 
 ### Files
 
-{% code title="/etc/default/tftpd-hpa" %}
 ```text
+# File: /etc/default/tftpd-hpa
+
 TFTP_USERNAME="tftp"
 TFTP_DIRECTORY="/var/tftp"
 TFTP_ADDRESS=":69"
 TFTP_OPTIONS="--create --secure"
 ```
-{% endcode %}
 
 ## Pterodactyl
 
