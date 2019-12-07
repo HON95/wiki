@@ -19,13 +19,13 @@ Raspbian
 - Configure through the menu: `raspi-config`
   - Go through all the options.
   - Locale and default locale: Use `en_US.UTF-8`.
-  - Disable all interfaces except SSH \(disable SSH too if not needed\).
+  - Disable all interfaces except SSH (disable SSH too if not needed).
   - If a black border is present, disable overscan.
 - Upgrade the system: `apt update && apt upgrade`
 - Install packages: `vim htop screen`
 - Add personal admin user:
   - Create user: `adduser <user>`
-  - Add SSH key \(from a GitHub user in this case\):
+  - Add SSH key (from a GitHub user in this case):
     - `cd /home/<user>`
     - `mkdir .ssh`
     - `curl https://github.com/<user>.keys >> .ssh/authorized_keys`

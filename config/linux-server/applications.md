@@ -20,7 +20,7 @@ Debian 10 Buster
 ### Setup
 
 1. [Official guide for Debian](https://docs.docker.com/install/linux/docker-ce/debian/)
-2. \(Optional\) Setup swap limit:
+2. (Optional) Setup swap limit:
    - If `docker info` contains `WARNING: No swap limit support`, it's not working and should maybe be fixed.
    - It incurs a small performance degredation and is optional but recommended.
    - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
@@ -38,14 +38,14 @@ Debian 10 Buster
 
 ### Notes
 
-- DHCPv4 uses raw sockets, so it bypasses the firewall \(i.e. no firewall rules are needed\). DHCPv6, however, does not. This includes the respective clients as well.
+- DHCPv4 uses raw sockets, so it bypasses the firewall (i.e. no firewall rules are needed). DHCPv6, however, does not. This includes the respective clients as well.
 
 ### Setup
 
 1. Install and enable `isc-dhcp-server` and `radvd`.
 2. Add config files.
    1. DHCPv4: `/etc/dhcp/dhcpd.conf`
-   2. DHCPv6 \(optional\): `/etc/dhcp/dhcpd6.conf`
+   2. DHCPv6 (optional): `/etc/dhcp/dhcpd6.conf`
    3. radvd: `/etc/radvd.conf`
 3. If using systemd-networkd, fix wrong startup order:
    - **TODO**
@@ -54,9 +54,9 @@ Debian 10 Buster
 5. IPv6:
    1. For SLAAC, configure only radvd.
    2. Dor DHCPv6, configure radvd in stateful mode and DHCPv6.
-6. \(Optional\) Setup interfaces to listen to:
+6. (Optional) Setup interfaces to listen to:
    - This may mute the "No subnet declaration for ..." verbose error on some distros.
-   - In `/etc/default/isc-dhcp-server`, add the interfaces \(space-separated\) to `INTERFACESv4` and `INTERFACESv6`.
+   - In `/etc/default/isc-dhcp-server`, add the interfaces (space-separated) to `INTERFACESv4` and `INTERFACESv6`.
 
 ## NTPD
 
@@ -65,7 +65,7 @@ Debian 10 Buster
 - Disable systemd-timesyncd NTP client by disabling and stopping `systemd-timesyncd`.
 - Install `ntp`.
 - In `/etc/ntp.conf`, replace existing servers/pools with `ntp.justervesenet.no` with the `iburst` option.
-- Test with `ntpq -pn` \(it may take a minute to synchronize\).
+- Test with `ntpq -pn` (it may take a minute to synchronize).
 
 ## Postfix
 
@@ -74,7 +74,7 @@ Debian 10 Buster
 #### Notes
 
 - When using an SMTP relay, the original IP address will likely be found in the mail headers.
-- Make sure DNS is configured correctly \(SPF, DKIM, DMARC\).
+- Make sure DNS is configured correctly (SPF, DKIM, DMARC).
 
 #### Setup
 
@@ -82,24 +82,24 @@ Debian 10 Buster
    - If asked, choose to configure Postfix as a satellite system.
 2. Make sure the FQDN is correct in `/etc/mailname` and `/etc/postfix/main.cf`.
 3. Update the root alias in `/etc/aliases` and run `newaliases`.
-4. Update the `main.cf` config \(example not provided here\).
+4. Update the `main.cf` config (example not provided here).
    1. Only listen to localhost: Set “inet\_interfaces = loopback-only”
    2. Disable relaying: Set “mynetworks = 127.0.0.0/8 \[::ffff:127.0.0.0\]/104 \[::1\]/128”
    3. Anonymize banner: “smtpd\_banner = $myhostname ESMTP”
 5. Relay guides:
    1. Mailgun:
-      1. [How To Start Sending Email \(Mailgun\)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
-      2. [How to Set Up a Mail Relay with Postfix and Mailgun on Ubuntu 16.04 \(](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)[DigitalOcean\)](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)
+      1. [How To Start Sending Email (Mailgun)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
+      2. [How to Set Up a Mail Relay with Postfix and Mailgun on Ubuntu 16.04 (](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)[DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)
    2. SendGrid:
-      1. [Postfix \(SendGrid\)](https://sendgrid.com/docs/for-developers/sending-email/postfix/)
+      1. [Postfix (SendGrid)](https://sendgrid.com/docs/for-developers/sending-email/postfix/)
       2. Use API-key with permission to send mail only.
       3. The API-key username is `apikey`.
 6. Setup address rewrite rules:
    - For fixing the `To` and `From` fields, which is typically from root to root.
-   - Add the rewrite config \(see example below\).
+   - Add the rewrite config (see example below).
    - Reference the config using `smtp_header_checks` in the main config.
    - Test: `postmap -fq "From: root@<FQDN>" regexp:smtp_header_checks`
-7. Setup relay credentials \(SASL\):
+7. Setup relay credentials (SASL):
    1. Credentials file: `/etc/postfix/sasl_passwd`
    2. Add your credentials using format: `[relay_domain]:port user@domain:password`
    3. Run: `postmap sasl_passwd`
@@ -121,7 +121,7 @@ Debian 10 Buster
 - Send a test mail: `echo "Test from $HOSTNAME at time $(date)." | mail -s "Test" root`
 - Test the config: `postconf > /dev/null`
 - Print the config: `postconf -n`
-- If mails are stuck in the mail queue \(`mailq`\) because of previous errors, run `postqueue -f` to flush them.
+- If mails are stuck in the mail queue (`mailq`) because of previous errors, run `postqueue -f` to flush them.
 
 ## radvd
 
@@ -132,7 +132,7 @@ Debian 10 Buster
 
 ## TFTP Server
 
-Using H. Peter Anvin's TFTP server \(tftpd-hpa\).
+Using H. Peter Anvin's TFTP server (tftpd-hpa).
 
 ### Setup
 
@@ -203,8 +203,8 @@ TFTP_OPTIONS="--create --secure"
 
 ### Setup
 
-1. Enable the `contrib` and `non-free` repo areas. \(Don't use any backports repo.\)
-2. Install \(it might give errors\): `zfs-dkms zfsutils-linux zfs-zed`
+1. Enable the `contrib` and `non-free` repo areas. (Don't use any backports repo.)
+2. Install (it might give errors): `zfs-dkms zfsutils-linux zfs-zed`
 3. Load the ZFS module: `modprobe zfs`
 4. Fix the ZFS install: `apt install`
 
@@ -221,7 +221,7 @@ TFTP_OPTIONS="--create --secure"
 
 - ECC memory is recommended but not required. It helps prevent data corruption in memory. It does however not affect data corruption on disk.
 - Does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC.
-- A dedicated disk \(e.g. an NVMe SSD\) can be used as a secondary read cache. This is termed L2ARC \(level 2 ARC\). Only frequently accessed blocks are cached. The memory requirement will increase based on the size of the L2ARC. It should only be considered for pools with high read traffic, slow disks and lots of memory available.
-- A dedicated disk \(e.g. an NVMe SSD\) can be used for the ZIL \(ZFS intent log\) \(which is used for synchronized writes\). The disk is then termed SLOG \(secondary log\). The disk must be able to handle lots of writes. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
+- A dedicated disk (e.g. an NVMe SSD) can be used as a secondary read cache. This is termed L2ARC (level 2 ARC). Only frequently accessed blocks are cached. The memory requirement will increase based on the size of the L2ARC. It should only be considered for pools with high read traffic, slow disks and lots of memory available.
+- A dedicated disk (e.g. an NVMe SSD) can be used for the ZIL (ZFS intent log) (which is used for synchronized writes). The disk is then termed SLOG (secondary log). The disk must be able to handle lots of writes. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
 
 {% include footer.md %}

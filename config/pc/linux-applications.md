@@ -28,11 +28,11 @@ Kubuntu 19.10+
 #### Configure Fancontrol
 
 1. Install `fancontrol`.
-2. \(Optional\) Install `gnuplot` if you want `pwmconfig` to generate graphical plots.
+2. (Optional) Install `gnuplot` if you want `pwmconfig` to generate graphical plots.
 3. Run `pwmconfig`.
    1. Use manual mode for when asked.
    2. Generate detailed correlations when asked.
-   3. Set up the config file when asked \(`/etc/fancontrol`\).
+   3. Set up the config file when asked (`/etc/fancontrol`).
    4. Decide which sensor each controller should depend on.
    5. Configure all fan controllers.
    6. Save and quit.
@@ -58,7 +58,7 @@ GUI for configuring gaming mice.
 
 ## Shell
 
-### ZSH \(Oh-My-ZSH\)
+### ZSH (Oh-My-ZSH)
 
 1. Install ZSH.
 2. Install Oh-My-ZSH:

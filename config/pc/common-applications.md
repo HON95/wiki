@@ -29,7 +29,7 @@ breadcrumbs:
 
 ### Usage
 
-- New key \(RSA\): `ssh-keygen -t rsa -b 4096`
+- New key (RSA): `ssh-keygen -t rsa -b 4096`
 
 ### Config
 
@@ -59,7 +59,7 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 
 ### Extensions
 
-- HTML CSS Support \(ecmel.vscode-html-css\)
+- HTML CSS Support (ecmel.vscode-html-css)
 
 ### Config
 

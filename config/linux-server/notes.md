@@ -15,7 +15,7 @@ breadcrumbs:
 - [Cipherli.st](https://cipherli.st/)
 - [Linux Hardening Checklist](https://github.com/trimstray/linux-hardening-checklist)
 - [The Practical Linux Hardening Guide](https://github.com/trimstray/the-practical-linux-hardening-guide)
-- [Text to ASCII Art Generator \(TAAG\)](http://patorjk.com/software/taag/#p=display&f=Slant&t=)
+- [Text to ASCII Art Generator (TAAG)](http://patorjk.com/software/taag/#p=display&f=Slant&t=)
 
 ## Addresses
 

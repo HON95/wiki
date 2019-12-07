@@ -25,6 +25,6 @@ breadcrumbs:
 ## Storage
 
 - PERC 5/i and 6/i do not support disks over 2TB. PERC H200 and similar may need to be flashed to support it.
-- PERC H200, H310 H310 mini etc. do not need to be flashed \(from IR\) to IT mode. They already function as HBAs. But upgrade the firmware. \(Controversal topic, needs verification.\)
+- PERC H200, H310 H310 mini etc. do not need to be flashed (from IR) to IT mode. They already function as HBAs. But upgrade the firmware. (Controversal topic, needs verification.)
 
 {% include footer.md %}

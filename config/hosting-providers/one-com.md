@@ -12,6 +12,6 @@ breadcrumbs:
 
 ## Experience
 
-- Does not support non-ASCII characters in file names \(tested with basic web hosting\). I tried migrating a site with æ, ø and å in the file names, which didn't work at all.
+- Does not support non-ASCII characters in file names (tested with basic web hosting). I tried migrating a site with æ, ø and å in the file names, which didn't work at all.
 
 {% include footer.md %}

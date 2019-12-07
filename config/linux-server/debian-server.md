@@ -20,10 +20,10 @@ Debian 10 Buster
 - Installation:
   - Always verify the downloaded installation image after downloading it.
   - Use UEFI if given the option.
-  - Use the United States UTF-8 locale \(`en_US.UTF-8`\).
+  - Use the United States UTF-8 locale (`en_US.UTF-8`).
   - Use an FQDN as the hostname.
   - Disk partitioning:
-    - \(Recommended\) Manually partition the boot/main drive\(s\). See [the storage page](system.md) for suggestions.
+    - (Recommended) Manually partition the boot/main drive(s). See [the storage page](system.md) for suggestions.
     - Guided partitioning makes weird partition/volume sizes, try to avoid it.
     - For simple or temporary systems, just use "guided - use entire disk" with all files in one partition.
   - At the software selection menu, select only "SSH server" and "standard system utilities".
@@ -42,7 +42,7 @@ Debian 10 Buster
 - Check the hostname:
   - Use a shortname as the hostname.
   - Set the hostname: `hostnamectl set-hostname <hostname>`
-  - Update `/etc/hosts` with all variants of the hostname \(including shortname and FQDN\).
+  - Update `/etc/hosts` with all variants of the hostname (including shortname and FQDN).
 - Packages:
   - Update, upgrade and auto-remove.
   - Install: `sudo ca-certificates mailutils`
@@ -50,10 +50,10 @@ Debian 10 Buster
   - Enable the `contrib` and `non-free` repo areas:
     - Add `contrib non-free` to every line in `/etc/apt/sources.list`.
   - Install free and non-free firmware: `firmware-linux`
-  - If it asked to install non-free firmware in the initial installation installation, try to install it now using APT \(hint: search for `firmware-`\).
+  - If it asked to install non-free firmware in the initial installation installation, try to install it now using APT (hint: search for `firmware-`).
 - Configure your personal user:
-  - Add it to the sudo group \(`usermod -aG sudo <user>`\).
-  - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions \(700 for dir, 600 for file\).
+  - Add it to the sudo group (`usermod -aG sudo <user>`).
+  - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
   - Test it.
 - Postfix: **TODO**
 
@@ -74,7 +74,7 @@ Debian 10 Buster
   - Restart and see status for service `systemd-timesyncd`.
 - Setup firewall:
   - Install: `iptables iptables-persistent netfilter-persistent`
-  - Add basic rules \(it defaults to accepting everything\).
+  - Add basic rules (it defaults to accepting everything).
 - Reboot and make sure it still works.
 
 ### Security
@@ -93,21 +93,21 @@ Debian 10 Buster
   - `AllowTcpForwarding no`
   - `GatewayPorts no`
   - Restart `sshd`.
-- \(Optional\) Prevent root login:
+- (Optional) Prevent root login:
   - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
   - Add a personal user first.
-  - Check that the password field \(the second field\) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
+  - Check that the password field (the second field) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
   - Clear `/etc/securetty` to prevent root local/console login.
 - Extra tools:
   - Install `libpam-tmpdir`.
-  - \(Optional\) Install `fail2ban`.
+  - (Optional) Install `fail2ban`.
     - Fix the firewall first so it configures itself correctly wrt. firewall blocking.
     - Check the status with `fail2ban-client status [sshd]`.
     - See [Applications](applications.md#fail-2-ban) for more info.
-  - \(Optional\) Install and run Lynis:
+  - (Optional) Install and run Lynis:
     - Install `lynis`.
     - Run `lynis audit system`.
-- \(Optional\) Extra package security:
+- (Optional) Extra package security:
   - Install `apt-listbugs` and `apt-listchanges` and run them before upgrading a package.
   - Install `needrestart` and run it after upgrading.
 
@@ -143,7 +143,7 @@ Debian 10 Buster
 - Make the new networkd configs.
   - Extra network device configs: `/etc/systemd/network/*.netdev`
   - Network configs: `/etc/systemd/network/*.network`
-- \(Re\)move the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.disabled`
+- (Re)move the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.disabled`
 - Enable systemd-networkd: `systemctl enable systemd-networkd`
 - Reboot and test.
 - Check the status: `networkctl [status [-a]]`
@@ -156,23 +156,23 @@ Debian 10 Buster
   - Doesn’t need to be super fast.
   - SSD: 1 or 2 mirrored, overprovisioned.
   - HDD: 2 mirrored.
-- Use LVM or ZFS \(if supported/stable\) for the whole main disk, except the boot and EFI partitions.
+- Use LVM or ZFS (if supported/stable) for the whole main disk, except the boot and EFI partitions.
 - Use EXT4 for general filesystems if ZFS is nor supported or appropriate.
 - Some semi-guided installers automatically add the boot or EFI partition when adding the first one.
 - Partitioning:
   - If BIOS:
     - MBR partitioning table.
-    - `/boot`: 500MB, FAT32 \(?\)
-  - If UEFI \(preferred\):
+    - `/boot`: 500MB, FAT32 (?)
+  - If UEFI (preferred):
     - `/boot/efi`: 500MB, FAT32/EFI
     - `/boot`: 500MB, EXT4
-  - \(Optional\) Swap. Alternatively, add it as an LVM volume.
-  - LVM \(or ZFS\). For `/` and other volumes.
-  - \(Optional\) ZFS. So that LVM uses the first half and ZFS the last.
-  - If SSD: Reserve around 10% at the end of the drive \(no partition\).
+  - (Optional) Swap. Alternatively, add it as an LVM volume.
+  - LVM (or ZFS). For `/` and other volumes.
+  - (Optional) ZFS. So that LVM uses the first half and ZFS the last.
+  - If SSD: Reserve around 10% at the end of the drive (no partition).
 - Configure LVM:
   - Finish the partitioning before entering the LVM configuration.
-  - Create a volume group \(call it `vg0` or something\) and add the partition you created earlier for it.
+  - Create a volume group (call it `vg0` or something) and add the partition you created earlier for it.
   - Create as many logical volumes as you want. See the table below for a suggestion. Call them something like `var-lib` for the `/var/lib` volume.
   - Mount points etc. are configured after you finish the LVM configuration.
 - Set mount points and file system formats and stuff for all the volumes.
@@ -181,7 +181,7 @@ Debian 10 Buster
 
 This table is just for reference, everything about it is supposed to be suggestive. All of these are specified in `/etc/fstab`. Volumes/mounts like `/dev` are not mentioned.
 
-| Volume/Mount | Minimal Size \(GB\) | Mount Options |
+| Volume/Mount | Minimal Size (GB) | Mount Options |
 | :--- | :--- | :--- |
 | `/proc` | N/A | hidepid=2,gid=1500 |
 | `/boot` | 0.5 | nodev,nosuid,noexec |
@@ -201,18 +201,18 @@ This table is just for reference, everything about it is supposed to be suggesti
 
 ### Cron
 
-- Don't use periods \(including file extensions\) in the hourly/daily/weekly/monthly scripts.
+- Don't use periods (including file extensions) in the hourly/daily/weekly/monthly scripts.
 
 ## Extra Configuration
 
 - MOTD:
   - Clear `/etc/motd`.
   - Download [dmotd.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
-  - Add an ASCII art \(or Unicode art\) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
-  - \(Optional\) Add a MOTD to `/etc/motd`.
+  - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
+  - (Optional) Add a MOTD to `/etc/motd`.
 - Free disk space checking:
   - Download [disk-space-checker.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
-  - Example cron job \(15 minutes past every 4 hours\): `15 */4 * * * root /opt/bin/disk-space-checker`
+  - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
   - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
 
 {% include footer.md %}

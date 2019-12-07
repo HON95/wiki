@@ -23,7 +23,7 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
 4. Set the correct boot preference: boot system flash primary
    1. Check it with `sh boot-pref` in privileged exec mode.
 5. Set the hostname: `hostname <name>`
-6. Configure time zone \(Norway\):
+6. Configure time zone (Norway):
    1. Time zone: `clock timezone gmt gmt+01`
    2. Manual summer time: `clock summer-time`
 7. Configure NTP client:
@@ -54,25 +54,25 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
        1. `ip ssh encryption aes-only`
        2. `ip ssh encryption disable-aes-cbc`
        3. `jitc enable`
-    6. Set the idle timer: `ip ssh idle-time <minutes>` \(e.g. 10\)
+    6. Set the idle timer: `ip ssh idle-time <minutes>` (e.g. 10)
     7. Both password and key based authentication is enabled by default.
     8. SCP is enabled by default.
-11. \(Optional\) Enable HTTPS:
+11. (Optional) Enable HTTPS:
     1. Delete the old SSL/TLS certificate: `crypto-ssl certificate zeroize`
     2. Generate new SSL/TLS certificate: `crypto-ssl certificate generate`
     3. `web-management https`
     4. `no web-management http`
     5. `aaa authentication web-server default local`
 12. Disable extra features:
-    1. VSRP \(Brocade proprietary\): `no router vsrd`
+    1. VSRP (Brocade proprietary): `no router vsrd`
     2. Telner: `no telnet`
-13. Configure link aggregation \(LAG/LACP\):
+13. Configure link aggregation (LAG/LACP):
     1. Create it: `lag <name> [static | passive]`
     2. Add ports to it: `ports ethernet <if> [to <if>]`
        1. Use `no` to remove ports.
     3. Set the primary port: `primary-port <if>`
        1. All other ports will inherit the config for the primary port.
-    4. \(Optional\) Make it fast manually: `lacp-timeout short`
+    4. (Optional) Make it fast manually: `lacp-timeout short`
     5. Deploy/enable it: `deploy`
     6. If the LAG is not facing a STP-capable device, disable it. I've had problems where the LAG entered `LACP-BLOCKED` state and STP _seemed_ to have something to do with it.
 14. Configure VLANs:
@@ -80,11 +80,11 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
        1. Providing a name will automatically create it.
     2. Create untagged og tagged ports: `<untagged | tagged> <if> [<if>*]`
        1. Access ports and trunk ports in Cisco terms.
-    3. \(Optional\) Set a dual mode VLAN \(native VLAN for in Cisco terms\):
+    3. (Optional) Set a dual mode VLAN (native VLAN for in Cisco terms):
        1. Add the port as tagged.
        2. `dual-mode <VID>`
-    4. Enable spanning tree \(same type as global\): `spanning-tree`
-15. Configure normal interfaces \(`int eth <stack_unit>/slot/port [to ...]`\):
+    4. Enable spanning tree (same type as global): `spanning-tree`
+15. Configure normal interfaces (`int eth <stack_unit>/slot/port [to ...]`):
     1. Set the port name: `post-name <name>`
     2. If required, set the post speed and duplex mode: `speed-duplex <mode>`
        1. Note: SFP+ are disabled until a speed and duplex has been set.
@@ -93,16 +93,16 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
     1. Disable the OOB mgmt. interface:
        1. `int man 1`
        2. `disable`
-    2. Enter management VLAN config: `vlan 10` \(assuming 10 is the VID\)
-    3. Add router interface to the VLAN: `router-interface ve 10` \(10 should be same as VID\)
+    2. Enter management VLAN config: `vlan 10` (assuming 10 is the VID)
+    3. Add router interface to the VLAN: `router-interface ve 10` (10 should be same as VID)
     4. Enter router interface: `int ve 10`
     5. Set address for it: `ip address <address>/length`
     6. Exit router interface.
     7. Add a default route: `ip route 0.0.0.0/0 <gateway>`
-17. Configure spanning tree \(802-1w\):
+17. Configure spanning tree (802-1w):
     1. Enable globally: `spanning-tree single 802-1w`
     2. Set priority: `spanning-tree single 802-1w priority 12288`
-    3. Configure a port as edge port \(portfast in Cisco lingo\): `spanning-tree 802-1w admin-edge-port`
+    3. Configure a port as edge port (portfast in Cisco lingo): `spanning-tree 802-1w admin-edge-port`
     4. Enable root guard on a port: `spanning-tree root-protect`
     5. Enable BPDU guard on a port: `stp-bpdu-guard`
     6. Enable BPDU filter on a port: `stp-protect`
@@ -119,7 +119,7 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
 - Console:
   - Backspace in serial console: `Ctrl+H`
   - Enable logging to the serial console: `logging console`
-  - Enable logging to SSH/Telnet: `terminal monitor`\(in privileged exec mode\)
+  - Enable logging to SSH/Telnet: `terminal monitor`(in privileged exec mode)
 - Hardware:
   - Reboot: `boot system`
   - Show hardware: `sh chassis`
@@ -130,7 +130,7 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
   - Interface stats: `sh int`
 - Spanning tree:
   - Show: `sh span`
-- Link aggregation \(LAG\):
+- Link aggregation (LAG):
   - Show info: `sh lag`
 - File management:
   - Show directory contents: `sh dir`

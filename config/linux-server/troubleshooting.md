@@ -19,8 +19,8 @@ Debian 10 Buster
   - See all services it depends on: `systemctl show -p WantedBy network-online.target`
   - Disable the unused services which stall.
 - Firmware for the network card fails to load:
-  - Causes a syslog record like "firmware: failed to load rtl\_nic/rtl8168g-3.fw \(-2\)" when trying to up the interface.
-  - Might happen after installation even if working initially \(for some reason\).
+  - Causes a syslog record like "firmware: failed to load rtl\_nic/rtl8168g-3.fw (-2)" when trying to up the interface.
+  - Might happen after installation even if working initially (for some reason).
   - Realtek solution: Enable the "non-free" repo and install "firmware-realtek".
 - Perl complains about a locale error:
   - Test with `perl -e exit`. It will complain if there's an error.

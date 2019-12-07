@@ -15,14 +15,14 @@ Windows 10
 
 ## Installation
 
-- There's no need to provide a product/activation key. If the PC \(motherboard?\) has been activated before, it will automatically activate when starting the first time.
+- There's no need to provide a product/activation key. If the PC (motherboard?) has been activated before, it will automatically activate when starting the first time.
 -  Use a local account. Link to a Microsoft account later if needed, but preferably only for Microsoft apps.
 - Say no to everything privacy related.
 
 ## After Installation
 
 - Install all available updates.
-- Install graphics drivers and fix display frame rates, color ranges \(use full range for PC displays and limited for TVs, generally\) etc.
+- Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
 - Enable BitLocker drive encryption for all drives.
   - Allow using it without a TPM module:
     - Open `gpedit.msc`.
@@ -32,7 +32,7 @@ Windows 10
       - Allow without compatible TPM module.
       - Do not allow TPM.
     - Enable "allow enhanced PINs for startup".
-- Disable the lock screen: [How to Disable the Lock Screen on Windows 10 \(Lifewire\)](https://www.lifewire.com/disable-lock-screen-windows-10-4173812)
+- Disable the lock screen: [How to Disable the Lock Screen on Windows 10 (Lifewire)](https://www.lifewire.com/disable-lock-screen-windows-10-4173812)
   - Open `regedit`.
   - Go to `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows`.
   - Create a new key named `Personalization`.
@@ -54,7 +54,7 @@ Windows 10
   - Used balanced.
   - Extend periods for turning off stuff.
   - Disable the sleep timer.
-  - Allow the CPU to reduce its "utilization" \(for Intel SpeedStep\).
+  - Allow the CPU to reduce its "utilization" (for Intel SpeedStep).
 - Device settings:
   - Disable AutoPlay.
 - Personalisation settings:
@@ -75,7 +75,7 @@ Windows 10
 
 ## Troubleshooting
 
-### Windows Subsystem for Linux \(WSL\)
+### Windows Subsystem for Linux (WSL)
 
 #### Linux Kernel CMA Support was Requested ...
 
