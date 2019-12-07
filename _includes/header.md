@@ -6,7 +6,7 @@
 {% endif %}
 
 {% if page.toc_enable %}
-## Contents
+### Contents
 {:.no_toc}
 - ToC
 {:toc}
