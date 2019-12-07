@@ -1,5 +1,6 @@
 ---
 title: Debian Server Configuration
+toc_enable: yes
 breadcrumbs:
 - title: Home
   url: /

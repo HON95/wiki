@@ -1,6 +1,6 @@
 # HON's Wiki
 
-### Areas
+## Areas
 
 - [Configuration Notes](config/)
 
