@@ -86,7 +86,6 @@ POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)
 POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs)
 POWERLEVEL9K_STATUS_CROSS="true"
 ```
-{% endcode %}
 
 ## Steam
 
