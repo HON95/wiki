@@ -36,5 +36,7 @@ breadcrumbs:
     - Use a resistor and/or a ferrite bead to limit AC current.
 - Phantom power:
   - Applies 48V to XLR3 (or similar) mic inputs. Applying this to devices which aren't made for it can break them.
+- Impedance:
+  - Basically resistance but for AC.
 
 {% include footer.md %}
