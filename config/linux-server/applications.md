@@ -242,12 +242,16 @@ TFTP_OPTIONS="--create --secure"
 - Create an encrypted pool:
   - The procedure is basically the same for encrypted datasets.
   - Children of encrypted datasets can't be unencrypted.
+  - The encryption suite can't be changed after creation, but the keyformat can.
   - Using a password: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
   - Using a raw key:
-    - Generate the key: `dd if=/dev/random of=<path> bs=32 count=1`
-    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file://<path> ...`
-    - Automatically unlock at boot time: Add the systemd service to unlock pools/datasets individually () or to unlock all of them ().
-  - The encryption suite can't be changed after creation, but the keyformat can.
+    - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
+    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
+    - Automatically unlock at boot time: Add either the systemd service to unlock individual pools/datasets ([zfs-load-key@.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-key%40.service)) or the one to unlock all of them ([zfs-load-key-all.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-key-all.service)).
+    - Enable the new unlocking service:
+      - For the individual variant: `systemctl enable zfs- load-key@<tank/dataset>`
+      - For the all variant: `systemctl enable zfs-load-key-all`
+  - Reboot and test.
 - Send and receive snapshots:
   - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
   - Uses STDOUT.
