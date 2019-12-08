@@ -249,7 +249,7 @@ TFTP_OPTIONS="--create --secure"
     - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
     - Automatically unlock at boot time: Add either the systemd service to unlock individual pools/datasets ([zfs-load-key@.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-key%40.service)) or the one to unlock all of them ([zfs-load-key-all.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-key-all.service)).
     - Enable the new unlocking service:
-      - For the individual variant: `systemctl enable zfs- load-key@<tank/dataset>`
+      - For the individual variant: `systemctl enable zfs-load-key@<tank/dataset>`
       - For the all variant: `systemctl enable zfs-load-key-all`
   - Reboot and test.
 - Send and receive snapshots:
