@@ -239,6 +239,15 @@ TFTP_OPTIONS="--create --secure"
 ### Usage
 
 - Create a pool: `zpool create -o ashift=<9|12> [level] <drives>+`
+- Create an encrypted pool:
+  - The procedure is basically the same for encrypted datasets.
+  - Children of encrypted datasets can't be unencrypted.
+  - Using a password: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
+  - Using a raw key:
+    - Generate the key: `dd if=/dev/random of=<path> bs=32 count=1`
+    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file://<path> ...`
+    - Automatically unlock at boot time: Add the systemd service to unlock pools/datasets individually () or to unlock all of them ().
+  - The encryption suite can't be changed after creation, but the keyformat can.
 - Send and receive snapshots:
   - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
   - Uses STDOUT.
