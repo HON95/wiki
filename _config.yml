@@ -12,3 +12,5 @@ optional_front_matter:
     remove_originals: true
 
 google_analytics_id: UA-154149655-1
+
+theme: jekyll-theme-minimal
