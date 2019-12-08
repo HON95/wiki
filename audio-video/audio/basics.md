@@ -12,6 +12,11 @@ breadcrumbs:
 
 ## Notes
 
+- Bands:
+  - Lows (ca. 20Hz-100Hz)
+  - Low midrange (ca. 100Hz-1kHz)
+  - High midrange (ca. 1kHz-10kHz)
+  - Highs (ca. 10kHz-20kHz)
 - Signal levels:
   - +4dBu: Professional equipment.
   - -10dBV: Consumer equipment. Lower than +4dBu. Not to be confused with dB**v**.
