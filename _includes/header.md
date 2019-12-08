@@ -1,3 +1,5 @@
+{% include analytics.html %}
+
 # {{ site.name }} / {{ page.title }}
 {:.no_toc}
 
