@@ -1,7 +1,7 @@
 # {{ site.name }} / {{ page.title }}
 {:.no_toc}
 
-{% assign space = " " %}
+{% assign breadcrumbs_separator = " / " %}
 
 {% if page.breadcrumbs %}
 >
@@ -11,7 +11,7 @@
     {%- else -%}
         {{ crumb.title }}
     {%- endif -%}
-    {{ space }}/{{ space }}
+    {{ breadcrumbs_separator }}
 {%- endfor -%}
 {{ page.title }}
 {% endif %}
