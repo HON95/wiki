@@ -12,11 +12,10 @@ breadcrumbs:
 
 ## Notes
 
-- Line levels:
+- Signal levels:
   - +4dBu: Professional equipment.
-  - -10dBV: Consumer equipment. Lower than +4dBu.
-  - dBv
-  - dBm
+  - -10dBV: Consumer equipment. Lower than +4dBu. Not to be confused with dB**v**.
+  - Phono: Old, for turntables etc. Much lower voltage than line level. Typically needs a phono preamp/stage with RIAA equalization.
   - Not to be confused with SPL dB.
 - Balance mode:
   - Unbalanced: Ground and signal.
