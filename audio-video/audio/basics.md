@@ -13,8 +13,8 @@ breadcrumbs:
 ## Notes
 
 - Line levels:
-  - -10dBV: Consumer equipment. 0.316V RMS and 0.447V peak.
-  - +4dBu: Professional equipment. 1.228V RMS and 1.736V peak.
+  - +4dBu: Professional equipment.
+  - -10dBV: Consumer equipment. Lower than +4dBu.
   - dBv
   - dBm
   - Not to be confused with SPL dB.
