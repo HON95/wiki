@@ -130,9 +130,7 @@ Debian 10 Buster
 1. Install `radvd`.
 2. Setup the config: `/etc/radvd.conf`
 
-## TFTP Server
-
-Using H. Peter Anvin's TFTP server (tftpd-hpa).
+## TFTP-HPA
 
 ### Setup
 
@@ -216,6 +214,16 @@ TFTP_OPTIONS="--create --secure"
 - Log-strucrured filesystem
 - Tunable
 
+### Terminology
+
+- Vdev
+- Zpool
+- Zvol
+- ZFS POSIX Layer (ZPL)
+- ZFS Intent Log (ZIL)
+- Adaptive Replacement Cache (ARC)
+- Dataset
+
 ### Setup
 **TODO**: Check if this is still annoying.
 
@@ -223,11 +231,18 @@ TFTP_OPTIONS="--create --secure"
 1. Install (it might give errors): `zfs-dkms zfsutils-linux zfs-zed`
 1. Load the ZFS module: `modprobe zfs`
 1. Fix the ZFS install: `apt install`
+1. Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
+  - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
 1. Check that the cron scrub script exists.
   - If not, add one which runs `/usr/lib/zfs-linux/scrub`. It'll scrub all disks. Run it e.g. monthly or every 2 weeks.
 
 ### Usage
 
+- Create a pool: `zpool create -o ashift=<9|12> [level] <drives>+`
+- Send and receive snapshots:
+  - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
+  - Uses STDOUT.
+  - Use `zfs get receive_resume_token` and `zfs send -t <token>` to resume an interrupted transfer.
 - View activity: `zpool iostat [-v]`
 - Clear transient device errors: `zpool clear <pool> [device]`
 - If a pool is "UNAVAIL", it means it can't be recovered without corrupted data.
@@ -243,33 +258,58 @@ TFTP_OPTIONS="--create --secure"
   - Should be the log-2 of the physical block/sector size of the device.
   - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).
   - Check the physical block size with `smartctl -i <dev>`.
-- Always enable compression. Worst case it does nothing.
-- Consider using quotas and reservations.
+- Always enable compression. Generally `lz4`. Maybe `zstd` when implemented. Maybe `gzip-9` for archiving. Worst case it does nothing.
+- Never use deduplication. It may brick your ZFS server.
+- Generally always use quotas and reservations.
+- Avoid using more than 80% of the available space.
 - Make sure regular automatic scrubs are enabled. There should be a cron job/script or something. Run it e.g. every 2 weeks or monthly.
 - Snapshots are great for increments backups. They're easy to send places too. If the dataset is encrypted then so is the snapshot.
 
 ### Tuning
 
+- Use quotas, reservations and compression.
 - Very frequent reads:
   - E.g. for a static web root.
   - Set `atime=off` to disable updating the access time for files.
 - Database:
-  - Use different datasets for the DB data and DB WAL if possible.
+  - Disable `atime`.
   - Use an appropriate recordsize with `recordsize=<size>`.
-    - InnoDB should use 16k for data files and 128k on log files.
-    - PostgreSQL should use 8k for both data and WAL.
-  - Disable caching with `primarycache=metadata`. DMBSes handle caching themselves.
+    - InnoDB should use 16k for data files and 128k on log files (two datasets).
+    - PostgreSQL should use 8k (or 16k) for both data and WAL.
+  - Disable caching with `primarycache=metadata`. DMBSes typically handle caching themselves.
     - For InnoDB.
+    - For PostgreSQL if the working set fits in RAM.
   - Disable the ZIL with `logbias=throughput` to prevent writing twice.
-    - For both InnoDB and PostgreSQL.
+    - For InnoDB and PostgreSQL.
+    - Consider not using it for high-traffic applications.
+  - PostgreSQL:
+    - Use the same dataset for data and logs.
+    - Use one dataset per database instance. Requires you to specify it when creating the database.
+    - Don't use PostgreSQL checksums or compression.
+    - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
 
 ### Extra Notes
 
-- ECC memory is recommended but not required. It helps prevent data corruption in memory, where ZFS provides no redundancy. It does not affect data corruption on disk, however.
-- It does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC.
+- ECC memory is recommended but not required. It does not affect data corruption on disk.
+- It does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC. By default it's limited to 1/2 of all available RAM. Under memory pressure, it releases some of it to other applications.
+- Compressed ARC is a feature which compresses and checksums the ARC. It's enabled by default.
 - A dedicated disk (e.g. an NVMe SSD) can be used as a secondary read cache. This is termed L2ARC (level 2 ARC). Only frequently accessed blocks are cached. The memory requirement will increase based on the size of the L2ARC. It should only be considered for pools with high read traffic, slow disks and lots of memory available.
-- A dedicated disk (e.g. an NVMe SSD) can be used for the ZFS intent log (ZIL), which is used for synchronized writes. This is termed SLOG (separate intent log). The disk must be able to handle lots of writes. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
+- A dedicated disk (e.g. an NVMe SSD) can be used for the ZFS intent log (ZIL), which is used for synchronized writes. This is termed SLOG (separate intent log). The disk must have low latency, high durability and should preferrably be mirrored for redundancy. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
 - Intel Optane is a perfect choice as both L2ARCs and SLOGs due to its high throughput, low latency and high durability.
 - Some SSD models come with a build-in cache. Make sure it actually flushes it on power loss.
+- ZFS is always consistent, even in case of data loss.
+- Bitrot is real.
+  - 4.2% to 34% of SSDs have one UBER (uncorrectable bit error rate) per year.
+  - External factors:
+    - Temperature.
+    - Bus power consumption.
+    - Data written by system software.
+    - Workload changes due to SSD failure.
+- Early signs of drive failures:
+  - `zpool status <pool>` shows that a scrub has repaired any data.
+  - `zpool status <pool>` shows read, write or checksum errors (all values should be zero).
+- Database conventions:
+  - One app per database.
+  - Encode the environment and DMBS version into the dataset name, e.g. `theapp-prod-pg10`.
 
 {% include footer.md %}
