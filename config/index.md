@@ -9,6 +9,7 @@ breadcrumbs:
 ## Linux Server
 
 - [Notes](linux-server/notes/)
+- [Miscellaneous](linux-server/misc/)
 - [Debian Server](linux-server/debian-server/)
 - [Applications](linux-server/applications/)
 - [Troubleshooting](linux-server/troubleshooting/)
