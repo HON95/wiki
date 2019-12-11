@@ -301,6 +301,12 @@ TFTP_OPTIONS="--create --secure"
     - Don't use PostgreSQL checksums or compression.
     - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
 
+### Troubleshooting
+
+- `zfs-import-cache.service` fails to import all pools:
+  - Try deleting `/etc/zfs/zpool.cache`.
+  - Try setting `options scsi_mod scan=sync` in `/etc/modprobe.d/zfs.conf` to wait for disks to come online before ZFS starts.
+
 ### Extra Notes
 
 - ECC memory is recommended but not required. It does not affect data corruption on disk.
