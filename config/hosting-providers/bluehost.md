@@ -5,7 +5,6 @@ breadcrumbs:
 - title: Home
   url: /
 - title: Configuration
-  url: /config/
 - title: Hosting Providers
 ---
 {% include header.md %}

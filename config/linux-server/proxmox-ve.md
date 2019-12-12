@@ -5,7 +5,6 @@ breadcrumbs:
 - title: Home
   url: /
 - title: Configuration
-  url: /config/
 - title: Linux Server
 ---
 {% include header.md %}
