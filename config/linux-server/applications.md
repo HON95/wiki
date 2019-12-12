@@ -11,7 +11,7 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
-Debian 10 Buster
+Debian 10 Buster and a bit of Proxmox 6.
 
 ## Docker
 
@@ -225,16 +225,21 @@ TFTP_OPTIONS="--create --secure"
 - Dataset
 
 ### Setup
-**TODO**: Check if this is still annoying.
 
 1. Enable the `contrib` and `non-free` repo areas. (Don't use any backports repo.)
 1. Install (it might give errors): `zfs-dkms zfsutils-linux zfs-zed`
 1. Load the ZFS module: `modprobe zfs`
 1. Fix the ZFS install: `apt install`
+1. Make the import service wait for iSCSI:
+    1. `cp /lib/systemd/system/zfs-import-cache.zervice /etc/systemd/system`
+    1. Add `After=iscsi.service` in `/etc/systemd/system/zfs-import-cache.service`.
+    1. `systemctl enable zfs-import-cache.service`
 1. Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
-  - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
+    - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
 1. Check that the cron scrub script exists.
-  - If not, add one which runs `/usr/lib/zfs-linux/scrub`. It'll scrub all disks. Run it e.g. monthly or every 2 weeks.
+    - If not, add one which runs `/usr/lib/zfs-linux/scrub`. It'll scrub all disks.
+    - Run it e.g. monthly.
+    - (Proxmox) `/etc/cron.d/zfsutils-linux`
 
 ### Usage
 
@@ -247,11 +252,9 @@ TFTP_OPTIONS="--create --secure"
   - Using a raw key:
     - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
     - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
-    - Automatically unlock at boot time: Add either the systemd service to unlock individual pools/datasets ([zfs-load-key@.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-key%40.service)) or the one to unlock all of them ([zfs-load-key-all.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-key-all.service)).
-    - Enable the new unlocking service:
-      - For the individual variant: `systemctl enable zfs-load-key@<tank/dataset>`
-      - For the all variant: `systemctl enable zfs-load-key-all`
+    - Automatically unlock at boot time: Add and enable ([zfs-load-keys.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-keys.service)).
   - Reboot and test.
+  - Check the key status with `zfs get keystatus`.
 - Send and receive snapshots:
   - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
   - Uses STDOUT.
@@ -304,7 +307,8 @@ TFTP_OPTIONS="--create --secure"
 ### Troubleshooting
 
 - `zfs-import-cache.service` fails to import pools because disks are not found:
-  - Try setting `options scsi_mod scan=sync` in `/etc/modprobe.d/scsi.conf` (e.g.) to wait for disks to come online before ZFS starts.
+  - Set `options scsi_mod scan=sync` in `/etc/modprobe.d/zfs.conf` to wait for iSCSI disks to come online before ZFS starts.
+  - Add `After=iscsi.service` to `zfs-import-cache.service`
 
 ### Extra Notes
 
