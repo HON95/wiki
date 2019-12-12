@@ -19,7 +19,7 @@ Proxmox VE 6
 
 - See [Debian Server: Initial Setup](debian-server/#initial-setup).
   - **TODO**: Differences.
-- Change the console MOTD:
+- Disable the console MOTD:
   - Disable `pvebanner.service`.
   - Clear or update `/etc/issue` (e.g. use use the logo).
 
