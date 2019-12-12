@@ -13,7 +13,6 @@ breadcrumbs:
 - [Debian Server](linux-server/debian-server/)
 - [Proxmox VE](linux-server/proxmox-ve/)
 - [Applications](linux-server/applications/)
-- [Troubleshooting](linux-server/troubleshooting/)
 
 ## PC
 
