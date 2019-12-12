@@ -210,6 +210,7 @@ This table is just for reference, everything about it is supposed to be suggesti
   - Download [dmotd.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
   - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
   - (Optional) Add a MOTD to `/etc/motd`.
+  - (Optional) Add a pre-login message to `/etc/issue`, e.g. the logo.
 - Free disk space checking:
   - Download [disk-space-checker.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
   - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
