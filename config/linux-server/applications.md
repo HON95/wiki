@@ -303,9 +303,8 @@ TFTP_OPTIONS="--create --secure"
 
 ### Troubleshooting
 
-- `zfs-import-cache.service` fails to import all pools:
-  - Try deleting `/etc/zfs/zpool.cache`.
-  - Try setting `options scsi_mod scan=sync` in `/etc/modprobe.d/zfs.conf` to wait for disks to come online before ZFS starts.
+- `zfs-import-cache.service` fails to import pools because disks are not found:
+  - Try setting `options scsi_mod scan=sync` in `/etc/modprobe.d/scsi.conf` (e.g.) to wait for disks to come online before ZFS starts.
 
 ### Extra Notes
 
