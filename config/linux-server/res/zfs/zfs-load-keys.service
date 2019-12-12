@@ -9,7 +9,7 @@ After=zfs-import.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/bin/bash -c '/usr/bin/zfs load-key -a'
+ExecStart=/bin/bash -c '/sbin/zfs load-key -a'
 
 [Install]
 WantedBy=zfs-mount.service
