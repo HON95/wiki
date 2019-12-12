@@ -16,7 +16,7 @@ Proxmox VE 6
 
 **TODO**
 
-- See [Debian Server: Initial Setup](debian-server/#initial-setup).
+- See [Debian Server: Initial Setup](../debian-server/#initial-setup).
   - **TODO**: Differences.
 - Disable the console MOTD:
   - Disable `pvebanner.service`.
