@@ -33,11 +33,6 @@ breadcrumbs:
       </td>
       <td style="text-align:left">/etc/debian_version</td>
     </tr>
-    <tr>
-      <td style="text-align:left"></td>
-      <td style="text-align:left"></td>
-      <td style="text-align:left"></td>
-    </tr>
   </tbody>
 </table>
 
