@@ -11,6 +11,7 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
+{:.no_toc}
 Windows 10
 
 ## PuTTY

@@ -11,6 +11,7 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
+{:.no_toc}
 Debian 10 Buster
 
 **TODO:** Clean up.

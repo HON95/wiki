@@ -11,7 +11,8 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
-Debian 10 Buster and a bit of Proxmox 6.
+{:.no_toc}
+Debian 10 Buster
 
 ## Docker
 

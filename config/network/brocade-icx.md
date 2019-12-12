@@ -11,6 +11,7 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
+{:.no_toc}
 Brocade/Ruckus ICX 6610-24 running router/L3 software
 
 Security features like port security, dynamic ARP inspection, DHCP snooping, IP source guard, DHCPv6 snooping, IPv6 NDP inspection and IPv6 RA guard will not be covered since I mainly use the switch as a core/dist. switch and not an access switch.

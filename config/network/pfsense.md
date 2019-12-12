@@ -11,6 +11,7 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
+{:.no_toc}
 pfSense v2
 
 ## Initial Setup

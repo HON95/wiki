@@ -11,6 +11,7 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
+{:.no_toc}
 2950 (G9); R310, R610, R710 (G11); R720 (G12)
 
 ## Firmware Upgrades

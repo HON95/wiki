@@ -11,7 +11,8 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
-Linksys LGS326
+{:.no_toc}
+LGS326
 
 **TODO**
 

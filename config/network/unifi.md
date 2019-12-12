@@ -11,7 +11,10 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
-UniFi AP AC (different variants) with controller v5
+{:.no_toc}
+AP, AP AC Lite, AP AC LR
+
+Controller v5
 
 ## Access Points
 

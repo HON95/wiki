@@ -11,6 +11,7 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
+{:.no_toc}
 Kubuntu 19.10+
 
 ## Fancontrol

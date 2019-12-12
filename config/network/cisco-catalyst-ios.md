@@ -11,7 +11,8 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
-Cisco Catalyst 2960G and 3750G
+{:.no_toc}
+2960G, 3750G
 
 ## Initial Configuration
 

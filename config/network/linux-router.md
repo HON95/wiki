@@ -11,7 +11,8 @@ breadcrumbs:
 {% include header.md %}
 
 ### Using
-Debian 10
+{:.no_toc}
+Debian 10 Buster
 
 ## Notes
 
