@@ -1,5 +1,5 @@
 ---
-title: Debian Server Setup
+title: Debian Server
 toc_enable: yes
 breadcrumbs:
 - title: Home
