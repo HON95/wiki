@@ -3,6 +3,6 @@
 ### Areas
 
 - [Audio & Video](audio-video/)
-- [Configuration Notes](config/)
+- [Configuration](config/)
 
 {% include footer.md %}
