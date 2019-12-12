@@ -232,7 +232,7 @@ TFTP_OPTIONS="--create --secure"
 1. Fix the ZFS install: `apt install`
 1. Make the import service wait for iSCSI:
     1. `cp /lib/systemd/system/zfs-import-cache.zervice /etc/systemd/system`
-    1. Add `After=iscsi.service` in `/etc/systemd/system/zfs-import-cache.service`.
+    1. Add `After=iscsid.service` in `/etc/systemd/system/zfs-import-cache.service`.
     1. `systemctl enable zfs-import-cache.service`
 1. Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
     - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
@@ -308,7 +308,7 @@ TFTP_OPTIONS="--create --secure"
 
 - `zfs-import-cache.service` fails to import pools because disks are not found:
   - Set `options scsi_mod scan=sync` in `/etc/modprobe.d/zfs.conf` to wait for iSCSI disks to come online before ZFS starts.
-  - Add `After=iscsi.service` to `zfs-import-cache.service`
+  - Add `After=iscsid.service` to `zfs-import-cache.service`
 
 ### Extra Notes
 
