@@ -4,7 +4,7 @@ toc_enable: yes
 breadcrumbs:
 - title: Home
   url: /
-- title: Configuration Notes
+- title: Configuration
   url: /config/
 - title: IoT
 ---

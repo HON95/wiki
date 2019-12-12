@@ -1,5 +1,5 @@
 ---
-title: Configuration Notes
+title: Configuration
 breadcrumbs:
 - title: Home
   url: /
