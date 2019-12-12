@@ -29,9 +29,11 @@ breadcrumbs:
 
 ## Network
 
-- [Notes](network/notes/)
+- [Miscellaneous](network/misc/)
+- [Security](network/security/)
 - [Brocade ICX Switches](network/brocade-icx/)
-- [Cisco Catalyst Switches (IOS)](network/cisco-catalyst-ios/)
+- [Cisco IOS Routers](network/cisco-ios-routers/)
+- [Cisco IOS Switches](network/cisco-ios-switches/)
 - [Linksys LGS Switches](network/linksys-lgs/)
 - [Linux Router](network/linux-router/)
 - [Mikrotik Switches (SwOS)](network/mikrotik-swos/)
