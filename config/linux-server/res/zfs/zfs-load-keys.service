@@ -1,4 +1,4 @@
-# /etc/systemd/system/zfs-load-key-all.service
+# /etc/systemd/system/zfs-load-keys.service
 
 [Unit]
 Description=Load encryption keys
@@ -9,7 +9,7 @@ After=zfs-import.target
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/bin/bash -c '/usr/bin/zfs load-key -a'
+ExecStart=/bin/bash -c '/usr/bin/zfs load-key -a'
 
 [Install]
 WantedBy=zfs-mount.service
