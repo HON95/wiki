@@ -11,6 +11,7 @@ breadcrumbs:
 - [Notes](linux-server/notes/)
 - [Miscellaneous](linux-server/misc/)
 - [Debian Server](linux-server/debian-server/)
+- [Proxmox VE](linux-server/proxmox-ve/)
 - [Applications](linux-server/applications/)
 - [Troubleshooting](linux-server/troubleshooting/)
 
