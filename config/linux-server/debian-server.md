@@ -210,10 +210,24 @@ This table is just for reference, everything about it is supposed to be suggesti
   - Download [dmotd.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
   - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
   - (Optional) Add a MOTD to `/etc/motd`.
-  - (Optional) Add a pre-login message to `/etc/issue`, e.g. the logo.
+  - (Optional) Clear or change the pre-login message in `/etc/issue`.
 - Free disk space checking:
   - Download [disk-space-checker.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
   - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
   - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
+
+## Troubleshooting
+
+- `network-online.target` is stalling during boot:
+  - See all services it depends on: `systemctl show -p WantedBy network-online.target`
+  - Disable the unused services which stall.
+- Firmware for the network card fails to load:
+  - Causes a syslog record like "firmware: failed to load rtl\_nic/rtl8168g-3.fw (-2)" when trying to up the interface.
+  - Might happen after installation even if working initially (for some reason).
+  - Realtek solution: Enable the "non-free" repo and install "firmware-realtek".
+- Perl complains about a locale error:
+  - Test with `perl -e exit`. It will complain if there's an error.
+  - Check the locale: `locale`
+  - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale.
 
 {% include footer.md %}
