@@ -58,6 +58,15 @@ Debian 10 Buster
    - This may mute the "No subnet declaration for ..." verbose error on some distros.
    - In `/etc/default/isc-dhcp-server`, add the interfaces (space-separated) to `INTERFACESv4` and `INTERFACESv6`.
 
+## ntopng
+
+### Setup
+
+- Install `ntopng`.
+- Make sure service `ntopng` is enabled and running.
+- Configuration file: `/etc/ntopng.conf`
+- Default port: `3000`
+
 ## ntpd
 
 ### Setup
