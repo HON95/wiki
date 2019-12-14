@@ -62,19 +62,23 @@ Debian 10 Buster
 
 ### Setup
 
-- Install `ntopng`.
-- Make sure service `ntopng` is enabled and running.
-- Configuration file: `/etc/ntopng.conf`
-- Default port: `3000`
+1. Install `ntopng`.
+1. Make sure service `ntopng` is enabled and running.
+1. Fix log dir owner: `chown nobody:nogroup /var/log/ntopng`
+1. Configure:
+    1. Open `/etc/ntopng.conf`.
+    1. Add `-W=<new_port>` to enable HTTPS.
+    1. (Optional) Set `-w=0` to disable HTTP.
+1. Restart it (takes a while).
 
 ## ntpd
 
 ### Setup
 
-- Disable systemd-timesyncd NTP client by disabling and stopping `systemd-timesyncd`.
-- Install `ntp`.
-- In `/etc/ntp.conf`, replace existing servers/pools with `ntp.justervesenet.no` with the `iburst` option.
-- Test with `ntpq -pn` (it may take a minute to synchronize).
+1. Disable systemd-timesyncd NTP client by disabling and stopping `systemd-timesyncd`.
+1. Install `ntp`.
+1. In `/etc/ntp.conf`, replace existing servers/pools with `ntp.justervesenet.no` with the `iburst` option.
+1. Test with `ntpq -pn` (it may take a minute to synchronize).
 
 ## Postfix
 
