@@ -44,6 +44,12 @@ Debian 10 Buster
 
 - Find packages depending on the package: `apt rdepends --installed <package>`
 
+### Performance and Power Efficiency
+
+- Set the CPU frequency scaling governor mode:
+    - High performance: `echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor`
+    - Power save: ` echo powersave | ...`
+
 ### Processes and Memory
 
 - Useful ps args: `ps ax o uid,user:12,pid,comm`
