@@ -131,14 +131,14 @@ Debian 10 Buster
 
 ## Networking
 
-#### Setup
+### Setup
 
 - Update the DNS servers in `/etc/resolv.conf`.
 - Install extra functionality for ifupdown:
   - VLAN: `vlan`
   - Bonding/LACP: `ifenslave`
 
-#### Replace ifupdown with systemd-networkd
+### Replace ifupdown with systemd-networkd
 
 - Make the new networkd configs.
   - Extra network device configs: `/etc/systemd/network/*.netdev`
@@ -147,6 +147,18 @@ Debian 10 Buster
 - Enable systemd-networkd: `systemctl enable systemd-networkd`
 - Reboot and test.
 - Check the status: `networkctl [status [-a]]`
+
+### Setup Router
+
+- Set the following in `/etc/sysctl.conf`, then run `sysctl -p`:
+    - `net.ipv4.ip_forward=1`
+    - `net.ipv6.conf.all.forwarding=1`
+- Setup the firewall for forwarded traffic.
+- Setup the firewall for NAT.
+- Setup radvd for IPv6 NDP.
+- (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
+- Setup a DHCP server like the ISC DHCP Server.
+- (Optional) Setup a DNS server, like Unbound.
 
 ## Storage
 
