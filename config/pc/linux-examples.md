@@ -34,12 +34,6 @@ Debian 10 Buster
 
 - Pretty colors: `something | lolcat`
 
-### Hardware
-
-- Check if hard drives are spinning: `smartctl -i -n standby /dev/sdc | grep "^Power mode"`
-  - "Active" and "idle" means most likely spinning, "standby" and "sleeping" means most likely not spinning.
-- Get physical block size of drive: `hdparm -I /dev/sda | grep -i physical`
-
 ### Installations and Packages
 
 - Find packages depending on the package: `apt rdepends --installed <package>`
@@ -49,6 +43,8 @@ Debian 10 Buster
 - Set the CPU frequency scaling governor mode:
     - High performance: `echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor`
     - Power save: ` echo powersave | ...`
+- Monitor system and processes: `htop`
+- Monitor interrupt usage: `irqtop`
 
 ### Processes and Memory
 
