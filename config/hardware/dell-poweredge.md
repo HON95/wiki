@@ -24,7 +24,7 @@ breadcrumbs:
 
 ## Storage
 
-- PERC 5/i and 6/i do not support disks over 2TB. PERC H200 and similar may need to be flashed to support it.
-- PERC H200, H310 H310 mini etc. do not need to be flashed (from IR) to IT mode. They already function as HBAs. But upgrade the firmware. (Controversal topic, needs verification.)
+- PERC 5/i and 6/i do not support disks over 2TB. PERC H200 and similar needs to be flashed to a newer version to support it.
+- Some say the PERC H200, H310, H310 mini etc. need to be flashed from IR (the default) to IT mode in order to pass through unconfigured disks directly instead of presenting them as individual RAID volumes and maybe adding proprietary headers on disk. ZFS (e.g.) needs direct access to the disks to work optimally, meaning you should flash it to IT mode if you intend to use the card as an HBA with ZFS or similar. This can cause the cards to no longer be accepted in the R610 and R710 PCIe-like storage slot and needs to use a normal PCIe slot instead. However, some say that IR cards (not flashed to IT mode) with unconfigured disks work as HBAs and pass them through directly. As they're not flashed to IT mode, they should still work in the storage slot too. My own experience with and R610 and R710 with IR mode H200s in the storage slots and seemingly direct disk access seems to agree with this latter statement.
 
 {% include footer.md %}
