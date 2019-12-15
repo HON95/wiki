@@ -21,10 +21,10 @@ Proxmox VE 6
 1. Disable the console MOTD:
     - Disable `pvebanner.service`.
     - Clear or update `/etc/issue` (e.g. use use the logo).
-1. Disable IPv6 SLAAC:
-    - It's enabled on all bridges by default, meaning the node may become accessible to untrusted bridged networks.
-    - In `/etc/sysctl.conf`, set `net.ipv6.conf.default.autoconf=0`.
-    - Reboot (not or later) and make sure there's no unexpected neighbors (`ip -6 n`).
+1. Disable IPv6 NDP:
+    - It's enabled on all bridges by default, meaning the node may become accessible to untrusted bridged networks even when no IPv4 or IPv6 addresses are specified.
+    - **TODO**
+    - Reboot (now or later) and make sure there's no unexpected neighbors (`ip -6 n`).
 
 ### Setup SPICE Console
 
