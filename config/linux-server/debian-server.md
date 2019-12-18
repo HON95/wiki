@@ -162,24 +162,6 @@ Debian 10 Buster
   - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
   - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
 
-## Special Setups
-
-### Router
-
-- Some of these steps are completely optional and some may be moved to other boxes.
-- Setup the firewall for filtering both forwarded traffic and input/output to the router.
-- Setup the firewall for NAT.
-- Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:
-  - `net.ipv4.ip_forward=1`
-  - `net.ipv6.conf.all.forwarding=1`
-  - Run `sysctl -p` to reload.
-- Setup the network interfaces for all the directly connected networks.
-- Setup a default gateway, static routes and/or routing protocols.
-- Setup radvd for IPv6 NDP.
-- (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
-- Setup a DHCP server like the ISC DHCP Server.
-- (Optional) Setup a DNS server, like Unbound.
-
 ## System Storage
 
 - System drive:
