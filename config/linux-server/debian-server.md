@@ -17,47 +17,70 @@ Debian 10 Buster
 
 ## Initial Setup
 
-- Installation:
-  - Always verify the downloaded installation image after downloading it.
-  - Use UEFI if given the option.
-  - Use the United States UTF-8 locale (`en_US.UTF-8`).
-  - Use an FQDN as the hostname.
-  - Disk partitioning:
-    - (Recommended) Manually partition the boot/main drive(s). See [the storage page](system.md) for suggestions.
-    - Guided partitioning makes weird partition/volume sizes, try to avoid it.
-    - For simple or temporary systems, just use "guided - use entire disk" with all files in one partition.
-  - At the software selection menu, select only "SSH server" and "standard system utilities".
-  - If it asks to install non-free firmware, take note of the packages so they can be installed later.
-  - Use a separate password for root, not your personal one.
-- To log in as root, use the login prompt or `su -` from another user.
-- Check for failed services: `systemctl --failed`
-- Check that AppArmor is operational: `apparmor_status`
-- Check the locale:
-  - Check current locale: `locale`
-  - Set new locale if wrong: `update-locale LANG=en_US.UTF-8`
-  - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale.
-- Check the keymap:
-  - Try typing characters like æ, ø, å.
-  - Fix it if broken: `dpkg-reconfigure keyboard-configuration`
-- Check the hostname:
-  - Use a shortname as the hostname.
-  - Set the hostname: `hostnamectl set-hostname <hostname>`
-  - Update `/etc/hosts` with all variants of the hostname (including shortname and FQDN).
-- Packages:
-  - Update, upgrade and auto-remove.
-  - Install: `sudo ca-certificates mailutils`
-  - Install extra tools: `screen vim htop tree curl nmap net-tools`
-  - Enable the `contrib` and `non-free` repo areas:
-    - Add `contrib non-free` to every line in `/etc/apt/sources.list`.
-  - Install free and non-free firmware: `firmware-linux`
-  - If it asked to install non-free firmware in the initial installation installation, try to install it now using APT (hint: search for `firmware-`).
-- Configure your personal user:
-  - Add it to the sudo group (`usermod -aG sudo <user>`).
-  - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
-  - Test it.
-- Postfix: **TODO**
+### Installation
 
-### Networking
+- Always verify the downloaded installation image after downloading it.
+- Use UEFI if possible.
+- Localization:
+  - Language: United States English
+  - Location: Your location.
+  - Locale: United States UTF-8 (`en_US.UTF-8`)
+  - Keymap: Your keyboard's keymap.
+- Use an FQDN as the hostname.
+- Use separate password for root and your personal admin user.
+- Disk partitioning:
+  - (Recommended) Manually partition the system drive(s). See **TODO** for suggestions.
+  - Guided partitioning makes weird partition/volume sizes, try to avoid it.
+  - For simple or temporary systems, just use "guided - use entire disk" with all files in one partition.
+- At the software selection menu, select only "SSH server" and "standard system utilities".
+- If it asks to install non-free firmware, take note of the packages so they can be installed later.
+
+### Basic Configuration
+
+1. Login as root.
+    - Since sudo is not installed yet, use `su -` if you log in through a non-root user.
+1. Check for failed services: `systemctl --failed`
+1. Check that AppArmor is operational: `apparmor_status`
+1. Localization:
+    - Check current locale:
+      - `locale` should return `en_US.UTF-8`.
+      - Update if wrong: `update-locale LANG=en_US.UTF-8`
+    - Check the keymap:
+      - Try typing characters specific to your keyboard.
+      - Update if wrong: `dpkg-reconfigure keyboard-configuration`
+    - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale.
+1. Set the hostname:
+    - Use both the shortname and the FQDN as hostnames.
+    - Set the shortname: `hostnamectl set-hostname <shortname>`
+    - Set both the shortname and FQDN in `/etc/hosts`.
+1. Packages:
+    - Update, upgrade and auto-remove.
+    - Install basics: `sudo ca-certificates mailutils`
+    - Install extra tools: `screen vim htop tree curl nmap net-tools`
+    - (Optional) Enable the `contrib` and `non-free` repo areas:
+      - Add `contrib non-free` to every line in `/etc/apt/sources.list`.
+    - Install extra firmware: `firmware-linux`
+    - If it asked to install non-free firmware in the initial installation installation, try to install it now using APT (hint: search for `firmware-`).
+1. Configure your personal user:
+    - Add it to the sudo group (`usermod -aG sudo <user>`).
+    - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
+    - Try logging in remotely and gain root access through sudo.
+1. Postfix mail relay: **TODO**
+
+### Machine-Specic Configuration
+
+#### Physical Host
+
+- (Optional) If using SSD, add `vm.swappiness = 10` to `/etc/sysctl.conf` to reduce swappiness.
+- Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
+- Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
+- Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
+
+#### QEMU Virtual Host
+
+- Install `qemu-guest-agent`.
+
+### Networking 1
 
 - Setup network manager:
   - If you need VLAN and/or bonding support for ifupdown, install `vlan` and/or `ifenslave`.
@@ -76,6 +99,25 @@ Debian 10 Buster
   - Install: `iptables iptables-persistent netfilter-persistent`
   - Add basic rules (it defaults to accepting everything).
 - Reboot and make sure it still works.
+
+### Networking 2
+
+#### Setup
+
+- Update the DNS servers in `/etc/resolv.conf`.
+- Install extra functionality for ifupdown:
+  - VLAN: `vlan`
+  - Bonding/LACP: `ifenslave`
+
+#### Replace ifupdown with systemd-networkd
+
+- Make the new networkd configs.
+  - Extra network device configs: `/etc/systemd/network/*.netdev`
+  - Network configs: `/etc/systemd/network/*.network`
+- (Re)move the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.disabled`
+- Enable systemd-networkd: `systemctl enable systemd-networkd`
+- Reboot and test.
+- Check the status: `networkctl [status [-a]]`
 
 ### Security
 
@@ -116,57 +158,11 @@ Debian 10 Buster
     Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
 - 2FA with Google Authenticator: **TODO**
 
-## Machine Configuration
+## System Storage
 
-### Physical Host
-
-- If using SSD, add `vm.swappiness = 10` to `/etc/sysctl.conf` to reduce swappiness.
-- Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
-- Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
-- Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
-
-### QEMU Virtual Host
-
-- Install `qemu-guest-agent`.
-
-## Networking
-
-### Setup
-
-- Update the DNS servers in `/etc/resolv.conf`.
-- Install extra functionality for ifupdown:
-  - VLAN: `vlan`
-  - Bonding/LACP: `ifenslave`
-
-### Replace ifupdown with systemd-networkd
-
-- Make the new networkd configs.
-  - Extra network device configs: `/etc/systemd/network/*.netdev`
-  - Network configs: `/etc/systemd/network/*.network`
-- (Re)move the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.disabled`
-- Enable systemd-networkd: `systemctl enable systemd-networkd`
-- Reboot and test.
-- Check the status: `networkctl [status [-a]]`
-
-### Setup Router
-
-- Set the following in `/etc/sysctl.conf`, then run `sysctl -p`:
-    - `net.ipv4.ip_forward=1`
-    - `net.ipv6.conf.all.forwarding=1`
-- Setup the firewall for forwarded traffic.
-- Setup the firewall for NAT.
-- Setup radvd for IPv6 NDP.
-- (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
-- Setup a DHCP server like the ISC DHCP Server.
-- (Optional) Setup a DNS server, like Unbound.
-
-## Storage
-
-### System Storage
-
-- Main drive:
-  - Doesn’t need to be super fast.
-  - SSD: 1 or 2 mirrored, overprovisioned.
+- System drive:
+  - Doesn’t need to be super fast if just used to boot from.
+  - SSD: 1 overprovisioned.
   - HDD: 2 mirrored.
 - Use LVM or ZFS (if supported/stable) for the whole main disk, except the boot and EFI partitions.
 - Use EXT4 for general filesystems if ZFS is nor supported or appropriate.
@@ -174,26 +170,26 @@ Debian 10 Buster
 - Partitioning:
   - If BIOS:
     - MBR partitioning table.
-    - `/boot`: 500MB, FAT32 (?)
+    - `/boot`: 500MB, FAT32?
   - If UEFI (preferred):
     - `/boot/efi`: 500MB, FAT32/EFI
     - `/boot`: 500MB, EXT4
   - (Optional) Swap. Alternatively, add it as an LVM volume.
-  - LVM (or ZFS). For `/` and other volumes.
-  - (Optional) ZFS. So that LVM uses the first half and ZFS the last.
-  - If SSD: Reserve around 10% at the end of the drive (no partition).
-- Configure LVM:
+  - LVM physical volume or ZFS pool. For `/` and other volumes.
+  - (Optional) ZFS pool if the first half uses LVM. For data. Can be added after installation.
+  - If SSD: Reserve around 10% at the end of the drive (without partition).
+- Configure LVM (the LVM configuration screen):
   - Finish the partitioning before entering the LVM configuration.
   - Create a volume group (call it `vg0` or something) and add the partition you created earlier for it.
-  - Create as many logical volumes as you want. See the table below for a suggestion. Call them something like `var-lib` for the `/var/lib` volume.
-  - Mount points etc. are configured after you finish the LVM configuration.
+  - Create as many logical volumes as you want. Call them something like e.g. `var-lib` for the `/var/lib` volume. See the suggested layout below.
+  - Mount points etc. are not configured until after you finish the LVM configuration.
 - Set mount points and file system formats and stuff for all the volumes.
 
-#### Volumes
+### System Drive Volumes
 
-This table is just for reference, everything about it is supposed to be suggestive. All of these are specified in `/etc/fstab`. Volumes/mounts like `/dev` are not mentioned.
+This is just a suggestion for how to partition your main system drive. Since LVM volumes can be expanded later, it's fine to make them initially small. Create the volumes during system installation and set the mount options later in `/etc/fstab`.
 
-| Volume/Mount | Minimal Size (GB) | Mount Options |
+| Volume/Mount | Minimal Size (GiB) | Mount Options |
 | :--- | :--- | :--- |
 | `/proc` | N/A | hidepid=2,gid=1500 |
 | `/boot` | 0.5 | nodev,nosuid,noexec |
@@ -207,7 +203,21 @@ This table is just for reference, everything about it is supposed to be suggesti
 | `/var/tmp` | 5 | nodev,nosuid,noexec |
 | `/home` | 10 | nodev,nosuid |
 | `/srv` | 10 | nodev,nosuid |
-| SWAP | 16 | N/A |
+| Swap | 16 | N/A |
+
+## Special Setups
+
+### Router
+
+- Set the following in `/etc/sysctl.conf`, then run `sysctl -p`:
+    - `net.ipv4.ip_forward=1`
+    - `net.ipv6.conf.all.forwarding=1`
+- Setup the firewall for forwarded traffic.
+- Setup the firewall for NAT.
+- Setup radvd for IPv6 NDP.
+- (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
+- Setup a DHCP server like the ISC DHCP Server.
+- (Optional) Setup a DNS server, like Unbound.
 
 ## Miscellaneous
 
