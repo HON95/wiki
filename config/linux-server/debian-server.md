@@ -15,12 +15,13 @@ Debian 10 Buster
 
 **TODO:** Clean up.
 
-## Initial Setup
+## Basic Setup
 
 ### Installation
 
 - Always verify the downloaded installation image after downloading it.
 - Use UEFI if possible.
+- Use the non-graphical installer. It's basically the same as the graphical one.
 - Localization:
   - Language: United States English
   - Location: Your location.
@@ -158,6 +159,20 @@ Debian 10 Buster
     Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
 - 2FA with Google Authenticator: **TODO**
 
+
+### Extra
+
+- MOTD:
+  - Clear `/etc/motd`.
+  - Download [dmotd.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
+  - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
+  - (Optional) Add a MOTD to `/etc/motd`.
+  - (Optional) Clear or change the pre-login message in `/etc/issue`.
+- Free disk space checking:
+  - Download [disk-space-checker.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
+  - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
+  - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
+
 ## System Storage
 
 - System drive:
@@ -185,7 +200,7 @@ Debian 10 Buster
   - Mount points etc. are not configured until after you finish the LVM configuration.
 - Set mount points and file system formats and stuff for all the volumes.
 
-### System Drive Volumes
+### System Volumes Suggestion
 
 This is just a suggestion for how to partition your main system drive. Since LVM volumes can be expanded later, it's fine to make them initially small. Create the volumes during system installation and set the mount options later in `/etc/fstab`.
 
@@ -209,11 +224,15 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 
 ### Router
 
-- Set the following in `/etc/sysctl.conf`, then run `sysctl -p`:
-    - `net.ipv4.ip_forward=1`
-    - `net.ipv6.conf.all.forwarding=1`
-- Setup the firewall for forwarded traffic.
+- Some of these steps are completely optional and some may be moved to other boxes.
+- Setup the firewall for filtering both forwarded traffic and input/output to the router.
 - Setup the firewall for NAT.
+- Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:
+  - `net.ipv4.ip_forward=1`
+  - `net.ipv6.conf.all.forwarding=1`
+  - Run `sysctl -p` to reload.
+- Setup the network interfaces for all the directly connected networks.
+- Setup a default gateway, static routes and/or routing protocols.
 - Setup radvd for IPv6 NDP.
 - (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
 - Setup a DHCP server like the ISC DHCP Server.
@@ -224,19 +243,6 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 ### Cron
 
 - Don't use periods (including file extensions) in the hourly/daily/weekly/monthly scripts.
-
-## Extra Configuration
-
-- MOTD:
-  - Clear `/etc/motd`.
-  - Download [dmotd.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
-  - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
-  - (Optional) Add a MOTD to `/etc/motd`.
-  - (Optional) Clear or change the pre-login message in `/etc/issue`.
-- Free disk space checking:
-  - Download [disk-space-checker.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
-  - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
-  - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
 
 ## Troubleshooting
 
