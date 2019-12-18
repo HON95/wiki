@@ -15,9 +15,7 @@ Debian 10 Buster
 
 ## Setup
 
-See [Debian Server: Basic Setup](/config/linux-server/debian-server/#basic-setup).
-
-- Some of these steps are completely optional and some may be moved to other boxes.
+- Setup the Linux node as described in [Debian Server: Basic Setup](/config/linux-server/debian-server/#basic-setup).
 - Setup the firewall for filtering both forwarded traffic and input/output to the router.
 - Setup the firewall for NAT.
 - Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:
