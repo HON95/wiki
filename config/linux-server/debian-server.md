@@ -84,6 +84,7 @@ Debian 10 Buster
 1. (Alternative 1) Setup ifupdown (default):
     - For VLAN support, install `vlan`.
     - For bond support, install `ifenslave`.
+    - **TODO**: DHCPv4, IPv6 (static, SLAAC, DHCPv6)
 1. (Alternative 2) Setup networkd:
     - Make the new networkd configs.
       - Special network device configs: `/etc/systemd/network/*.netdev`
