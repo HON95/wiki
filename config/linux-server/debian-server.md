@@ -30,7 +30,7 @@ Debian 10 Buster
 - Use an FQDN as the hostname.
 - Use separate password for root and your personal admin user.
 - Disk partitioning:
-  - (Recommended) Manually partition the system drive(s). See **TODO** for suggestions.
+  - (Recommended) Manually partition the system drive(s). See [system storage](#system-storage) for a suggestion.
   - Guided partitioning makes weird partition/volume sizes, try to avoid it.
   - For simple or temporary systems, just use "guided - use entire disk" with all files in one partition.
 - At the software selection menu, select only "SSH server" and "standard system utilities".
@@ -40,8 +40,9 @@ Debian 10 Buster
 
 1. Login as root.
     - Since sudo is not installed yet, use `su -` if you log in through a non-root user.
-1. Check for failed services: `systemctl --failed`
-1. Check that AppArmor is operational: `apparmor_status`
+1. Check the system status:
+    - Check for failed services: `systemctl --failed`
+    - Check that AppArmor is operational: `apparmor_status`
 1. Localization:
     - Check current locale:
       - `locale` should return `en_US.UTF-8`.
@@ -66,7 +67,6 @@ Debian 10 Buster
     - Add it to the sudo group (`usermod -aG sudo <user>`).
     - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
     - Try logging in remotely and gain root access through sudo.
-1. Postfix mail relay: **TODO**
 
 ### Machine-Specic Configuration
 
@@ -162,16 +162,35 @@ Debian 10 Buster
 
 ### Extra
 
+- Postfix mail relay: **TODO**
 - MOTD:
   - Clear `/etc/motd`.
-  - Download [dmotd.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
+  - Download [dmotd.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
   - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
   - (Optional) Add a MOTD to `/etc/motd`.
   - (Optional) Clear or change the pre-login message in `/etc/issue`.
-- Free disk space checking:
-  - Download [disk-space-checker.sh](https://github.com/HON95/misc-scripts/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
+- Monitor free disk space:
+  - Download [disk-space-checker.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
   - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
   - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
+
+## Special Setups
+
+### Router
+
+- Some of these steps are completely optional and some may be moved to other boxes.
+- Setup the firewall for filtering both forwarded traffic and input/output to the router.
+- Setup the firewall for NAT.
+- Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:
+  - `net.ipv4.ip_forward=1`
+  - `net.ipv6.conf.all.forwarding=1`
+  - Run `sysctl -p` to reload.
+- Setup the network interfaces for all the directly connected networks.
+- Setup a default gateway, static routes and/or routing protocols.
+- Setup radvd for IPv6 NDP.
+- (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
+- Setup a DHCP server like the ISC DHCP Server.
+- (Optional) Setup a DNS server, like Unbound.
 
 ## System Storage
 
@@ -219,24 +238,6 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 | `/home` | 10 | nodev,nosuid |
 | `/srv` | 10 | nodev,nosuid |
 | Swap | 16 | N/A |
-
-## Special Setups
-
-### Router
-
-- Some of these steps are completely optional and some may be moved to other boxes.
-- Setup the firewall for filtering both forwarded traffic and input/output to the router.
-- Setup the firewall for NAT.
-- Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:
-  - `net.ipv4.ip_forward=1`
-  - `net.ipv6.conf.all.forwarding=1`
-  - Run `sysctl -p` to reload.
-- Setup the network interfaces for all the directly connected networks.
-- Setup a default gateway, static routes and/or routing protocols.
-- Setup radvd for IPv6 NDP.
-- (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
-- Setup a DHCP server like the ISC DHCP Server.
-- (Optional) Setup a DNS server, like Unbound.
 
 ## Miscellaneous
 
