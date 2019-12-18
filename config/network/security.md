@@ -9,15 +9,76 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## Hosts
+
+- Directed broadcasts of ICMP echo:
+  - Should generally be disabled.
+  - Exploited by smurf and fraggle attacks.
+  - Linux:
+    - ICMP echo reception disabled by default.
+    - `icmp_echo_ignore_broadcasts=1`
+- ICMP redirects:
+  - Should be blocked or ignored.
+  - Allows attackers to change the default gateway or inject bogus routes.
+  - The secure variant (Linux) specifies that the host will only accept redirects from hosts in its gateway list.
+  - Can be blocked by the firewall or ignored through configuration.
+  - Ignore with Linux:
+    - Redirects are accepted by default on hosts and ignored by default on routers. IPv4 secure redirects are enabled by default.
+    - IPv4: `net.ipv4.conf.all.accept_redirects=0`
+    - IPv6: `net.ipv6.conf.all.accept_redirects=0`
+    - IPv4 secure: `net.ipv4.conf.all.secure_redirects=0`
+- Syn cookies:
+  - Should be enabled on servers.
+  - Prevents connection-based DDoS attacks.
+  - When the connection queue is filled up, syn cookies are used for new connections. Connections using syn cookies must have all TCP options rejected, thus violating TCP.
+  - Linux:
+    - Enabled by default.
+    - `net.ipv4.tcp_syncookies=1`
+
 ## Switches
 
 **TODO** (see switch pages)
 
 ## Routers
 
-- Directed broadcasts:
-  - Should be disabled.
-  - Used by smurf and fraggle attacks.
+- Bogin filtering:
+  - Should be enabled if appropriate.
+  - Blocks packets from fake/invalid addresses such as from unused or unallocated prefixes.
+  - May include RFC 1918 addresses.
+  - Can be done by explicitly blacklisting all stable bogon prefixes.
+- Source verification:
+  - Should be enabled if appropriate.
+  - Prevents attackers on stub networks from spoofing source addresses outside the network.
+  - Can be done with the firewall.
+- Reverse path filtering:
+  - Should be enabled.
+  - Filters packets from sources that are not reachable by the FIB (loose mode); or filter packets from sources that are not received on the interface that would be used to reach the source (strict mode).
+  - Use loose mode for asymmetric routing and strict mode otherwise.
+  - Linux:
+    - Disabled by default but enabled by some distros.
+    - Use 1 for strict mode and 2 for loose mode.
+    - `net.ipv4.conf.all.rp_filter=<1|2>`
+- Directed broadcasts (forwarding):
+  - Should generally be disabled.
+  - Exploited by smurf and fraggle attacks.
+  - Linux:
+    - **TODO**
+  - Cisco IOS:
+    - Disabled by default.
+    - `no ip directed-broadcast`
+- Source routing:
+  - Should generally be disabled.
+  - Allows attackers to send packets to unintended paths/destinations.
+  - Uses the Strict Source Route (SSR) or Loose Source Routing (LSR) IPv4 header options.
+  - IPv6 source routing has been deprecated and replaced by segment routing.
+  - Linux:
+    - Enabled by default on routers.
+    - IPv4: `net.ipv4.conf.all.accept_source_route=0`
+    - (Optional) IPv6 (segment routing): `net.ipv6.conf.all.accept_source_route=-1`
+  - Cisco IOS:
+    - `no source-route`
+- ICMP redirects:
+  - See [Hosts](#hosts).
 
 ## L4 Firewalls
 
