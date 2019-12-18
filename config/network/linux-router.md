@@ -13,6 +13,25 @@ breadcrumbs:
 {:.no_toc}
 Debian 10 Buster
 
+## Setup
+
+See [Debian Server: Basic Setup](/config/linux-server/debian-server/#basic-setup).
+
+- Some of these steps are completely optional and some may be moved to other boxes.
+- Setup the firewall for filtering both forwarded traffic and input/output to the router.
+- Setup the firewall for NAT.
+- Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:
+  - `net.ipv4.ip_forward=1`
+  - `net.ipv6.conf.all.forwarding=1`
+  - Run `sysctl -p` to reload.
+- Setup the network interfaces for all the directly connected networks.
+- Setup a default gateway, static routes and/or routing protocols.
+- Setup radvd for IPv6 NDP.
+- (Optional) Setup a DHCPv6 server like the ISC DHCP Server.
+- Setup a DHCP server like the ISC DHCP Server.
+- (Optional) Setup a DNS server, like Unbound.
+- **TODO** Multicast routing.
+
 ## Notes
 
 1. For high-performance routing:
