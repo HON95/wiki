@@ -168,7 +168,7 @@ Debian 10 Buster
 - Set the boot flag on `/boot/efi` (UEFI) or `/boot` (BIOS). It's not used, but some hardware may require it to try booting the drive.
 - Swap can be added either as a partition, as an LVM volume or not added at all.
 - Use LVM or ZFS (if supported/stable) for the whole main disk, except the boot and EFI partitions.
-- Use EXT4 for general filesystems if ZFS is nor supported or appropriate.
+- Generally use EXT4, but try to use ZFS if appropriate.
 - Optionally use only the first half of the disk for LVM/system stuff and the other half as for ZFS.
 - Storage typically uses base-10 prefixes, not base-2, like speed and unlike memory.
 - SSDs can be overprovisioned in order to improve performance by leaving unused space the SSD can use internally. Factories typically reserve some minimum size appropriate to the drive, but users can overprovision further by leaving space unallocated/unpartitioned at the end of the drive. It's typically not needed to overprovision newer SSDs.
