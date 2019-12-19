@@ -53,7 +53,7 @@ breadcrumbs:
 - Reverse path filtering:
   - Should be enabled.
   - Filters packets from sources that are not reachable by the FIB (loose mode); or filter packets from sources that are not received on the interface that would be used to reach the source (strict mode).
-  - Use loose mode for asymmetric routing and strict mode otherwise.
+  - Use strict mode for most cases and loose mode if using asymmetric routing.
   - Linux:
     - Disabled by default but enabled by some distros.
     - Use 1 for strict mode and 2 for loose mode.
