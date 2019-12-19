@@ -164,50 +164,33 @@ Debian 10 Buster
 
 ## System Storage
 
-- System drive:
-  - Doesn’t need to be super fast if just used to boot from.
-  - SSD: 1 overprovisioned.
-  - HDD: 2 mirrored.
+- The system drive doesn’t need to be super fast if not used a lot for service stuff. It's typically built from one overprovisioned SSD (leave 10% unused at the end) or 2 mirrored HDDs (as they're less reliable).
+- Set the boot flag on `/boot/efi` (UEFI) or `/boot` (BIOS). It's not used, but some hardware may require it to try booting the drive.
+- Swap can be added either as a partition, as an LVM volume or not added at all.
 - Use LVM or ZFS (if supported/stable) for the whole main disk, except the boot and EFI partitions.
 - Use EXT4 for general filesystems if ZFS is nor supported or appropriate.
-- Some semi-guided installers automatically add the boot or EFI partition when adding the first one.
-- Partitioning:
-  - If BIOS:
-    - MBR partitioning table.
-    - `/boot`: 500MB, FAT32?
-  - If UEFI (preferred):
-    - `/boot/efi`: 500MB, FAT32/EFI
-    - `/boot`: 500MB, EXT4
-  - (Optional) Swap. Alternatively, add it as an LVM volume.
-  - LVM physical volume or ZFS pool. For `/` and other volumes.
-  - (Optional) ZFS pool if the first half uses LVM. For data. Can be added after installation.
-  - If SSD: Reserve around 10% at the end of the drive (without partition).
-- Configure LVM (the LVM configuration screen):
-  - Finish the partitioning before entering the LVM configuration.
-  - Create a volume group (call it `vg0` or something) and add the partition you created earlier for it.
-  - Create as many logical volumes as you want. Call them something like e.g. `var-lib` for the `/var/lib` volume. See the suggested layout below.
-  - Mount points etc. are not configured until after you finish the LVM configuration.
-- Set mount points and file system formats and stuff for all the volumes.
+- Optionally use only the first half of the disk for LVM/system stuff and the other half as for ZFS.
 
 ### System Volumes Suggestion
 
 This is just a suggestion for how to partition your main system drive. Since LVM volumes can be expanded later, it's fine to make them initially small. Create the volumes during system installation and set the mount options later in `/etc/fstab`.
 
-| Volume/Mount | Minimal Size (GiB) | Mount Options |
-| :--- | :--- | :--- |
-| `/proc` | N/A | hidepid=2,gid=1500 |
-| `/boot` | 0.5 | nodev,nosuid,noexec |
-| `/boot/efi` | 0.5 | nodev,nosuid,noexec |
-| `/` | 10 | nodev |
-| `/tmp` | 5 | nodev,nosuid,noexec |
-| `/var` | 5 | nodev,nosuid |
-| `/var/lib` | 5 | nodev,nosuid |
-| `/var/log` | 5 | nodev,nosuid,noexec |
-| `/var/log/audit` | 1 | nodev,nosuid,noexec |
-| `/var/tmp` | 5 | nodev,nosuid,noexec |
-| `/home` | 10 | nodev,nosuid |
-| `/srv` | 10 | nodev,nosuid |
-| Swap | 16 | N/A |
+| Volume/Mount | Type | Minimal Size (GiB) | Mount Options |
+| :--- | :--- | :--- | :--- |
+| `/proc` | Runtime | N/A | hidepid=2,gid=1500 |
+| `/boot/efi` | FAT32 w/ boot flag (UEFI), none (BIOS) | 0.5 | nodev,nosuid,noexec |
+| `/boot` | EXT4 (UEFI), FAT32 w/ boot flag (BIOS) | 0.5 | nodev,nosuid,noexec |
+| Swap | Swap or swap on LVM | 4, 8, 16 | N/A |
+| `vg0` | LVM | 90% | N/A |
+| `/` | EXT4 (LVM) | 10 | nodev |
+| `/tmp` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
+| `/var` | EXT4 (LVM) | 5 | nodev,nosuid |
+| `/var/lib` | EXT4 (LVM) | 5 | nodev,nosuid |
+| `/var/log` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
+| `/var/log/audit` | EXT4 (LVM) | 1 | nodev,nosuid,noexec |
+| `/var/tmp` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
+| `/home` | EXT4 (LVM) | 10 | nodev,nosuid |
+| `/srv` | EXT4 (LVM) or none if external | 10 | nodev,nosuid |
 
 ## Miscellaneous
 
