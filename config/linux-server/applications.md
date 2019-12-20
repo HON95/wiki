@@ -17,8 +17,10 @@ Debian 10 Buster
 
 ### Setup
 
-1. [Official guide for Debian](https://docs.docker.com/install/linux/docker-ce/debian/)
-2. (Optional) Setup swap limit:
+1. [Install Docker (Debian)](https://docs.docker.com/install/linux/docker-ce/debian/).
+1. [Install Docker Compose](https://docs.docker.com/compose/install/).
+1. [Install Docker Compose command completion](https://docs.docker.com/compose/completion/).
+1. (Optional) Setup swap limit:
    - If `docker info` contains `WARNING: No swap limit support`, it's not working and should maybe be fixed.
    - It incurs a small performance degredation and is optional but recommended.
    - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
