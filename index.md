@@ -10,7 +10,7 @@
 
 - [Notes](config/linux-server/notes/)
 - [Miscellaneous](config/linux-server/misc/)
-- [Debian Server](config/linux-server/debian-server/)
+- [Debian Server](config/linux-server/debian/)
 - [Proxmox VE](config/linux-server/proxmox-ve/)
 - [Applications](config/linux-server/applications/)
 
