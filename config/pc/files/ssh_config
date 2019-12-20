@@ -1,0 +1,4 @@
+# Use special user and key for host
+host github.com
+    User git
+    IdentityFile ~/.ssh/id_rsa_artorias

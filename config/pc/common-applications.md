@@ -10,17 +10,9 @@ breadcrumbs:
 ## Git
 
 ### Config
+Location: `~/.gitconfig`
 
-```ini
-[user]
-	name = <full_name>
-	email = <email_addr>
-[commit]
-	gpgsign = false
-[core]
-	autocrlf = input
-	eol = lf
-```
+Example: [.gitconfig]({{ site.github.repository_url }}/blob/master/config/pc/files/gitconfig).
 
 ## SSH
 
@@ -29,28 +21,18 @@ breadcrumbs:
 - New key (RSA): `ssh-keygen -t rsa -b 4096`
 
 ### Config
+Location: `~/.ssh/config`
 
-```text
-# File: ~/.ssh/config
-
-# Use special user and key
-host github.com
-    User git
-    IdentityFile ~/.ssh/id_rsa_artorias
-```
+Example: [config]({{ site.github.repository_url }}/blob/master/config/pc/files/ssh_config).
 
 ## Vim
 
 ### Config
+Location:
+- Global: `/etc/vim/vimrc`
+- User: `~/.vimrc`
 
-```text
-" File: ~/.vimrc
-
-" Global: /etc/vim/vimrc
-
-" Better YAML indentation
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
-```
+Example: [vimrc]({{ site.github.repository_url }}/blob/master/config/pc/files/vimrc).
 
 ## VS Code
 
@@ -59,33 +41,10 @@ autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
 - HTML CSS Support (ecmel.vscode-html-css)
 
 ### Config
+Location:
+- Linux: `~/.config/Code/user/settings.json`
+- Windows: `%APPDATA%\Code\User\settings.json`
 
-```javascript
-// Linux file: ~/.config/Code/user/settings.json
-// Windows file: %APPDATA%\Code\User\settings.json
-
-{
-"files.encoding": "utf8",
-"files.eol": "\n",
-// Hide open editors Explorer section
-"explorer.openEditors.visible": 0,
-"explorer.confirmDragAndDrop": false,
-"explorer.confirmDelete": false,
-// Don't jump to file in Explorer when tabbing to it
-"explorer.autoReveal": false,
-// Hide these in Explorer
-"files.exclude": {
-  "**/__pycache__/": true,
-  "**/*.o": true,
-  "**/*.pyc": true
-},
-// Don't show quick suggestion while typing
-"editor.quickSuggestions": false,
-"editor.autoClosingBrackets": "never",
-"editor.autoClosingQuotes": "never",
-"editor.autoSurround": "never",
-"html.autoClosingTags": false,
-}
-```
+Example: [settings.json]({{ site.github.repository_url }}/blob/master/config/pc/files/vscode_settings.json).
 
 {% include footer.md %}

@@ -263,7 +263,7 @@ TFTP_OPTIONS="--create --secure"
   - Using a raw key:
     - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
     - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
-    - Automatically unlock at boot time: Add and enable ([zfs-load-keys.service](https://github.com/HON95/wiki/blob/master/config/linux-server/res/zfs/zfs-load-keys.service)).
+    - Automatically unlock at boot time: Add and enable [zfs-load-keys.service]({{ site.github.repository_url }}/blob/master/config/linux-server/files/zfs/zfs-load-keys.service).
   - Reboot and test.
   - Check the key status with `zfs get keystatus`.
 - Send and receive snapshots:
