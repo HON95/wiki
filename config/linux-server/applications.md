@@ -138,10 +138,7 @@ Debian 10 Buster
 
 ## radvd
 
-### Setup
-
-1. Install `radvd`.
-2. Setup the config: `/etc/radvd.conf`
+See [ISC DHCP Server and radvd](#isc-dhcp-server-and-radvd).
 
 ## TFTP-HPA
 
