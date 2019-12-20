@@ -59,29 +59,52 @@ Debian 10 Buster
     - Update, upgrade and auto-remove.
     - Install basics: `sudo ca-certificates`
     - Install extra tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
+    - Install per-user tmpdirs: `libpam-tmpdir`
     - Install Postfix: Install `postfix` and select "satellite system" if the system will only send email.
     - Install extra firmware:
       - Install `firmware-linux` or `firmware-linux-free` for some common firmware and microcode.
       - APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
       - If it asked to install non-free firmware in the initial installation installation, try to install it now.
       - Install firmware from other sources (e.g. for some Intel NICs).
+1. Add mount options:
+    - Add PID monitor group: `groupadd -g 1500 pidmonitor`
+    - Add your personal user to the PID monitor group: `usermod -aG pidmonitor <user>`
+    - Set mount options in `/etc/fstab`:
+      - See [Storage](system.md).
+      - Enable hidepid: `proc /proc proc defaults,hidepid=2,gid=1500 0 0`
+    - Run `mount -a` to validate fstab.
+    - Restart the system for it to take effect.
+1. Setup SSHd:
+    - `PermitRootLogin no`
+    - `PasswordAuthentication no`
+    - `AllowTcpForwarding no`
+    - `GatewayPorts no`
+    - Restart `sshd`.
+1. Update MOTD:
+    - Clear `/etc/motd`.
 1. Configure your personal user:
     - Add it to the sudo group (`usermod -aG sudo <user>`).
     - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file). (Hint: Get `https://github.com/<user>.keys` and filter the results.)
     - Try logging in remotely and gain root access through sudo.
+1. (Optional) Prevent root login:
+    - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
+    - Add a personal user first.
+    - Check that the password field (the second field) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
+    - Clear `/etc/securetty` to prevent root local/console login.
 
 ### Machine-Specic Configuration
 
 #### Physical Host
 
-- (Optional) If using SSD, add `vm.swappiness = 10` to `/etc/sysctl.conf` to reduce swappiness.
-- Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
-- Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
-- Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
+1. **TODO** SSD optimizations.
+1. (Optional) If using SSD, add `vm.swappiness=1` to `/etc/sysctl.conf` to minimize swapping.
+1. Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
+1. Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
+1. Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
 
 #### QEMU Virtual Host
 
-- Install `qemu-guest-agent`.
+1. Install `qemu-guest-agent`.
 
 ### Networking
 
@@ -113,57 +136,33 @@ Debian 10 Buster
     - Add basic rules (it defaults to accepting everything).
 1. Reboot and make sure it still works.
 
-### Security
+### Extra
+Optional stuff.
 
-- Add mount options:
-  - Add PID monitor group: `groupadd -g 1500 pidmonitor`
-  - Add your personal user to the PID monitor group: `usermod -aG pidmonitor <user>`
-  - Set mount options in `/etc/fstab`:
-    - See [Storage](system.md).
-    - Enable hidepid: `proc /proc proc defaults,hidepid=2,gid=1500 0 0`
-  - Run `mount -a` to validate fstab.
-  - Restart the system for it to take effect.
-- Setup SSHD:
-  - `PermitRootLogin no`
-  - `PasswordAuthentication no`
-  - `AllowTcpForwarding no`
-  - `GatewayPorts no`
-  - Restart `sshd`.
-- (Optional) Prevent root login:
-  - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
-  - Add a personal user first.
-  - Check that the password field (the second field) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
-  - Clear `/etc/securetty` to prevent root local/console login.
-- Extra tools:
-  - Install `libpam-tmpdir`.
-  - (Optional) Install `fail2ban`.
+1. Extra package security:
+    - Install `apt-listbugs` and `apt-listchanges` and run them before upgrading a package.
+    - Install `needrestart` and run it after upgrading.
+    - Install `debsums` and run it after upgrading to check deb checksums.
+    - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
+1. Postfix mail relay: **TODO**
+1. Install `fail2ban`.
     - Fix the firewall first so it configures itself correctly wrt. firewall blocking.
     - Check the status with `fail2ban-client status [sshd]`.
     - See [Applications](applications.md#fail-2-ban) for more info.
-  - (Optional) Install and run Lynis:
+1. Google Authenticator 2FA: **TODO**
+1. Install and run Lynis:
     - Install `lynis`.
     - Run `lynis audit system`.
-- (Optional) Extra package security:
-  - Install `apt-listbugs` and `apt-listchanges` and run them before upgrading a package.
-  - Install `needrestart` and run it after upgrading.
-  - Install `debsums` and run it after upgrading to check deb checksums.
-  - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
-- 2FA with Google Authenticator: **TODO**
-
-
-### Extra
-
-- Postfix mail relay: **TODO**
-- MOTD:
-  - Clear `/etc/motd`.
-  - Download [dmotd.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
-  - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
-  - (Optional) Add a MOTD to `/etc/motd`.
-  - (Optional) Clear or change the pre-login message in `/etc/issue`.
-- Monitor free disk space:
-  - Download [disk-space-checker.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
-  - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
-  - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
+1. MOTD:
+    - Clear `/etc/motd`.
+    - Download [dmotd.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
+    - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
+    - (Optional) Add a MOTD to `/etc/motd`.
+    - (Optional) Clear or change the pre-login message in `/etc/issue`.
+1. Monitor free disk space:
+    - Download [disk-space-checker.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
+    - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
+    - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
 
 ## System Storage
 
