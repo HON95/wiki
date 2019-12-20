@@ -136,6 +136,20 @@ Debian 10 Buster
 - Print the config: `postconf -n`
 - If mails are stuck in the mail queue (`mailq`) because of previous errors, run `postqueue -f` to flush them.
 
+## Pterodactyl
+
+### Setup
+
+- Note: The node must be publicly accessable.
+- Follow the official guide.
+
+### Game Servers
+
+#### CSGO
+
+- It uses a ton of storage, between 20 and 30 GB last I checked. If you useless, the installer will fail with some useless error message.
+- Use app ID 730 in Steam Game Server Account Manager, regardless of which app ID the server was created with. If you use e.g. 740, the server will not be able to log into Steam.
+
 ## radvd
 
 See [ISC DHCP Server and radvd](#isc-dhcp-server-and-radvd).
@@ -160,20 +174,6 @@ TFTP_DIRECTORY="/var/tftp"
 TFTP_ADDRESS=":69"
 TFTP_OPTIONS="--create --secure"
 ```
-
-## Pterodactyl
-
-### Setup
-
-- Note: The node must be publicly accessable.
-- Follow the official guide.
-
-### Game Servers
-
-#### CSGO
-
-- It uses a ton of storage, between 20 and 30 GB last I checked. If you useless, the installer will fail with some useless error message.
-- Use app ID 730 in Steam Game Server Account Manager, regardless of which app ID the server was created with. If you use e.g. 740, the server will not be able to log into Steam.
 
 ## Unbound
 
@@ -204,6 +204,17 @@ TFTP_OPTIONS="--create --secure"
 
 - Use DNS over HTTPS/TLS.
 - Setup private addresses for DNS rebinding prevention.
+
+## UniFi
+
+### Setup
+
+Using the unofficial Docker image by jacobalberty.
+
+1. Add a system user named "unifi": `useradd -r unifi`
+1. Allow the ports through the firewall: See [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used).
+1. Add a Docker Compose file. See [docker-compose.yml]({{ site.github.repository_url }}/blob/master/config/linux-server/files/unifi/docker-compose.yml).
+1. Start the container, open the webpage and follow the wizard.
 
 ## ZFS
 
