@@ -109,13 +109,14 @@ Debian 10 Buster
 
 ### Networking
 
+1. **TODO** Security stuff.
 1. (Alternative 1) (Recommended) Setup networkd network manager:
     - Add a simple network config:
       - Alternatively, add a complicated set of configs.
       - Create `/etc/systemd/network/lan.network` based on [lan.network]({{ site.github.repository_url }}/blob/master/config/linux-server/files/networkd/lan.network).
     - Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
     - Enable and start systemd-networkd: `systemctl enable systemd-networkd`
-      - Restart it it already running.
+      - Restart it if already running.
     - Purge `ifupdown` and `ifupdown2`.
     - Check the status: `networkctl [status [-a]]`
     - Restart the system (now or later) and check if still working.
@@ -151,7 +152,7 @@ Optional stuff.
     - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
 1. Postfix mail relay: **TODO**
 1. Install `fail2ban`.
-    - Fix the firewall first so it configures itself correctly wrt. firewall blocking.
+    - Fix the firewall first so it configures itself correctly wrt. which firewall is used.
     - Check the status with `fail2ban-client status [sshd]`.
     - See [Applications](applications.md#fail-2-ban) for more info.
 1. Google Authenticator 2FA: **TODO**
@@ -160,10 +161,12 @@ Optional stuff.
     - Run `lynis audit system`.
 1. MOTD:
     - Clear `/etc/motd`.
-    - Download [dmotd.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/` and install the dependencies `neofetch` and `lolcat`.
+    - Download [dmotd.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/`.
+    - Install the dependencies: `neofetch lolcat`
     - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
     - (Optional) Add a MOTD to `/etc/motd`.
     - (Optional) Clear or change the pre-login message in `/etc/issue`.
+    - Test it (as a normal user): `bash /etc/profile.d/dmotd.sh`
 1. Monitor free disk space:
     - Download [disk-space-checker.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
     - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
