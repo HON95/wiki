@@ -1,0 +1,32 @@
+# Docker Compose file for UniFi
+
+# Instructions:
+# - Add a "unifi" system user: "useradd -r unifi"
+# - Copy the UID and GID here: "id unifi"
+# - Allow the ports through the firewall.
+
+version: "3.7"
+services:
+  unifi:
+    image: jacobalberty/unifi:stable
+    container_name: unifi
+    restart: unless-stopped
+    init: true
+    environment:
+    - RUNAS_UID0=false
+    - UNIFI_UID=
+    - UNIFI_GID=
+    - TZ=Europe/Oslo
+    volumes:
+    - /srv/unifi/data:/unifi/data
+    - /srv/unifi/log:/unifi/log
+    ports:
+    # See https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used
+    - "3478:3478/udp"
+    - "8080:8080"
+    - "8443:8443"
+    - "8880:8880"
+    - "8843:8843"
+    - "6789:6789"
+    - "10001:10001/udp"
+    - "1900:1900/udp"
