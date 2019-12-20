@@ -1,9 +1,6 @@
 ---
 title: Audio Basics
 toc_enable: yes
-breadcrumbs:
-- title: Audio & Video
-- title: Audio
 ---
 {% include header.md %}
 
