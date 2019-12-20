@@ -23,7 +23,7 @@ Debian 10 Buster
   - Location: Your location.
   - Locale: United States UTF-8 (`en_US.UTF-8`)
   - Keymap: Your keyboard's keymap.
-- Use an FQDN as the hostname.
+- Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
 - Use separate password for root and your personal admin user.
 - Disk partitioning:
   - (Recommended) Manually partition the system drive(s). See [system storage](#system-storage) for a suggestion.
@@ -32,6 +32,7 @@ Debian 10 Buster
   - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - At the software selection menu, select only "SSH server" and "standard system utilities".
 - If it asks to install non-free firmware, take note of the packages so they can be installed later.
+- Install GRUB to the used disk.
 
 ### Basic Configuration
 
@@ -47,22 +48,26 @@ Debian 10 Buster
     - Check the keymap:
       - Try typing characters specific to your keyboard.
       - Update if wrong: `dpkg-reconfigure keyboard-configuration`
-    - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale.
+    - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale. Restart `sshd`.
 1. Set the hostname:
-    - Use both the shortname and the FQDN as hostnames.
     - Set the shortname: `hostnamectl set-hostname <shortname>`
     - Set both the shortname and FQDN in `/etc/hosts`.
+    - Check the hostnames with `hostname` (shortname) and `hostname --fqdn` (FQDN).
 1. Packages:
-    - Update, upgrade and auto-remove.
-    - Install basics: `sudo ca-certificates mailutils`
-    - Install extra tools: `screen vim htop tree curl nmap net-tools`
     - (Optional) Enable the `contrib` and `non-free` repo areas:
       - Add `contrib non-free` to every line in `/etc/apt/sources.list`.
-    - Install extra firmware: `firmware-linux`
-    - If it asked to install non-free firmware in the initial installation installation, try to install it now using APT (hint: search for `firmware-`).
+    - Update, upgrade and auto-remove.
+    - Install basics: `sudo ca-certificates`
+    - Install extra tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
+    - Install Postfix: Install `postfix` and select "satellite system" if the system will only send email.
+    - Install extra firmware:
+      - Install `firmware-linux` or `firmware-linux-free` for some common firmware and microcode.
+      - APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
+      - If it asked to install non-free firmware in the initial installation installation, try to install it now.
+      - Install firmware from other sources (e.g. for some Intel NICs).
 1. Configure your personal user:
     - Add it to the sudo group (`usermod -aG sudo <user>`).
-    - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
+    - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file). (Hint: Get `https://github.com/<user>.keys` and filter the results.)
     - Try logging in remotely and gain root access through sudo.
 
 ### Machine-Specic Configuration
