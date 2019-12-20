@@ -138,7 +138,7 @@ Debian 10 Buster
 1. Setup firewall:
     - Install: `iptables iptables-persistent netfilter-persistent`
       - Don't save the current rules.
-    - Add basic rules (it defaults to accepting everything).
+    - Add som [simple]({{ site.github.repository_url }}/blob/master/config/linux-server/files/iptables/iptables-simple.sh) or [complex]({{ site.github.repository_url }}/blob/master/config/linux-server/files/iptables/iptables-complex.sh) rules.
 1. Reboot and make sure it still works.
 
 ### Extra
