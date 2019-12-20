@@ -4,16 +4,15 @@
 {% assign breadcrumbs_separator = " / " %}
 
 {% if page.breadcrumbs %}
->
+> [Home](/)
 {%- for crumb in page.breadcrumbs -%}
+    {{ breadcrumbs_separator }}
     {%- if crumb.url -%}
         [{{ crumb.title }}]({{ crumb.url }})
     {%- else -%}
         {{ crumb.title }}
     {%- endif -%}
-    {{ breadcrumbs_separator }}
 {%- endfor -%}
-{{ page.title }}
 {% endif %}
 
 {% if page.toc_enable %}

@@ -2,8 +2,6 @@
 title: Linux Server Notes
 toc_enable: yes
 breadcrumbs:
-- title: Home
-  url: /
 - title: Configuration
 - title: Linux Server
 ---

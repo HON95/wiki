@@ -2,8 +2,6 @@
 title: Bluehost
 toc_enable: yes
 breadcrumbs:
-- title: Home
-  url: /
 - title: Configuration
 - title: Hosting Providers
 ---

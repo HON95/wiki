@@ -2,8 +2,6 @@
 title: Dell OptiPlex Series
 toc_enable: yes
 breadcrumbs:
-- title: Home
-  url: /
 - title: Configuration
 - title: Hardware
 ---

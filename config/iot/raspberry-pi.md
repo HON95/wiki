@@ -2,8 +2,6 @@
 title: Raspberry Pi
 toc_enable: yes
 breadcrumbs:
-- title: Home
-  url: /
 - title: Configuration
 - title: IoT
 ---
