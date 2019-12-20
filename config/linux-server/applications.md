@@ -214,6 +214,7 @@ Using the unofficial Docker image by jacobalberty.
 1. Add a system user named "unifi": `useradd -r unifi`
 1. Allow the ports through the firewall: See [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used).
 1. Add a Docker Compose file. See [docker-compose.yml]({{ site.github.repository_url }}/blob/master/config/linux-server/files/unifi/docker-compose.yml).
+    - Use host networking mode for L2 adoption to work (if you're not using L3 or SSH adoption).
 1. Start the container, open the webpage and follow the wizard.
 
 ## ZFS
