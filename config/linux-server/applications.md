@@ -247,9 +247,8 @@ TFTP_OPTIONS="--create --secure"
 1. Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
     - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
 1. Check that the cron scrub script exists.
-    - If not, add one which runs `/usr/lib/zfs-linux/scrub`. It'll scrub all disks.
-    - Run it e.g. monthly.
-    - (Proxmox) `/etc/cron.d/zfsutils-linux`
+    - Typical location: `/etc/cron.d/zfsutils-linux`
+    - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
 
 ### Usage
 
