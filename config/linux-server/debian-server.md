@@ -29,6 +29,7 @@ Debian 10 Buster
   - (Recommended) Manually partition the system drive(s). See [system storage](#system-storage) for a suggestion.
   - Guided partitioning makes weird partition/volume sizes, try to avoid it.
   - For simple or temporary systems, just use "guided - use entire disk" with all files in one partition.
+  - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - At the software selection menu, select only "SSH server" and "standard system utilities".
 - If it asks to install non-free firmware, take note of the packages so they can be installed later.
 
@@ -140,10 +141,8 @@ Debian 10 Buster
 - (Optional) Extra package security:
   - Install `apt-listbugs` and `apt-listchanges` and run them before upgrading a package.
   - Install `needrestart` and run it after upgrading.
-
-    Install `debsums` and run it after upgrading to check deb checksums.
-
-    Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
+  - Install `debsums` and run it after upgrading to check deb checksums.
+  - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
 - 2FA with Google Authenticator: **TODO**
 
 
@@ -176,13 +175,14 @@ Debian 10 Buster
 
 This is just a suggestion for how to partition your main system drive. Since LVM volumes can be expanded later, it's fine to make them initially small. Create the volumes during system installation and set the mount options later in `/etc/fstab`.
 
-| Volume/Mount | Type | Minimal Size (GiB) | Mount Options |
+| Volume/Mount | Type | Minimal Size (GB) | Mount Options |
 | :--- | :--- | :--- | :--- |
 | `/proc` | Runtime | N/A | hidepid=2,gid=1500 |
 | `/boot/efi` | FAT32 w/ boot flag (UEFI), none (BIOS) | 0.5 | nodev,nosuid,noexec |
 | `/boot` | EXT4 (UEFI), FAT32 w/ boot flag (BIOS) | 0.5 | nodev,nosuid,noexec |
-| Swap | Swap or swap on LVM | 4, 8, 16 | N/A |
-| `vg0` | LVM | 90% | N/A |
+| Swap | Swap (optional) | 4, 8, 16 | N/A |
+| `vg0` | LVM | 50% or 100% | N/A |
+| Swap | Swap (LVM) (optional) | 4, 8, 16 | N/A |
 | `/` | EXT4 (LVM) | 10 | nodev |
 | `/tmp` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
 | `/var` | EXT4 (LVM) | 5 | nodev,nosuid |
