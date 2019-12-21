@@ -20,6 +20,6 @@
 {% if page.toc_enable %}
 ### Contents
 {:.no_toc}
-- ToC
-{:toc}
+> - ToC
+> {:toc}
 {% endif %}
