@@ -12,7 +12,7 @@ breadcrumbs:
 ### Config
 Location: `~/.gitconfig`
 
-Example: [.gitconfig]({{ site.github.repository_url }}/blob/master/config/pc/files/gitconfig).
+Example: [.gitconfig](https://github.com/HON95/configs/blob/master/pc/common/gitconfig).
 
 ## SSH
 
@@ -23,7 +23,7 @@ Example: [.gitconfig]({{ site.github.repository_url }}/blob/master/config/pc/fil
 ### Config
 Location: `~/.ssh/config`
 
-Example: [config]({{ site.github.repository_url }}/blob/master/config/pc/files/ssh_config).
+Example: [config](https://github.com/HON95/configs/blob/master/pc/common/ssh_config).
 
 ## Vim
 
@@ -32,7 +32,7 @@ Location:
 - Global: `/etc/vim/vimrc`
 - User: `~/.vimrc`
 
-Example: [vimrc]({{ site.github.repository_url }}/blob/master/config/pc/files/vimrc).
+Example: [vimrc](https://github.com/HON95/configs/blob/master/pc/common/vimrc).
 
 ## VS Code
 
@@ -45,6 +45,6 @@ Location:
 - Linux: `~/.config/Code/user/settings.json`
 - Windows: `%APPDATA%\Code\User\settings.json`
 
-Example: [settings.json]({{ site.github.repository_url }}/blob/master/config/pc/files/vscode_settings.json).
+Example: [settings.json](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
 
 {% include footer.md %}
