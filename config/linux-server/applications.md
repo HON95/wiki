@@ -213,7 +213,7 @@ Using the unofficial Docker image by jacobalberty.
 
 1. Add a system user named "unifi": `useradd -r unifi`
 1. Allow the ports through the firewall: See [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used).
-1. Add a Docker Compose file. See [docker-compose.yml]({{ site.github.repository_url }}/blob/master/config/linux-server/files/unifi/docker-compose.yml).
+1. Add a Docker Compose file. See [docker-compose.yml](https://github.com/HON95/misc-configs/blob/master/linux-server/unifi/docker-compose.yml).
     - Use host networking mode for L2 adoption to work (if you're not using L3 or SSH adoption).
 1. Start the container, open the webpage and follow the wizard.
 
@@ -273,7 +273,7 @@ Using the unofficial Docker image by jacobalberty.
   - Using a raw key:
     - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
     - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
-    - Automatically unlock at boot time: Add and enable [zfs-load-keys.service]({{ site.github.repository_url }}/blob/master/config/linux-server/files/zfs/zfs-load-keys.service).
+    - Automatically unlock at boot time: Add and enable [zfs-load-keys.service](https://github.com/HON95/misc-configs/blob/master/linux-server/zfs/zfs-load-keys.service).
   - Reboot and test.
   - Check the key status with `zfs get keystatus`.
 - Send and receive snapshots:
