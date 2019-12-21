@@ -74,7 +74,7 @@ GUI for configuring gaming mice.
    1. In `/etc/zprofile`, add: `emulate sh -c "source /etc/profile"`
    2. Prevents Snaps and other profile stuff from breaking.
 
-Example: [zshrc]({{ site.github.repository_url }}/blob/master/config/pc/files/zshrc).
+Example: [zshrc](https://github.com/HON95/configs/blob/master/pc/common/zshrc).
 
 ## Steam
 
