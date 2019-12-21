@@ -113,7 +113,7 @@ Debian 10 Buster
 1. (Alternative 1) (Recommended) Setup networkd network manager:
     - Add a simple network config:
       - Alternatively, add a complicated set of configs.
-      - Create `/etc/systemd/network/lan.network` based on [lan.network]({{ site.github.repository_url }}/blob/master/config/linux-server/files/networkd/lan.network).
+      - Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/misc-configs/blob/master/linux-server/networkd/main.network).
     - Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
     - Enable and start systemd-networkd: `systemctl enable systemd-networkd`
       - Restart it if already running.
@@ -139,7 +139,7 @@ Debian 10 Buster
 1. Setup firewall:
     - Install: `iptables iptables-persistent netfilter-persistent`
       - Don't save the current rules.
-    - Add som [simple]({{ site.github.repository_url }}/blob/master/config/linux-server/files/iptables/iptables-simple.sh) or [complex]({{ site.github.repository_url }}/blob/master/config/linux-server/files/iptables/iptables-complex.sh) rules.
+    - Add som [simple](https://github.com/HON95/misc-configs/blob/master/linux-server/iptables/iptables-simple.sh) or [complex](https://github.com/HON95/misc-configs/blob/master/linux-server/iptables/iptables-complex.sh) rules.
 1. Reboot and make sure it still works.
 
 ### Extra
