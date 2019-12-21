@@ -91,12 +91,10 @@ breadcrumbs:
 
 ### Firewalls and Intrusion Detection Systems (IDSes)
 
-- Stateful firewall: Provides connection tracking for TCP/UDP traffic.
 - Network address translation (NAT):
-  - Mainly done in firewalls but also in some routers.
-  - Many different types, including masquerading with port forwarding.
   - Hairpinning/reflection: Reroute internal requests from a NATed network to an edge router's external IP address back into the router. It allows using domain names with public IP addresses from within the NATed network.
-  - Greatly reduced the rate of IPv4 address exhaustion at the cost of breaking the end-to-end principle, which introduced many new problems.
-  - Generally avoided in IPv6. Network prefix translation (NPT), however, can be used to translate (highly) dynamic global prefixes to static site-local prefixes.
-- Layer 7 firewalls: Provides deep packet inspection (DPI). A.k.a. next-generation firewalls (NGFW). Provides a foundation for IDS/IPS, user identity management and web application firewalls (WAF).
+  - Generally avoided in IPv6. Network prefix translation (NPT), however, can be used to translate dynamic global prefixes to static site-local prefixes.
+- Layer 7 firewalls: A.k.a. next-generation firewalls (NGFW). Provides deep packet inspection (DPI). Provides a foundation for IDS/IPS, user identity management and web application firewalls (WAF).
 - Intrusion prevention systemes (IPSes or IDPs): Can block traffic once a threat has been identified, unlike a plain IDS.
+
+{% include footer.md %}
