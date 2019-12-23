@@ -11,7 +11,7 @@ breadcrumbs:
 {:.no_toc}
 Debian 10 Buster
 
-## Docker
+## Docker & Docker Compose
 
 **TODO**
 
@@ -25,6 +25,20 @@ Debian 10 Buster
    - It incurs a small performance degredation and is optional but recommended.
    - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
    - Run `update-grub` and reboot.
+
+### Docker Compose TMPDIR Fix
+Docker Compose will fail to work if `/tmp` has `noexec`.
+
+1. Move `/usr/local/bin/docker-compose` to `/usr/local/bin/docker-compose-normal`.
+1. Create `/usr/local/bin/docker-compose` with the contents below and make it executable.
+1. Create the new TMPDIR dir.
+
+```sh
+#!/bin/bash
+# Some dir without noexec
+export TMPDIR=/var/lib/docker-compose-tmp
+/usr/local/bin/docker-compose-normal "$@"
+```
 
 ## Fail2ban
 
