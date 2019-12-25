@@ -17,7 +17,7 @@ Windows 10
 -  Use a local account. Link to a Microsoft account later if needed, but preferably only for Microsoft apps.
 - Say no to everything privacy related.
 
-## After Installation
+## Setup
 
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
@@ -31,6 +31,7 @@ Windows 10
       - Do not allow TPM.
     - Enable "allow enhanced PINs for startup".
 - Disable the lock screen: [How to Disable the Lock Screen on Windows 10 (Lifewire)](https://www.lifewire.com/disable-lock-screen-windows-10-4173812)
+  - Because it's annoying.
   - Open `regedit`.
   - Go to `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows`.
   - Create a new key named `Personalization`.
@@ -49,7 +50,7 @@ Windows 10
   - Show known file endings and hidden files.
   - Show merge conflicts.
 - Power settings:
-  - Used balanced.
+  - Use balanced mode.
   - Extend periods for turning off stuff.
   - Disable the sleep timer.
   - Allow the CPU to reduce its "utilization" (for Intel SpeedStep).
@@ -72,6 +73,8 @@ Windows 10
   - Keep Game Mode enabled.
 
 ## Troubleshooting
+
+### Docker
 
 ### Windows Subsystem for Linux (WSL)
 
