@@ -64,15 +64,14 @@ GUI for configuring gaming mice.
 3. Install the Powerlevel9k theme:
    1. `git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k`
    2. In `~/.zshrc`: `ZSH_THEME="powerlevel9k/powerlevel9k"`
-4. Install the Hack font from Nerd Fonts:
-   1. If it's already installed.
-   2. Install it if not: [https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack)
+4. Use the Hack font from Nerd Fonts:
+   2. Install it if missing: [https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack)
    3. Change your terminal's font to it.
    4. In `~/.zshrc`, set `POWERLEVEL9K_MODE="nerdfont-complete"`.
-5. Configure `~/.zshrc`: See below.
+5. Configure `~/.zshrc`: See the example below.
 6. Make zprofile include profile:
    1. In `/etc/zprofile`, add: `emulate sh -c "source /etc/profile"`
-   2. Prevents Snaps and other profile stuff from breaking.
+   2. This prevents Snaps and other profile stuff from breaking.
 
 Example: [zshrc](https://github.com/HON95/configs/blob/master/pc/common/zshrc).
 
