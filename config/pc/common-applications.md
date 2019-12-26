@@ -42,7 +42,7 @@ Example: [vimrc](https://github.com/HON95/configs/blob/master/pc/common/vimrc).
 
 ### Config
 Location:
-- Linux: `~/.config/Code/user/settings.json`
+- Linux: `~/.config/Code/User/settings.json`
 - Windows: `%APPDATA%\Code\User\settings.json`
 
 Example: [settings.json](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
