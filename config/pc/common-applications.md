@@ -7,12 +7,20 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## Firefox
+
+### Config
+
+- (Linux) Disable middle mouse paste:
+  - Go to `about:config`.
+  - Set `middlemouse.paste` to false.
+
 ## Git
 
 ### Config
 Location: `~/.gitconfig`
 
-Example: [.gitconfig](https://github.com/HON95/configs/blob/master/pc/common/gitconfig).
+[Example](https://github.com/HON95/configs/blob/master/pc/common/gitconfig).
 
 ## SSH
 
@@ -23,7 +31,7 @@ Example: [.gitconfig](https://github.com/HON95/configs/blob/master/pc/common/git
 ### Config
 Location: `~/.ssh/config`
 
-Example: [config](https://github.com/HON95/configs/blob/master/pc/common/ssh_config).
+[Example](https://github.com/HON95/configs/blob/master/pc/common/ssh_config).
 
 ## Vim
 
@@ -32,7 +40,7 @@ Location:
 - Global: `/etc/vim/vimrc`
 - User: `~/.vimrc`
 
-Example: [vimrc](https://github.com/HON95/configs/blob/master/pc/common/vimrc).
+[Example](https://github.com/HON95/configs/blob/master/pc/common/vimrc).
 
 ## VS Code
 
@@ -45,6 +53,6 @@ Location:
 - Linux: `~/.config/Code/User/settings.json`
 - Windows: `%APPDATA%\Code\User\settings.json`
 
-Example: [settings.json](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
+[Example](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
 
 {% include footer.md %}
