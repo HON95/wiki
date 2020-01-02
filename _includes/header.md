@@ -1,4 +1,4 @@
-# {{ site.name }} > {{ page.title }}
+# {{ site.name }} # {{ page.title }}
 {:.no_toc}
 
 {% assign breadcrumbs_separator = " / " %}
