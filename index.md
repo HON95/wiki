@@ -17,7 +17,7 @@
 ### PC
 
 - [Common Applications](config/pc/common-applications/)
-- [Ubuntu](config/pc/ubuntu/)
+- [Kubuntu](config/pc/kubuntu/)
 - [Linux Applications](config/pc/linux-applications/)
 - [Linux Examples](config/pc/linux-examples/)
 - [Windows](config/pc/windows/)
