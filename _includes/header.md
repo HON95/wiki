@@ -7,7 +7,6 @@
 
 {% assign breadcrumbs_separator = " / " %}
 
-{% unless page.no_breadcrumbs %}
 > [Home](/)
 {%- if page.breadcrumbs -%}
 {%- for crumb in page.breadcrumbs -%}
@@ -18,7 +17,6 @@
         {{ crumb.title }}
     {%- endif -%}
 {% endfor %}
-{% endif %}
 {% endif %}
 
 ### Contents
