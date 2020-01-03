@@ -21,9 +21,7 @@
 {% endif %}
 {% endif %}
 
-{% unless page.no_toc %}
 ### Contents
 {:.no_toc}
 
 > - ToC {:toc}
-{% endif %}
