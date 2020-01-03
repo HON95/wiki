@@ -47,9 +47,9 @@ breadcrumbs:
 ## Git
 
 ### Config
-Location: `~/.gitconfig`
 
-[Example](https://github.com/HON95/configs/blob/master/pc/common/gitconfig).
+- Location: `~/.gitconfig`
+- [Example](https://github.com/HON95/configs/blob/master/pc/common/gitconfig).
 
 ## Nvidia Settings (Linux)
 
@@ -105,9 +105,9 @@ GUI for configuring gaming mice.
 - New key (RSA): `ssh-keygen -t rsa -b 4096`
 
 ### Config
-Location: `~/.ssh/config`
 
-[Example](https://github.com/HON95/configs/blob/master/pc/common/ssh_config).
+- Location: `~/.ssh/config`
+- [Example](https://github.com/HON95/configs/blob/master/pc/common/ssh_config).
 
 ## Steam (Linux)
 
@@ -116,13 +116,21 @@ Location: `~/.ssh/config`
 ## Vim
 
 ### Config
-Location:
-- Global: `/etc/vim/vimrc`
-- User: `~/.vimrc`
-
-[Example](https://github.com/HON95/configs/blob/master/pc/common/vimrc).
+- Location:
+    - Global: `/etc/vim/vimrc`
+    - User: `~/.vimrc`
+- [Example](https://github.com/HON95/configs/blob/master/pc/common/vimrc).
 
 ## VS Code
+
+### Setup
+
+1. Install it.
+1. (Linux) Increase the handle count limit:
+    1. Ref.: ["Visual Studio Code is unable to watch for file changes in this large workspace" (error ENOSPC)](https://code.visualstudio.com/docs/setup/linux#_visual-studio-code-is-unable-to-watch-for-file-changes-in-this-large-workspace-error-enospc).
+    1. Get current limit: `cat /proc/sys/fs/inotify/max_user_watches`
+    1. In `/etc/sysctl.conf`, set `fs.inotify.max_user_watches=524288`.
+    1. Reload the config: `sysctl -p`
 
 ### Some Extensions
 
@@ -130,10 +138,9 @@ Location:
 - HTML CSS Support (ecmel.vscode-html-css)
 
 ### Config
-Location:
-- Linux: `~/.config/Code/User/settings.json`
-- Windows: `%APPDATA%\Code\User\settings.json`
-
-[Example](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
+- Location:
+    - Linux: `~/.config/Code/User/settings.json`
+    - Windows: `%APPDATA%\Code\User\settings.json`
+- [Example](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
 
 {% include footer.md %}
