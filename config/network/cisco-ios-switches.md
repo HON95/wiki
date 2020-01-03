@@ -1,6 +1,5 @@
 ---
 title: Cisco IOS Switches
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Network

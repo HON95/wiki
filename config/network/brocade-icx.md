@@ -1,6 +1,5 @@
 ---
 title: Brocade ICX Switches
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Network

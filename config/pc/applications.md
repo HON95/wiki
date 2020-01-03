@@ -1,6 +1,5 @@
 ---
 title: PC Applications
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: PC

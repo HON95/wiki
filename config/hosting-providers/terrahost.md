@@ -1,6 +1,5 @@
 ---
 title: Terrahost
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Hosting Providers

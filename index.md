@@ -1,4 +1,7 @@
-# HON's Wiki
+---
+no_breadcrumbs: true
+no_toc: true
+---
 
 ## Audio & Video
 

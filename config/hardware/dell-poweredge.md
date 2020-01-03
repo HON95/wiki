@@ -1,6 +1,5 @@
 ---
 title: Dell PowerEdge Series
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Hardware

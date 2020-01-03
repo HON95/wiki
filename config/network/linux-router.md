@@ -1,6 +1,5 @@
 ---
 title: Linux Router
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Network

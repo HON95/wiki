@@ -1,9 +1,13 @@
+{% if page.title %}
 # {{ site.name }} # {{ page.title }}
+{% else %}
+# {{ site.name }}
+{% endif %}
 {:.no_toc}
 
 {% assign breadcrumbs_separator = " / " %}
 
-{% if page.url != "/" %}
+{% if not page.no_breadcrumbs %}
 > [Home](/)
 {%- if page.breadcrumbs -%}
 {%- for crumb in page.breadcrumbs -%}
@@ -17,7 +21,7 @@
 {% endif %}
 {% endif %}
 
-{% if page.toc_enable %}
+{% if not page.no_toc %}
 ### Contents
 {:.no_toc}
 > - ToC

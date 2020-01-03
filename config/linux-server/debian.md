@@ -1,6 +1,5 @@
 ---
 title: Debian Server
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Linux Server

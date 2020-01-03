@@ -1,6 +1,5 @@
 ---
 title: Clevo PCs
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Hardware

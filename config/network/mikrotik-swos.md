@@ -1,6 +1,5 @@
 ---
 title: Mikrotik Switches (SwOS)
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Network

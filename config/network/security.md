@@ -1,6 +1,5 @@
 ---
 title: Network Security
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Network

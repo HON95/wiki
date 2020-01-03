@@ -1,6 +1,5 @@
 ---
 title: Linux
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: PC

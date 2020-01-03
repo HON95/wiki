@@ -1,6 +1,5 @@
 ---
 title: VyOS
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Network

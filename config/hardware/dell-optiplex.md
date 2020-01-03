@@ -1,6 +1,5 @@
 ---
 title: Dell OptiPlex Series
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Hardware

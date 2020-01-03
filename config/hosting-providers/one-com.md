@@ -1,6 +1,5 @@
 ---
 title: One.com
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Hosting Providers

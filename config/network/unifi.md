@@ -1,6 +1,5 @@
 ---
 title: UniFi Access Points
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Network

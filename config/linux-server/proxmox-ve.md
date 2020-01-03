@@ -1,6 +1,5 @@
 ---
 title: Proxmox VE
-toc_enable: yes
 breadcrumbs:
 - title: Configuration
 - title: Linux Server
