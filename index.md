@@ -10,6 +10,10 @@ no_toc: true
 
 ## Configuration
 
+### General
+
+- [Notes](config/general/notes/)
+
 ### Linux Server
 
 - [Notes](config/linux-server/notes/)
