@@ -1,8 +1,4 @@
-{% if page.title %}
 # {{ site.name }} # {{ page.title }}
-{% else %}
-# {{ site.name }}
-{% endif %}
 {:.no_toc}
 
 {% assign breadcrumbs_separator = " / " %}
