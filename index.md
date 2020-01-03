@@ -16,12 +16,10 @@
 
 ### PC
 
-- [Common Applications](config/pc/common-applications/)
+- [Applications](config/pc/applications/)
+- [Linux](config/pc/linux/)
 - [Kubuntu](config/pc/kubuntu/)
-- [Linux Applications](config/pc/linux-applications/)
-- [Linux Examples](config/pc/linux-examples/)
 - [Windows](config/pc/windows/)
-- [Windows Applications](config/pc/windows-applications/)
 
 ### IoT
 
