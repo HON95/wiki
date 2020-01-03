@@ -21,7 +21,9 @@
 {% endif %}
 {% endif %}
 
+{% if page.no_toc != true %}
 ### Contents
 {:.no_toc}
 
 > - ToC {:toc}
+{% endif %}
