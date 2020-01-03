@@ -3,7 +3,6 @@
 
 {% assign breadcrumbs_separator = " / " %}
 
-{% if not page.no_breadcrumbs %}
 > [Home](/)
 {%- if page.breadcrumbs -%}
 {%- for crumb in page.breadcrumbs -%}
@@ -15,11 +14,8 @@
     {%- endif -%}
 {% endfor %}
 {% endif %}
-{% endif %}
 
-{% if not page.no_toc %}
 ### Contents
 {:.no_toc}
 
 > - ToC {:toc}
-{% endif %}
