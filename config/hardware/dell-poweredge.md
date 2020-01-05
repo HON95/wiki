@@ -12,8 +12,11 @@ breadcrumbs:
 
 ## Firmware Upgrades
 
-- G11: Download and boot into the model-specific firmware upgrade ISO from some box site, I can't remember where exactly. Most other methods are just painful and typically don't even work.
-- G12+: Update through iDRAC 7 using HTTP site `downloads.dell.com`.
+### G11 and lower
+There are lots of ways to upgrade the firmware, but most are painful and typically don't even work (e.g. loading firmware files in the Lifecycle Controller, Repository Manager custom ISOs, Repository Manager repositories, Repository Manager firmware files, and the Server Update Utility (SUU)). One way that *does* work is finding a pre-built bootable ISO and booting into it, but finding an ISO is getting harder.
+
+### G12 and higher
+Update through iDRAC 7 using HTTP site `downloads.dell.com`.
 
 ## Management
 
