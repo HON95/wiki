@@ -232,7 +232,8 @@ Using the unofficial Docker image by jacobalberty.
 
 ## ZFS
 
-### Features
+### Info
+#### Features
 
 - Filesystem and physical storage decoupled
 - Always consistent
@@ -249,7 +250,7 @@ Using the unofficial Docker image by jacobalberty.
 - Log-strucrured filesystem
 - Tunable
 
-### Terminology
+#### Terminology
 
 - Vdev
 - Zpool
