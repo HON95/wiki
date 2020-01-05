@@ -24,10 +24,10 @@ no_toc: true
 
 ### PC
 
-- [Applications](config/pc/applications/)
 - [Linux](config/pc/linux/)
 - [Kubuntu](config/pc/kubuntu/)
 - [Windows](config/pc/windows/)
+- [Applications](config/pc/applications/)
 
 ### IoT
 
