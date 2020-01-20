@@ -106,7 +106,9 @@ export TMPDIR=/var/lib/docker-compose-tmp
 
 1. Install: `postfix libsasl2-modules mailutils`
    - If asked, choose to configure Postfix as a satellite system.
-2. Make sure the FQDN is correct in `/etc/mailname` and `/etc/postfix/main.cf`.
+2. Set the FQDN:
+   1. Update it in `/etc/postfix/main.cf`.
+   1. Link mailname to hostname (must be FQDN): `ln -sf /etc/hostname /etc/mailname`
 3. Update the root alias in `/etc/aliases` and run `newaliases`.
 4. Update the `main.cf` config (example not provided here).
    1. Only listen to localhost: Set “inet\_interfaces = loopback-only”
