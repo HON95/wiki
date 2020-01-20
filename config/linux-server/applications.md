@@ -133,7 +133,7 @@ export TMPDIR=/var/lib/docker-compose-tmp
    3. Run: `postmap sasl_passwd`
    4. Fix permissions: `chmod 600 sasl_passwd*`
 8. Restart `postfix`.
-9. Try sending an email: `echo "Test from $HOSTNAME at time $(date)." | mail -s "Test" root`
+9. Try sending an email: `echo "Test from $(hostname) at time $(date)." | mail -s "Test" root`
 
 #### Examples
 
