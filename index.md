@@ -42,11 +42,10 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 #### General
 
+- [Routing](config/network/routing/)
 - [Switching](config/network/switching/)
 - [WLAN](config/network/wlan/)
-- [Routing](config/network/routing/)
 - [Security](config/network/security/)
-- [Miscellaneous](config/network/misc/)
 
 #### Specific
 
@@ -59,7 +58,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Linksys LGS Switches](config/network/linksys-lgs/)
 - [Linux Switching & Routing](config/network/linux/)
 - [pfSense](config/network/pfsense/)
-- [UniFi](config/network/unifi/)
+- [UniFi Access Points](config/network/unifi-ap/)
 
 ### PC
 
@@ -71,9 +70,9 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 ### Network
 
-- [Network Architecture](it/network/architecture/)
 - [IPv4](it/network/ipv4/)
 - [IPv6](it/network/ipv6/)
+- [Network Architecture](it/network/architecture/)
 - [Switching](it/network/switching/)
 - [Wireless Basics](it/network/wireless-basics/)
 - [WLAN](it/network/wlan/)

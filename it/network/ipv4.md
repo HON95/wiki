@@ -47,7 +47,7 @@ Originally the IPv4 address space was split into five classes with fixed, implic
 
 **Classless inter-domain routing (CIDR)** allows combining multiple smaller networks (with a common prefix) into a larger network (supernetting). It is the opposite of classful routing.
 
-The terms are frequently interchanged and used to refer to the same thing.
+The terms are frequently interchanged and now typically used to refer to the same thing.
 
 ### Special Addresses
 
