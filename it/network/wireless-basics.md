@@ -1,14 +1,10 @@
 ---
-title: VyOS
+title: Wireless Basics
 breadcrumbs:
-- title: Configuration
+- title: IT
 - title: Network
 ---
 {% include header.md %}
-
-### Using
-{:.no_toc}
-**TODO**
 
 **TODO**
 

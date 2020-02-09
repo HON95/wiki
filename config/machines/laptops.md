@@ -1,12 +1,14 @@
 ---
-title: Clevo PCs
+title: Laptops
 breadcrumbs:
 - title: Configuration
-- title: Hardware
+- title: Machines
 ---
 {% include header.md %}
 
-## N950TP (Multicom Kunshan N950T)
+## Clevo N950TP
+
+Aka Multicom Kunshan N950T.
 
 ### Linux
 

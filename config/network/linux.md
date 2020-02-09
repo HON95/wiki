@@ -1,5 +1,5 @@
 ---
-title: Linux Router
+title: Linux Switching & Routing
 breadcrumbs:
 - title: Configuration
 - title: Network
@@ -8,7 +8,21 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-Debian 10 Buster
+
+- Debian 10 Buster
+
+### Foreword
+{:.no_toc}
+
+Using Linux servers as switches and routers may often be an inexpensive option and
+allows you to implement most network functionalities in one box.
+They may be virtualized to possibly reduce power usage and noise and take up no physical space.
+It is generally more unreliable than using enterprise routers and switches, though,
+and may require a good amount of time troubleshooting performance issues at times.
+The issues may not become apparent until tested live with tens to houndreds of clients,
+as a simple throughput test will not uncover bottlenecks related to large amounts of connections
+(which can be hard to test realistically in lab environments).
+Issues may also be related to stupid things like which ports you're using on the *same* NIC.
 
 ## Setup
 
@@ -27,13 +41,10 @@ Debian 10 Buster
 - (Optional) Setup a DNS server, like Unbound.
 - **TODO** Multicast routing.
 
-## Security
-
-See [Network Security: Routers](config/network/security#routers).
-
 ## Tuning
 
 - Disabling dynamic frequency and voltage scaling (Intel SpeedStep).
 - Disabling multithreading (Intel Hyper-Threading).
+- Make sure network interrupts are distributed across all cores.
 
 {% include footer.md %}

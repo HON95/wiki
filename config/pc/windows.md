@@ -8,12 +8,13 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-Windows 10
+
+- Windows 10
 
 ## Installation
 
 - There's no need to provide a product/activation key. If the PC (motherboard?) has been activated before, it will automatically activate when starting the first time.
--  Use a local account. Link to a Microsoft account later if needed, but preferably only for Microsoft apps.
+- Use a local account. Link to a Microsoft account later if needed, but preferably only for Microsoft apps.
 - Say no to everything privacy related.
 
 ## Setup

@@ -6,9 +6,18 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+### Related Pages
+{:.no_toc}
+
+- [Cisco IOS](../cisco-ios/)
+- [Cisco IOS Routers](../cisco-ios-routers/)
+
 ### Using
 {:.no_toc}
-Catalyst 2960G, Catalyst 3750G
+
+- Catalyst 2950
+- Catalyst 2960G
+- Catalyst 3750G
 
 ## Initial Configuration
 
@@ -148,69 +157,77 @@ Catalyst 2960G, Catalyst 3750G
     1. **TODO**
 1. Save the config: `copy run start`
 
-## Notes
+## General Configuration
 
-### Management
+### Simple Actions
 
-- Reset the configuration:
-  - Delete the config: `erase startup-config`
-  - Delete the VLAN DB: `delete flash:vlan.dat`
-  - Show files: `sh flash:`
-  - Delete `.renamed` files too.
-  - Reload: `reload`
+- Show statuses:
+    - L3 port overview: `sh ip int br`
+    - L2 port overview: `sh int status`
+    - Port statistics: `sh int <if>`
+    - Err-disable: `sh int status err-disabled`
 
-### AAA
+### Reset the Configuration
 
-- Disable the `password-encryption` service, use encrypted passwords instead.
-- Use type 9 (scrypt) secrets.
-
-### Ports and VLANs
-
-- Show interfaces:
-  - Overview: `sh ip int br`
-  - Details: `sh int`
-- Use trunks between switches. Avoid using native VLANs with trunks if possible.
-- Select range of interfaces: `int range g1/0/1-52` (example)
-- Reset interface(s): `default int [range] <if>[-<end>]`
-- User ports:
-  - Untrusted.
-  - Generally, configure it as an access port.
-  - Disable services/protocols like CDP, VTP, DTP, etc.
-  - Disable automatic PaGP/LACP.
-  - Enable portfast.
-  - Enable BPDU guard, unless configured globally.
-  - Enable port security to limit the amount of MAC addresses using that port. MAC flooding can result in full MAC tables, which causes all frames to be flooded.
-  - Enable ARP inspection to prevent ARP spoofing.
-- Ports to switches:
-  - Generally, configure it as a trunk port without a native VLAN.
-  - Enable root guard if facing switches on lower topological tiers.
-- Unused ports:
-  - Shut them down.
-- Native VLAN:
-  - Be careful not to have a native VLAN spanning the entire area.
-  - Avoid using VLAN 1 (the default VLAN).
-  - Consider adding a new VLAN (e.g. VLAN 2) and shutting it down, then using it as the native VLAN of trunks. This effectively disables the native VLAN for those trunks.
-  - User VLANs should never be a native VLAN on any trunk. It can enable VLAN hopping through double tagging.
+1. Delete the config: `erase startup-config`
+1. Delete the VLAN DB: `delete flash:vlan.dat`
+1. Show files: `sh flash:`
+1. Delete `.renamed` files too.
+1. Reload: `reload`
 
 ### Services and Features
 
 - CDP:
-  - It may leak information.
-  - Disable globally: `no cdp run`
+    - It may leak information.
+    - Disable globally: `no cdp run`
 - VTP:
-  - It may fuck up the trunks when an out-of-sync VTP switch joins.
-  - Disable globally: `vtp mode (off | transparent)`
+    - It may fuck up the trunks when an out-of-sync VTP switch joins.
+    - Disable globally: `vtp mode (off | transparent)`
 - DTP:
-  - It may facilitate switch spoofing and VLAN hopping.
-  - Disable it for each switch port: `switchport nonegotiate`
+    - It may facilitate switch spoofing and VLAN hopping.
+    - Disable it for each switch port: `switchport nonegotiate`
 - UDLD:
-  - Generally only useful for fiber.
-  - Disable globally: **TODO**
+    - Generally only useful for fiber.
+    - Disable globally: **TODO**
 
 ### Spanning Tree
 
 - Enable BPDU guard globally to automatically enable it om ports with portfast. Or don't.
 - Only enable loop guard for links which may become uni-directional and which have UDLD enabled.
+
+## Theory
+
+### Ports and VLANs
+
+- Use trunks between switches. Avoid using native VLANs with trunks if possible.
+- User ports:
+    - Untrusted.
+    - Generally, configure it as an access port.
+    - Disable services/protocols like CDP, VTP, DTP, etc.
+    - Disable automatic PaGP/LACP.
+    - Enable portfast.
+    - Enable BPDU guard, unless configured globally.
+    - Enable port security to limit the amount of MAC addresses using that port. MAC flooding can result in full MAC tables, which causes all frames to be flooded.
+    - Enable ARP inspection to prevent ARP spoofing.
+- Ports to switches:
+    - Generally, configure it as a trunk port without a native VLAN.
+    - Enable root guard if facing switches on lower topological tiers.
+- Unused ports:
+    - Shut them down.
+- Native VLAN:
+    - Be careful not to have a native VLAN spanning the entire area.
+    - Avoid using VLAN 1 (the default VLAN).
+    - Consider adding a new VLAN (e.g. VLAN 2) and shutting it down, then using it as the native VLAN of trunks. This effectively disables the native VLAN for those trunks.
+    - User VLANs should never be a native VLAN on any trunk. It can enable VLAN hopping through double tagging.
+
+### Port Lights
+
+- Status mode:
+    - Off: No link or administratively down.
+    - Green: Link present.
+    - Blinking green: Activity.
+    - Alternating green-amber: Link fault. Could be caused by hardware errors or mismatched speed or duplex.
+    - Amber and blinking amber: Blocked by STP.
 
 ## Resources
 

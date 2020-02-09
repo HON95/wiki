@@ -8,7 +8,11 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-Brocade/Ruckus ICX 6610-24 running router/L3 software
+
+- Brocade/Ruckus ICX 6610-24 running router/L3 software (**TODO** Version?)
+
+### Disclaimer
+{:.no_toc}
 
 Security features like port security, dynamic ARP inspection, DHCP snooping, IP source guard, DHCPv6 snooping, IPv6 NDP inspection and IPv6 RA guard will not be covered since I mainly use the switch as a core/dist. switch and not an access switch.
 
@@ -111,10 +115,11 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
     1. Page 269
 21. Save the config: `write memory`
 
-## Usage
+## General Configuration
+
+### Simple Actions
 
 - Console:
-  - Backspace in serial console: `Ctrl+H`
   - Enable logging to the serial console: `logging console`
   - Enable logging to SSH/Telnet: `terminal monitor`(in privileged exec mode)
 - Hardware:
@@ -138,8 +143,13 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
 - Special:
   - Enable SFP+ ports: `speed-duplex 10g-full`
 
-## Notes
+## Theory
 
-- Brocade devices operate in cut-through switching mode instead of store-and-forward.
+### Using the CLI
+
+- Backspace: `Ctrl+H`
+
+### Miscellaneous
+- Brocade devices operate in cut-through switching mode instead of store-and-forward by default.
 
 {% include footer.md %}

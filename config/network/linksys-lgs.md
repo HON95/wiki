@@ -8,7 +8,8 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-LGS326
+
+- LGS326
 
 **TODO**
 

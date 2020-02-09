@@ -8,7 +8,8 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-Debian 10 Buster
+
+- Debian 10 Buster
 
 ## Basic Setup
 
@@ -18,14 +19,14 @@ Debian 10 Buster
 - Use UEFI if possible.
 - Use the non-graphical installer. It's basically the same as the graphical one.
 - Localization:
-  - Language: United States English
+  - Language: United States English.
   - Location: Your location.
-  - Locale: United States UTF-8 (`en_US.UTF-8`)
+  - Locale: United States UTF-8 (`en_US.UTF-8`).
   - Keymap: Your keyboard's keymap.
 - Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
 - Use separate password for root and your personal admin user.
 - Disk partitioning:
-  - (Recommended) Manually partition the system drive(s). See [system storage](#system-storage) for a suggestion.
+  - (Recommended) Manually partition the system drive(s). See [system storage](../storage/#system-storage).
   - Guided partitioning makes weird partition/volume sizes, try to avoid it.
   - For simple or temporary systems, just use "guided - use entire disk" with all files in one partition.
   - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
@@ -91,6 +92,10 @@ Debian 10 Buster
     - Add a personal user first.
     - Check that the password field (the second field) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
     - Clear `/etc/securetty` to prevent root local/console login.
+1. (Optional) Enable persistent logging:
+    - The default journal directory is `/var/log/journal`. By default, it's not automatically created.
+    - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
+    - `auto` (the default) is like `persistent` but does not automatically create the log directory.
 
 ### Machine-Specic Configuration
 
@@ -142,7 +147,6 @@ Debian 10 Buster
 1. Reboot and make sure it still works.
 
 ### Extra
-Optional stuff.
 
 1. Extra package security:
     - Install `apt-listbugs` and `apt-listchanges` and run them before upgrading a package.
@@ -170,39 +174,6 @@ Optional stuff.
     - Download [disk-space-checker.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
     - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
     - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
-
-## System Storage
-
-- The system drive doesn’t need to be super fast if not used a lot for service stuff. It's typically built from one SSD (optionally overprovisioned) or 2 mirrored HDDs (as they're less reliable).
-- Set the boot flag on `/boot/efi` (UEFI) or `/boot` (BIOS). It's not used, but some hardware may require it to try booting the drive.
-- Swap can be added either as a partition, as an LVM volume or not added at all.
-- Use LVM or ZFS (if supported/stable) for the whole main disk, except the boot and EFI partitions.
-- Generally use EXT4, but try to use ZFS if appropriate.
-- Optionally use only the first half of the disk for LVM/system stuff and the other half as for ZFS.
-- Storage typically uses base-10 prefixes, not base-2, like speed and unlike memory.
-- SSDs can be overprovisioned in order to improve performance by leaving unused space the SSD can use internally. Factories typically reserve some minimum size appropriate to the drive, but users can overprovision further by leaving space unallocated/unpartitioned at the end of the drive. It's typically not needed to overprovision newer SSDs.
-
-### System Volumes Suggestion
-
-This is just a suggestion for how to partition your main system drive. Since LVM volumes can be expanded later, it's fine to make them initially small. Create the volumes during system installation and set the mount options later in `/etc/fstab`.
-
-| Volume/Mount | Type | Minimal Size (GB) | Mount Options |
-| :--- | :--- | :--- | :--- |
-| `/proc` | Runtime | N/A | hidepid=2,gid=1500 |
-| `/boot/efi` | FAT32 w/ boot flag (UEFI), none (BIOS) | 0.5 | nodev,nosuid,noexec |
-| `/boot` | EXT4 (UEFI), FAT32 w/ boot flag (BIOS) | 0.5 | nodev,nosuid,noexec |
-| Swap | Swap (optional) | 4, 8, 16 | N/A |
-| `vg0` | LVM | 50% or 100% | N/A |
-| Swap | Swap (LVM) (optional) | 4, 8, 16 | N/A |
-| `/` | EXT4 (LVM) | 10 | nodev |
-| `/tmp` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
-| `/var` | EXT4 (LVM) | 5 | nodev,nosuid |
-| `/var/lib` | EXT4 (LVM) | 5 | nodev,nosuid |
-| `/var/log` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
-| `/var/log/audit` | EXT4 (LVM) | 1 | nodev,nosuid,noexec |
-| `/var/tmp` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
-| `/home` | EXT4 (LVM) | 10 | nodev,nosuid |
-| `/srv` | EXT4 (LVM) or none if external | 10 | nodev,nosuid |
 
 ## Miscellaneous
 

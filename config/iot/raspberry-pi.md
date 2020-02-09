@@ -8,9 +8,11 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-Raspbian
 
-## Basic Setup
+- 1B
+- 3B
+
+## Raspbian Basic Setup
 
 - Default credentials: Username `pi`, password `raspberry`.
 - Configure through the menu: `raspi-config`

@@ -8,11 +8,12 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-AP, AP AC Lite, AP AC LR
 
-Controller v5
+- AP
+- AP AC Lite
+- AP AC LR
 
-## Access Points
+## General Configuration
 
 ### Wireless Uplink (Meshing)
 

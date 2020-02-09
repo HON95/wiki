@@ -6,8 +6,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Notes
-
 - Bands:
   - Lows (ca. 20Hz-100Hz)
   - Low midrange (ca. 100Hz-1kHz)

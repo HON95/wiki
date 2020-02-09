@@ -1,14 +1,12 @@
 ---
-title: Mikrotik Switches (SwOS)
+title: Routing
 breadcrumbs:
 - title: Configuration
 - title: Network
 ---
 {% include header.md %}
 
-### Using
-{:.no_toc}
-CSS326-24G-2S+RM
+Layer 3 stuff.
 
 **TODO**
 

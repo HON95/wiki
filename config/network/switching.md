@@ -1,20 +1,34 @@
 ---
-title: Miscellaneous Network Notes
+title: Switching
 breadcrumbs:
 - title: Configuration
 - title: Network
 ---
 {% include header.md %}
 
+Layer 2 stuff.
+
 ## Terms
 
 | Cisco IOS | Brocade ICX |
-| :--- | :--- |
-| Access port (VLAN) | Untagged port |
-| Trunk port (VLAN) | Tagged port |
+| - | - |
+| Access port | Untagged port |
+| Trunk port | Tagged port |
 | Native VLAN | Dual mode |
 
-## Spanning Tree
+## VLAN IDs
+
+Valid VID range (802.1Q): 1-4095
+
+Reserved:
+- 1: Default native VLAN.
+- 1002: FDDI default (Cisco).
+- 1003: Token ring default (Cisco).
+- 1004: FDDI-Net (Cisco).
+- 1005: TRNET (Cisco).
+- 4095: Implementation use.
+
+## Spanning Tree Protocol (STP)
 
 ### Variants
 
@@ -42,12 +56,14 @@ breadcrumbs:
 
 #### Cisco IOS
 
-- Disable VTP, it's dangerous if not used properly. It also doesn't carry MST configuration.
+- VTP can be very dangerous if not used properly and is enabled by default. It also doesn't carry MST configuration.
 - Rapid-PVST+ ignores UplinkFast and BackboneFast and supports UDLD.
 
-### Compatibility Between Switch Models
+### Inter-Model Compatibility Examples
 
-#### Alternative 1
+#### Example 1
+
+**TODO** I have not actually tested this properly.
 
 - Cisco IOS (Cat 3750G): `rapid-pvst`
 - Brocade (ICX 6610): `802.1w`

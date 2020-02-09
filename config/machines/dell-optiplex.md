@@ -2,13 +2,15 @@
 title: Dell OptiPlex Series
 breadcrumbs:
 - title: Configuration
-- title: Hardware
+- title: Machines
 ---
 {% include header.md %}
 
 ### Using
 {:.no_toc}
-780 SFF, 9010 SFF
+
+- 780 SFF
+- 9010 SFF
 
 ## Management
 

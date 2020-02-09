@@ -8,7 +8,8 @@ breadcrumbs:
 
 ### Using
 {:.no_toc}
-pfSense v2
+
+- pfSense v2
 
 ## Initial Setup
 
@@ -16,7 +17,7 @@ pfSense v2
 
 - Use ZFS for the root device.
 
-### Configuration
+### Initial Configuration
 
 1. Connect to the website and finish the wizard.
 2. Set upstream DNS and NTP servers.
@@ -30,7 +31,7 @@ pfSense v2
 10. Disable TCP segmentation offload (TSO) and large receive offload (LRO). Most hardware/drivers have issues with them.
 11. See [this page](https://docs.netgate.com/pfsense/en/latest/hardware/tuning-and-troubleshooting-network-cards.html) for NIC-specific tuning.
 
-## Services
+## Configuration
 
 ### FreeRADIUS
 

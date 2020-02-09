@@ -8,7 +8,12 @@ breadcrumbs:
 
 ## Resources
 
+### Security
+
 - [Cipherli.st](https://cipherli.st/)
+
+### Miscellaneous
+
 - [Text to ASCII Art Generator (TAAG)](http://patorjk.com/software/taag/#p=display&f=Slant&t=)
 
 ## Addresses

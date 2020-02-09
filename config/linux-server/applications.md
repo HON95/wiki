@@ -6,9 +6,12 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+**TODO** Migrate the rest of the config notes from the old Google Doc.
+
 ### Using
 {:.no_toc}
-Debian 10 Buster
+
+- Debian 10 Buster
 
 ## Docker & Docker Compose
 
@@ -25,7 +28,8 @@ Debian 10 Buster
    - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
    - Run `update-grub` and reboot.
 
-### Docker Compose TMPDIR Fix
+### Docker Compose No-Exec Tmp-Dir Fix
+
 Docker Compose will fail to work if `/tmp` has `noexec`.
 
 1. Move `/usr/local/bin/docker-compose` to `/usr/local/bin/docker-compose-normal`.
@@ -231,144 +235,5 @@ Using the unofficial Docker image by jacobalberty.
 1. Add a Docker Compose file. See [docker-compose.yml](https://github.com/HON95/misc-configs/blob/master/linux-server/unifi/docker-compose.yml).
     - Use host networking mode for L2 adoption to work (if you're not using L3 or SSH adoption).
 1. Start the container, open the webpage and follow the wizard.
-
-## ZFS
-
-### Info
-#### Features
-
-- Filesystem and physical storage decoupled
-- Always consistent
-- Intent log
-- Synchronous or asynchronous
-- Everything checksummed
-- Compression
-- Deduplication
-- Encryption
-- Snapshots
-- Copy-on-write (CoW)
-- Clones
-- Caching
-- Log-strucrured filesystem
-- Tunable
-
-#### Terminology
-
-- Vdev
-- Zpool
-- Zvol
-- ZFS POSIX Layer (ZPL)
-- ZFS Intent Log (ZIL)
-- Adaptive Replacement Cache (ARC)
-- Dataset
-
-### Setup
-
-1. Enable the `contrib` and `non-free` repo areas. (Don't use any backports repo.)
-1. Install (it might give errors): `zfs-dkms zfsutils-linux zfs-zed`
-1. Load the ZFS module: `modprobe zfs`
-1. Fix the ZFS install: `apt install`
-1. Make the import service wait for iSCSI:
-    1. `cp /lib/systemd/system/zfs-import-cache.zervice /etc/systemd/system`
-    1. Add `After=iscsid.service` in `/etc/systemd/system/zfs-import-cache.service`.
-    1. `systemctl enable zfs-import-cache.service`
-1. Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
-    - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
-1. Check that the cron scrub script exists.
-    - Typical location: `/etc/cron.d/zfsutils-linux`
-    - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
-
-### Usage
-
-- Create a pool: `zpool create -o ashift=<9|12> [level] <drives>+`
-- Create an encrypted pool:
-  - The procedure is basically the same for encrypted datasets.
-  - Children of encrypted datasets can't be unencrypted.
-  - The encryption suite can't be changed after creation, but the keyformat can.
-  - Using a password: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
-  - Using a raw key:
-    - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
-    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
-    - Automatically unlock at boot time: Add and enable [zfs-load-keys.service](https://github.com/HON95/misc-configs/blob/master/linux-server/zfs/zfs-load-keys.service).
-  - Reboot and test.
-  - Check the key status with `zfs get keystatus`.
-- Send and receive snapshots:
-  - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
-  - Uses STDOUT.
-  - Use `zfs get receive_resume_token` and `zfs send -t <token>` to resume an interrupted transfer.
-- View activity: `zpool iostat [-v]`
-- Clear transient device errors: `zpool clear <pool> [device]`
-- If a pool is "UNAVAIL", it means it can't be recovered without corrupted data.
-- Replace a device and automatically copy data from the old device or from redundant devices: `zpool replace <pool> <device> [new-device]`
-- Bring a device online or offline: `zpool (online|offline) <pool> <device>`
-- Re-add device that got wiped: Take it offline and then online again.
-
-### Best Practices and Suggestions
-
-- As far as possible, use raw disks and HBA disk controllers (or RAID controllers in IT mode).
-- Always use `/etc/disk/by-id/X`, not `/dev/sdX`.
-- Always manually set the correct ashift for pools.
-  - Should be the log-2 of the physical block/sector size of the device.
-  - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).
-  - Check the physical block size with `smartctl -i <dev>`.
-- Always enable compression. Generally `lz4`. Maybe `zstd` when implemented. Maybe `gzip-9` for archiving. Worst case it does nothing.
-- Never use deduplication. It may brick your ZFS server.
-- Generally always use quotas and reservations.
-- Avoid using more than 80% of the available space.
-- Make sure regular automatic scrubs are enabled. There should be a cron job/script or something. Run it e.g. every 2 weeks or monthly.
-- Snapshots are great for increments backups. They're easy to send places too. If the dataset is encrypted then so is the snapshot.
-
-### Tuning
-
-- Use quotas, reservations and compression.
-- Very frequent reads:
-  - E.g. for a static web root.
-  - Set `atime=off` to disable updating the access time for files.
-- Database:
-  - Disable `atime`.
-  - Use an appropriate recordsize with `recordsize=<size>`.
-    - InnoDB should use 16k for data files and 128k on log files (two datasets).
-    - PostgreSQL should use 8k (or 16k) for both data and WAL.
-  - Disable caching with `primarycache=metadata`. DMBSes typically handle caching themselves.
-    - For InnoDB.
-    - For PostgreSQL if the working set fits in RAM.
-  - Disable the ZIL with `logbias=throughput` to prevent writing twice.
-    - For InnoDB and PostgreSQL.
-    - Consider not using it for high-traffic applications.
-  - PostgreSQL:
-    - Use the same dataset for data and logs.
-    - Use one dataset per database instance. Requires you to specify it when creating the database.
-    - Don't use PostgreSQL checksums or compression.
-    - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
-
-### Troubleshooting
-
-- `zfs-import-cache.service` fails to import pools because disks are not found:
-  - Set `options scsi_mod scan=sync` in `/etc/modprobe.d/zfs.conf` to wait for iSCSI disks to come online before ZFS starts.
-  - Add `After=iscsid.service` to `zfs-import-cache.service`
-
-### Extra Notes
-
-- ECC memory is recommended but not required. It does not affect data corruption on disk.
-- It does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC. By default it's limited to 1/2 of all available RAM. Under memory pressure, it releases some of it to other applications.
-- Compressed ARC is a feature which compresses and checksums the ARC. It's enabled by default.
-- A dedicated disk (e.g. an NVMe SSD) can be used as a secondary read cache. This is termed L2ARC (level 2 ARC). Only frequently accessed blocks are cached. The memory requirement will increase based on the size of the L2ARC. It should only be considered for pools with high read traffic, slow disks and lots of memory available.
-- A dedicated disk (e.g. an NVMe SSD) can be used for the ZFS intent log (ZIL), which is used for synchronized writes. This is termed SLOG (separate intent log). The disk must have low latency, high durability and should preferrably be mirrored for redundancy. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
-- Intel Optane is a perfect choice as both L2ARCs and SLOGs due to its high throughput, low latency and high durability.
-- Some SSD models come with a build-in cache. Make sure it actually flushes it on power loss.
-- ZFS is always consistent, even in case of data loss.
-- Bitrot is real.
-  - 4.2% to 34% of SSDs have one UBER (uncorrectable bit error rate) per year.
-  - External factors:
-    - Temperature.
-    - Bus power consumption.
-    - Data written by system software.
-    - Workload changes due to SSD failure.
-- Early signs of drive failures:
-  - `zpool status <pool>` shows that a scrub has repaired any data.
-  - `zpool status <pool>` shows read, write or checksum errors (all values should be zero).
-- Database conventions:
-  - One app per database.
-  - Encode the environment and DMBS version into the dataset name, e.g. `theapp-prod-pg10`.
 
 {% include footer.md %}

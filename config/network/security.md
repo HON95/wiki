@@ -86,7 +86,7 @@ breadcrumbs:
 
 ## Intrusion Detection Systems (IDSes)
 
-## Extra Notes
+## Theory
 
 ### Firewalls and Intrusion Detection Systems (IDSes)
 

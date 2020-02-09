@@ -8,7 +8,7 @@ breadcrumbs:
 
 ## Fancontrol (Linux)
 
-**Warning:** Fancontrol is unreliable and should probably not be used. The fan controller IDs like to change on every reboot which breaks the config.
+**Warning:** Don't use this. The fan controller IDs may change on every reboot which breaks the config.
 
 ### Configure Sensors
 
@@ -137,6 +137,7 @@ GUI for configuring gaming mice.
 - HTML CSS Support (ecmel.vscode-html-css)
 
 ### Config
+
 - Location:
     - Linux: `~/.config/Code/User/settings.json`
     - Windows: `%APPDATA%\Code\User\settings.json`
