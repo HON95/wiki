@@ -6,8 +6,6 @@ no_toc: true
 
 Random collection of config notes and miscellaneous theory. Technically not a wiki.
 
-[haavard.tech](https://haavard.tech)
-
 ## Configuration
 
 ### General
