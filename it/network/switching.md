@@ -34,8 +34,11 @@ breadcrumbs:
 - VXLAN network identifiers (VNIs) (24-bit) identify bridge domains.
 - VXLAN tunnel endpoints (VTEPs) encapsulate/decapsulate the traffic.
 - VTEPs may be either on hosts or on switches/routers as gateways.
+- Address learning:
+    - Data plane learning: Flood and learn.
+    - Data plane learning: Uses BGP to route wrt. MAC addresses.
 - BUM handling using multicast:
-    - Requires multicast-enabled infrastructure.
+    - Requires multicast routing-enabled infrastructure.
     - VNI are mapped to multicast groups (N:1).
     - VTEPs joins the groups for its VNIs using IGMP.
     - BUM traffic is only sent to the relevant groups.

@@ -6,6 +6,28 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## Special Prefixes
+
+| Prefix | Description |
+| - | - |
+| `::/0` | Default route |
+| `::/128` | Unspecified |
+| `::1/128` | Localhost |
+| `::/96` | IPv4-compatible IPv6 address (deprecated) |
+| `::ffff:0:0/96` | IPv4-mapped IPv6 address |
+| `::ffff:0:0:0/96` | IPv4-translated IPv6 address |
+| `64:ff9b::/96` | IPv4-IPv6 translation |
+| `100::/64` | Discard |
+| `2000::/3` | Global unicast address (GUA) |
+| `2001::/32` | Teredo |
+| `2001:20::/28` | ORCHIDv2 |
+| `2001:db8::/32` | Documentation (non-routable) |
+| `2002::/16` | 6to4 (deprecated) |
+| `fc00::/7` | Unique local address (ULA) |
+| `fd00::/8` | Locally administered ULA |
+| `fe80::/10` | Link-scoped unicast (non-routable) |
+| `ff00::/8` | Multicast |
+
 ## Advantages over IPv4
 
 - Designed based on experience with the strengths and limitations of IPv4 and other protocols.
@@ -92,23 +114,6 @@ breadcrumbs:
     - Valid: Preferred or deprecated.
     - Invalid: Expired valid.
     - Optimistic: Like tenative but for Optimistic DAD. Can be used.
-
-## Address Ranges
-
-|Prefix|Description|
-|-|-|
-|`::/32`|IPv4-compatible IPv6 address (deprecated)|
-|`::ffff/32`|IPv4-mapped IPv6 address|
-|`100::/64`|Discard-only|
-|`64:ff9b::/96`|IPv4-IPv6 translation|
-|`2000::/3`|Global unicast address (GUA)|
-|`2001::/32`|Teredo|
-|`2001:db8::/32`|Documentation (non-routable)|
-|`2002::/16`|6to4|
-|`fc00::/7`|Unique local address (ULA)|
-|`fd00::/8`|Locally administered ULA|
-|`fe80::/10`|Link-scoped unicast|
-|`ff00::/8`|Multicast|
 
 ## Packet and Transit
 

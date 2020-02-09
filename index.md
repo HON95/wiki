@@ -72,6 +72,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 ### Network
 
 - [Network Architecture](it/network/architecture/)
+- [IPv4](it/network/ipv4/)
 - [IPv6](it/network/ipv6/)
 - [Switching](it/network/switching/)
 - [Wireless Basics](it/network/wireless-basics/)
