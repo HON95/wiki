@@ -14,14 +14,16 @@ breadcrumbs:
 ## Notes
 
 - Storage typically uses base-10 prefixes like speed but unlike memory.
-
-## Guidelines
-
 - Higher-end SSDs provide power loss protection which generally consists of an on-board capacitor used to flush the device cache in case of power loss.
   Typically DC-grade devices do but cheap consumer devices to not.
+
+## Guidelines
 - SSDs can be overprovisioned in order to improve performance by leaving unused space the SSD can use internally.
   Factories typically reserve some minimum size appropriate to the drive, but users can overprovision further by leaving space unallocated/unpartitioned at the end of the drive.
   It's typically not needed to overprovision newer SSDs.
+- After receiving a new drive or after transporting an existing drive, you may want to run a SMART conveyance test,
+  which is similar to a short test but targeted at this scenario.
+  See [smartmontools](../../linux-general/applications/#smartmontools).
 
 ### RAID
 
