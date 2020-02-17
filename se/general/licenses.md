@@ -10,6 +10,8 @@ breadcrumbs:
 
 - [Various Licenses and Comments about Them (GNU Project)](https://www.gnu.org/licenses/license-list.en.html)
 - [How are the various GNU licenses compatible with each other? (GNU Project)](https://www.gnu.org/licenses/gpl-faq.html#AllCompatibility)
+- [FOSSA - Open Source Management for Enterprise Teams](https://fossa.com/)
+    - For managing licenses for dependencies, finding licensing conflicts, generating attibution notices, and more.
 
 ## Definitions
 
@@ -46,7 +48,8 @@ breadcrumbs:
     - GPLv3 programs may use GPLv2-or-later libraries, resulting in a GPLv3 program.
     - Mixing GPLv2-only and GPLv3 libraries is not possible.
 - GPLv3 is compatible with more licenses than GPLv2.
-- Exceptions can be made to the standard licenses, for instance to modify how the license affects derivative works.
+- Exceptions can be made to the standard licenses, for instance to modify how the license for your work affects derivative works.
   The work must still adhere to other imposed licenses, though.
+- An attibution notice must be added within your software for all direct and indirect dependencies it's using.
 
 {% include footer.md %}
