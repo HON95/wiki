@@ -16,11 +16,11 @@ breadcrumbs:
 ### Files
 
 - Find files:
-  - By UID: `find / -user <UID>`
-  - Without a user: `find / -nouser`
-  - With setuid permission bit: `find / -perm /4000`
+    - By UID: `find / -user <UID>`
+    - Without a user: `find / -nouser`
+    - With setuid permission bit: `find / -perm /4000`
 - Recursive search and replace: `find <dir> \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/123/456/g'`
-  - `-type d -name .git -prune` skips `.git` directories and can be excluded outside of git repos.
+    - `-type d -name .git -prune` skips `.git` directories and can be excluded outside of git repos.
 
 ### Fun
 
@@ -30,12 +30,37 @@ breadcrumbs:
 
 - Find packages depending on the package (APT): `apt rdepends --installed <package>`
 
-### Monitoring
+### Network
 
-- Monitor system and processes: `htop`
-- Monitor interrupt usage: `irqtop`
-- Monitor network load: `nload`
-- Monitor lots of stuff: `glances`
+- Monitor usage:
+    - `nload <if>`
+    - `speedometer -t <if> -r <if>`
+      - Prettier than nload.
+      - Multiple interfaces can be specified.
+- Monitor per-process usage:
+    - `nethog`
+- Test throughput:
+    - Internet: `speedtest` (the official one, not `speedtest-cli`)
+    - Internal: `iperf3`
+- Show sockets:
+    - `netstat -tulpn`
+        - `tu` for TCP and UDP, `l` for listening, `p` for protocol, `n` for numerical post numbers.
+    - `ss <options>`
+- Show interface stats:
+    - `ip [-s] link`
+    - `netstat -i`
+- Show interfaces and addresses:
+    - `ip a` (MAC, IPv4, IPv6)
+- Show neighbors:
+    - `ip n`
+- Show routes:
+    - `ip r` & `ip -6 r`
+    - `netstat -r`
+- Show multicast groups:
+    - `netstat -g`
+- Show misc. stats:
+    - `nstat`
+    - `netstat -s` (statistics)
 
 ### Performance and Power Efficiency
 
@@ -51,6 +76,15 @@ breadcrumbs:
 ### Security
 
 - Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`
+
+### System
+
+- Monitor system and processes: `htop`
+- Monitor interrupts:
+    - `irqtop`
+    - `watch -n0.1 /proc/interrupts`
+    - 
+- Monitor lots of stuff: `glances`
 
 ## Tasks
 

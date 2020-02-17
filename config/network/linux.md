@@ -45,6 +45,8 @@ Issues may also be related to stupid things like which ports you're using on the
 
 - Disabling dynamic frequency and voltage scaling (Intel SpeedStep).
 - Disabling multithreading (Intel Hyper-Threading).
-- Make sure network interrupts are distributed across all cores.
+- Disable protocol hardware offloading as it typically causes more problems than it solves.
+- Make sure network interrupts from a given NIC are distributed across all cores.
+    - See `/proc/interrupts`.
 
 {% include footer.md %}
