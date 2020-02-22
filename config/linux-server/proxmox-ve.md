@@ -69,23 +69,15 @@ See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability
 
 ## Ceph
 
-### Info
+See: [Storage: Ceph](../storage/#ceph)
 
-- Distributed storage for HA.
-- Redundant and self-healing without any single point of failure.
-- The Ceph Storeage Cluster consists of:
-    - Monitors (typically one per node) for monitoring the state of itself and other nodes.
-    - Managers (at least two for HA) for serving metrics and statuses to users and external services.
-    - OSDs (object storage daemon) (one per disk) for handles storing of data, replication, etc.
-    - Metadata Servers (MDSs) for storing metadata for POSIX file systems to function properly and efficiently.
-- Multiple monitors, which uses quorum, are required for HA.
-- The CRUSH algorithm is used for determining object storage locations.
-- Each node connects directly to OSDs when handling data.
+### Notes
+
 - It's recommended to use a high-bandwidth SAN/management network within the cluster for Ceph traffic.
   It may be the same as used for out-of-band PVE cluster management traffic.
 - When used with PVE, the configuration is stored in the cluster-synchronized PVE config dir.
 
-### Cluster Setup
+### Setup
 
 1. Setup a shared network.
     - It should be high-bandwidth and isolated.

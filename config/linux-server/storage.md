@@ -79,7 +79,41 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 | `/var/tmp` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
 | `/home` | EXT4 (LVM) | 10 | nodev,nosuid |
 | `/srv` | EXT4 (LVM) or none if external | 10 | nodev,nosuid |
-  
+
+## Ceph
+
+### Resources
+
+- (Ceph: Ceph PGs per Pool Calculator)[https://ceph.com/pgcalc/]
+
+### Info
+
+- Distributed storage for HA.
+- Redundant and self-healing without any single point of failure.
+- The Ceph Storeage Cluster consists of:
+    - Monitors (typically one per node) for monitoring the state of itself and other nodes.
+    - Managers (at least two for HA) for serving metrics and statuses to users and external services.
+    - OSDs (object storage daemon) (one per disk) for handles storing of data, replication, etc.
+    - Metadata Servers (MDSs) for storing metadata for POSIX file systems to function properly and efficiently.
+- Multiple monitors, which uses quorum, are required for HA.
+- Each node connects directly to OSDs when handling data.
+- Pools consist of a number of placement groups (PGs) and OSDs.
+- Each PG uses a number of OSDs, as described by the replication factor.
+- The number of PGs in an existing pool can be increased but not decreased.
+- The minimum replication factor describes the number of OSDs that must have received the data before the write is considered successful.
+- Clients only interact with the primary OSD in a PG.
+- The CRUSH algorithm is used for determining storage locations based on hashing the pool and object names. It avoids having to index file locations.
+
+### Usage
+
+- Interact with pools using rados:
+    - List pools: `rados lspools`
+    - Show utilization: `rados df`
+    - List files: `rados -p <pool> ls`
+    - Put file: `rados -p <pool> put <name> <file>`
+    - Get file: `rados -p <pool> get <name> <file>`
+    - Delete file: `rados -p <pool> rm <name>`
+
 ## ZFS
 
 ### Info
