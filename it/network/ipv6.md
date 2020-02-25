@@ -323,11 +323,11 @@ breadcrumbs:
     - No changes are required in the IPv6 client in order to support it.
     - If the DNS64 server does not find an AAAA record, it synthesizes a AAAA record within the NAT64 prefix.
     - Limitations:
-        - All clients must be configured to use the the DNS64 server (e.g. through DHCP).
-        - Synthesized AAAA records break DNSSEC.
-        - Connections can't be initiated from the IPv4 side (like NAT masquerading).
-        - Some applications don't support IPv6 or may have IPv4 literals hardcoded.
-        - Users may attempt to enter IPv4 literals instead of using the DNS64 server.
+        - All clients must be configured to use the the DNS64 server (e.g. through DHCP). Clients with statically configured public servers will not work.
+        - Some applications don't support IPv6 or may have IPv4 literals hardcoded. They won't work, period.
+        - Synthesized AAAA records break DNSSEC. I'm not sure if typical clients validate DNSSEC, though.
+        - Connections can't be initiated from the IPv4 side (just like NAT44).
+        - Users may prefer entering IPv4 literals instead of IPv6 literals or using domain names. That's more of an IPv6 "limitation", though.
 - XLAT464:
     - Uses stateful translation in the core and statekess translaton at the edge.
     - Uses a customer-side translator (CLAT) which translated between 1:1 private IPv4 addresses and global IPv6 addresses.
