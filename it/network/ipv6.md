@@ -70,7 +70,7 @@ breadcrumbs:
 - Anycast.
     - Explicitly supported.
     - May use any unicast address.
-    - Treated like unicast except by the last router toward the anycast hosts.
+    - Treated like unicast except by the last routers toward the hosts using the anycast address.
     - Some important addresses:
         - Subnet-router: The first interface ID in every subnet. All routers are required to listen to it. (RFC 4291)
         - Reserved: The last 128 interface IDs in every subnet. (RFC 2526)
