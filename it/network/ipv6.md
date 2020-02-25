@@ -68,15 +68,23 @@ breadcrumbs:
 - 128 bit addresses.
 - No broadcast.
 - Anycast.
-    - Shared unicast address.
-    - Subnet-router anycast address.
+    - Explicitly supported.
+    - May use any unicast address.
+    - Treated like unicast except by the last router toward the anycast hosts.
+    - Some important addresses:
+        - Subnet-router: The first interface ID in every subnet. All routers are required to listen to it. (RFC 4291)
+        - Reserved: The last 128 interface IDs in every subnet. (RFC 2526)
+    - Shared unicast address approach:
+        - An alternative approach to anycast.
+        - Same as for IPv4, based purely on unicast and routing and no explicit anycast mechanisms.
+        - Multiple hosts using is as their unicast address and letting routing protocols route towards the closest one.
 - Multicast:
     - Some scopes:
         - 1: Interface-local.
         - 2: Link-local.
         - 5: Site-local.
         - E: Global.
-    - Some well-known addresses:
+    - Some important addresses:
         - `ff02::1`: All nodes.
         - `ff02::2`: All routers.
         - `ff02:6a`: All snoopers.
