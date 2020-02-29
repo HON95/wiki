@@ -31,7 +31,7 @@ breadcrumbs:
    1. Add a keyboard shortcut for Dolphin (e.g. `Meta+E`) by running `kmenuedit` and changing System, Dolphin.
 1. Setup panels for all screens. Only show tasks for the current screen.
 1. Setup an IPTables firewall:
-    - Purge `ufw firewalld`.
+    - Remove other firewalls: `apt purge ufw firewalld`.
     - Install `iptables iptables-persistent netfilter-persistent`.
     - Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/configs/blob/master/pc/linux/iptables/iptables.sh).
 1. Firefox:
