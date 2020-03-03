@@ -53,14 +53,13 @@ breadcrumbs:
 - Improved QoS.
 - Improved multicast.
 - Removed broadcast.
-- Interfaces can have multiple addresses.
-    - Link-local address.
-    - Addresses from multiple prefixes from different routers.
-    - Internal addresses in addition to global addresses.
-- More efficient routing due to better address aggregation.
+- Interfaces can (and typically do) have multiple addresses.
+    - One link-local address.
+    - One or more addresses for each different advertised prefix from each local router.
+- More efficient routing due to better address aggregation (potentially).
 - More efficient packet processing:
-    - No fragmentation in routers.
     - Streamlined fixed-length header with extension headers.
+    - No fragmentation in routers.
     - No checksum.
 
 ## Addressing
@@ -296,8 +295,21 @@ breadcrumbs:
 
 ### Tanslation Mechanisms
 
-- NAT44 (IPv4 only).
+- IP masquerading aka NAT44 (IPv4 only).
+    - Limitations (apply to many other NAT approaches as well):
+        - Port exhaustion: Some applications use a lot of connections, making port exhaustion a real threat when many users share the same port range.
+        - Violates end-to-end connectivity: A core Internet principle.
+          The external hosts can't address and connect to the internal host.
+          For layer 4 and higher protocols, like UDP and TCP, port forwarding or hole punching must be used to connect to the internal host.
+          Layer 3 protocols, like ICMP, won't be able to traverse the NAT router.
+          Protocols that embed the address in the payload, like IPsec, will generally not work without special handling.
+        - Prevents unique identities: Host can not be identified with unique IP addresses, which may cause multiple problems.
+          Service providers will not be able to identify hosts doing participating in illegal activities, like attacking some server or downloading illegal content.
+          IP blocking (as a result of offensive activities) and throttling will affect all hosts sharing the same public IP address, which may be accidental or intentional DoS.
+          Service providers (like game platforms) may flag and block the IP address when many users are concurrently using the same services, because it thinks it's a bot.
 - Carrier grade NAT (CGN) aka NAT444 (IPv4 only).
+    - Preserves even more IPv4 address space than NAT44.
+    - May be a good approach for providing native IPv4 as a service when most traffic is using IPv6.
 - NAT464:
     - IPv6-only between the customer edge and the privider network.
     - Uses NAT46 and NAT64 at the two sides.
@@ -323,11 +335,12 @@ breadcrumbs:
     - No changes are required in the IPv6 client in order to support it.
     - If the DNS64 server does not find an AAAA record, it synthesizes a AAAA record within the NAT64 prefix.
     - Limitations:
+        - See NAT44 limitations.
         - All clients must be configured to use the the DNS64 server (e.g. through DHCP). Clients with statically configured public servers will not work.
-        - Some applications don't support IPv6 or may have IPv4 literals hardcoded. They won't work, period.
-        - Synthesized AAAA records break DNSSEC. I'm not sure if typical clients validate DNSSEC, though.
-        - Connections can't be initiated from the IPv4 side (just like NAT44).
-        - Users may prefer entering IPv4 literals instead of IPv6 literals or using domain names. That's more of an IPv6 "limitation", though.
+        - All IPv4 addresses must have an associated domain name which must be used in place of the address literal.
+          This may not always be the case, e.g. when people host stuff from home and use the IPv4 address directly.
+        - Some applications just don't support IPv6, or may use IPv4 literals (hardcoded or acquired dynamically). They won't work, period.
+        - Synthesized DNS records break DNSSEC. I'm not sure if typical clients validate DNSSEC, though.
 - XLAT464:
     - Uses stateful translation in the core and statekess translaton at the edge.
     - Uses a customer-side translator (CLAT) which translated between 1:1 private IPv4 addresses and global IPv6 addresses.
