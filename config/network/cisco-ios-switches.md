@@ -27,10 +27,12 @@ breadcrumbs:
 1. Enter configuration mode: `conf t`
 1. Set the hostname and domain name:
    1. `hostname <hostname>`
-   2. `ip domain-name <domain>` (the part after the hostname)
-1. Set the time zone (Norway):
+   1. `ip domain-name <domain>` (the part after the hostname)
+1. Set the time zone (for Norway) and time:
    1. Time zone: `clock timezone UTC 1 0`
-   2. Automatic summer time: `clock summer-time CEST recurring last Sun Mar 2:00 last Sun Oct 3:00`
+   1. Automatic summer time: `clock summer-time CEST recurring last Sun Mar 2:00 last Sun Oct 3:00`
+   1. Set the time (exec mode): `clock set 10:50:00 Oct 26 2006` (example)
+   1. Show the current time (exec mode): `show clock`
 1. Disable unused features/services:
    1. `no service config`
    2. `no service pad`
@@ -73,7 +75,7 @@ breadcrumbs:
     6. (Optional) Shut down: `shutdown`
 1. Configure LAGs (LACP):
     1. Set load balancing method (globally): `port-channel load-balance src-dst-ip`
-    2. Enter LAG config: `interface port-channel<id>`
+    2. Enter LAG config: `interface port-channel <id>`
     3. Set description: `description <description>`
     4. Add interfaces (int config): `channel-group <id> mode active`
 1. Configure ports:
@@ -156,6 +158,7 @@ breadcrumbs:
 1. Configure SNMP traps:
     1. **TODO**
 1. Save the config: `copy run start`
+1. (Optional) Copy the config to a TFTP server: `copy start tftp://<host>/<path>`
 
 ## General Configuration
 
@@ -166,14 +169,26 @@ breadcrumbs:
     - L2 port overview: `sh int status`
     - Port statistics: `sh int <if>`
     - Err-disable: `sh int status err-disabled`
+    - STP blocked ports: `sh span blockedports`
+    - STP blocked VLANS: `sh span summary`
+- Show/search log: `sh log | i <search-text>`
 
 ### Reset the Configuration
 
-1. Delete the config: `erase startup-config`
-1. Delete the VLAN DB: `delete flash:vlan.dat`
 1. Show files: `sh flash:`
-1. Delete `.renamed` files too.
+1. Delete the config files:
+    ```
+    delete flash:config.text
+    delete flash:private-config.text
+    delete flash:vlan.dat
+    ```
+1. Delete any `.backup` and `.renamed` files too.
 1. Reload: `reload`
+    - Not required if the "mode" button was used to reset the device.
+
+#### Without CLI Access
+
+Hold the "mode" button for 30 seconds or until it says in the console that it's restarting and clearing the configuration.
 
 ### Services and Features
 
@@ -194,6 +209,10 @@ breadcrumbs:
 
 - Enable BPDU guard globally to automatically enable it om ports with portfast. Or don't.
 - Only enable loop guard for links which may become uni-directional and which have UDLD enabled.
+- Show err-disabled ports: `sh int status err-disabled`
+- Show blocked ports: `sh span blockedports`
+- Show blocked VLANS: `sh span summary`
+- Show STP neighbors: ``
 
 ## Theory
 
