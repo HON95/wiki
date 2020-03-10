@@ -74,7 +74,7 @@ breadcrumbs:
       - Enable hidepid: `proc /proc proc defaults,hidepid=2,gid=1500 0 0`
     - Run `mount -a` to validate fstab.
     - Restart the system for it to take effect.
-1. Setup SSHd:
+1. Setup SSHD:
     - File: `/etc/ssh/sshd_config`
     - `PermitRootLogin no`
     - `PasswordAuthentication no`
@@ -96,13 +96,24 @@ breadcrumbs:
     - The default journal directory is `/var/log/journal`. By default, it's not automatically created.
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
     - `auto` (the default) is like `persistent` but does not automatically create the log directory.
+1. (Optional) Add swap file:
+    1. Show if swap is already enabled: `swapon --show`
+    1. Allocate the swap file: `fallocate -l <size> /swapfile`
+        - Alternatively, use dd.
+    1. Fix the permissions: `chmod 600 /swapfile`
+    1. Setup the swap file: `mkswap /swapfile`
+    1. Activate the swap file: `swapon /swapfile`
+        - Check: `swapon --show`
+    1. Add it to fstab using this line: `/swapfile swap swap defaults 0 0`
+        - Check: `mount -a`
+    1. (Optional) Reduce swappiness: Add `vm.swappiness = 10` to `/etc/sysctl.conf`.
 
-### Machine-Specic Configuration
+### Machine-Specific Configuration
 
 #### Physical Host
 
 1. **TODO** SSD optimizations.
-1. (Optional) If using SSD, add `vm.swappiness=1` to `/etc/sysctl.conf` to minimize swapping.
+1. (Optional) Reduce swappiness: Add `vm.swappiness = 10` to `/etc/sysctl.conf`.
 1. Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
 1. Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
 1. Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
