@@ -35,7 +35,7 @@ breadcrumbs:
 
 ## Monitoring
 
-### smartmontools (SMART)
+### SMART
 
 See [smartmontools](../../linux-general/applications/#smartmontools).
 
@@ -277,7 +277,7 @@ Some guides recommend using backport repos, but this way avoids that.
 
 ### Usage
 
-- Create a pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
+- Create a simple pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
 - Create an encrypted pool:
   - The procedure is basically the same for encrypted datasets.
   - Children of encrypted datasets can't be unencrypted.
@@ -296,7 +296,7 @@ Some guides recommend using backport repos, but this way avoids that.
 - View activity: `zpool iostat [-v]`
 - Clear transient device errors: `zpool clear <pool> [device]`
 - If a pool is "UNAVAIL", it means it can't be recovered without corrupted data.
-- Replace a device and automatically copy data from the old device or from redundant devices: `zpool replace <pool> <device> [new-device]`
+- Replace a device and automatically copy data from the old device or from redundant devices: `zpool replace <pool> <old-device> <new-device>`
 - Bring a device online or offline: `zpool (online|offline) <pool> <device>`
 - Re-add device that got wiped: Take it offline and then online again.
 
