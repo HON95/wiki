@@ -277,7 +277,7 @@ Some guides recommend using backport repos, but this way avoids that.
 
 ### Usage
 
-- Create a pool: `zpool create -o ashift=<9|12> [level] <drives>+`
+- Create a pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
 - Create an encrypted pool:
   - The procedure is basically the same for encrypted datasets.
   - Children of encrypted datasets can't be unencrypted.

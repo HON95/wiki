@@ -23,10 +23,10 @@ breadcrumbs:
 1. [Install Docker Compose](https://docs.docker.com/compose/install/).
 1. [Install Docker Compose command completion](https://docs.docker.com/compose/completion/).
 1. (Optional) Setup swap limit:
-   - If `docker info` contains `WARNING: No swap limit support`, it's not working and should maybe be fixed.
-   - It incurs a small performance degredation and is optional but recommended.
-   - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
-   - Run `update-grub` and reboot.
+    - If `docker info` contains `WARNING: No swap limit support`, it's not working and should maybe be fixed.
+    - It incurs a small performance degredation and is optional but recommended.
+    - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
+    - Run `update-grub` and reboot.
 
 ### Docker Compose No-Exec Tmp-Dir Fix
 
@@ -51,7 +51,44 @@ export TMPDIR=/var/lib/docker-compose-tmp
 2. Fix the firewall first so it configures itself correctly wrt. firewall blocking.
 3. Check the status with `fail2ban-client status [sshd]`.
 
+## Intel SSD Data Center Tool (isdct)
+
+### Setup
+
+1. Download the ZIP for Linux from Intel's site.
+1. Install the AMD64 deb package.
+
+### Usage
+
+- Command syntax: `isdct <verb> [options] [targets] [properties]`
+    - Target may be either index (as seen in *show*) or serial number.
+- Show all SSDs: `isdct show -intelssd`
+- Show SSD properties: `isdct show -all -intelssd [target]`
+- Show health: `isdct show -sensor`
+- Upgrade firmware: `isdct load -intelssd <target>`
+- Set physical sector size: `isdct set -intelssd <target> PhysicalSectorSize=<512|4096>`
+    - 4k is generally the most optimal choice.
+- Prepare a drive for removal by putting it in standby: `isdct start -intelssd <target> -standby`
+- Show speed: `isdct show -a -intelssd [target] | grep -i speed`
+- Fix SATA 3.0 speed: `isdct set -intelssd <target> PhySpeed=6`
+    - Check before and after either with *isdct* or *smartctl*.
+
+#### Change the Capacity
+
+1. Remove all partitions from the drive.
+1. Remove all data: `isdct delete -intelssd <target>`
+1. (Optional) Set the physical sector size: `isdct set -intelssd <target> PhysicalSectorSize=<512|4096>`
+1. Set the new size: `isdct set -intelssd <target> MaximumLBA=<size>`
+    - If this fails, run `isdct set -system EnableLSIAdapter=true`.
+      It will add another "version" of the SSDs, which you can try again with.
+    - The size can be specified either as "native", the LBA count, percent (`x%`) or in gigabytes (`xGB`).
+      Use "native" unless you have a reason not to.
+1. Prepare it for removal: `isdct start -intelssd <target> -standby`
+1. Reconnect the drives or restart the system.
+
 ## ISC DHCP Server and radvd
+
+**FIXME**
 
 ### Notes
 
@@ -61,19 +98,19 @@ export TMPDIR=/var/lib/docker-compose-tmp
 
 1. Install and enable `isc-dhcp-server` and `radvd`.
 2. Add config files.
-   1. DHCPv4: `/etc/dhcp/dhcpd.conf`
-   2. DHCPv6 (optional): `/etc/dhcp/dhcpd6.conf`
-   3. radvd: `/etc/radvd.conf`
+    1. DHCPv4: `/etc/dhcp/dhcpd.conf`
+    2. DHCPv6 (optional): `/etc/dhcp/dhcpd6.conf`
+    3. radvd: `/etc/radvd.conf`
 3. If using systemd-networkd, fix wrong startup order:
-   - **TODO**
+    - **TODO**
 4. IPv4:
-   1. Configure DHCPv4.
+    1. Configure DHCPv4.
 5. IPv6:
-   1. For SLAAC, configure only radvd.
-   2. Dor DHCPv6, configure radvd in stateful mode and DHCPv6.
+    1. For SLAAC, configure only radvd.
+    2. For DHCPv6, configure radvd in stateful mode and DHCPv6.
 6. (Optional) Setup interfaces to listen to:
-   - This may mute the "No subnet declaration for ..." verbose error on some distros.
-   - In `/etc/default/isc-dhcp-server`, add the interfaces (space-separated) to `INTERFACESv4` and `INTERFACESv6`.
+    - This *may* (?) mute the "No subnet declaration for ..." verbose error on some distros.
+    - In `/etc/default/isc-dhcp-server`, add the interfaces (space-separated) to `INTERFACESv4` and `INTERFACESv6`.
 
 ## ntopng
 
@@ -109,33 +146,33 @@ export TMPDIR=/var/lib/docker-compose-tmp
 #### Setup
 
 1. Install: `postfix libsasl2-modules mailutils`
-   - If asked, choose to configure Postfix as a satellite system.
+    - If asked, choose to configure Postfix as a satellite system.
 2. Set the FQDN:
-   1. Update it in `/etc/postfix/main.cf`.
-   1. Link mailname to hostname (must be FQDN): `ln -sf /etc/hostname /etc/mailname`
+    1. Update it in `/etc/postfix/main.cf`.
+    1. Link mailname to hostname (must be FQDN): `ln -sf /etc/hostname /etc/mailname`
 3. Update the root alias in `/etc/aliases` and run `newaliases`.
 4. Update the `main.cf` config (example not provided here).
-   1. Only listen to localhost: Set “inet\_interfaces = loopback-only”
-   2. Disable relaying: Set “mynetworks = 127.0.0.0/8 \[::ffff:127.0.0.0\]/104 \[::1\]/128”
-   3. Anonymize banner: “smtpd\_banner = $myhostname ESMTP”
+    1. Only listen to localhost: Set “inet\_interfaces = loopback-only”
+    2. Disable relaying: Set “mynetworks = 127.0.0.0/8 \[::ffff:127.0.0.0\]/104 \[::1\]/128”
+    3. Anonymize banner: “smtpd\_banner = $myhostname ESMTP”
 5. Relay guides:
-   1. Mailgun:
+    1. Mailgun:
       1. [How To Start Sending Email (Mailgun)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
       2. [How to Set Up a Mail Relay with Postfix and Mailgun on Ubuntu 16.04 (](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)[DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)
-   2. SendGrid:
+    2. SendGrid:
       1. [Postfix (SendGrid)](https://sendgrid.com/docs/for-developers/sending-email/postfix/)
       2. Use API-key with permission to send mail only.
       3. The API-key username is `apikey`.
 6. Setup address rewrite rules:
-   - For fixing the `To` and `From` fields, which is typically from root to root.
-   - Add the rewrite config (see example below).
-   - Reference the config using `smtp_header_checks` in the main config.
-   - Test: `postmap -fq "From: root@<FQDN>" regexp:smtp_header_checks`
+    - For fixing the `To` and `From` fields, which is typically from root to root.
+    - Add the rewrite config (see example below).
+    - Reference the config using `smtp_header_checks` in the main config.
+    - Test: `postmap -fq "From: root@<FQDN>" regexp:smtp_header_checks`
 7. Setup relay credentials (SASL):
-   1. Credentials file: `/etc/postfix/sasl_passwd`
-   2. Add your credentials using format: `[relay_domain]:port user@domain:password`
-   3. Run: `postmap sasl_passwd`
-   4. Fix permissions: `chmod 600 sasl_passwd*`
+    1. Credentials file: `/etc/postfix/sasl_passwd`
+    2. Add your credentials using format: `[relay_domain]:port user@domain:password`
+    3. Run: `postmap sasl_passwd`
+    4. Fix permissions: `chmod 600 sasl_passwd*`
 8. Restart `postfix`.
 9. Try sending an email: `echo "Test from $(hostname) at time $(date)." | mail -s "Test" root`
 
@@ -202,16 +239,16 @@ TFTP_OPTIONS="--create --secure"
 2. Setup the config: `/etc/unbound/unbound.conf`
 3. Add hostname variants to `/etc/hosts`.
 4. Configure it in `/etc/resolv.conf`:
-   1. `nameserver 127.0.0.1`
-   2. `search <domain>`
-   3. `domain <domain>`
+    1. `nameserver 127.0.0.1`
+    2. `search <domain>`
+    3. `domain <domain>`
 5. Configure it in `/etc/systemd/resolved.conf`:
-   1. `DNSStubListener=no`
-   2. `DNS=127.0.0.1`
-   3. Restart `systemd-resolved`.
+    1. `DNSStubListener=no`
+    2. `DNS=127.0.0.1`
+    3. Restart `systemd-resolved`.
 6. Test DNSSEC:
-   1. `drill sigfail.verteiltesysteme.net` should give an rcode of `SERVFAIL`.
-   2. `drill sigok.verteiltesysteme.net` should give an rcode of `NOERROR`.
+    1. `drill sigfail.verteiltesysteme.net` should give an rcode of `SERVFAIL`.
+    2. `drill sigok.verteiltesysteme.net` should give an rcode of `NOERROR`.
 7. Make sure dns-root-data is updating root hints in file `/usr/share/dns/root.hints`.
 
 ### Troubleshooting
