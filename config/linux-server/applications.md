@@ -13,6 +13,10 @@ breadcrumbs:
 
 - Debian 10 Buster
 
+## Ceph
+
+See [Storage: Ceph](../storage/#ceph).
+
 ## Docker & Docker Compose
 
 **TODO**
@@ -272,5 +276,9 @@ Using the unofficial Docker image by jacobalberty.
 1. Add a Docker Compose file. See [docker-compose.yml](https://github.com/HON95/misc-configs/blob/master/linux-server/unifi/docker-compose.yml).
     - Use host networking mode for L2 adoption to work (if you're not using L3 or SSH adoption).
 1. Start the container, open the webpage and follow the wizard.
+
+## ZFS
+
+See [Storage: ZFS](../storage/#zfs).
 
 {% include footer.md %}

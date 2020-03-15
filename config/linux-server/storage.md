@@ -6,32 +6,50 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-### Using
-{:.no_toc}
+## Guidelines and Miscellaneous Notes
 
-- Debian 10 Buster
-
-## Notes
-
-- Storage typically uses base-10 prefixes like speed but unlike memory.
-- Higher-end SSDs provide power loss protection which generally consists of an on-board capacitor used to flush the device cache in case of power loss.
-  Typically DC-grade devices do but cheap consumer devices to not.
-
-## Guidelines
-- SSDs can be overprovisioned in order to improve performance by leaving unused space the SSD can use internally.
-  Factories typically reserve some minimum size appropriate to the drive, but users can overprovision further by leaving space unallocated/unpartitioned at the end of the drive.
-  It's typically not needed to overprovision newer SSDs.
-- After receiving a new drive or after transporting an existing drive, you may want to run a SMART conveyance test,
+- While file/block sizes typically use base-2 prefixes, storage mediums typically use base-10 prefixes.
+- Partitioning formats:
+    - Master Boot Record (MBR):
+        - From DOS.
+        - Supports only 4 physical partitions, but one (and only one) physical partition may be used as an extended partition which contains logical partitions.
+        - Supports disks up to 2TB only.
+    - GUID Partition Table (GPT):
+        - Newer than MBR, part of the UEFI specification.
+        - Supports disks over 2TB.
+        - Some OSes requires EFI support in order to boot from GPT drives.
+- Addressing modes: Cylinder, head and sector (CHS) (old and HDD-based) and logical block addressing (LBA) (new and hardware agnostic).
+- After receiving a new drive or after transporting an existing drive, you should run a SMART conveyance test,
   which is similar to a short test but targeted at this scenario.
   See [smartmontools](../../linux-general/applications/#smartmontools).
+- Alignment and block sizes:
+    - Using a logical block size smaller than the physical one or misaligning logical and physical blocks will cause reduced performance, mainly for small writes.
+    - Typical options:
+        - 512: The original, still used by some drives.
+        - 4096: Aka "Advanced Format" or "AF". Newer than 512.
+        - Emulated 512: Actually 4096 but emulating 512 for compatibility reasons. Problematic when automatically selecting block size.
+    - Some enterprise SSDs let you to set the physical block size.
+
+### SSDs
+
+- Overprovisioning: SSDs can be overprovisioned by leaving unallocated/unpartitioned space at the end in order to improve wear leveling and performance, handled internally by the SSD.
+  They're already overprovisioned internally, meaning newer SSDs generally don't *need* to be manually overprovisioned.
+  Some enterprise SSDs allow the user specify how much overprovisioned it is.
+- DRAM cache: Mid-to-high-end SSDs typically use a volatile DRAM cache, which significantly improves performance.
+- Power loss protection:
+  Higher-end SSDs typically provide power loss protection, which generally consists of an on-board capacitor used to flush the device cache in case of power loss.
+  Typically DC-grade devices contain this mechanism but cheap consumer devices do not.
 
 ### RAID
 
-- HDDs: RAID 1 or RAID 6/7. Never RAID 5. RAID 10 for high load (especially IO).
-- SSDs: RAID 5 if three or more and RAID 1 of only two. RAID 10 for extreme load (especially IO).
+- With HDDs: Use RAID 1 if only two and RAID 6/7 if three or more. Never RAID 5, it's too risky.
+- With SSDs: Use RAID 1 if only two and RAID 5 if three or more.
+- Use RAID 10 for high/extreme load (expecially IOPS). Typically for HDDs, as SSDs are already pretty "fast".
 - For lots of devices, create stripes of RAIDs where each raid handles redundancy internally (e.g. RAID 10 and 60).
 - When creating HDD arrays, try to use drives from different batches.
   If one if the batches has some kind of manufacturing fault, shipping damage etc., you don't want the entire array to die all at once.
+- After replacing a bad drive, the resilvering of the new drive typically puts a high load on the other drives.
+  It's not uncommon for other drives to fail during this process, which is why you never use RAID 5 with HDDs.
 
 ## Monitoring
 
@@ -39,9 +57,7 @@ breadcrumbs:
 
 See [smartmontools](../../linux-general/applications/#smartmontools).
 
-#### Some HDD SMART Attributes
-
-These should stay near 0 and should not be rising. If they are, it may indicate the drive is about to commit seppuku.
+For HDDs, the attributes below should stay near 0 and should not be rising. If they are, it may indicate the drive is about to commit seppuku.
 
 - 005: Reallocated Sectors Count
 - 187: Reported Uncorrectable Errors
