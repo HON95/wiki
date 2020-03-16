@@ -13,7 +13,9 @@ breadcrumbs:
 
 ## Initial Setup
 
-**TODO**
+**TODO** Initial setup
+
+**TODO** Notes from Google Docs
 
 1. See [Debian Server: Initial Setup](../debian-server/#initial-setup).
     - **TODO**: Differences.
