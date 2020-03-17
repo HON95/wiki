@@ -110,6 +110,15 @@ export TMPDIR=/var/lib/docker-compose-tmp
 1. If using systemd-networkd, fix wrong startup order:
     - **TODO**
 
+### Configuration
+
+- Always specify the `authorative` statement in subnet declarations so that the server will reply with DHCPNAK for misconfigured clients.
+  This may significantly reduce reconfiguration delay when a client moves between subnets.
+- For `range6`, prefer using CIDR notation.
+  If using range notation, try to align the start and end on a CIDR block to avoid excessive memory usage.
+- DHCPv6 uses lease pools of 9973 entries, so using range sizes below this number may be preferable as a very general reference.
+  `/116` gives 8191 addresses.
+
 ## ntopng
 
 ### Setup
