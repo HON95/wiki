@@ -90,31 +90,25 @@ export TMPDIR=/var/lib/docker-compose-tmp
 1. Prepare it for removal: `isdct start -intelssd <target> -standby`
 1. Reconnect the drives or restart the system.
 
-## ISC DHCP Server and radvd
-
-**FIXME**
+## ISC DHCP Server
 
 ### Notes
 
-- DHCPv4 uses raw sockets, so it bypasses the firewall (i.e. no firewall rules are needed). DHCPv6, however, does not. This includes the respective clients as well.
+- DHCPv4 uses raw sockets, so it bypasses the firewall (i.e. no firewall rules are needed).
+  DHCPv6, however, does not. This includes the respective clients as well.
+- The DHCPv6 server is typically used with [radvd](#Router Advertisement Daemon (radvd)) for router advertisements.
 
 ### Setup
 
-1. Install and enable `isc-dhcp-server` and `radvd`.
-2. Add config files.
-    1. DHCPv4: `/etc/dhcp/dhcpd.conf`
-    2. DHCPv6 (optional): `/etc/dhcp/dhcpd6.conf`
-    3. radvd: `/etc/radvd.conf`
-3. If using systemd-networkd, fix wrong startup order:
-    - **TODO**
-4. IPv4:
-    1. Configure DHCPv4.
-5. IPv6:
-    1. For SLAAC, configure only radvd.
-    2. For DHCPv6, configure radvd in stateful mode and DHCPv6.
-6. (Optional) Setup interfaces to listen to:
+1. Install and enable `isc-dhcp-server`.
+1. Setup config files:
+    - DHCPv4: `/etc/dhcp/dhcpd.conf`
+    - DHCPv6 (optional): `/etc/dhcp/dhcpd6.conf`
+1. (Optional) Setup interfaces to listen to:
     - This *may* (?) mute the "No subnet declaration for ..." verbose error on some distros.
     - In `/etc/default/isc-dhcp-server`, add the interfaces (space-separated) to `INTERFACESv4` and `INTERFACESv6`.
+1. If using systemd-networkd, fix wrong startup order:
+    - **TODO**
 
 ## ntopng
 
@@ -210,9 +204,12 @@ export TMPDIR=/var/lib/docker-compose-tmp
 - It uses a ton of storage, between 20 and 30 GB last I checked. If you useless, the installer will fail with some useless error message.
 - Use app ID 730 in Steam Game Server Account Manager, regardless of which app ID the server was created with. If you use e.g. 740, the server will not be able to log into Steam.
 
-## radvd
+## Router Advertisement Daemon (radvd)
 
-See [ISC DHCP Server and radvd](#isc-dhcp-server-and-radvd).
+### Setup
+
+1. Install and enable `radvd`.
+1. Setup config file: `/etc/radvd.conf`
 
 ## TFTP-HPA
 
