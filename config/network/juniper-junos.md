@@ -6,6 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+**TODO** Reorganize and add missing basic stuff.
+
 ### Related Pages
 {:.no_toc}
 
@@ -101,7 +103,7 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 ### Booting
 
 The devices have two partitions; the primary and the backup.
-One of them will be designated as active and that will not be reset when the device is rebooted.
+One of them will be designated as active and that choice will be remembered across reboots.
 When the active partition is damaged, the device will boot into the other partition.
 When the backup partition is the active partition, an alarm will be set and a banner shown.
 
@@ -112,8 +114,10 @@ Change active partition and reboot: `request system reboot slice alternate media
 The devices should be shut down gracefully instead of just pulling the power.
 This will prevent corrupting the file system.
 
-- Shell: `shutdown -h now`
+- Shell: `shutdown -h now` or `halt`
 - Op mode: `request system <halt|power-off> [local|all-members|member <member-id>]`
+
+Wait for the "The operating system has halted." text before pulling the power.
 
 ### The Configuration
 
