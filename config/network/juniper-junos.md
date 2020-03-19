@@ -117,7 +117,7 @@ This will prevent corrupting the file system.
 - Shell: `shutdown -h now` or `halt`
 - Op mode: `request system <halt|power-off> [local|all-members|member <member-id>]`
 
-Wait for the "The operating system has halted." text before pulling the power, so that system processess are stopped and disks are synchronized.
+Wait for the "The operating system has halted." text before pulling the power, so that system processess are stopped and disks are synchronized. The system LED turning off and the LCD saying "HALTING..." does *not* mean that the halting process is finished yet.
 
 ### The Configuration
 
