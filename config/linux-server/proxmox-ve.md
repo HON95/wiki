@@ -69,7 +69,8 @@ See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability
 
 ## Ceph
 
-See: [Storage: Ceph](../storage/#ceph)
+See [Storage: Ceph](../storage/#ceph) for general notes.
+The notes below are PVE-specific.
 
 ### Notes
 

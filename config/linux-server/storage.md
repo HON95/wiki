@@ -29,6 +29,9 @@ breadcrumbs:
         - 4096: Aka "Advanced Format" or "AF". Newer than 512.
         - Emulated 512: Actually 4096 but emulating 512 for compatibility reasons. Problematic when automatically selecting block size.
     - Some enterprise SSDs let you to set the physical block size.
+- Hard drives often experience performance degredation before failing completely.
+  This may lead to high latencies, reduced bandwidth and possibly read/write errors.
+  High latencies and low bandwidth is hard to detect automatically and may result in reduced performance for the whole system.
 
 ### SSDs
 
