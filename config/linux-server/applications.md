@@ -104,9 +104,6 @@ export TMPDIR=/var/lib/docker-compose-tmp
 1. Setup config files:
     - DHCPv4: `/etc/dhcp/dhcpd.conf`
     - DHCPv6 (optional): `/etc/dhcp/dhcpd6.conf`
-1. (Optional) Setup interfaces to listen to:
-    - This *may* (?) mute the "No subnet declaration for ..." verbose error on some distros.
-    - In `/etc/default/isc-dhcp-server`, add the interfaces (space-separated) to `INTERFACESv4` and `INTERFACESv6`.
 1. If using systemd-networkd, fix wrong startup order:
     - **TODO**
 
