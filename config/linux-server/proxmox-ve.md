@@ -13,9 +13,11 @@ breadcrumbs:
 
 ## Initial Setup
 
-**TODO** Initial setup
+**TODO:**
 
-**TODO** Notes from Google Docs
+- Initial setup
+- Notes from Google Docs
+- Does `localhost` resolve to `::1` too?
 
 1. See [Debian Server: Initial Setup](../debian-server/#initial-setup).
     - **TODO**: Differences.
