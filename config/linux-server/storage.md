@@ -329,7 +329,7 @@ Some guides recommend using backport repos, but this way avoids that.
     - Mount status: `zfs get mountpoint` and `zfs get mounted`.
 - Fix automatic unlock when mounting at boot time:
     1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
-    1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a` (add `-l`).
+    1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a` (add `-l`), so that it loads encryption keys.
     1. Reboot and test. It may fail due to dependency/boot order stuff.
 
 ### Best Practices and Suggestions
