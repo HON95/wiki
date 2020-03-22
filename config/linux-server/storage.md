@@ -269,6 +269,13 @@ Typically an early indicator of faulty hardware, so take note of which disk it i
 - Adaptive Replacement Cache (ARC)
 - Dataset
 
+#### Encryption
+
+- ZoL v0.8.0 and newer supports native encryption of pools and datasets. This encrypts all data except some metadata like pool/dataset structure, dataset names and file sizes.
+- Datasets can be scrubbed, resilvered, renamed and deleted without unlocking them first.
+- Datasets will by default inherit encryption and the encryption key (the "encryption root") from the parent pool/dataset.
+- The encryption suite can't be changed after creation, but the keyformat can.
+
 ### Setup
 
 #### Installation
@@ -283,35 +290,25 @@ Some guides recommend using backport repos, but this way avoids that.
 
 #### Configuration
 
-1. Make the import service wait for iSCSI:
+1. (Optional) Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
+    - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
+    - This is generally not required, ZFS should happily yield RAM to other processes that need it.
+1. Check that the cron scrub script exists.
+    - Typical location: `/etc/cron.d/zfsutils-linux`
+    - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
+1. (Maybe required) Make the import service wait for iSCSI:
     1. **TODO** Test if this is actually working.
     1. `cp /lib/systemd/system/zfs-import-cache.zervice /etc/systemd/system`
     1. Add `After=iscsid.service` in `/etc/systemd/system/zfs-import-cache.service`.
     1. `systemctl enable zfs-import-cache.service`
-1. Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
-    - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
-1. Check that the cron scrub script exists.
-    - Typical location: `/etc/cron.d/zfsutils-linux`
-    - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
 
 ### Usage
 
 - Create a simple pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
-- Create an encrypted pool:
-  - The procedure is basically the same for encrypted datasets.
-  - Children of encrypted datasets can't be unencrypted.
-  - The encryption suite can't be changed after creation, but the keyformat can.
-  - Using a password: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
-  - Using a raw key:
-    - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
-    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
-    - Automatically unlock at boot time: Add and enable [zfs-load-keys.service](https://github.com/HON95/misc-configs/blob/master/linux-server/zfs/zfs-load-keys.service).
-  - Reboot and test.
-  - Check the key status with `zfs get keystatus`.
 - Send and receive snapshots:
-  - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
-  - Uses STDOUT.
-  - Use `zfs get receive_resume_token` and `zfs send -t <token>` to resume an interrupted transfer.
+    - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
+    - Uses STDOUT.
+    - Use `zfs get receive_resume_token` and `zfs send -t <token>` to resume an interrupted transfer.
 - View activity: `zpool iostat [-v]`
 - Clear transient device errors: `zpool clear <pool> [device]`
 - If a pool is "UNAVAIL", it means it can't be recovered without corrupted data.
@@ -319,15 +316,35 @@ Some guides recommend using backport repos, but this way avoids that.
 - Bring a device online or offline: `zpool (online|offline) <pool> <device>`
 - Re-add device that got wiped: Take it offline and then online again.
 
+#### Encryption
+
+- Create a password encrypted pool: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
+- Create a raw key encrypted pool:
+    - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
+    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
+- Encrypt received dataset: `zfs send <dataset> | zfs recv -o encryption=aes-128-gcm -o keyformat=raw -o keylocation=file:///root/keys/zfs/<tank> <dataset>`
+- Check stuff:
+    - Encryption root: `zfs get encryptionroot`
+    - Key status: `zfs get keystatus`. `unavailable` means locked and `-` means not encrypted.
+    - Mount status: `zfs get mountpoint` and `zfs get mounted`.
+- (Optional) Automatically unlock at boot time:
+    - (Alternative A) Load keys for all pools:
+        - Download [zfs-load-keys.service](https://github.com/HON95/configs/blob/master/server/linux/zfs/zfs-load-keys.service) to `/etc/systemd/system/`.
+        - Enable it: `systemctl enable zfs-load-keys.service`
+    - (Alternative B) Load keys for specific pools:
+        - Download [zfs-load-key@.service](https://github.com/HON95/configs/blob/master/server/linux/zfs/zfs-load-key@.service) to `/etc/systemd/system/`.
+        - Enable it: `systemctl enable zfs-load-key@<pool>.service`
+    - Reboot and test. It may fail due to dependency/boot order stuff.
+
 ### Best Practices and Suggestions
 
 - As far as possible, use raw disks and HBA disk controllers (or RAID controllers in IT mode).
 - Always use `/etc/disk/by-id/X`, not `/dev/sdX`.
 - Always manually set the correct ashift for pools.
-  - Should be the log-2 of the physical block/sector size of the device.
-  - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).
-  - Check the physical block size with `smartctl -i <dev>`.
-  - Keep in mind that some 4kB disks emulate/report 512B. They should be used as 4kB disks.
+    - Should be the log-2 of the physical block/sector size of the device.
+    - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).
+    - Check the physical block size with `smartctl -i <dev>`.
+    - Keep in mind that some 4kB disks emulate/report 512B. They should be used as 4kB disks.
 - Always enable compression.
     - Generally `lz4`. Maybe `zstd` when implemented. Maybe `gzip-9` for archiving.
     - For uncompressable data, worst case it that it does nothing (i.e. no loss for enabling it).
