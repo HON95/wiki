@@ -328,7 +328,7 @@ Some guides recommend using backport repos, but this way avoids that.
     - Key status: `zfs get keystatus`. `unavailable` means locked and `-` means not encrypted.
     - Mount status: `zfs get mountpoint` and `zfs get mounted`.
 - Fix automatic unlock when mounting at boot time:
-    1. Copy `` to ``.
+    1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
     1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a` (add `-l`).
     1. Reboot and test. It may fail due to dependency/boot order stuff.
 
