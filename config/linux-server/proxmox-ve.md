@@ -17,7 +17,7 @@ breadcrumbs:
 
 - Initial setup
 - Notes from Google Docs
-- Does `localhost` resolve to `::1` too?
+- `localhost` must resolve to both 127.0.0.1 and ::1 and the domain name must resolve to the mgmt. interface IP addresses (v4+v6).
 
 1. See [Debian Server: Initial Setup](../debian-server/#initial-setup).
     - **TODO**: Differences.
