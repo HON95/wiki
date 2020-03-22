@@ -296,11 +296,6 @@ Some guides recommend using backport repos, but this way avoids that.
 1. Check that the cron scrub script exists.
     - Typical location: `/etc/cron.d/zfsutils-linux`
     - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
-1. (Maybe required) Make the import service wait for iSCSI:
-    1. **TODO** Test if this is actually working.
-    1. `cp /lib/systemd/system/zfs-import-cache.zervice /etc/systemd/system`
-    1. Add `After=iscsid.service` in `/etc/systemd/system/zfs-import-cache.service`.
-    1. `systemctl enable zfs-import-cache.service`
 
 ### Usage
 
