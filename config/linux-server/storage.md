@@ -327,14 +327,10 @@ Some guides recommend using backport repos, but this way avoids that.
     - Encryption root: `zfs get encryptionroot`
     - Key status: `zfs get keystatus`. `unavailable` means locked and `-` means not encrypted.
     - Mount status: `zfs get mountpoint` and `zfs get mounted`.
-- (Optional) Automatically unlock at boot time:
-    - (Alternative A) Load keys for all pools:
-        - Download [zfs-load-keys.service](https://github.com/HON95/configs/blob/master/server/linux/zfs/zfs-load-keys.service) to `/etc/systemd/system/`.
-        - Enable it: `systemctl enable zfs-load-keys.service`
-    - (Alternative B) Load keys for specific pools:
-        - Download [zfs-load-key@.service](https://github.com/HON95/configs/blob/master/server/linux/zfs/zfs-load-key@.service) to `/etc/systemd/system/`.
-        - Enable it: `systemctl enable zfs-load-key@<pool>.service`
-    - Reboot and test. It may fail due to dependency/boot order stuff.
+- Fix automatic unlock when mounting at boot time:
+    1. Copy `` to ``.
+    1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a` (add `-l`).
+    1. Reboot and test. It may fail due to dependency/boot order stuff.
 
 ### Best Practices and Suggestions
 
