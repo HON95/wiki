@@ -300,11 +300,19 @@ Some guides recommend using backport repos, but this way avoids that.
 ### Usage
 
 - Create a simple pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
+- Create and destroy snapshots:
+    - Create: `zfs snapshot [-r] <dataset>@<snapshot>` (`-r` for "recursive")
+    - Destroy: `zfs destroy [-r] <dataset>@<snapshot>` (Careful!)
 - Send and receive snapshots:
-    - `zfs send [-R] <snapshot>` and `zfs recv <snapshot>`.
-    - Uses STDOUT.
-    - Use `zfs get receive_resume_token` and `zfs send -t <token>` to resume an interrupted transfer.
+    - Send to STDOUT: `zfs send [-R] <snapshot>` (`-R` for "recursive")
+    - Receive from STDIN: `zfs recv <snapshot>`
+    - Resume interrupted transfer: Use `zfs get receive_resume_token` and `zfs send -t <token>`.
+    - Consider running it in a screen session or something to avoid interruption.
+    - If you want transfer information (throughput), pipe it through `pv`.
 - View activity: `zpool iostat [-v]`
+
+#### Error Handling and Replacement
+
 - Clear transient device errors: `zpool clear <pool> [device]`
 - If a pool is "UNAVAIL", it means it can't be recovered without corrupted data.
 - Replace a device and automatically copy data from the old device or from redundant devices: `zpool replace <pool> <old-device> <new-device>`
@@ -313,11 +321,6 @@ Some guides recommend using backport repos, but this way avoids that.
 
 #### Encryption
 
-- Create a password encrypted pool: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
-- Create a raw key encrypted pool:
-    - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
-    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
-- Encrypt received dataset: `zfs send <dataset> | zfs recv -o encryption=aes-128-gcm -o keyformat=raw -o keylocation=file:///root/keys/zfs/<tank> <dataset>`
 - Check stuff:
     - Encryption root: `zfs get encryptionroot`
     - Key status: `zfs get keystatus`. `unavailable` means locked and `-` means not encrypted.
@@ -326,6 +329,18 @@ Some guides recommend using backport repos, but this way avoids that.
     1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
     1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a` (add `-l`), so that it loads encryption keys.
     1. Reboot and test. It may fail due to dependency/boot order stuff.
+- Create a password encrypted pool: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
+- Create a raw key encrypted pool:
+    - Generate the key: `dd if=/dev/random of=/root/keys/zfs/<tank> bs=32 count=1`
+    - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> ...`
+- Encrypt an existing dataset by sending and receiving:
+    1. Rename the old dataset: `zfs rename <dataset> <old-dataset>`
+    1. Snapshot the old dataset: `zfs snapshot -r <dataset>@<snapshot>`
+    1. Command: `zfs send [-R] <old-dataset> | zfs recv -o encryption=aes-128-gcm -o keyformat=raw -o keylocation=file:///root/keys/zfs/<tank> <new-dataset>`
+    1. Test the new dataset.
+    1. Delete the snapshots and the old dataset.
+    - All child datasets will be encrypted too (if `-r` and `-R` were used).
+    - The new dataset will become its own encryption root instead of inheriting from any parent dataset/pool.
 
 ### Best Practices and Suggestions
 
