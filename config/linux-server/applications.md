@@ -272,9 +272,20 @@ TFTP_OPTIONS="--create --secure"
 
 ### Setup
 
-1. See:
-    - [UniFi: How to Install and Update via APT on Debian or Ubuntu](https://help.ubnt.com/hc/en-us/articles/220066768-UniFi-How-to-Install-and-Update-via-APT-on-Debian-or-Ubuntu)
-    - [UniFi Community: UniFi Installation Scripts](https://community.ui.com/questions/UniFi-Installation-Scripts-or-UniFi-Easy-Update-Script-or-UniFi-Lets-Encrypt-or-Ubuntu-16-04-18-04-/ccbc7530-dd61-40a7-82ec-22b17f027776)
+**TODO** This is just horrible, just use some unofficial Docker image instead.
+
+1. Install MongoDB:
+    - See: [MongoDB: Install MongoDB Community Edition on Debian](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/) or (MongoDB: Install MongoDB on Debian (v3.0))[https://docs.mongodb.com/v3.0/tutorial/install-mongodb-on-debian/]
+    - Download and install [libssl1.0.0(Debian Jessie)](https://packages.debian.org/jessie/libssl1.0.0).
+    - Install for Debian Jessie and MongoDB version 3.4.
+    - Enable and start `mongod`.
+1. Install OpenJDK 8.
+    - Somehow ...
+1. Install UniFi:
+    - See: [UniFi: How to Install and Update via APT on Debian or Ubuntu](https://help.ubnt.com/hc/en-us/articles/220066768-UniFi-How-to-Install-and-Update-via-APT-on-Debian-or-Ubuntu)
+1. Watch logs:
+    - UniFi: `/usr/lib/unifi/logs/server.log`
+    - MongoDB: `/usr/lib/unifi/logs/mongod.log`
 1. Allow the following incoming ports (see [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used)):
     - UDP 3478: STUN
     - TCP 8080: Device-controller communication (for devices)
