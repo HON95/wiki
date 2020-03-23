@@ -61,11 +61,6 @@ breadcrumbs:
     - Install extra tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
     - Install per-user tmpdirs: `libpam-tmpdir`
     - Install Postfix: Install `postfix` and select "satellite system" if the system will only send email.
-    - Install extra firmware:
-      - Install `firmware-linux` or `firmware-linux-free` for some common firmware and microcode.
-      - APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
-      - If it asked to install non-free firmware in the initial installation installation, try to install it now.
-      - Install firmware from other sources (e.g. for some Intel NICs).
 1. Add mount options:
     - Add PID monitor group: `groupadd -g 1500 pidmonitor`
     - Add your personal user to the PID monitor group: `usermod -aG pidmonitor <user>`
@@ -112,8 +107,13 @@ breadcrumbs:
 
 #### Physical Host
 
-1. **TODO** SSD optimizations.
+1. **TODO** SSD optimizations. (Not super important any more.)
 1. (Optional) Reduce swappiness: Add `vm.swappiness = 10` to `/etc/sysctl.conf`.
+1. Install extra firmware:
+    - Install `firmware-linux` or `firmware-linux-free` for some common firmware and microcode.
+    - APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
+    - If it asked to install non-free firmware in the initial installation installation, try to install it now.
+    - Install firmware from other sources (e.g. for some Intel NICs).
 1. Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
 1. Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
 1. Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
