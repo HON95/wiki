@@ -296,6 +296,8 @@ Some guides recommend using backport repos, but this way avoids that.
 1. Check that the cron scrub script exists.
     - Typical location: `/etc/cron.d/zfsutils-linux`
     - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
+1. Check that ZED is set up to send emails.
+    - In `/etc/zfs/zed.d/zed.rc`, make sure `ZED_EMAIL_ADDR="root"` is uncommented.
 
 ### Usage
 
