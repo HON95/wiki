@@ -82,7 +82,7 @@ breadcrumbs:
     - Add it to the sudo group (`usermod -aG sudo <user>`).
     - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file). (Hint: Get `https://github.com/<user>.keys` and filter the results.)
     - Try logging in remotely and gain root access through sudo.
-1. (Optional) Prevent root login:
+1. (Not recommended) Prevent root login:
     - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
     - Add a personal user first.
     - Check that the password field (the second field) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
