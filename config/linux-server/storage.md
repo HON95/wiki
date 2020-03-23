@@ -390,14 +390,6 @@ Some guides recommend using backport repos, but this way avoids that.
     - Don't use PostgreSQL checksums or compression.
     - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
 
-### Troubleshooting
-
-**TODO** Test if working. It may have worked just by accident.
-
-- `zfs-import-cache.service` fails to import pools because disks are not found:
-  - Set `options scsi_mod scan=sync` in `/etc/modprobe.d/zfs.conf` to wait for iSCSI disks to come online before ZFS starts.
-  - Add `After=iscsid.service` to `zfs-import-cache.service`
-
 ### Extra Notes
 
 - ECC memory is recommended but not required. It does not affect data corruption on disk.
