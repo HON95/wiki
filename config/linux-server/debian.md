@@ -102,6 +102,7 @@ breadcrumbs:
     1. Add it to fstab using this line: `/swapfile swap swap defaults 0 0`
         - Check: `mount -a`
     1. (Optional) Reduce swappiness: Add `vm.swappiness = 10` to `/etc/sysctl.conf`.
+1. (Recommended) Postfix mail relay: **TODO**
 
 ### Machine-Specific Configuration
 
@@ -161,30 +162,34 @@ breadcrumbs:
 
 ### Extra
 
+Everything here is optional.
+
 1. Extra package security:
     - Install `apt-listbugs` and `apt-listchanges` and run them before upgrading a package.
     - Install `needrestart` and run it after upgrading.
     - Install `debsums` and run it after upgrading to check deb checksums.
     - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
-1. Postfix mail relay: **TODO**
 1. Install `fail2ban`.
+    - Recommended for public-facing servers.
     - Fix the firewall first so it configures itself correctly wrt. which firewall is used.
     - Check the status with `fail2ban-client status [sshd]`.
     - See [Applications](applications.md#fail-2-ban) for more info.
-1. Google Authenticator 2FA: **TODO**
-1. Install and run Lynis:
+1. Google Authenticator 2FA:
+    - Recommended for public-facing servers.
+    - **TODO**
+1. Install and run Lynis security auditor:
     - Install `lynis`.
     - Run `lynis audit system`.
 1. MOTD:
     - Clear `/etc/motd`.
-    - Download [dmotd.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/profile/dmotd.sh) to `/etc/profile.d/`.
+    - Download [dmotd.sh](https://github.com/HON95/configs/blob/master/server/linux/profile/dmotd.sh) to `/etc/profile.d/`.
     - Install the dependencies: `neofetch lolcat`
     - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
     - (Optional) Add a MOTD to `/etc/motd`.
     - (Optional) Clear or change the pre-login message in `/etc/issue`.
     - Test it (as a normal user): `bash /etc/profile.d/dmotd.sh`
 1. Monitor free disk space:
-    - Download [disk-space-checker.sh](https://github.com/HON95/misc-configs/blob/master/linux-server/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
+    - Download [disk-space-checker.sh](https://github.com/HON95/configs/blob/master/server/linux/cron/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
     - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
     - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
 
