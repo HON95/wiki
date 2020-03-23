@@ -299,7 +299,10 @@ Some guides recommend using backport repos, but this way avoids that.
 
 ### Usage
 
-- Create a simple pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
+- Create pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
+    - Realistic example: `zpool create -o ashift=<9|12> -o compression=lz4 <name> [mirror|raidz|raidz2|...] <drives>`
+- Create dataset: `zfs create <pool>/<name>`
+    - Realistic example: `zfs create -o quota=<size> -o reservation=<size> <pool>/<other-datasets>/<name>`
 - Create and destroy snapshots:
     - Create: `zfs snapshot [-r] <dataset>@<snapshot>` (`-r` for "recursive")
     - Destroy: `zfs destroy [-r] <dataset>@<snapshot>` (Careful!)
@@ -371,24 +374,24 @@ Some guides recommend using backport repos, but this way avoids that.
 
 - Use quotas, reservations and compression.
 - Very frequent reads:
-  - E.g. for a static web root.
-  - Set `atime=off` to disable updating the access time for files.
+    - E.g. for a static web root.
+    - Set `atime=off` to disable updating the access time for files.
 - Database:
-  - Disable `atime`.
-  - Use an appropriate recordsize with `recordsize=<size>`.
-    - InnoDB should use 16k for data files and 128k on log files (two datasets).
-    - PostgreSQL should use 8k (or 16k) for both data and WAL.
-  - Disable caching with `primarycache=metadata`. DMBSes typically handle caching themselves.
-    - For InnoDB.
-    - For PostgreSQL if the working set fits in RAM.
-  - Disable the ZIL with `logbias=throughput` to prevent writing twice.
-    - For InnoDB and PostgreSQL.
-    - Consider not using it for high-traffic applications.
-  - PostgreSQL:
-    - Use the same dataset for data and logs.
-    - Use one dataset per database instance. Requires you to specify it when creating the database.
-    - Don't use PostgreSQL checksums or compression.
-    - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
+    - Disable `atime`.
+    - Use an appropriate recordsize with `recordsize=<size>`.
+        - InnoDB should use 16k for data files and 128k on log files (two datasets).
+        - PostgreSQL should use 8k (or 16k) for both data and WAL.
+    - Disable caching with `primarycache=metadata`. DMBSes typically handle caching themselves.
+        - For InnoDB.
+        - For PostgreSQL if the working set fits in RAM.
+    - Disable the ZIL with `logbias=throughput` to prevent writing twice.
+        - For InnoDB and PostgreSQL.
+        - Consider not using it for high-traffic applications.
+    - PostgreSQL:
+        - Use the same dataset for data and logs.
+        - Use one dataset per database instance. Requires you to specify it when creating the database.
+        - Don't use PostgreSQL checksums or compression.
+        - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
 
 ### Extra Notes
 
