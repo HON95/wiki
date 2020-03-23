@@ -272,10 +272,21 @@ TFTP_OPTIONS="--create --secure"
 
 ### Setup
 
-Using the unofficial Docker image by jacobalberty.
+1. See [UniFi: How to Install and Update via APT on Debian or Ubuntu](https://help.ubnt.com/hc/en-us/articles/220066768-UniFi-How-to-Install-and-Update-via-APT-on-Debian-or-Ubuntu).
+1. Allow the following incoming ports (see [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used)):
+    - UDP 3478: STUN
+    - TCP 8080: Device-controller communication (for devices)
+    - TCP 8443: GUI/API (for admins)
+    - TCP 8880: HTTP portal (for guests)
+    - TCP 8843: HTTPS portal (for guests)
+    - TCP 6789: Mobile speedtest (for admins)
+    - UDP 10001: Device discovery (for devices)
+    - UDP 1900: L2 adoption (optional, for devices)
+
+#### Using jacobalberty's Unofficial Docker Image
 
 1. Add a system user named "unifi": `useradd -r unifi`
-1. Allow the ports through the firewall: See [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used).
+1. Allow the ports through the firewall (see above).
 1. Add a Docker Compose file. See [docker-compose.yml](https://github.com/HON95/misc-configs/blob/master/linux-server/unifi/docker-compose.yml).
     - Use host networking mode for L2 adoption to work (if you're not using L3 or SSH adoption).
 1. Start the container, open the webpage and follow the wizard.
