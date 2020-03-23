@@ -133,7 +133,7 @@ breadcrumbs:
     1. Enable and (re)start systemd-networkd: `systemctl enable systemd-networkd`
     1. Purge `ifupdown` and `ifupdown2`.
     1. Check the status: `networkctl [status [-a]]`
-    1. Restart the system (now or later) and check if still working.
+    1. Restart the system and check if still working. This will also kill any dhclient daemons which could trigger a DHCP renew at some point.
 1. (Alternative 2) Setup networking using ifupdown2:
     1. Install `ifupdown2`.
       - This may take the network down, so do it locally.
