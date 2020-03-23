@@ -15,10 +15,15 @@ breadcrumbs:
 
 ## Distros
 
-| Distro | RHEL/CentOS | Debian/Ubuntu |
-| - | - | - |
-| Nobody user/group | nobody:nobody | nobody:nogroup |
-| Version file(s) | /etc/redhat-release <br /> /etc/centos-release | /etc/debian_version |
+### Debian/Ubuntu
+
+- Nobody user and group: `nobody:nogroup`
+- Release info file: `/etc/debian_version`
+
+### RHEL/CentOS
+
+- Nobody user and group: `nobody:nobody`
+- Release info file: `/etc/redhat-release` or `/etc/centos-release`
 
 ## Miscellaneous
 

@@ -79,11 +79,17 @@ breadcrumbs:
 
 ### System
 
+- Get version info:
+    - Release info files:
+        - Debian (and Ubuntu): `/etc/debian_version`
+        - RHEL: `/etc/redhat-release`
+        - CentOS: `/etc/centos-release`
+    - General release info: `uname -a`
+    - Slightly more distro-specific release info: `lsb_release -a`
 - Monitor system and processes: `htop`
 - Monitor interrupts:
     - `irqtop`
     - `watch -n0.1 /proc/interrupts`
-    - 
 - Monitor lots of stuff: `glances`
 
 ## Tasks
