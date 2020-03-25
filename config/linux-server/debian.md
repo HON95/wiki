@@ -26,9 +26,8 @@ breadcrumbs:
 - Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
 - Use separate password for root and your personal admin user.
 - Disk partitioning:
-  - (Recommended) Manually partition the system drive(s). See [system storage](../storage/#system-storage).
-  - Guided partitioning makes weird partition/volume sizes, try to avoid it.
-  - For simple or temporary systems, just use "guided - use entire disk" with all files in one partition.
+  - (Recommended for "simple" systemd) Use "guided - use entire disk" with all files in one partition.
+  - (Recommended for "complex" systems) Manually partition the system drive(s). See [system storage](../storage/#system-storage).
   - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - At the software selection menu, select only "SSH server" and "standard system utilities".
 - If it asks to install non-free firmware, take note of the packages so they can be installed later.
