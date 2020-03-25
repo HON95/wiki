@@ -38,6 +38,7 @@ writeid
 writeip
 
 // 128-tick
+// In addition, add "-tickrate 128" to the command line
 sv_mincmdrate "128"
 sv_maxcmdrate "128"
 sv_minupdaterate "128"
