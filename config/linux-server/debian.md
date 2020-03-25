@@ -19,16 +19,17 @@ breadcrumbs:
 - Use UEFI if possible.
 - Use the non-graphical installer. It's basically the same as the graphical one.
 - Localization:
-  - Language: United States English.
-  - Location: Your location.
-  - Locale: United States UTF-8 (`en_US.UTF-8`).
-  - Keymap: Your keyboard's keymap.
+    - Language: United States English.
+    - Location: Your location.
+    - Locale: United States UTF-8 (`en_US.UTF-8`).
+    - Keymap: Your keyboard's keymap.
 - Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
 - Use separate password for root and your personal admin user.
-- Disk partitioning:
-  - (Recommended for "simple" systemd) Use "guided - use entire disk" with all files in one partition.
-  - (Recommended for "complex" systems) Manually partition the system drive(s). See [system storage](../storage/#system-storage).
-  - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
+- System disk partitioning:
+    - (Recommended for "simple" systems) Manually partition: One partition using all space, mounted as EXT4 at `/`.
+    - (Recommended for "complex" systems) Manually partition, see [system storage](../storage/#system-storage).
+    - Swap can be set up later as a file or LVM volume.
+    - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - At the software selection menu, select only "SSH server" and "standard system utilities".
 - If it asks to install non-free firmware, take note of the packages so they can be installed later.
 - Install GRUB to the used disk.
