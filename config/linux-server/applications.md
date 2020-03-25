@@ -116,6 +116,66 @@ export TMPDIR=/var/lib/docker-compose-tmp
 - DHCPv6 uses lease pools of 9973 entries, so using range sizes below this number may be preferable as a very general reference.
   `/116` gives 8191 addresses.
 
+## NFS
+
+The instructions below use NFSv4 *without* Kerberos.
+This is not considered secure at all and should only be used on trusted networks and systems.
+
+### Server
+
+#### Setup
+
+1. (Recommended) Use NTP on both server and clients to make sure the clocks are synchronized.
+1. Install: `apt install nfs-kernel-server portmap`
+    - "portmap" is only required for NFSv2 and v3, not for NFSv4.
+1. See which versions are running: `cat /proc/fs/nfsd/versions`
+1. (Recommended) Enable only v4:
+    1. In `/etc/default/nfs-common`, set:
+      ```
+      NEED_STATD="no"
+      NEED_IDMAPD="yes"
+      ```
+    1. In `/etc/default/nfs-kernel-server`, set:
+      ```
+      RPCNFSDOPTS="-N 2 -N 3"
+      RPCMOUNTDOPTS="--manage-gids -N 2 -N 3"
+      ```
+    1. Mask "rpcbind":
+      ```
+      systemctl mask rpcbind.service
+      systemctl mask rpcbind.socket
+      ```
+
+#### Usage
+
+1. Setup a new directory contain all exports in:
+    1. Create the container: `mkdir /export`
+    1. Create the export mount dirs within the container.
+    1. Mount the exports in the container using bind mounts.
+        - Example fstab entry using ZFS: `/mnt/zfspool /srv/nfs4/music none bind,defaults,nofail,x-systemd.requires=zfs-mount.service 0 0`
+    1. Remember to set appropriate permissions.
+1. Add filesystems to export in `/etc/exports`.
+    1. (Optional) For NFSv4, the container directory can be set as the root export by specifying option `fsid=root`.
+    1. For a list of options, see `exports(5)`.
+1. Update the NFS table: `exportfs -ra`
+    - Or, restart the service: `systemctl restart nfs-server`
+1. (Optional) Show exports: `exportfs -v`
+1. (Optional) Update the firewall:
+    - NFSv4 uses only TCP port 2049.
+
+### Client
+
+#### Setup
+
+1. Install: `apt install nfs-common`
+
+#### Usage
+
+1. Create a dir to mount the export to.
+1. (Optional) Try to mount it: `mount -t nfs4 <server-hostname>:<export> <mountpoint>`
+    - Note that for NFSv4 with a root export, the export path is relative to the root export.
+1. (Optional) Make it permanent by adding it to fstab.
+
 ## ntopng
 
 ### Setup
@@ -216,6 +276,14 @@ export TMPDIR=/var/lib/docker-compose-tmp
 
 1. Install and enable `radvd`.
 1. Setup config file: `/etc/radvd.conf`
+
+## Samba
+
+**TODO**
+
+Misc. notes:
+
+- `testparm -t` to test configuration.
 
 ## TFTP-HPA
 
