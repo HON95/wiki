@@ -12,22 +12,32 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [General Notes](config/general/general/)
 
-### IoT
-
-- [Raspberry Pi](config/iot/raspberry-pi/)
-
 ### Linux General
 
 - [Linux General Notes](config/linux-general/general/)
 - [Linux Applications](config/linux-general/applications/)
 - [Linux Examples](config/linux-general/examples/)
 
-### Linux Server
+### Linux Servers
 
-- [Debian Server](config/linux-server/debian/)
-- [Proxmox VE](config/linux-server/proxmox-ve/)
-- [Storage](config/linux-server/storage/)
-- [Linux Server Applications](config/linux-server/applications/)
+- [Debian Server](config/linux-servers/debian/)
+- [Proxmox VE](config/linux-servers/proxmox-ve/)
+- [Storage](config/linux-servers/storage/)
+- [Linux Server Applications](config/linux-servers/applications/)
+
+### Game Servers
+
+- [Counter-Strike: Global Offensive (CS:GO)](config/game-servers/csgo/)
+
+### PC
+
+- [Kubuntu](config/pc/kubuntu/)
+- [Windows](config/pc/windows/)
+- [PC Applications](config/pc/applications/)
+
+### IoT
+
+- [Raspberry Pi](config/iot/raspberry-pi/)
 
 ### Machines
 
@@ -57,12 +67,6 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Linux Switching & Routing](config/network/linux/)
 - [pfSense](config/network/pfsense/)
 - [UniFi Access Points](config/network/unifi-ap/)
-
-### PC
-
-- [Kubuntu](config/pc/kubuntu/)
-- [Windows](config/pc/windows/)
-- [PC Applications](config/pc/applications/)
 
 ## Information Technology
 

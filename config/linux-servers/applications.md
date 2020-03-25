@@ -2,7 +2,7 @@
 title: Linux Server Applications
 breadcrumbs:
 - title: Configuration
-- title: Linux Server
+- title: Linux Servers
 ---
 {% include header.md %}
 
