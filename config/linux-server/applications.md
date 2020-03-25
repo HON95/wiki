@@ -17,6 +17,20 @@ breadcrumbs:
 
 See [Storage: Ceph](../storage/#ceph).
 
+## Certbot
+
+### Setup
+
+1. Install: `apt install certbot`
+1. (Optional) Add post-update hook: In `/etc/letsencrypt/cli.ini`, add `renew-hook = systemctl reload nginx` or equivalent.
+
+### Usage
+
+- Create using HTTP challenge (auto-renewable): `certbot -d <domain> --preferred-challenges=http --webroot --webroot-path=<webroot> certonly`
+- Create using DNS channelge (not auto-renewable): `certbot -d <domain> --preferred-challenges=dns --manual certonly`
+- Dry-run renew: `certbot renew --dry-run [--staging]`
+- Revoke certificate: `certbot revoke --cert-path <cert>`
+
 ## Docker & Docker Compose
 
 **TODO**
@@ -258,17 +272,34 @@ This is not considered secure at all and should only be used on trusted networks
 
 ## Pterodactyl
 
-### Setup
+### General
 
-- Note: The node must be publicly accessable.
-- Follow the official guide.
+- The panel must be able to communicate with all daemons and all vice versa.
+  The user must be able to communicate with both the panel and daemons.
+- Both the panel and daemons need valid TLS certificates.
+
+### Panel
+
+#### Setup
+
+1. Follow the official guide.
+
+### Daemon
+
+1. Follow the official guide.
+1. Install `unzip`.
+1. Setup a valid TLS certificate.
 
 ### Game Servers
 
+#### General
+
+- You can typically watch the installation progress by watching the docker logs.
+
 #### CSGO
 
-- It uses a ton of storage, between 20 and 30 GB last I checked. If you useless, the installer will fail with some useless error message.
-- Use app ID 730 in Steam Game Server Account Manager, regardless of which app ID the server was created with. If you use e.g. 740, the server will not be able to log into Steam.
+- Use source ID 740 in Pterodactyl (the default) and app ID 730 in Steam Game Server Account Manager, regardless of which app ID the Pterodactyl uses.
+- It uses a ton of storage, between 20 and 30 GB last I checked. If you run out of space, the installer will fail with some useless error message.
 
 ## Router Advertisement Daemon (radvd)
 
@@ -279,11 +310,48 @@ This is not considered secure at all and should only be used on trusted networks
 
 ## Samba
 
-**TODO**
+### Server
 
-Misc. notes:
+#### Setup
 
-- `testparm -t` to test configuration.
+1. Install: `apt install samba`
+
+#### Usage
+
+- Making changes:
+    - Change the configuration file: `/etc/samba/smb.conf`
+    - Test the configuration: `testparm -t`
+    - Restart the service: `systemctl restart smbd`
+- Manage access to a share:
+    - Add a Linux group for the share, like "smb-media", to restrict user access.
+    - Fix permissions for only that group on the system.
+    - Configure the share to only allow that group.
+    - Add Linux users to the group.
+- Manage users:
+    - Samba users are somewhat using Linux users but with a different password.
+    - To separate pure Samba users from *real* users, you can add a "smb-" prefix to its username and make it a system user.
+    - Create a new Linux (system) user without shell login: `useradd -r <name>`
+        - Or: `useradd `
+    - Add a user and set its password: `smbpasswd -a <user>`
+    - Show users: `sudo pdbedit -L -v`
+
+### Client
+
+#### Setup
+
+1. Install: `apt install cifs-utils`
+
+#### Usage
+
+- Add permanent share:
+    1. Create the mountpoint.
+    1. Create a credentials file (`/root/.credentials/smb/<whatever>`):
+       ```
+       user=<user>
+       password=<password>
+       ```
+    1. In `/etc/fstab`, add: `//<share> <mountpoint> cifs vers=3.1.1,credentials=<file>,iocharset=utf8 0 0`
+    1. Test it: `mount -a`
 
 ## TFTP-HPA
 
