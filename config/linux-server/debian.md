@@ -62,13 +62,13 @@ breadcrumbs:
     - Install per-user tmpdirs: `libpam-tmpdir`
     - Install Postfix: Install `postfix` and select "satellite system" if the system will only send email.
 1. Add mount options:
-    - Add PID monitor group: `groupadd -g 1500 pidmonitor`
-    - Add your personal user to the PID monitor group: `usermod -aG pidmonitor <user>`
-    - Set mount options in `/etc/fstab`:
-      - See [Storage](system.md).
-      - Enable hidepid: `proc /proc proc defaults,hidepid=2,gid=1500 0 0`
+    - Setup hidepid:
+        - Add PID monitor group: `groupadd -g 1500 pidmonitor`
+        - Add your personal user to the PID monitor group: `usermod -aG pidmonitor <user>`
+        - Enable hidepid in `/etc/fstab`: `proc /proc proc defaults,hidepid=2,gid=1500 0 0`
+    - (Optional) Setup extra mount options: See [Storage](system.md).
     - Run `mount -a` to validate fstab.
-    - Restart the system for it to take effect.
+    - (Optional) Restart the system for it to take effect.
 1. Setup SSHD:
     - File: `/etc/ssh/sshd_config`
     - `PermitRootLogin no`
