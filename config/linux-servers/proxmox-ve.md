@@ -31,7 +31,7 @@ breadcrumbs:
 1. Disable IPv6 NDP (**TODO** Move to Debian?):
     - It's enabled on all bridges by default, meaning the node may become accessible to untrusted bridged networks even when no IPv4 or IPv6 addresses are specified.
     - **TODO**
-    - Reboot (now or later) and make sure there's no unexpected neighbors (`ip -6 n`).
+    - Reboot and make sure there's no unexpected neighbors (run `ip -6 n`).
 
 ## Cluster
 
@@ -146,6 +146,13 @@ The notes below are PVE-specific.
     - Firewall: Enable if the guest does not provide one itself.
     - Multiqueue: When using VirtUO, it can be set to the total CPU cores of the VM for increased performance.
       It will increase the CPU load, so only use it for VMs that need to handle a high amount of connections.
+
+### Linux Setup
+
+1. Setup QEMU Guest Agent:
+    1. Install: `apt install qemu-guest-agent`
+    1. Toggle the "QEMU Guest Agent" option for the VM in Proxmox.
+    - If enabled in Proxmox but not installed, Proxmox will fail to shutdown/restart the VM.
 
 ### Setup SPICE Console
 
