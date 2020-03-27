@@ -43,11 +43,11 @@ breadcrumbs:
     - Check that AppArmor is operational: `apparmor_status`
 1. Localization:
     - Check current locale:
-      - `locale` should return `en_US.UTF-8`.
-      - Update if wrong: `update-locale LANG=en_US.UTF-8`
+        - `locale` should return `en_US.UTF-8`.
+        - Update if wrong: `update-locale LANG=en_US.UTF-8`
     - Check the keymap:
-      - Try typing characters specific to your keyboard.
-      - Update if wrong: `dpkg-reconfigure keyboard-configuration`
+        - Try typing characters specific to your keyboard.
+        - Update if wrong: `dpkg-reconfigure keyboard-configuration`
     - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale. Restart `sshd`.
 1. Set the hostname:
     - Set the shortname: `hostnamectl set-hostname <shortname>`
@@ -61,6 +61,14 @@ breadcrumbs:
     - Install extra tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
     - Install per-user tmpdirs: `libpam-tmpdir`
     - Install Postfix: Install `postfix` and select "satellite system" if the system will only send email.
+1. Setup your personal user:
+    - Add the relevant groups (using `usermod -aG <group> <user>`):
+        - `sudo` for sudo access.
+        - `systemd-journal` for system log access.
+        - The hidepid group if using hidepid, to see all processes.
+    - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
+        - Hint: Get `https://github.com/<user>.keys` and filter the results.
+    - Try logging in remotely and gain root access through sudo.
 1. Add mount options:
     - Setup hidepid:
         - Add PID monitor group: `groupadd -g 1500 pidmonitor`
@@ -76,14 +84,11 @@ breadcrumbs:
       PasswordAuthentication no
       AllowTcpForwarding no
       GatewayPorts no
+      #AcceptEnv ...
       ```
     - Restart `sshd`.
 1. Update MOTD:
     - Clear `/etc/motd`.
-1. Configure your personal user:
-    - Add it to the sudo group (`usermod -aG sudo <user>`).
-    - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file). (Hint: Get `https://github.com/<user>.keys` and filter the results.)
-    - Try logging in remotely and gain root access through sudo.
 1. (Not recommended) Prevent root login:
     - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
     - Add a personal user first.

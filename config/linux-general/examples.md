@@ -12,6 +12,9 @@ breadcrumbs:
 
 - Partition disk: `gdisk <dev>` or `fdisk <dev>`
 - Create filesystem: `mkfs.<fs> <dev>`
+- Modify fstab:
+    - Test it with `mount -a` to make sure it doesn't have errors that may cause boot to fail.
+    - Run `systemctl daemon-reload` to avoid having systemd remount stuff that was removed from fstab or other weird shit.
 
 ### Files
 
