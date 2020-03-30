@@ -60,13 +60,17 @@ breadcrumbs:
 
 See [smartmontools](../../linux-general/applications/#smartmontools).
 
-For HDDs, the attributes below should stay near 0 and should not be rising. If they are, it may indicate the drive is about to commit seppuku.
+For HDDs, the following attributes should stay near 0 and should not be rising. If they are, it may indicate the drive is about to commit seppuku.
 
-- 005: Reallocated Sectors Count
-- 187: Reported Uncorrectable Errors
-- 188: Command Timeout
-- 197: Current Pending Sector Count
-- 198: Uncorrectable Sector Count
+- 005 (Reallocated Sectors Count)
+- 187 (Reported Uncorrectable Errors)
+- 188 (Command Timeout)
+- 197 (Current Pending Sector Count)
+- 198 (Uncorrectable Sector Count)
+
+#### Seagate
+
+Attributes 1 (Raw Read Error Rate) and 7 (Seek Error Rate) can be a bit misleading, as a non-zero value does not mean there are errors. They are 48-bit values where the most significant 16 bits are the error count and the lower 32 bits are the number of operations (acting sort of like a fraction/rate).
 
 ## System Storage
 
@@ -284,7 +288,7 @@ The installation part is highly specific to Debian 10.
 Some guides recommend using backport repos, but this way avoids that.
 
 1. Enable the `contrib` and `non-free` repo areas.
-1. Install (it might give errors): `zfs-dkms zfsutils-linux zfs-zed`
+1. Install (will probably stall a bit because of errors): `apt install zfs-dkms zfsutils-linux zfs-zed`
 1. Load the ZFS module: `modprobe zfs`
 1. Fix the ZFS install: `apt install`
 

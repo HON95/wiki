@@ -26,6 +26,8 @@ Issues may also be related to stupid things like which ports you're using on the
 
 ## Setup
 
+(In semi-random order.)
+
 - Setup the Linux node as described in [Debian Server: Basic Setup](/config/linux-server/debian-server/#basic-setup).
 - Setup the firewall for filtering both forwarded traffic and input/output to the router.
 - Setup the firewall for NAT.
@@ -48,5 +50,10 @@ Issues may also be related to stupid things like which ports you're using on the
 - Disable protocol hardware offloading as it typically causes more problems than it solves.
 - Make sure network interrupts from a given NIC are distributed across all cores.
     - See `/proc/interrupts`.
+
+## Notes
+
+- DHCPv4 servers and clients use raw sockets, which bypasses Netfilter, because it uses special IP addresses.
+  DHCPv6 does not, however, because it uses real IP addresses.
 
 {% include footer.md %}

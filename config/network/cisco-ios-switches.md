@@ -248,8 +248,4 @@ Hold the "mode" button for 30 seconds or until it says in the console that it's 
     - Alternating green-amber: Link fault. Could be caused by hardware errors or mismatched speed or duplex.
     - Amber and blinking amber: Blocked by STP.
 
-## Resources
-
-- [https://github.com/cisco-config-analysis-tool/ccat](https://github.com/cisco-config-analysis-tool/ccat)
-
 {% include footer.md %}

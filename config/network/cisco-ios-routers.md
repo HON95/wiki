@@ -24,7 +24,7 @@ breadcrumbs:
 ## Security
 
 - Disable directed broadcasts:
-  - `no ip directed-broadcast`
+  - Config: `no ip directed-broadcast`
   - Used by smurf and fraggle attacks.
 
 {% include footer.md %}

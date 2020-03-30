@@ -8,92 +8,83 @@ breadcrumbs:
 
 ## Hosts
 
-- Directed broadcasts of ICMP echo:
-  - Should generally be disabled.
-  - Exploited by smurf and fraggle attacks.
-  - Linux:
-    - ICMP echo reception disabled by default.
-    - `icmp_echo_ignore_broadcasts=1`
-- ICMP redirects:
-  - Should be blocked or ignored.
-  - Allows attackers to change the default gateway or inject bogus routes.
-  - The secure variant (Linux) specifies that the host will only accept redirects from hosts in its gateway list.
-  - Can be blocked by the firewall or ignored through configuration.
-  - Ignore with Linux:
-    - Redirects are accepted by default on hosts and ignored by default on routers. IPv4 secure redirects are enabled by default.
-    - IPv4: `net.ipv4.conf.all.accept_redirects=0`
-    - IPv6: `net.ipv6.conf.all.accept_redirects=0`
-    - IPv4 secure: `net.ipv4.conf.all.secure_redirects=0`
-- Syn cookies:
-  - Should be enabled on servers.
-  - Prevents connection-based DDoS attacks.
-  - When the connection queue is filled up, syn cookies are used for new connections. Connections using syn cookies must have all TCP options rejected, thus violating TCP.
-  - Linux:
-    - Enabled by default.
-    - `net.ipv4.tcp_syncookies=1`
+- Smurf and Fraggle attacks:
+    - DDoS where the adversary uses sends an ICMP/UDP echo packet (or similar) to a broadcast/multicast address using a spoofed source address, causing all reply traffic to be sent toward the user of the spoofed address.
+    - Linux hosts:
+        - Ignore broadcast/multicast ICMP echo and timestamp: `net.ipv4.icmp_echo_ignore_broadcasts=1` (Ignored (1) by default)
+        - Ignore UDP echo etc.: Firewall it.
+- ICMP redirects (IPv4):
+    - Should be blocked or ignored for IPv4 since they can act as attack vectors and are basically never used in network designs.
+    - Allows attackers to change the default gateway or inject bogus routes.
+    - For IPv6, it is a more central functionality and should not be disabled.
+    - Can be blocked by the firewall or ignored through configuration.
+    - Linux:
+        - Linux has a secure variant (`secure_redirects`) that specifies that the host will only accept redirects from hosts in its gateway list.
+        - Disable reception of "insecure" ICMP redirects: `net.ipv4.conf.<all+default>.accept_redirects=0` (enabled (1) for hosts and disabled (0) for routers by default)
+        - Disable reception of secure ICMP redirects`net.ipv4.conf.<all+default>.secure_redirects=0` (enabled (1) by default)
+        - Disable sending ICMP redirects: `net.ipv4.conf.<all+default>.send_redirects=0` (enabled (1) by default)
+- SYN cookies:
+    - Should be enabled on servers.
+    - Prevents TCP DDoS attacks.
+    - When the connection queue is filled up, SYN cookies are used for new connections. Connections using SYN cookies must have all TCP options rejected, thus violating TCP.
+    - Linux:
+        - Enable: `net.ipv4.tcp_syncookies=1` (enabled (1) by default)
 
 ## Switches
 
-**TODO** (see switch pages)
+**TODO** (see switch pages, personal notes and papers on my desk)
 
 ## Routers
 
-- Bogin filtering:
-  - Should be enabled if appropriate.
-  - Blocks packets from fake/invalid addresses such as from unused or unallocated prefixes.
-  - May include RFC 1918 addresses.
-  - Can be done by explicitly blacklisting all stable bogon prefixes.
-- Source verification:
-  - Should be enabled if appropriate.
-  - Prevents attackers on stub networks from spoofing source addresses outside the network.
-  - Can be done with the firewall.
-- Reverse path filtering:
-  - Should be enabled.
-  - Filters packets from sources that are not reachable by the FIB (loose mode); or filter packets from sources that are not received on the interface that would be used to reach the source (strict mode).
-  - Use strict mode for most cases and loose mode if using asymmetric routing.
-  - Linux:
-    - Disabled by default but enabled by some distros.
-    - Use 1 for strict mode and 2 for loose mode.
-    - `net.ipv4.conf.all.rp_filter=<1|2>`
-- Directed broadcasts (forwarding):
-  - Should generally be disabled.
-  - Exploited by smurf and fraggle attacks.
-  - Linux:
-    - **TODO**
-  - Cisco IOS:
-    - Disabled by default.
-    - `no ip directed-broadcast`
-- Source routing:
-  - Should generally be disabled.
-  - Allows attackers to send packets to unintended paths/destinations.
-  - Uses the Strict Source Route (SSR) or Loose Source Routing (LSR) IPv4 header options.
-  - IPv6 source routing has been deprecated and replaced by segment routing.
-  - Linux:
-    - Enabled by default on routers.
-    - IPv4: `net.ipv4.conf.all.accept_source_route=0`
-    - (Optional) IPv6 (segment routing): `net.ipv6.conf.all.accept_source_route=-1`
-  - Cisco IOS:
-    - `no source-route`
 - ICMP redirects:
-  - See [Hosts](#hosts).
+    - See the [Hosts](#hosts) section.
+- Source routing:
+    - Should generally be disabled unless required. May be used in certain mobility scenarios.
+    - Allows attackers to send packets to unintended paths/destinations.
+    - For IPv4, there is the Strict Source Route (SSR) option and the Loose Source Routing (LSR) option. Both are considered insecure.
+    - For IPv6, there is the type 0 routing header, type 2 routing header and type 4 Segment Routing Header.
+    - Linux:
+        - Enabled by default on routers.
+        - Disable IPv4 SSR and LSR: `net.ipv4.conf.<all+default>.accept_source_route=0` (disabled (0) for hosts and enabled (1) for routers by default)
+        - Disable IPv6 type 0 routing headers only: `net.ipv6.conf.all.accept_source_route=0` (type 2 only allowed (0) by default)
+            - (Optional) Disable both IPv6 type 0 and 2 routing headers: `net.ipv6.conf.all.accept_source_route=-1`
+    - Cisco IOS:
+        - Disable source routing: `no source-route` (enabled by default)
+- Source verification:
+    - Should be handled somehow if possible.
+    - May prevent spoofed IP addresses, especially
+    - Can be done with firewall rules, reverse path forwarding (RPF), DHCP snooping-based verification, etc. based on scenario.
+- Reverse path filtering:
+    - Should be enabled. Use strict mode for most cases and loose mode if using asymmetric routing.
+    - Filters packets from sources that are not reachable by the FIB (loose mode); or filter packets from sources that are not received on the interface that would be used to reach the source (strict mode).
+    - Linux:
+        - Enable strict RPF (1) or loose RPF (2): `net.ipv4.conf.all.rp_filter=<0|1|2>` (default varies by distro, but generally disabled by default)
+- Directed broadcast forwarding:
+    - Should be disabled.
+    - Exploited by e.g. smurf and fraggle attacks.
+    - Linux routers:
+        - Always disabled.
+    - Cisco IOS:
+        - Disable `no ip directed-broadcast` (disabled by default)
+- Bogin filtering:
+    - Should be enabled if appropriate.
+    - Blocks packets from fake/invalid addresses such as from unused or unallocated prefixes.
+    - May include RFC 1918 addresses.
+    - Can be done by explicitly blacklisting all stable bogon prefixes.
 
 ## L4 Firewalls
 
-- NAT:
-  - Universal Plug and Play (UPnP), NAT Port Mapping Protocol (NAT-PMP), Port Control Protocol (PCP), Session Traversal Utilities for NAT (STUN), etc. can function as attack vectors as an adversarial program may be able to exploit it to allow external connections to internal devices. It should generally be turned off except if explicitly needed. It's typically used by multiplayer games and other peer-to-peer applications.
+- NAT traversal protocols:
+    - E.g. Universal Plug and Play (UPnP), NAT Port Mapping Protocol (NAT-PMP), Port Control Protocol (PCP), Session Traversal Utilities for NAT (STUN).
+    - Should generally be turned off unless explicitly needed. It's typically used by multiplayer games and other peer-to-peer applications.
+    - Can function as attack vectors as an adversarial program may be able to exploit it to allow external connections to internal devices.
 
 ## L7 Firewalls
 
+*Empty.*
+
 ## Intrusion Detection Systems (IDSes)
 
-## Theory
-
-### Firewalls and Intrusion Detection Systems (IDSes)
-
-- Network address translation (NAT):
-  - Hairpinning/reflection: Reroute internal requests from a NATed network to an edge router's external IP address back into the router. It allows using domain names with public IP addresses from within the NATed network.
-  - Generally avoided in IPv6. Network prefix translation (NPT), however, can be used to translate dynamic global prefixes to static site-local prefixes.
-- Layer 7 firewalls: A.k.a. next-generation firewalls (NGFW). Provides deep packet inspection (DPI). Provides a foundation for IDS/IPS, user identity management and web application firewalls (WAF).
-- Intrusion prevention systemes (IPSes or IDPs): Can block traffic once a threat has been identified, unlike a plain IDS.
+*Empty.*
 
 {% include footer.md %}
