@@ -65,13 +65,36 @@ Some configurations that DOESN'T work:
 
 ### R610 and R710
 
-For max performance, use two dual-rank 1333MHz DIMMS in slots 1 and 2 for all channels (12 DIMMS total).
-Earlier BIOS versions only supported one DIMM per channel for 1333MHz, as written in some outdated manuals.
+For max performance, use two dual-rank 1333MHz DIMMS in slots 1 and 2 for all channels (12 DIMMS total). Earlier BIOS versions only supported one DIMM per channel for 1333MHz, as written in some outdated manuals.
 
 ## Storage
 
-- PERC 5/i and 6/i do not support disks over 2TB. PERC H200 and similar needs to be flashed to a newer version to support it.
-- Some say the PERC H200, H310, H310 mini etc. need to be flashed from IR (the default) to IT mode in order to pass through unconfigured disks directly instead of presenting them as individual RAID volumes and maybe adding proprietary headers on disk. ZFS (e.g.) needs direct access to the disks to work optimally, meaning you should flash it to IT mode if you intend to use the card as an HBA with ZFS or similar. This can cause the cards to no longer be accepted in the R610 and R710 PCIe-like storage slot and needs to use a normal PCIe slot instead. However, some say that IR cards (not flashed to IT mode) with unconfigured disks work as HBAs and pass them through directly. As they're not flashed to IT mode, they should still work in the storage slot too. My own experience with and R610 and R710 with IR mode H200s in the storage slots and seemingly direct disk access seems to agree with this latter statement.
+### General
+
+- About flashing custom/non-Dell firmware:
+    - Only do it if you know for sure you need it. This is often not required.
+    - Many guides suggest installing custom/non-Dell firmware to support better (more direct) IT (HBA) mode and maybe some other features (like increasing queue depth).
+    - Typically integrated (non-PCIe) cards don't support it.
+
+### PERC 5 and 6
+
+(Different generations but otherwise pretty similar.)
+
+- The integrated version has the "/i" suffix.
+- Does not support disks over 2TB.
+
+### PERC H200
+
+- The integrated version has the "i" suffix.
+- Supports disks over 2TB if using newer firmware.
+- Supports passthrough.
+- May stop working in the storage slot (a special PCIe slot) if using other firmware.
+
+### PERC H310 and H710
+
+- The integrated non-blade version has the "mini mono" suffix.
+- H310 supports passthrough while H710 does not.
+- The H310 has bad queue depth, but for the PCIe version it can be fixed using other firmware.
 
 ## Power Efficiency
 
