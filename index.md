@@ -22,6 +22,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [Debian Server](config/linux-servers/debian/)
 - [Proxmox VE](config/linux-servers/proxmox-ve/)
+- [Ubiquiti UniFi Controller (Debian)](config/linux-servers/unifi-debian/)
 - [Storage](config/linux-servers/storage/)
 - [Linux Server Applications](config/linux-servers/applications/)
 
