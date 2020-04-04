@@ -146,6 +146,7 @@ See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability
 - The firewall is pretty pre-configured for most basic stuff, like connection tracking and management network access.
 - Host NDP problem:
     - For hosts, there is a vulnerability where the hosts autoconfigures itself for IPv6 on all bridges (see [Bug 1251 - Security issue: IPv6 autoconfiguration on Bridge-Interfaces ](https://bugzilla.proxmox.com/show_bug.cgi?id=1251)).
+    - Even though you firewall off management traffic to the host, the host may still use the "other" networks as default gateways.
     - To partially fix this, disable NDP on all nodes and add a rule allowing protocol "ipv6-icmp" on trusted interfaces.
     - To verify that it's working, reboot and check its IPv6 routes and neighbors.
 - Check firewall status: `pve-firewall status`
