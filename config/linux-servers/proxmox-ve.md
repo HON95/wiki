@@ -11,9 +11,9 @@ breadcrumbs:
 
 - Proxmox VE 6
 
-## Initial Setup
+## Host
 
-**TODO:**
+**TODO** Ignore this whole section for now.
 
 - Initial setup
 - Notes from Google Docs
@@ -28,10 +28,13 @@ breadcrumbs:
 1. Disable the console MOTD:
     - Disable `pvebanner.service`.
     - Clear or update `/etc/issue` (e.g. use use the logo).
-1. Disable IPv6 NDP (**TODO** Move to Debian?):
-    - It's enabled on all bridges by default, meaning the node may become accessible to untrusted bridged networks even when no IPv4 or IPv6 addresses are specified.
-    - **TODO**
-    - Reboot and make sure there's no unexpected neighbors (run `ip -6 n`).
+1. Setup firewall:
+    - Open an SSH session, as this will prevent full lock-out.
+    - Enable the cluster/datacenter firewall.
+    - Disable NDP. This is because of a vulnerability in Proxmox where it autoconfigures itself on all bridges.
+    - Add incoming rules on the management network (!) for NDP (ICMPv6), ping (macro), SSH (macro) and the web GUI (TCP port 8006).
+    - Enable the host/node firewall.
+    - Make sure ping, SSH and the web GUI is working both for IPv4 and IPv6.
 
 ## Cluster
 
@@ -70,37 +73,6 @@ See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability
     - The software watchdog (using the Linux kernel driver "softdog") is used by default and doesn't require any configuretion,
       but it's not as reliable as other solutions as it's running inside the host.
 - Services are not migrated from failed nodes until fencing is finished.
-
-## Ceph
-
-See [Storage: Ceph](../storage/#ceph) for general notes.
-The notes below are PVE-specific.
-
-### Notes
-
-- It's recommended to use a high-bandwidth SAN/management network within the cluster for Ceph traffic.
-  It may be the same as used for out-of-band PVE cluster management traffic.
-- When used with PVE, the configuration is stored in the cluster-synchronized PVE config dir.
-
-### Setup
-
-1. Setup a shared network.
-    - It should be high-bandwidth and isolated.
-    - It can be the same as used for PVE cluster management traffic.
-1. Install (all nodes): `pveceph install`
-1. Initialize (one node): `pveceph init --network <subnet>`
-1. Setup a monitor (all nodes): `pveceph createmon`
-1. Check the status: `ceph status`
-    - Requires at least one monitor.
-1. Add a disk (all nodes, all disks): `pveceph createosd <dev>`
-    - If the disks contains any partitions, run `ceph-disk zap <dev>` to clean the disk.
-    - Can also be done from the dashboard.
-1. Check the disks: `ceph osd tree`
-1. Create a pool (PVE dashboard).
-    - "Size" is the number of replicas.
-    - "Minimum size" is the number of replicas that must be written before the write should be considered done.
-    - Use at least size 3 and min. size 2 in production.
-    - "Add storage" adds the pool to PVE for disk image and container content.
 
 ## VMs
 
@@ -162,5 +134,76 @@ The notes below are PVE-specific.
     - Windows: `spice-guest-tools`
 1. Install a SPICE compatible viewer on your client:
     - Linux: `virt-viewer`
+
+## Firewall
+
+- PVE uses three different/overlapping firewalls:
+    - Cluster: Applies to all hosts/nodes in the cluster/datacenter.
+    - Host: Applies to all nodes/hosts and overrides the cluster rules.
+    - VM: Applies to VM (and CT) firewalls.
+- To enable the firewall for nodes, both the cluster and host firewall options must be enabled.
+- To enable the firewall for VMs, both the VM option and the option for individual interfaces must be enabled.
+- The firewall is pretty pre-configured for most basic stuff, like connection tracking and management network access.
+- Host NDP problem:
+    - For hosts, there is a vulnerability where the hosts autoconfigures itself for IPv6 on all bridges (see [Bug 1251 - Security issue: IPv6 autoconfiguration on Bridge-Interfaces ](https://bugzilla.proxmox.com/show_bug.cgi?id=1251)).
+    - To partially fix this, disable NDP on all nodes and add a rule allowing protocol "ipv6-icmp" on trusted interfaces.
+    - To verify that it's working, reboot and check its IPv6 routes and neighbors.
+- Check firewall status: `pve-firewall status`
+
+### Special Aliases and IP Sets
+
+- Alias `localnet` (cluster):
+    - For allowing cluster and management access (Corosync, API, SSH).
+    - Automatically detected and defined for the management network (one of them), but can be overridden at cluster level.
+    - Check: `pve-firewall localnet`
+- IP set `cluster_network` (cluster):
+    - Consists of all cluster hosts.
+- IP set `management` (cluster):
+    - For management access to hosts.
+    - Includes `cluster_network`.
+    - If you want to handle management firewalling elsewhere/differently, just ignore this and add appropriate rules directly.
+- IP set `blacklist` (cluster):
+    - For blocking traffic to hosts and VMs.
+
+### PVE Ports
+
+- TCP 22: SSH.
+- TCP 3128: SPICE proxy.
+- TCP 5900-5999: VNC web console.
+- TCP 8006: Web interface.
+- TCP 60000-60050: Live migration (internal).
+- UDP 111: rpcbind (optional).
+- UDP 5404-5405: Corosync (internal).
+
+## Ceph
+
+See [Storage: Ceph](../storage/#ceph) for general notes.
+The notes below are PVE-specific.
+
+### Notes
+
+- It's recommended to use a high-bandwidth SAN/management network within the cluster for Ceph traffic.
+  It may be the same as used for out-of-band PVE cluster management traffic.
+- When used with PVE, the configuration is stored in the cluster-synchronized PVE config dir.
+
+### Setup
+
+1. Setup a shared network.
+    - It should be high-bandwidth and isolated.
+    - It can be the same as used for PVE cluster management traffic.
+1. Install (all nodes): `pveceph install`
+1. Initialize (one node): `pveceph init --network <subnet>`
+1. Setup a monitor (all nodes): `pveceph createmon`
+1. Check the status: `ceph status`
+    - Requires at least one monitor.
+1. Add a disk (all nodes, all disks): `pveceph createosd <dev>`
+    - If the disks contains any partitions, run `ceph-disk zap <dev>` to clean the disk.
+    - Can also be done from the dashboard.
+1. Check the disks: `ceph osd tree`
+1. Create a pool (PVE dashboard).
+    - "Size" is the number of replicas.
+    - "Minimum size" is the number of replicas that must be written before the write should be considered done.
+    - Use at least size 3 and min. size 2 in production.
+    - "Add storage" adds the pool to PVE for disk image and container content.
 
 {% include footer.md %}
