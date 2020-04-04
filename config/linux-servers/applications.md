@@ -31,6 +31,12 @@ See [Storage: Ceph](../storage/#ceph).
 - Dry-run renew: `certbot renew --dry-run [--staging]`
 - Revoke certificate: `certbot revoke --cert-path <cert>`
 
+## DDNS
+
+### Cloudflare
+
+Use [cloudflare-ddns-updater.sh](https://github.com/HON95/scripts/tree/master/server/linux/cloudflare).
+
 ## Docker & Docker Compose
 
 **TODO**
