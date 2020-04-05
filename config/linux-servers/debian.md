@@ -132,7 +132,6 @@ breadcrumbs:
 
 ### Networking
 
-1. **TODO** Security stuff, like IPv6 link-locals and NDP.
 1. (Recommended alternative) Setup networking using systemd-networkd:
     1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/server/linux/networkd/main.network).
     1. Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
@@ -166,6 +165,10 @@ breadcrumbs:
     - Install: `apt install iptables iptables-persistent netfilter-persistent`
         - Don't save the current rules when it asks.
     - Add [a simple iptables script](https://github.com/HON95/configs/blob/master/server/linux/iptables/iptables-simple.sh) or something more complex.
+1. Make sure IPv6 and NDP is configured securely:
+    - If IPv6 and NDP is enabled and accepting RAs on insecure (i.e. public-facing) interfaces, the server may autoconfigure itself for those interfaces.
+    - By configuration: Disable "Accept-RA" on interfaces that should not autoconfigure themselves. It's typically enabled by default.
+    - (Not recommended) By firewalling: Block ICMPv6/NDP on untrusted interfaces so that the host can't autoconfigure itself. This prevents all IPv6 configuration for the interface, but may be required in some cases (i.e. Proxmox).
 1. Reboot and make sure it still works.
 
 ### Extra
