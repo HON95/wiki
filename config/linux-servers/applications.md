@@ -321,6 +321,8 @@ This is not considered secure at all and should only be used on trusted networks
 #### Setup
 
 1. Install: `apt install samba`
+1. Open TCP port 445.
+1. Configure it (see usage).
 
 #### Usage
 

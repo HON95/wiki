@@ -1,5 +1,5 @@
 ---
-title: Storage
+title: Linux Server Storage
 breadcrumbs:
 - title: Configuration
 - title: Linux Servers
