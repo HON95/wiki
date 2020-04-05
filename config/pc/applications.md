@@ -89,6 +89,12 @@ GUI for configuring gaming mice.
 - In `Window > Appearance`, change font to Consolas, regular, size 10.
 - In `Window > Colours`, set all ANSI non-bold colors to the same as the bold ones.
 
+## SMB
+
+### Troubleshooting
+
+- If using DNS instead of NetBIOS and the client freezes while connecting to a share, try enabling the "Routing and Remote Access" service.
+
 ## Speedfan (Windows)
 
 - **Warning:** The controller symlinks likes to change on boot, meaning the config may break every boot. This makes it literally useless.

@@ -32,6 +32,11 @@ breadcrumbs:
 - Hard drives often experience performance degredation before failing completely.
   This may lead to high latencies, reduced bandwidth and possibly read/write errors.
   High latencies and low bandwidth is hard to detect automatically and may result in reduced performance for the whole system.
+- SSD/HDD optimiztions:
+    - Most modern tools on modern Linux versions will automatically align file systems and partitions correctly.
+    - The `relatime` mount flag is set by default, to reduce disk writes when a file is read.
+    - For SSDs, don't enable TRIM (using neither the `discard` mount option nor `fstrim.timer`). TRIM typically don't provide much benefit and may actually reduce performance. Since SSDs are generally overprovisioned and may be overprovisioned further by the user (generally not needed), TRIM is generally not needed any more.
+    - `vm.swappiness` should possibly be set to some reasonable value to reduce swapping pressure on the swap disk(s).
 
 ### SSDs
 

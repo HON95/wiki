@@ -13,21 +13,40 @@ breadcrumbs:
 
 ## Host
 
-**TODO** Ignore this whole section for now.
+### Installation
 
-- Initial setup
-- Notes from Google Docs
-- `localhost` must resolve to both 127.0.0.1 and ::1 and the domain name must resolve to the mgmt. interface IP addresses (v4+v6).
+1. Find a mouse.
+    - Just a keyboard is not enough.
+    - You don't need the mouse too often, though, so you can hot-swap between the keyboard and mouse during the install.
+1. Download PVE and boot from the installation medium in UEFI mode (if supported).
+1. Storage:
+    - Use 1-2 mirrored SSDs with ZFS.
+    - (ZFS) enable compression and checksums and set the correct ashift for the SSD(s). If in doubt, use ashift=12.
+1. Localization:
+    - (Nothing special.)
+1. Administrator user:
+    - Set a root password. It should be different from your personal password.
+    - Set the email to "root@localhost" or something. It's not important before actually setting up email.
+1. Network:
+    - (Nothing special.)
 
-1. See [Debian Server: Initial Setup](../debian-server/#initial-setup).
-    - **TODO**: Differences.
-1. Setup the PVE repos (assuming no subscription):
+### Initial Configuration
+
+Follow the instructions for [Debian server basic setup](../debian-server/#initial-setup), but with the following exceptions and extra steps:
+
+1. Before installing updates, setup the PVE repos (assuming no subscription):
     - In `/etc/apt/sources.list.d/pve-enterprise.list`, comment out the Enterprise repo.
-    - In `/etc/apt/sources.list`, add the PVE No-Subscription repo. See [Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo).
-    - Update the package index.
-1. Disable the console MOTD:
-    - Disable `pvebanner.service`.
-    - Clear or update `/etc/issue` (e.g. use use the logo).
+    - In `/etc/apt/sources.list`, add the PVE No-Subscription repo: `deb http://download.proxmox.com/debian/pve buster pve-no-subscription`
+    - More info: [Proxmox VE: Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
+1. Update network config and hostname:
+    - Do NOT manually modify the configs for network, DNS, NTP, firewall, etc. as specified in the Debian guide.
+    - Update network config: Use the web GUI.
+    - Update hostname: See the Debian guide.
+    - Update `/etc/hosts`: The short and FQDN hostnames must resolve to the IPv4 and IPv6 management address.
+1. Update MOTD:
+    - Disable the special PVE banner: `systemctl disable --now pvebanner.service`
+    - Clear or update `/etc/issue` and `/etc/motd`.
+    - (Optional) Set up dynamic MOTD: See the Debian guide.
 1. Setup firewall:
     - Open an SSH session, as this will prevent full lock-out.
     - Enable the cluster/datacenter firewall.
@@ -35,6 +54,33 @@ breadcrumbs:
     - Add incoming rules on the management network (!) for NDP (ICMPv6), ping (macro), SSH (macro) and the web GUI (TCP port 8006).
     - Enable the host/node firewall.
     - Make sure ping, SSH and the web GUI is working both for IPv4 and IPv6.
+
+### Setup PCI(e) Passthrough
+
+**Possibly outdated**
+
+- Guide: [Proxmox VE: Pci passthrough](https://pve.proxmox.com/wiki/Pci_passthrough)
+- Requires support for  IOMMU, IOMMU interrupt remapping, and for dome PCI devices, UEFI support
+- Only 4 devices are are supported
+- For graphics cards, additional steps are required
+- Setup BIOS/UEFI features:
+    - Enable UEFI
+    - Enable VT-d and SR-IOV Global Enable
+    - Disable I/OAT
+- Enable SR-IOT for NICs in BIOS/ROM
+- Enable IOMMU: Add `intel_iommu=on` to GRUB command line (edit `/etc/default/grub` and add to line `GRUB_CMDLINE_LINUX_DEFAULT`) and run `update-grub`
+- Enable modules: Add `vfio vfio_iommu_type1 vfio_pci vfio_virqfd pci_stub` (newline-separated) to `/etc/modules` and run `update-initramfs -u -k all`
+- Reboot
+- Test for IOMMU interrupt remapping: Run `dmesg | grep ecap` and check if the last character of the `ecap` value is 8, 9, a, b, c, d, e, or an f. Also, run `dmesg | grep vfio` to check for - errors. If it is not supported, set `options vfio_iommu_type1 allow_unsafe_interrupts=1` in `/etc/modules`, which also makes the host vulnerable to interrupt injection attacks.
+- Test NIC SR-IOV support: `lspci -s <NIC_BDF> -vvv | grep -i "Single Root I/O Virtualization"`
+- List PCI devices: `lspci`
+- List PCI devices and their IOMMU groups: `find /sys/kernel/iommu_groups/ -type l`
+- A device with all of its functions can be added by removing the function suffix of the path
+- Add PCIe device to VM:
+    - Add `machine: q35` to the config
+- Add `hostpci<n>: <pci-path>,pcie=1,driver=vfio` to the config for every device
+- Test if the VM can see the PCI card: Run `qm monitor <vm-id>`, then `info pci` inside
+
 
 ## Cluster
 

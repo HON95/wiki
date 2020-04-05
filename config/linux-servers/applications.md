@@ -6,12 +6,53 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-**TODO** Migrate the rest of the config notes from the old Google Doc.
-
 ### Using
 {:.no_toc}
 
 - Debian 10 Buster
+
+## Apache
+
+**Outdated and missing information**
+
+## Setup
+
+1. Install: `apt install apache2`
+1. Update `security.conf`:
+    ```
+    ServerTokens Prod
+    ServerSignature Off
+    ```
+
+## Usage
+
+- Enable/disable stuff: `a2<en|dis><conf|mod|site> <...>`
+- Test configuration: `apache2ctl`
+
+## AWS CLI
+
+**Possibly outdated**
+
+### Setup
+
+- Guide: [AWS: Installing the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
+- Install `awscli` through pip3
+- Fix permissions: `chmod +x /usr/local/bin/aws`
+
+### Usage
+
+- Login: `aws configure [--profile <profile>]`
+    - This will store the credentials for the current Linux user.
+    - London region: `eu-west-2`
+    - Output format: `json`
+- Examples:
+    - Upload file: `aws s3 cp <local_file> s3://<bucket>/`
+
+## bitwarden_rs
+
+A free community backend for Bitwarden.
+
+**TODO**
 
 ## Ceph
 
@@ -37,28 +78,59 @@ See [Storage: Ceph](../storage/#ceph).
 
 Use [cloudflare-ddns-updater.sh](https://github.com/HON95/scripts/tree/master/server/linux/cloudflare).
 
-## Docker & Docker Compose
-
-**TODO**
+## Docker
 
 ### Setup
 
-1. [Install Docker (Debian)](https://docs.docker.com/install/linux/docker-ce/debian/).
-1. [Install Docker Compose](https://docs.docker.com/compose/install/).
-1. [Install Docker Compose command completion](https://docs.docker.com/compose/completion/).
+1. Install: [Docker Documentation: Get Docker Engine - Community for Debian](https://docs.docker.com/install/linux/docker-ce/debian/).
 1. (Optional) Setup swap limit:
     - If `docker info` contains `WARNING: No swap limit support`, it's not working and should maybe be fixed.
     - It incurs a small performance degredation and is optional but recommended.
     - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
     - Run `update-grub` and reboot.
+1. Configure `/etc/docker/daemon.json`:
+    - Set DNS servers: `"dns": ["1.1.1.1", "1.0.0.1", "2606:4700:4700::1111", "2606:4700:4700::1001"]`
+    - (Optional) Disable automatic IPTables rules: `"iptables": false`
+    - Enable IPv6: `"ipv6": true`
+    - Set IPv6 default subnet: `"fixed-cidr-v6": <64-prefix>`
+1. (Optional, not recommended on servers) Allow certain users to use Docker: Add them to the `docker` group.
 
-### Docker Compose No-Exec Tmp-Dir Fix
+### Usage
+
+- Docker run options:
+    - Set name: `--name=<name>`
+    - Run in detatched mode: `-d`
+    - Run using interactive terminal: `-it`
+    - Automatically remove when stopped: `--rm`
+    - Automatically restart: `--restart=unless-stopped`
+    - Use "tini" as entrypoint and use PID 1: `--init`
+    - Set env var: `-e <var>=<val>`
+    - Publish network port: `-p <host-port>:<cont-port>[/udp]`
+    - Mount volume: `-v <vol>:<cont-path>` (`<vol>` must have a path prefix like `./` or `/` if it is a directory and not a named volume)
+- Networks:
+    - Create bridged network: `docker network create --driver=bridge --ipv6 --subnet=<ipv4-net> --subnet=<ipv6-net> <name>`
+    - Create bridged network connected to host interface: `docker network create --driver=bridge --ipv6 --subnet=<ipv4-net> --gateway=<ipv4-gateway> --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`
+    - Run container with network: `docker run --network=<net-name> --ip=<ipv4-addr> --ip6=<ipv6-addr> --dns=<dns-server> <image>`
+
+## Docker Compose
+
+### Setup
+
+1. Install Docker: See above.
+1. Install: [Docker Documentation: Install Docker Compose](https://docs.docker.com/compose/install/).
+1. Install command completion: [Docker Documentation: Command-line completion](https://docs.docker.com/compose/completion/).
+
+### Troubleshooting
+
+#### Fix Docker Compose No-Exec Tmp-Dir
 
 Docker Compose will fail to work if `/tmp` has `noexec`.
 
 1. Move `/usr/local/bin/docker-compose` to `/usr/local/bin/docker-compose-normal`.
 1. Create `/usr/local/bin/docker-compose` with the contents below and make it executable.
 1. Create the new TMPDIR dir.
+
+New `docker-compose`:
 
 ```sh
 #!/bin/bash
@@ -109,6 +181,35 @@ export TMPDIR=/var/lib/docker-compose-tmp
       Use "native" unless you have a reason not to.
 1. Prepare it for removal: `isdct start -intelssd <target> -standby`
 1. Reconnect the drives or restart the system.
+
+## Google Authenticator
+
+**Possibly outdated**
+
+This setup requires pubkey plus MFA (if configured) plus password.
+
+### Setup
+
+- Warning: Keep a shell open and test with a new shell during the process to make sure you don’t lock yourself out.
+- Install: `apt install libpam-google-authenticator`
+- In `/etc/pam.d/sshd`, add `auth required pam_google_authenticator.so nullok` after `@include common-auth`.
+- In `/etc/ssh/sshd_config`, set:
+    ```
+    ChallengeResponseAuthentication yes
+    UsePAM yes
+    AuthenticationMethods publickey,keyboard-interactive
+    ```
+- Restart `sshd` and check that you can login with pubkey and MFA now.
+- (Optional) Add my [google-auth-config-prompter.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/google-auth-config-prompter.sh) profile script to `/etc/profile.d/` to ask user to configure Google Auth on login.
+- To allow a group to use only pubkey (no password or OTP):
+    - In `/etc/ssh/sshd_config`, add `Match Group no-mfa` containing `AuthenticationMethods publickey` (indented) at the bottom.
+    - Add the system group `no-mfa` and add special users to it.
+- To manually configure MFA for a user:
+    - Example: `google-authenticator -tduW`
+    - Use time-based tokens.
+    - Restrict usage of the same token multiple times.
+    - Don’t rate limit.
+    - Allow 3 concurrent codes (1 before, 1 after).
 
 ## ISC DHCP Server
 
@@ -218,6 +319,29 @@ This is not considered secure at all and should only be used on trusted networks
 1. In `/etc/ntp.conf`, replace existing servers/pools with `ntp.justervesenet.no` with the `iburst` option.
 1. Test with `ntpq -pn` (it may take a minute to synchronize).
 
+## OpenSSL
+
+### Usage
+
+- Many OpenSSL default options are insecure and must be specified.
+- Specifying `-noout -text` prints the data as formatted text instead of raw Base64.
+
+## Pi-hole (Docker)
+ 
+- (Optional) Set up an upstream DNS server.
+- Image: pihole/pihole
+- Run on LAN-accessible bridge.
+- Don’t give capability NET_ADMIN.
+- Add a reject rule in the firewall to more easily block HTTPS ads.
+- Find the admin password with `docker logs pihole 2>&1 | grep "random password"`
+- Specify the upstream DNS server twice so that it doesn’t choose the second itself.
+- Whitelists and blacklists:
+    - Blacklist (example): https://v.firebog.net/hosts/lists.php
+    - Whitelist (example): https://github.com/anudeepND/whitelist
+    - Add blocklists to `/etc/pihole/adlists.list`.
+    - Add whitelist domains to `/etc/pihole/whitelist.txt`.
+    - Run `pihole -g` to update lists.
+
 ## Postfix
 
 ### Satellite system
@@ -231,34 +355,34 @@ This is not considered secure at all and should only be used on trusted networks
 
 1. Install: `postfix libsasl2-modules mailutils`
     - If asked, choose to configure Postfix as a satellite system.
-2. Set the FQDN:
+1. Set the FQDN:
     1. Update it in `/etc/postfix/main.cf`.
     1. Link mailname to hostname (must be FQDN): `ln -sf /etc/hostname /etc/mailname`
-3. Update the root alias in `/etc/aliases` and run `newaliases`.
-4. Update the `main.cf` config (example not provided here).
-    1. Only listen to localhost: Set “inet\_interfaces = loopback-only”
-    2. Disable relaying: Set “mynetworks = 127.0.0.0/8 \[::ffff:127.0.0.0\]/104 \[::1\]/128”
-    3. Anonymize banner: “smtpd\_banner = $myhostname ESMTP”
-5. Relay guides:
-    1. Mailgun:
-      1. [How To Start Sending Email (Mailgun)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
-      2. [How to Set Up a Mail Relay with Postfix and Mailgun on Ubuntu 16.04 (](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)[DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)
-    2. SendGrid:
-      1. [Postfix (SendGrid)](https://sendgrid.com/docs/for-developers/sending-email/postfix/)
-      2. Use API-key with permission to send mail only.
-      3. The API-key username is `apikey`.
-6. Setup address rewrite rules:
+1. Update the root alias in `/etc/aliases` and run `newaliases`.
+1. Update the `main.cf` config (example not provided here).
+    1. Only listen to localhost: Set `inet\_interfaces = loopback-only`
+    1. Disable relaying: Set `mynetworks = 127.0.0.0/8 \[::ffff:127.0.0.0\]/104 \[::1\]/128`
+    1. Anonymize banner: `smtpd\_banner = $myhostname ESMTP`
+1. See the specific relay guides:
+    - Mailgun:
+        - [How To Start Sending Email (Mailgun)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
+        - [How to Set Up a Mail Relay with Postfix and Mailgun on Ubuntu 16.04 (](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)[DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)
+    - SendGrid:
+        - [Postfix (SendGrid)](https://sendgrid.com/docs/for-developers/sending-email/postfix/)
+        - Use API-key with permission to send mail only.
+        - The API-key username is `apikey`.
+1. Setup address rewrite rules:
     - For fixing the `To` and `From` fields, which is typically from root to root.
     - Add the rewrite config (see example below).
     - Reference the config using `smtp_header_checks` in the main config.
     - Test: `postmap -fq "From: root@<FQDN>" regexp:smtp_header_checks`
-7. Setup relay credentials (SASL):
+1. Setup relay credentials (SASL):
     1. Credentials file: `/etc/postfix/sasl_passwd`
     2. Add your credentials using format: `[relay_domain]:port user@domain:password`
     3. Run: `postmap sasl_passwd`
     4. Fix permissions: `chmod 600 sasl_passwd*`
-8. Restart `postfix`.
-9. Try sending an email: `echo "Test from $(hostname) at time $(date)." | mail -s "Test" root`
+1. Restart `postfix`.
+1. Try sending an email: `echo "Test from $(hostname) at time $(date)." | mail -s "Test" root`
 
 #### Examples
 
@@ -274,7 +398,7 @@ This is not considered secure at all and should only be used on trusted networks
 - Send a test mail: `echo "Test from $HOSTNAME at time $(date)." | mail -s "Test" root`
 - Test the config: `postconf > /dev/null`
 - Print the config: `postconf -n`
-- If mails are stuck in the mail queue (`mailq`) because of previous errors, run `postqueue -f` to flush them.
+- If `mailq` tells you mails are stuck in the mail queue because of previous errors, run `postqueue -f` to flush them.
 
 ## Pterodactyl
 
@@ -321,11 +445,20 @@ This is not considered secure at all and should only be used on trusted networks
 #### Setup
 
 1. Install: `apt install samba`
-1. Open TCP port 445.
+1. Open TCP port 445 (and 139 if using NetBIOS).
+1. (Optional) Disable NetBIOS: `systemctl disable --now nmbd` and `systemctl mask nmbd`
 1. Configure it (see usage).
 
 #### Usage
 
+- Enforce encryption and signing (`server signing` and `smb encrypt`) on important volumes.
+- Performance tuning:
+    - Socket options: `socket options = TCP_NODELAY SO_KEEPALIVE IPTOS_LOWDELAY`
+    - If the stuff is not important and the network is secure and high throughput is desired: `smb encrypt = disabled`
+    - Raw IO: `read raw = yes` and `read raw = yes`
+    - Sendfile: `use sendfile = yes`
+    - Zero-copy from net to FS (doesn't work for signed connections): `min receivefile size = 16384`
+    - Async RW for large files: `aio read size = 16384` and `aio write size = 16384`
 - Making changes:
     - Change the configuration file: `/etc/samba/smb.conf`
     - Test the configuration: `testparm -t`
@@ -388,25 +521,23 @@ TFTP_OPTIONS="--create --secure"
 ### Setup
 
 1. Install: `unbound dns-root-data`
-2. Setup the config: `/etc/unbound/unbound.conf`
-3. Add hostname variants to `/etc/hosts`.
-4. Configure it in `/etc/resolv.conf`:
-    1. `nameserver 127.0.0.1`
-    2. `search <domain>`
-    3. `domain <domain>`
-5. Configure it in `/etc/systemd/resolved.conf`:
-    1. `DNSStubListener=no`
-    2. `DNS=127.0.0.1`
-    3. Restart `systemd-resolved`.
-6. Test DNSSEC:
+1. Setup the config: `/etc/unbound/unbound.conf`
+1. Test DNSSEC:
     1. `drill sigfail.verteiltesysteme.net` should give an rcode of `SERVFAIL`.
     2. `drill sigok.verteiltesysteme.net` should give an rcode of `NOERROR`.
-7. Make sure dns-root-data is updating root hints in file `/usr/share/dns/root.hints`.
+1. Make sure dns-root-data is updating root hints in file `/usr/share/dns/root.hints`.
 
-### Troubleshooting
+#### Setup the Local Host to Use It
 
-- It sometimes stops resolving names and responds with "servfail".
-  - I don't know why. Restarting it works.
+1. Add hostname variants to `/etc/hosts`.
+1. Configure the local host to use it in `/etc/resolv.conf`:
+    - `nameserver 127.0.0.1`
+    - `search <domain>`
+    - `domain <domain>`
+1. Configure the local host to use it in `/etc/systemd/resolved.conf`:
+    - `DNSStubListener=no`
+    - `DNS=::1`
+    - Restart `systemd-resolved`.
 
 ### Notes
 

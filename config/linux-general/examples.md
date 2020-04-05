@@ -27,7 +27,9 @@ breadcrumbs:
 
 ### Fun
 
-- Pretty colors: `<something> | lolcat`
+- Color text from STDIN: `lolcat`
+- `cowsay`
+- `fortune`
 
 ### Installations and Packages
 
@@ -80,6 +82,10 @@ breadcrumbs:
 
 - Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`
 
+### Storage
+
+- Test read speed: `hdparm -t <dev>` (safe)
+
 ### System
 
 - Get version info:
@@ -89,11 +95,16 @@ breadcrumbs:
         - CentOS: `/etc/centos-release`
     - General release info: `uname -a`
     - Slightly more distro-specific release info: `lsb_release -a`
-- Monitor system and processes: `htop`
+- Monitor a mix of everything: 
+    - `glances`
+    - `ytop`
+- Monitor system and processes:
+    - `htop`
 - Monitor interrupts:
     - `irqtop`
     - `watch -n0.1 /proc/interrupts`
-- Monitor lots of stuff: `glances`
+- Stress test:
+    - Stress CPU: `stress-ng -c $(nproc) -t 600`
 
 ## Tasks
 
