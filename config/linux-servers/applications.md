@@ -348,6 +348,7 @@ This is not considered secure at all and should only be used on trusted networks
 #### Setup
 
 1. Install: `apt install cifs-utils`
+1. Add permanent shares (see usage).
 
 #### Usage
 
@@ -358,7 +359,7 @@ This is not considered secure at all and should only be used on trusted networks
        user=<user>
        password=<password>
        ```
-    1. In `/etc/fstab`, add: `//<share> <mountpoint> cifs vers=3.1.1,credentials=<file>,iocharset=utf8 0 0`
+    1. In `/etc/fstab`, add: `//<share> <mountpoint> cifs vers=3.1.1,uid=<uid>,gid=<gid>,credentials=<file>,iocharset=utf8 0 0`
     1. Test it: `mount -a`
 
 ## TFTP-HPA
