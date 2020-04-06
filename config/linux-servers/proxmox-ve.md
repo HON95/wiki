@@ -38,6 +38,7 @@ Follow the instructions for [Debian server basic setup](../debian-server/#initia
     1. In `/etc/apt/sources.list.d/pve-enterprise.list`, comment out the Enterprise repo.
     1. In `/etc/apt/sources.list`, add the PVE No-Subscription repo: `deb http://download.proxmox.com/debian/pve buster pve-no-subscription`
     1. More info: [Proxmox VE: Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
+1. Don't install any of the firmware packages, it will remove the PVE firmware packages.
 1. Update network config and hostname:
     1. Do NOT manually modify the configs for network, DNS, NTP, firewall, etc. as specified in the Debian guide.
     1. Install `ifupdown2`.

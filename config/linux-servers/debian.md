@@ -41,6 +41,7 @@ breadcrumbs:
 1. Check the system status:
     - Check for failed services: `systemctl --failed`
     - Check that AppArmor is operational: `apparmor_status`
+1. Update the root password: `passwd`
 1. Localization:
     - Check current locale:
         - `locale` should return `en_US.UTF-8`.
@@ -199,7 +200,7 @@ Everything here is optional.
     - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
     - (Optional) Add a MOTD to `/etc/motd`.
     - (Optional) Clear or change the pre-login message in `/etc/issue`.
-    - Test it (as a normal user): `bash /etc/profile.d/dmotd.sh`
+    - Test it: `su - <some-normal-user>`
 1. Monitor free disk space:
     - Download [disk-space-checker.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
     - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
