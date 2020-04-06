@@ -355,14 +355,12 @@ This is not considered secure at all and should only be used on trusted networks
 
 1. Install: `postfix libsasl2-modules mailutils`
     - If asked, choose to configure Postfix as a satellite system.
-1. Set the FQDN:
-    1. Update it in `/etc/postfix/main.cf`.
-    1. Link mailname to hostname (must be FQDN): `ln -sf /etc/hostname /etc/mailname`
-1. Update the root alias in `/etc/aliases` and run `newaliases`.
+1. Set the FQDN in `/etc/postfix/main.cf`.
+1. Update the root alias to point your real email address in `/etc/aliases`, then run `newaliases`.
 1. Update the `main.cf` config (example not provided here).
-    1. Only listen to localhost: Set `inet\_interfaces = loopback-only`
-    1. Disable relaying: Set `mynetworks = 127.0.0.0/8 \[::ffff:127.0.0.0\]/104 \[::1\]/128`
-    1. Anonymize banner: `smtpd\_banner = $myhostname ESMTP`
+    1. Only listen to localhost: Set `inet_interfaces = loopback-only`
+    1. Disable relaying: Set `mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128`
+    1. Anonymize banner: `smtpd_banner = $myhostname ESMTP`
 1. See the specific relay guides:
     - Mailgun:
         - [How To Start Sending Email (Mailgun)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
@@ -375,7 +373,7 @@ This is not considered secure at all and should only be used on trusted networks
     - For fixing the `To` and `From` fields, which is typically from root to root.
     - Add the rewrite config (see example below).
     - Reference the config using `smtp_header_checks` in the main config.
-    - Test: `postmap -fq "From: root@<FQDN>" regexp:smtp_header_checks`
+    - Test: `postmap -fq "From: root@$(hostname --fqdn)" regexp:smtp_header_checks`
 1. Setup relay credentials (SASL):
     1. Credentials file: `/etc/postfix/sasl_passwd`
     2. Add your credentials using format: `[relay_domain]:port user@domain:password`

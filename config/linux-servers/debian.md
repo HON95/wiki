@@ -48,27 +48,17 @@ breadcrumbs:
     - Check the keymap:
         - Try typing characters specific to your keyboard.
         - Update if wrong: `dpkg-reconfigure keyboard-configuration`
-    - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale. Restart `sshd`.
 1. Set the hostname:
     - Set the shortname: `hostnamectl set-hostname <shortname>`
-    - Set both the shortname and FQDN in `/etc/hosts`.
+    - Set both the shortname and FQDN in `/etc/hosts` using the following format: `127.0.0.1 <fqdn> <shortname>`
     - Check the hostnames with `hostname` (shortname) and `hostname --fqdn` (FQDN).
 1. Packages:
-    - (Optional) Enable the `contrib` and `non-free` repo areas:
-      - Add `contrib non-free` to every line in `/etc/apt/sources.list`.
+    - (Optional) Enable the `contrib` and `non-free` repo areas: Add `contrib non-free` to every line in `/etc/apt/sources.list`.
     - Update, upgrade and auto-remove.
     - Install basics: `sudo ca-certificates`
     - Install extra tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
     - Install per-user tmpdirs: `libpam-tmpdir`
     - Install Postfix: Install `postfix` and select "satellite system" if the system will only send email.
-1. Setup your personal user:
-    - Add the relevant groups (using `usermod -aG <group> <user>`):
-        - `sudo` for sudo access.
-        - `systemd-journal` for system log access.
-        - The hidepid group if using hidepid, to see all processes.
-    - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
-        - Hint: Get `https://github.com/<user>.keys` and filter the results.
-    - Try logging in remotely and gain root access through sudo.
 1. Add mount options:
     - Setup hidepid:
         - Add PID monitor group: `groupadd -g 1500 pidmonitor`
@@ -77,6 +67,15 @@ breadcrumbs:
     - (Optional) Setup extra mount options: See [Storage](system.md).
     - Run `mount -a` to validate fstab.
     - (Optional) Restart the system for it to take effect.
+1. Setup your personal user:
+    - If it doesn't exist, create it: `adduser <username>`
+    - Add the relevant groups (using `usermod -aG <group> <user>`):
+        - `sudo` for sudo access.
+        - `systemd-journal` for system log access.
+        - `hidepid` (whatever it's called) if using hidepid, to see all processes.
+    - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
+        - Hint: Get `https://github.com/<user>.keys` and filter the results.
+    - Try logging in remotely and gain root access through sudo.
 1. Setup SSHD:
     - In `/etc/ssh/sshd_config`, set:
       ```
@@ -106,10 +105,12 @@ breadcrumbs:
 #### Physical Host
 
 1. Install extra firmware:
-    - Install `firmware-linux` or `firmware-linux-free` for some common firmware and microcode.
+    - Enable the `non-free` repo areas.
+    - Install `firmware-linux` (or `firmware-linux-free`) for some common firmware and microcode.
     - APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
     - If it asked to install non-free firmware in the initial installation installation, try to install it now.
     - Install firmware from other sources (e.g. for some Intel NICs).
+    - Update microcode: Install `intel-microcode` (for Intel) or `amd64-microcode` (for AMD) and reboot (now or later).
 1. Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
 1. Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
 1. Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
