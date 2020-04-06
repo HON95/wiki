@@ -166,7 +166,7 @@ breadcrumbs:
 1. Setup firewall:
     - Install: `apt install iptables iptables-persistent netfilter-persistent`
         - Don't save the current rules when it asks.
-    - Add [a simple iptables script](https://github.com/HON95/configs/blob/master/server/linux/iptables/iptables-simple.sh) or something more complex.
+    - Add [a simple iptables script](https://github.com/HON95/scripts/blob/master/server/linux/iptables/iptables-simple.sh) or something more complex.
 1. Make sure IPv6 and NDP is configured securely:
     - If IPv6 and NDP is enabled and accepting RAs on insecure (i.e. public-facing) interfaces, the server may autoconfigure itself for those interfaces.
     - By configuration: Disable "Accept-RA" on interfaces that should not autoconfigure themselves. It's typically enabled by default.
@@ -182,17 +182,18 @@ Everything here is optional.
     - Install `needrestart` and run it after upgrading.
     - Install `debsums` and run it after upgrading to check deb checksums.
     - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
-1. Install `fail2ban`.
+1. Install Fail2Ban.
     - Recommended for public-facing servers.
     - Fix the firewall first so it configures itself correctly wrt. which firewall is used.
-    - Check the status with `fail2ban-client status [sshd]`.
+    - Install: `apt install fail2ban`
+    - Check status: `fail2ban-client status [sshd]`
     - See [Applications](applications.md#fail-2-ban) for more info.
 1. Google Authenticator 2FA:
     - Recommended for public-facing servers.
     - **TODO**
 1. Install and run Lynis security auditor:
-    - Install `lynis`.
-    - Run `lynis audit system`.
+    - Install: `apt install lynis`
+    - Run: `lynis audit system`
 1. MOTD:
     - Clear `/etc/motd` and `/etc/issue`.
     - Download [dmotd.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/dmotd.sh) to `/etc/profile.d/`.

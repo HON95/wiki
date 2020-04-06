@@ -406,17 +406,20 @@ This is not considered secure at all and should only be used on trusted networks
   The user must be able to communicate with both the panel and daemons.
 - Both the panel and daemons need valid TLS certificates.
 
-### Panel
+### Panel (Docker)
 
 #### Setup
 
-1. Follow the official guide.
+**TODO**
+
+Logs are located in `/app/storage/logs/laravel/`.
 
 ### Daemon
 
 1. Follow the official guide.
 1. Install `unzip`.
 1. Setup a valid TLS certificate.
+1. Setup Docker DNS servers: Add `{ "dns": ["1.1.1.1", "1.0.0.1", "2606:4700:4700::1111", "2606:4700:4700::1001"] }` to `/etc/docker/daemon.json`.
 
 ### Game Servers
 
@@ -424,10 +427,13 @@ This is not considered secure at all and should only be used on trusted networks
 
 - You can typically watch the installation progress by watching the docker logs.
 
-#### CSGO
+#### Counter-Strike: Global Offensive
 
-- Use source ID 740 in Pterodactyl (the default) and app ID 730 in Steam Game Server Account Manager, regardless of which app ID the Pterodactyl uses.
-- It uses a ton of storage, between 20 and 30 GB last I checked. If you run out of space, the installer will fail with some useless error message.
+See [Counter-Strike: Global Offensive (CS:GO)](/config/game-servers/csgo/).
+
+#### Team Fortress 2
+
+See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 
 ## Router Advertisement Daemon (radvd)
 

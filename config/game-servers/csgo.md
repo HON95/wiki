@@ -8,10 +8,21 @@ breadcrumbs:
 
 ## Installation
 
-- It's huge. Like 30GB huge.
-- Using a server manager like [Pterodactyl](/config/linux-servers/applications/#pterodactyl) makes hosting easier.
+Use Pterodactyl.
 
 ## Configuration
+
+- App ID: 730 (not 740)
+- Resource usage:
+    - vCPUs: 1
+    - RAM: 1GB
+    - Storage: 25GB
+
+### Command Line
+
+In addition to the default Pterodactyl command arguments.
+
+- `-tickrate 128`: Use tick rate 128. Must be set in the config as well.
 
 ### Configuration Files
 
