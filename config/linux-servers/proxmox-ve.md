@@ -35,25 +35,29 @@ breadcrumbs:
 Follow the instructions for [Debian server basic setup](../debian-server/#initial-setup), but with the following exceptions and extra steps:
 
 1. Before installing updates, setup the PVE repos (assuming no subscription):
-    - In `/etc/apt/sources.list.d/pve-enterprise.list`, comment out the Enterprise repo.
-    - In `/etc/apt/sources.list`, add the PVE No-Subscription repo: `deb http://download.proxmox.com/debian/pve buster pve-no-subscription`
-    - More info: [Proxmox VE: Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
+    1. In `/etc/apt/sources.list.d/pve-enterprise.list`, comment out the Enterprise repo.
+    1. In `/etc/apt/sources.list`, add the PVE No-Subscription repo: `deb http://download.proxmox.com/debian/pve buster pve-no-subscription`
+    1. More info: [Proxmox VE: Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
 1. Update network config and hostname:
-    - Do NOT manually modify the configs for network, DNS, NTP, firewall, etc. as specified in the Debian guide.
-    - Update network config: Use the web GUI.
-    - Update hostname: See the Debian guide.
-    - Update `/etc/hosts`: The short and FQDN hostnames must resolve to the IPv4 and IPv6 management address.
+    1. Do NOT manually modify the configs for network, DNS, NTP, firewall, etc. as specified in the Debian guide.
+    1. Install `ifupdown2`.
+    1. Update network config: Use the web GUI.
+    1. (Optional) Update hostname: See the Debian guide.
+    1. Update `/etc/hosts`: The short and FQDN hostnames must resolve to the IPv4 and IPv6 management address.
 1. Update MOTD:
-    - Disable the special PVE banner: `systemctl disable --now pvebanner.service`
-    - Clear or update `/etc/issue` and `/etc/motd`.
-    - (Optional) Set up dynamic MOTD: See the Debian guide.
+    1. Disable the special PVE banner: `systemctl disable --now pvebanner.service`
+    1. Clear or update `/etc/issue` and `/etc/motd`.
+    1. (Optional) Set up dynamic MOTD: See the Debian guide.
 1. Setup firewall:
-    - Open an SSH session, as this will prevent full lock-out.
-    - Enable the cluster/datacenter firewall.
-    - Disable NDP. This is because of a vulnerability in Proxmox where it autoconfigures itself on all bridges.
-    - Add incoming rules on the management network (!) for NDP (ICMPv6), ping (macro), SSH (macro) and the web GUI (TCP port 8006).
-    - Enable the host/node firewall.
-    - Make sure ping, SSH and the web GUI is working both for IPv4 and IPv6.
+    1. Open an SSH session, as this will prevent full lock-out.
+    1. Enable the cluster/datacenter firewall.
+    1. Disable NDP. This is because of a vulnerability in Proxmox where it autoconfigures itself on all bridges.
+    1. Add incoming rules on the management network for NDP (ICMPv6), ping (macro), SSH (macro) and the web GUI (TCP port 8006).
+    1. Enable the host/node firewall.
+    1. Make sure ping, SSH and the web GUI is working both for IPv4 and IPv6.
+1. Set up storage:
+    1. Create a ZFS pool or something.
+    1. Add it to `/etc/pve/storage.cfg`: See [Proxmox VE: Storage](https://pve.proxmox.com/wiki/Storage)
 
 ### Setup PCI(e) Passthrough
 
@@ -81,26 +85,46 @@ Follow the instructions for [Debian server basic setup](../debian-server/#initia
 - Add `hostpci<n>: <pci-path>,pcie=1,driver=vfio` to the config for every device
 - Test if the VM can see the PCI card: Run `qm monitor <vm-id>`, then `info pci` inside
 
+### Troubleshooting
+
+#### Failed Login
+
+Make sure `/etc/hosts` contains both the IPv4 and IPv6 addresses for the management networks.
 
 ## Cluster
 
 - `/etc/pve` will get synchronized across all nodes.
+    - This includes `storage.cfg`, so storage configuration must be the same for all nodes.
 - High availability:
     - Clusters must be explicitly configured for HA.
     - Provides live migration.
-    - Requires shared storage (e.h. Ceph).
+    - Requires shared storage (e.g. Ceph).
 
-### Simple Setup
+### Creating a Cluster
 
-1. Setup a management network for the cluster.
-    - It should generally be isolated.
-1. Setup each node.
-1. Add each other host to each host's hostfile.
-    - So that IP addresses can be more easily changed.
-    - Use short hostnames, not FQDNs.
+1. Setup an internal and preferrably isolated management network for the cluster.
 1. Create the cluster on one of the nodes: `pvecm create <name>`
+
+### Joining a Cluster
+
+1. Add each other host to each host's hostfile using shortnames and internal management addresses.
+1. If firewalling NDP, make sure it's allowed for the internam management network. This must be fixed BEFORE joining the cluster to avoid loss of quorum.
 1. Join the cluster on the other hosts: `pvecm add <name>`
 1. Check the status: `pvecm status`
+1. If a node with the same IP address has been part of the cluster before, run `pvecm updatecerts` to update its SSH fingerprint to prevent any SSH errors.
+
+### Leaving a Cluster
+
+This is the recommended method to remove a node from a cluster. The removed node must never come back online and must be reinstalled.
+
+1. Back up the node to be removed.
+1. Log into another node in the cluster.
+1. Run `pvecm nodes` to find the ID or name of the node to remove.
+1. Power off the node to be removed.
+1. Run `pvecm nodes` again to check that the node disappeared. If not, wait and try again.
+1. Run `pvecm delnode <name>` to remove the node.
+1. Check `pvevm status` to make sure everything is okay.
+1. (Optional) Remove the node from the hostfiles of the other nodes.
 
 ### High Availability Info
 
@@ -119,6 +143,12 @@ See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability
     - The software watchdog (using the Linux kernel driver "softdog") is used by default and doesn't require any configuretion,
       but it's not as reliable as other solutions as it's running inside the host.
 - Services are not migrated from failed nodes until fencing is finished.
+
+### Troubleshooting
+
+#### Modify Without Quorum
+
+If you lost quorum because if connection problems and need to modify something (e.g. to fix the connection problems), run `pvecm expected 1` to set the expected quorum to 1.
 
 ## VMs
 
@@ -192,7 +222,7 @@ See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability
 - The firewall is pretty pre-configured for most basic stuff, like connection tracking and management network access.
 - Host NDP problem:
     - For hosts, there is a vulnerability where the hosts autoconfigures itself for IPv6 on all bridges (see [Bug 1251 - Security issue: IPv6 autoconfiguration on Bridge-Interfaces ](https://bugzilla.proxmox.com/show_bug.cgi?id=1251)).
-    - Even though you firewall off management traffic to the host, the host may still use the "other" networks as default gateways.
+    - Even though you firewall off management traffic to the host, the host may still use the "other" networks as default gateways, which will cause routing issues for IPv6.
     - To partially fix this, disable NDP on all nodes and add a rule allowing protocol "ipv6-icmp" on trusted interfaces.
     - To verify that it's working, reboot and check its IPv6 routes and neighbors.
 - Check firewall status: `pve-firewall status`
