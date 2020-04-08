@@ -15,9 +15,9 @@ Use Pterodactyl.
 - App ID: 440 (Steam Game Server Account Management) or 232250 (Pterodactyl)
 - Game name: `tf`
 - Resource usage:
-    - vCPUs: **???**
-    - RAM: **???**
-    - Storage: **8GB**
+    - vCPUs: 1 (min)
+    - RAM: 1GiB
+    - Storage: 10GB
 
 ### Command Line
 
@@ -27,9 +27,11 @@ In addition to the default Pterodactyl command arguments.
 
 ### Configuration Files
 
-(Examples)
+Config dir: `tf/cfg/`
 
-**`tf/cfg/autoexec.cfg`:**
+**`autoexec.cfg`:**
+
+Example:
 ```
 hostname ""
 // Optional, set to an email address
@@ -39,7 +41,9 @@ rcon_password ""
 sv_password ""
 ```
 
-**`tf/cfg/server.cfg`:**
+**`server.cfg`:**
+
+Example:
 ```
 // Time in minutes per map, use 0 to disable time limit
 mp_timelimit 30
@@ -47,12 +51,14 @@ mp_timelimit 30
 mp_maxrounds 10
 ```
 
-**`tf/cfg/motd.txt`:**
+**`motd.txt` and `motd_text.txt`:**
+Contains the full MOTD shown to players when joining the server.
+`motd.txt` may contain HTML and is used by default.
+`motd_text.txt` is used if the player has disabled HTML MOTDs.
+If `motd.txt` contains *any* HTML/CSS/JS, it will be rendered using some ugly default font and opaque background.
 
-Use `tf/cfg/motd_default.txt` as a reference.
-
-**`tf/cfg/mapcycle.txt`:**
-
+**`mapcycle.txt`:**
+Lists the all maps in the map pool.
 Use `tf/cfg/mapcycle_default.txt` as a reference.
 
 {% include footer.md %}
