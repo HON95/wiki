@@ -16,7 +16,7 @@ Use Pterodactyl.
 - Resource usage:
     - vCPUs: 1
     - RAM: 1GB
-    - Storage: 25GB
+    - Storage: 30GB
 
 ### Command Line
 
