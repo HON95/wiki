@@ -14,8 +14,8 @@ Use Pterodactyl.
 
 - App ID: 730 (not 740)
 - Resource usage:
-    - vCPUs: 1
-    - RAM: 1GB
+    - vCPUs: 1 (min)
+    - RAM: 1GiB
     - Storage: 30GB
 
 ### Command Line
@@ -26,7 +26,12 @@ In addition to the default Pterodactyl command arguments.
 
 ### Configuration Files
 
-**`csgo/cfg/autoexec.cfg`** (example)
+Config dir: `csgo/cfg/`
+
+**`autoexec.cfg`**
+Loaded when the server starts.
+
+Example:
 ```
 hostname ""
 //rcon_password ""
@@ -37,7 +42,10 @@ exec banned_user.cfg
 exec banned_ip.cfg
 ```
 
-**`csgo/cfg/server.cfg`** (lacking example)
+**`csgo/cfg/server.cfg`**
+Loaded when a map is loaded (I think).
+
+Example:
 ```
 // Auto balance teams
 mp_autoteambalance 1
