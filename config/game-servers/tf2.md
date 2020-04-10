@@ -14,7 +14,7 @@ breadcrumbs:
 
 Use Pterodactyl.
 
-## Configuration
+## General Configuration
 
 - App ID: 440 (Steam Game Server Account Management) or 232250 (Pterodactyl)
 - Game name: `tf`
@@ -64,5 +64,14 @@ If `motd.txt` contains *any* HTML/CSS/JS, it will be rendered using some ugly de
 **`mapcycle.txt`:**
 Lists the all maps in the map pool.
 Use `tf/cfg/mapcycle_default.txt` as a reference.
+
+## MvM Configuration
+
+For more info: [Steam Support: TF2 Mann vs Machine Server Overview](https://support.steampowered.com/kb_article.php?ref=6656-IAZN-7933)
+
+1. Set `+maxplayers 32` on the command line.
+1. Add only MvM maps to `mapcycle.txt`.
+1. Set `+map mvm_decoy` (or another MvM map from the map pool) on the command line.
+1. (Optional) To allow matchmaking, see the Steam Support link above.
 
 {% include footer.md %}
