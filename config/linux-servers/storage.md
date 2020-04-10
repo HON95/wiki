@@ -108,6 +108,34 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 | `/home` | EXT4 (LVM) | 10 | nodev,nosuid |
 | `/srv` | EXT4 (LVM) or none if external | 10 | nodev,nosuid |
 
+## LUKS
+
+### Setup
+
+1. Install: `apt install cryptsetup`
+
+### Usage
+
+#### Encrypt Normal Partition
+
+1. Format the device/partition: `cryptsetup -v luksFormat <dev> [keyfile]`
+    - If not keyfile is specified, a password is required instead.
+    - Generate random keyfile: `dd if=/dev/random of=/root/.credentials/luks/<dev> bs=64 count=1`
+1. (Optional) Add extra keys: `cryptsetup luksAddKey <dev> [--key-file <oldkeyfile>] [keyfile]`
+    - Specify `oldkeyfile` to unlock it using a existing keyfile.
+    - Omit `keyfile` to add a password.
+1. (Optional) Check the result: `cryptsetup luksDump <dev>`
+1. Mount the decrypted device: `cryptsetup open <dev> [--key-file <keyfile>] <name>`
+    - Close: `cryptsetup close <name>`
+    - Show status: `cryptsetup -v status <name>`
+1. (Optional) Zeroize it to write random data to disk: `dd if=/dev/zero of=<mapper-dev> status=progress`
+1. Format using some file system: `mkfs.ext4 <mapper-dev>` (for EXT4)
+1. (Optional) Permanently mount device and FS using keyfile:
+    1. In `/etc/crypttab`, add: `<name> UUID=<dev-uuid> <keyfile> luks`
+    1. In `/etc/fstab`, add: `/dev/mapper/<name> <mountpoint> ext4 defaults 0 0` (for EXT4)
+    1. Reload `/etc/crypttab`: `systemctl reload-daemons`
+    1. Reload `/etc/fstab`: `mount -a`
+
 ## Ceph
 
 ### Resources
@@ -311,7 +339,8 @@ Some guides recommend using backport repos, but this way avoids that.
 ### Usage
 
 - Create pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
-    - Realistic example: `zpool create -o ashift=<9|12> -o compression=lz4 <name> [mirror|raidz|raidz2|...] <drives>`
+    - Create encrypted pool: See [encryption](#encryption-1).
+    - Example: `zpool create -o ashift=<9|12> -o compression=lz4 <name> [mirror|raidz|raidz2|...] <drives>`
 - Create dataset: `zfs create <pool>/<name>`
     - Realistic example: `zfs create -o quota=<size> -o reservation=<size> <pool>/<other-datasets>/<name>`
 - Create and destroy snapshots:
@@ -345,7 +374,7 @@ Some guides recommend using backport repos, but this way avoids that.
     1. Reboot and test. It may fail due to dependency/boot order stuff.
 - Create a password encrypted pool: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
 - Create a raw key encrypted pool:
-    - Generate the key: `dd if=/dev/random of=/root/.credentials/zfs/<tank> bs=32 count=1`
+    - Generate the key: `dd if=/dev/random of=/root/.credentials/zfs/<tank> bs=64 count=1`
     - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/.credentials/zfs/<tank> ...`
 - Encrypt an existing dataset by sending and receiving:
     1. Rename the old dataset: `zfs rename <dataset> <old-dataset>`

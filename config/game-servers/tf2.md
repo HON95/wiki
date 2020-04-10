@@ -6,6 +6,10 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## Resources
+
+- [CFG.TF](https://cfg.tf/)
+
 ## Installation
 
 Use Pterodactyl.

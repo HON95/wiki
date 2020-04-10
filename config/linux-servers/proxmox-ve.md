@@ -172,7 +172,11 @@ If you lost quorum because if connection problems and need to modify something (
 - Hard disk tab:
     - Bus/device: Use SCSI with the VirtIO SCSI controller selected in the system tab.
       It supersedes the VirtIO Block controller.
-    - Cache: Optional, typically using write back.
+    - Cache:
+        - Use none for balanced performance and safety with better *write* performance.
+        - Use write-through for balanced performance and safety with better *read* performance.
+        - Use write-back for max performance with slightly reduced safety.
+        - Direct-sync and write-through can be fast for SAN/HW-RAID, but slow if using qcow2.
     - Discard: When using thin-provisioning storage for the disk and a TRIM-enabled guest OS,
       this option will relay guest TRIM commands to the storage so it may shrink the disk image.
       The guest OS may require SSD emulation to be enabled.
