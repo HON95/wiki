@@ -49,6 +49,9 @@ Official installation instructions: [UniFi: How to Install & Upgrade the UniFi N
 - Reset: Hold RESET button until the front light alternate between black, white and blue.
 - Default credentials (after RESET and before adoption): Username `ubnt` with password `ubnt`.
 - IPv6 management: It does not seem to support DHCPv6. I don't know about SLAAC.
+- Problematic settings:
+    - "Guest Policy": For client isolation and captive portal. Does not support IPv6. May cause communication to fail after connecting to the AP.
+    - "High Performance Devices": May cause the connection establishment to to fail.
 
 ### Wireless Uplink (Meshing)
 
