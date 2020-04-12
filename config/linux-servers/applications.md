@@ -78,67 +78,6 @@ See [Storage: Ceph](../storage/#ceph).
 
 Use [cloudflare-ddns-updater.sh](https://github.com/HON95/scripts/tree/master/server/linux/cloudflare).
 
-## Docker
-
-### Setup
-
-1. Install: [Docker Documentation: Get Docker Engine - Community for Debian](https://docs.docker.com/install/linux/docker-ce/debian/).
-1. (Optional) Setup swap limit:
-    - If `docker info` contains `WARNING: No swap limit support`, it's not working and should maybe be fixed.
-    - It incurs a small performance degredation and is optional but recommended.
-    - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
-    - Run `update-grub` and reboot.
-1. Configure `/etc/docker/daemon.json`:
-    - Set DNS servers: `"dns": ["1.1.1.1", "1.0.0.1", "2606:4700:4700::1111", "2606:4700:4700::1001"]`
-    - (Optional) Disable automatic IPTables rules: `"iptables": false`
-    - Enable IPv6: `"ipv6": true`
-    - Set IPv6 default subnet: `"fixed-cidr-v6": <64-prefix>`
-1. (Optional, not recommended on servers) Allow certain users to use Docker: Add them to the `docker` group.
-
-### Usage
-
-- Docker run options:
-    - Set name: `--name=<name>`
-    - Run in detatched mode: `-d`
-    - Run using interactive terminal: `-it`
-    - Automatically remove when stopped: `--rm`
-    - Automatically restart: `--restart=unless-stopped`
-    - Use "tini" as entrypoint and use PID 1: `--init`
-    - Set env var: `-e <var>=<val>`
-    - Publish network port: `-p <host-port>:<cont-port>[/udp]`
-    - Mount volume: `-v <vol>:<cont-path>` (`<vol>` must have a path prefix like `./` or `/` if it is a directory and not a named volume)
-- Networks:
-    - Create bridged network: `docker network create --driver=bridge --ipv6 --subnet=<ipv4-net> --subnet=<ipv6-net> <name>`
-    - Create bridged network connected to host interface: `docker network create --driver=bridge --ipv6 --subnet=<ipv4-net> --gateway=<ipv4-gateway> --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`
-    - Run container with network: `docker run --network=<net-name> --ip=<ipv4-addr> --ip6=<ipv6-addr> --dns=<dns-server> <image>`
-
-## Docker Compose
-
-### Setup
-
-1. Install Docker: See above.
-1. Install: [Docker Documentation: Install Docker Compose](https://docs.docker.com/compose/install/).
-1. Install command completion: [Docker Documentation: Command-line completion](https://docs.docker.com/compose/completion/).
-
-### Troubleshooting
-
-#### Fix Docker Compose No-Exec Tmp-Dir
-
-Docker Compose will fail to work if `/tmp` has `noexec`.
-
-1. Move `/usr/local/bin/docker-compose` to `/usr/local/bin/docker-compose-normal`.
-1. Create `/usr/local/bin/docker-compose` with the contents below and make it executable.
-1. Create the new TMPDIR dir.
-
-New `docker-compose`:
-
-```sh
-#!/bin/bash
-# Some dir without noexec
-export TMPDIR=/var/lib/docker-compose-tmp
-/usr/local/bin/docker-compose-normal "$@"
-```
-
 ## Fail2ban
 
 ### Setup
@@ -550,39 +489,7 @@ TFTP_OPTIONS="--create --secure"
 
 ## UniFi
 
-### Setup
-
-**TODO** This is just horrible, just use some unofficial Docker image instead.
-
-1. Install MongoDB:
-    - See: [MongoDB: Install MongoDB Community Edition on Debian](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-debian/) or (MongoDB: Install MongoDB on Debian (v3.0))[https://docs.mongodb.com/v3.0/tutorial/install-mongodb-on-debian/]
-    - Download and install [libssl1.0.0(Debian Jessie)](https://packages.debian.org/jessie/libssl1.0.0).
-    - Install for Debian Jessie and MongoDB version 3.4.
-    - Enable and start `mongod`.
-1. Install OpenJDK 8.
-    - Somehow ...
-1. Install UniFi:
-    - See: [UniFi: How to Install and Update via APT on Debian or Ubuntu](https://help.ubnt.com/hc/en-us/articles/220066768-UniFi-How-to-Install-and-Update-via-APT-on-Debian-or-Ubuntu)
-1. Watch logs:
-    - UniFi: `/usr/lib/unifi/logs/server.log`
-    - MongoDB: `/usr/lib/unifi/logs/mongod.log`
-1. Allow the following incoming ports (see [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used)):
-    - UDP 3478: STUN
-    - TCP 8080: Device-controller communication (for devices)
-    - TCP 8443: GUI/API (for admins)
-    - TCP 8880: HTTP portal (for guests)
-    - TCP 8843: HTTPS portal (for guests)
-    - TCP 6789: Mobile speedtest (for admins)
-    - UDP 10001: Device discovery (for devices)
-    - UDP 1900: L2 adoption (optional, for devices)
-
-#### Using jacobalberty's Unofficial Docker Image
-
-1. Add a system user named "unifi": `useradd -r unifi`
-1. Allow the ports through the firewall (see above).
-1. Add a Docker Compose file. See [docker-compose.yml](https://github.com/HON95/misc-configs/blob/master/linux-server/unifi/docker-compose.yml).
-    - Use host networking mode for L2 adoption to work (if you're not using L3 or SSH adoption).
-1. Start the container, open the webpage and follow the wizard.
+See [Ubiquiti UniFi Controller (Debian)](../unifi-debian/).
 
 ## ZFS
 

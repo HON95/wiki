@@ -1,5 +1,5 @@
 ---
-title: Cisco IOS
+title: Cisco IOS General
 breadcrumbs:
 - title: Configuration
 - title: Network
@@ -16,7 +16,19 @@ breadcrumbs:
 
 - [Cisco Config Analysis Tool (CCAT)](https://github.com/cisco-config-analysis-tool/ccat)
 
-## CLI
+## System
+
+- Memories:
+    - ROM: For bootstrap stuff.
+    - Flash: For IOS images.
+    - NVRAM: For startup configuration files.
+    - RAM: For running config, tables, etc.
+
+### Boot
+
+- IOS image sources (in default order): Flash, TFTP, ROM.
+- Startup config sources (in default order): NVRAM, TFTP, system configuration dialog.
+- Some details may be configured using the configuration register.
 
 ### Modes
 
@@ -36,7 +48,9 @@ breadcrumbs:
     - Completely useless, never use it.
 - ROM monitor mode (aka ROMMON).
 
-### General Usage
+## Configuration
+
+### Usage and Basics
 
 - Most commands take effect immediately.
 - Select range of interfaces: `int range g1/0/1-52` (example)
@@ -45,11 +59,6 @@ breadcrumbs:
     - Tab: Auto-complete.
     - `?`: Prints the allowed keywords.
     - `| <filter>`: Can be used to filter the output using one of the filter commands.
-
-## Configuration
-
-### Basics
-
 - Save running config: `copy run start` or `write mem`
 - Restore startup config: `copy start run`
 - Show configurations: `show [run|start]`
@@ -58,8 +67,33 @@ breadcrumbs:
 ### AAA
 
 - Disable the `password-encryption` service, use encrypted passwords instead. Perferrably type 9 (scrypt) secrets if available.
+- Set enable secret (for entering privileged EXEC mode): `enable algorithm-type scrypt secret <secret>`
+- Enable user auth: `aaa new-model`
+- Local user database:
+    - Enable local database: `aaa authentication login default local`
+    - Add user: `username <username> privilege 15 algorithm-type scrypt secret <password>`
+        - `privilege 15` means the user will enter directly into privileged EXEC mode.
+        - `algorithm-type scrypt` means it will use the secure scrypt password hashing algorithm.
+- TACACS+:
+    - **TODO**
 
-## Miscellaneous
+### Lines
+
+- Includes the console line and vty (telnet/SSH) lines.
+- Configured using line conf. mode: `line <con|vty> <n>`
+- Set inactivity logout: `exec-timeout <min> <sec>`
+    - `0 0` disables it, which is practical for labs.
+- Enabel synchronous logging for console: `logging synchronous`
+- (Not recommended) Enable simple password-based console login:
+    1. Enter line conf. mode.
+    1. Enable login: `login`
+    1. Set console password: `password [alg] <password>`
+- (Recommended) Enable user-based console login:
+    1. Enter line conf. mode.
+    1. Enable login: `login`
+    1. Set to use the local database: `login authentication default`
+
+## Miscellanea
 
 ### Version and Image String Notations
 

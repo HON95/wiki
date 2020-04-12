@@ -1,5 +1,5 @@
 ---
-title: Juniper Junos OS
+title: Juniper General
 breadcrumbs:
 - title: Configuration
 - title: Network

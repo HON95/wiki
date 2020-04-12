@@ -22,7 +22,6 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [Debian Server](config/linux-servers/debian/)
 - [Proxmox VE](config/linux-servers/proxmox-ve/)
-- [Ubiquiti UniFi Controller (Debian)](config/linux-servers/unifi-debian/)
 - [Linux Server Storage](config/linux-servers/storage/)
 - [Linux Server Applications](config/linux-servers/applications/)
 
@@ -60,15 +59,15 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 #### Specific
 
 - [Brocade ICX Switches](config/network/brocade-icx/)
-- [Cisco IOS](config/network/cisco-ios/)
+- [Cisco IOS General](config/network/cisco-ios-general/)
 - [Cisco IOS Routers](config/network/cisco-ios-routers/)
 - [Cisco IOS Switches](config/network/cisco-ios-switches/)
-- [Juniper Junos OS](config/network/juniper-junos/)
+- [Juniper General](config/network/juniper-general/)
 - [Juniper EX Series Switches](config/network/juniper-ex/)
 - [Linksys LGS Switches](config/network/linksys-lgs/)
 - [Linux Switching & Routing](config/network/linux/)
 - [pfSense](config/network/pfsense/)
-- [UniFi Access Points](config/network/unifi-ap/)
+- [UniFi](config/network/unifi/)
 
 ## Information Technology
 

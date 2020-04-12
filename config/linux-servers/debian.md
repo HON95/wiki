@@ -221,7 +221,7 @@ Everything here is optional.
     - Check the locale: `locale`
     - Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale.
 
-## Miscellaneous Notes
+## Miscellanea
 
 ### Cron
 
