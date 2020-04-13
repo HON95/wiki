@@ -102,10 +102,12 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [BASH](se/langs/bash/)
 - [Markdown](se/langs/markdown/)
 
+<!--
 ## External Resources
 
 - [My miscellaneous configs and scripts](https://github.com/HON95/configs)
 - [My miscellaneous code snippets and dev scripts](https://github.com/HON95/code)
 - [My miscellaneous Ansible playbooks](https://github.com/HON95/ansible-playbooks)
+-->
 
 {% include footer.md %}
