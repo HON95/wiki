@@ -203,11 +203,15 @@ If you lost quorum because if connection problems and need to modify something (
 ### Linux Setup
 
 1. Setup QEMU Guest Agent:
+    1. Notes:
+        - If enabled in Proxmox but not installed, Proxmox will fail to shutdown/restart the VM.
     1. Install: `apt install qemu-guest-agent`
     1. Toggle the "QEMU Guest Agent" option for the VM in Proxmox.
-    - If enabled in Proxmox but not installed, Proxmox will fail to shutdown/restart the VM.
+    1. Restart the VM from PVE (not from within the VM).
 
 ### Setup SPICE Console
+
+SPICE allows interacting with graphical VM desktop environments, including support for keyboard, mouse, audio and video.
 
 1. In the VM hardware configuration, set the display to SPICE.
 1. Install the guest agent:
