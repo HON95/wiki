@@ -163,19 +163,18 @@ If you lost quorum because if connection problems and need to modify something (
       For equal order, the VMID in is used in ascending order.
 - OS tab: No notes.
 - System tab:
-    - Graphics card: **TODO** SPICE graphics card?
+    - Graphics card: Use the default. **TODO** SPICE graphics card?
     - Qemu Agent: It provides more information about the guest and allows PVE to perform some actions more intelligently,
       but requires the guest to run the agent.
-    - SCSI controller: Use VirtIO SCSI for Linux and the LSI for Windows.
-    - BIOS: Generally use SeaBIOS. Use OVMF (UEFI) if you need PCIe pass-through.
-    - Machine: Generally use Intel 440FX. Use Q35 if you need PCIe pass-through.
+    - BIOS: SeaBIOS (generally). Use OVMF (UEFI) if you need PCIe pass-through.
+    - Machine: Intel 440FX (generally). Use Q35 if you need PCIe pass-through.
+    - SCSI controller: VirtIO SCSI.
 - Hard disk tab:
-    - Bus/device: Use SCSI with the VirtIO SCSI controller selected in the system tab.
-      It supersedes the VirtIO Block controller.
+    - Bus/device: Use SCSI with the VirtIO SCSI controller selected in the system tab (it supersedes the VirtIO Block controller).
     - Cache:
+        - Use write-back for max performance with slightly reduced safety.
         - Use none for balanced performance and safety with better *write* performance.
         - Use write-through for balanced performance and safety with better *read* performance.
-        - Use write-back for max performance with slightly reduced safety.
         - Direct-sync and write-through can be fast for SAN/HW-RAID, but slow if using qcow2.
     - Discard: When using thin-provisioning storage for the disk and a TRIM-enabled guest OS,
       this option will relay guest TRIM commands to the storage so it may shrink the disk image.
@@ -191,7 +190,8 @@ If you lost quorum because if connection problems and need to modify something (
     - CPU units: Aka CPU shares/weight. Processing priority, higher is higher priority.
     - See the documentation for the various CPU flags (especially the ones related to Meltdown/Spectre).
 - Memory tab:
-    - Ballooning allows the guest OS to release memory back to the host when the host is running low on it.
+    - Ballooning: Enable it.
+      It allows the guest OS to release memory back to the host when the host is running low on it.
       For Linux, it uses the "balloon" kernel driver in the guest, which will swap out processes or start the OOM killer if needed.
       For Windows, it must be added manually and may incur a slowdown of the guest.
 - Network tab:
@@ -200,25 +200,69 @@ If you lost quorum because if connection problems and need to modify something (
     - Multiqueue: When using VirtUO, it can be set to the total CPU cores of the VM for increased performance.
       It will increase the CPU load, so only use it for VMs that need to handle a high amount of connections.
 
-### Linux Setup
+### Windows Setup
 
-1. Setup QEMU Guest Agent:
-    1. Notes:
-        - If enabled in Proxmox but not installed, Proxmox will fail to shutdown/restart the VM.
-    1. Install: `apt install qemu-guest-agent`
-    1. Toggle the "QEMU Guest Agent" option for the VM in Proxmox.
-    1. Restart the VM from PVE (not from within the VM).
+*For Windows 10.*
 
-### Setup SPICE Console
+[Proxmox VE Wiki: Windows 10 guest best practices](https://pve.proxmox.com/wiki/Windows_10_guest_best_practices)
+
+#### Before Installation
+
+1. Add the VirtIO drivers ISO: [Fedora Docs: Creating Windows virtual machines using virtIO drivers](https://docs.fedoraproject.org/en-US/quick-docs/creating-windows-virtual-machines-using-virtio-drivers/index.html#virtio-win-direct-downloads)
+1. Add it as a CDROM using IDE device 3.
+
+### During Installation
+
+1. (Optional) Select "I din't have a product key" if you don't have a product key.
+1. In the advanced storage section:
+    1. Install storage driver: Open drivers disc dir `vioscsi\w10\amd64` and install "Red Hat VirtIO SCSI pass-through controller".
+    1. Install network driver: Open drivers disc dir `NetKVM\w10\amd64` and install "Redhat VirtIO Ethernet Adapter".
+    1. Install memory ballooning driver: Open drivers disc dir `Balloon\w10\amd64` and install "VirtIO Balloon Driver".
+
+#### After Installation
+
+1. Install QEMU guest agent:
+    1. Open the Device Manager and find "PCI Simple Communications Controller".
+    1. Click "Update driver" and select drivers disc dir `vioserial\w10\amd64`
+    1. Open drivers disc dir `guest-agent` and install `qemu-ga-x86_64.msi`.
+1. Install drivers and services: 
+    1. Download `virtio-win-gt-x64.msi` (see the wiki for the link).
+    1. (Optional) Deselect "Qxl" and "Spice" if you don't plan to use SPICE.
+1. Install SPICE guest agent:
+    1. **TODO** Find out if this is included in `virtio-win-gt-x64.msi`.
+    1. Download and install `spice-guest-tools` from spice-space.org.
+    1. Set the display type in PVE to "SPICE".
+1. For SPICE audio, add an `ich9-intel-hda` audio device.
+1. Restart the VM.
+1. Install missing drivers:
+    1. Open the Device Manager and look for missing drivers.
+    1. Click "Update driver", "Browse my computer for driver software" and select the drivers disc with "Include subfolders" checked.
+
+### QEMU Guest Agent Setup
+
+[Proxmox VE Wiki: Qemu-guest-agent](https://pve.proxmox.com/wiki/Qemu-guest-agent)
+
+The QEMU guest agent provides more info about the VM to PVE, allows proper shutdown from PVE and allows PVE to freeze the guest file system when making backups.
+
+1. Activate the "QEMU Guest Agent" option for the VM in Proxmox and restart if it wasn't already activated.
+1. Install the guest agent:
+    - Linux: `apt install qemu-guest-agent`
+    - Windows: See [Windows Setup](#windows-setup).
+1. Restart the VM from PVE (not from within the VM).
+    - Alternatively, shut it down from inside the VM and then start it from PVE.
+
+### SPICE Setup
+
+[Proxmox VE Wiki: SPICE](https://pve.proxmox.com/wiki/SPICE)
 
 SPICE allows interacting with graphical VM desktop environments, including support for keyboard, mouse, audio and video.
 
-1. In the VM hardware configuration, set the display to SPICE.
-1. Install the guest agent:
-    - Linux: `spice-vdagent`
-    - Windows: `spice-guest-tools`
 1. Install a SPICE compatible viewer on your client:
     - Linux: `virt-viewer`
+1. Install the guest agent:
+    - Linux: `spice-vdagent`
+    - Windows: See [Windows Setup](#windows-setup).
+1. In the VM hardware configuration, set the display to SPICE.
 
 ## Firewall
 
