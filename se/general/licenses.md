@@ -62,5 +62,6 @@ breadcrumbs:
 ## Guidelines
 
 - Try to avoid licensing libraries as GPL. Using these libraries is a nightmare, even for GPL applications (due to GPLv2 and v3 incompatibilities).
+- GPLv2/v3 may be licensed as "GPLv2/v3 or later" to try to avoid the GPL inter-version incompatibilities.
 
 {% include footer.md %}
