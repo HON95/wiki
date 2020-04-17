@@ -199,7 +199,19 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 
 - General:
     - List pools: `rados lspools` or `ceph osd lspools`
-    - Show pool utilization: `rados df`
+- Show utilization:
+    - `rados df`
+    - `ceph df [detail]`
+    - `deph osd df`
+- Show health and status:
+    - `ceph status`
+    - `ceph health [detail]`
+    - `ceph osd stat`
+    - `ceph osd tree`
+    - `ceph mon stat`
+    - `ceph osd perf`
+    - `ceph osd pool stats`
+    - `ceph pg dump pgs_brief`
 - Pools:
     - Create: `ceph osd pool create <pool> <pg-num>`
     - Delete: `ceph osd pool delete <pool> [<pool> --yes-i-really-mean-it]`
@@ -207,8 +219,6 @@ This is just a suggestion for how to partition your main system drive. Since LVM
     - Make or delete snapshot: `ceph osd pool <mksnap|rmsnap> <pool> <snap>`
     - Set or get values: `ceph osd pool <set|get> <pool> <key>`
     - Set quota: `ceph osd pool set-quota <pool> [max_objects <count>] [max_bytes <bytes>]`
-- PGs:
-    - Status of PGs: `ceph pg dump pgs_brief`
 - Interact with pools directly using RADOS:
     - Ceph is built on based on RADOS.
     - List files: `rados -p <pool> ls`
@@ -273,11 +283,15 @@ Typically an early indicator of faulty hardware, so take note of which disk it i
     - Check that the new OSD is up: `ceph osd tree`
 1. Start the OSD daemon: `systemctl start ceph-osd@<id>`
 1. Wait for rebalancing: `ceph -s [-w]`
-1. Check the health: `ceph health`
+1. Check the health: `ceph health [detail]`
 
 ## ZFS
 
+Using ZFS on Linux (ZoL).
+
 ### Info
+
+Note: ZFS's history (Oracle) and license (CDDL, which is incompatible with the Linux mainline kernel) are pretty good reasons to avoid ZFS.
 
 #### Features
 
@@ -299,12 +313,13 @@ Typically an early indicator of faulty hardware, so take note of which disk it i
 #### Terminology
 
 - Vdev
-- Zpool
+- Pool
+- Dataset
 - Zvol
 - ZFS POSIX Layer (ZPL)
 - ZFS Intent Log (ZIL)
-- Adaptive Replacement Cache (ARC)
-- Dataset
+- Adaptive Replacement Cache (ARC) and L2ARC
+- ZFS Event Daemon (ZED)
 
 #### Encryption
 
@@ -407,10 +422,7 @@ Some guides recommend using backport repos, but this way avoids that.
 - Make sure regular automatic scrubs are enabled.
     - There should be a cron job/script or something.
     - Run it e.g. every 2 weeks or monthly.
-- Snapshots are great for incremental backups. They're easy to send places too. If the dataset is encrypted then so is the snapshot.
-- Enabling features like encryption, compression, deduplication is not retro-active. You'll need to move the old data away and back for the features to apply to the data.
-
-### Tuning
+- Snapshots are great for incremental backups. They're easy to send placesOS
 
 - Use quotas, reservations and compression.
 - Very frequent reads:
