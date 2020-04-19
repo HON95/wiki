@@ -90,16 +90,27 @@ breadcrumbs:
 1. Update MOTD:
     - Clear `/etc/motd` and `/etc/issue`.
     - (Optional) Add a MOTD script (see below).
-1. (Not recommended) Prevent root login:
-    - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
-    - Add a personal user first.
-    - Check that the password field (the second field) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
-    - Clear `/etc/securetty` to prevent root local/console login.
+1. (Optional) Set up a swap file:
+    1. (Note) Avoid using swapping if possible. If you really need it but don't intend on using it too often (e.g. for hibernation), consider putting it on a larger, slower disk.
+    1. Show if swap is already enabled: `swapon --show`
+    1. Allocate the swap file: `fallocate -l <size> /swapfile`
+        - Alternatively, use dd.
+    1. Fix the permissions: `chmod 600 /swapfile`
+    1. Setup the swap file: `mkswap /swapfile`
+    1. Activate the swap file: `swapon /swapfile`
+        - Check: `swapon --show`
+    1. Add it to fstab using this line: `/swapfile swap swap defaults 0 0`
+        - Check: `mount -a`
 1. (Optional) Enable persistent logging:
     - The default journal directory is `/var/log/journal`. By default, it's not automatically created.
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
     - `auto` (the default) is like `persistent` but does not automatically create the log directory.
 1. (Recommended) Postfix mail relay: See [Linux Server Applications: Postfix](../applications/#postfix) (satellite system).
+1. (Not recommended) Prevent root login:
+    - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
+    - Add a personal user first.
+    - Check that the password field (the second field) for root in `/etc/shadow` is something invalid like "\*" or "!", but not empty and not valid password hash. This prevents password login.
+    - Clear `/etc/securetty` to prevent root local/console login.
 
 ### Machine-Specific Configuration
 
@@ -115,18 +126,6 @@ breadcrumbs:
 1. Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
 1. Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
 1. Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
-1. (Optional) Set up a swap file:
-    1. (Note) Avoid using swapping if possible. If you really need it but don't intend on using it too often (e.g. for hibernation), consider putting it on a larger, slower disk.
-    1. Show if swap is already enabled: `swapon --show`
-    1. Allocate the swap file: `fallocate -l <size> /swapfile`
-        - Alternatively, use dd.
-    1. Fix the permissions: `chmod 600 /swapfile`
-    1. Setup the swap file: `mkswap /swapfile`
-    1. Activate the swap file: `swapon /swapfile`
-        - Check: `swapon --show`
-    1. Add it to fstab using this line: `/swapfile swap swap defaults 0 0`
-        - Check: `mount -a`
-    1. (Optional) Reduce swappiness: Add `vm.swappiness = 10` to `/etc/sysctl.conf`.
 
 #### QEMU Virtual Host
 

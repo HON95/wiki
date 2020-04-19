@@ -36,7 +36,6 @@ breadcrumbs:
     - Most modern tools on modern Linux versions will automatically align file systems and partitions correctly.
     - The `relatime` mount flag is set by default, to reduce disk writes when a file is read.
     - For SSDs, don't enable TRIM (using neither the `discard` mount option nor `fstrim.timer`). TRIM typically don't provide much benefit and may actually reduce performance. Since SSDs are generally overprovisioned and may be overprovisioned further by the user (generally not needed), TRIM is generally not needed any more.
-    - `vm.swappiness` should possibly be set to some reasonable value to reduce swapping pressure on the swap disk(s).
 
 ### SSDs
 
@@ -95,9 +94,9 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 | `/proc` | Runtime | N/A | hidepid=2,gid=1500 |
 | `/boot/efi` | FAT32 w/ boot flag (UEFI), none (BIOS) | 0.5 | nodev,nosuid,noexec |
 | `/boot` | EXT4 (UEFI), FAT32 w/ boot flag (BIOS) | 0.5 | nodev,nosuid,noexec |
-| Swap | Swap (optional) | 4, 8, 16 | N/A |
+| Swap | Swap (optional) | N/A | N/A |
 | `vg0` | LVM | 50% or 100% | N/A |
-| Swap | Swap (LVM) (optional) | 4, 8, 16 | N/A |
+| Swap | Swap (LVM) (optional) | N/A | N/A |
 | `/` | EXT4 (LVM) | 10 | nodev |
 | `/tmp` | EXT4 (LVM) | 5 | nodev,nosuid,noexec |
 | `/var` | EXT4 (LVM) | 5 | nodev,nosuid |
