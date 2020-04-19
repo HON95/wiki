@@ -40,6 +40,7 @@ Sends an emails when APT updates are available.
     - Make sure the root email alias is set appropriately.
 1. Install: `apt install apticron`
 1. Setup the config: `/etc/apticron/apticron.conf`
+    - Create it: `cp /usr/lib/apticron/apticron.conf /etc/apticron/apticron.conf`
     - The defaults are typically fine.
 1. Modify the check interval in `/etc/cron.d/apticron` (e.g. `30 23 * * *`).
 1. Test it: `apticron`
