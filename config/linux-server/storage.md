@@ -276,10 +276,10 @@ Typically an early indicator of faulty hardware, so take note of which disk it i
     - Unmount it if not: `umount <dev>`
 1. Replace the physical disk.
 1. Zap the new disk: `ceph-disk zap <dev>`
-1. Create new OSD: `pveceph osd create <dev> [options]` (PVE)
-    - Specify any WAL or DB devices.
+1. Create new OSD: `pveceph osd create <dev> [options]` (Proxmox VE)
+    - Optionally specify any WAL or DB devices.
     - See [PVE: pveceph(1)](https://pve.proxmox.com/pve-docs/pveceph.1.html).
-    - Without `pveceph osd create`, a series of steps are required.
+    - Without PVE's `pveceph(1)`, a series of steps are required.
     - Check that the new OSD is up: `ceph osd tree`
 1. Start the OSD daemon: `systemctl start ceph-osd@<id>`
 1. Wait for rebalancing: `ceph -s [-w]`

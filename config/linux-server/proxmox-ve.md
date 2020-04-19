@@ -60,7 +60,7 @@ Follow the instructions for [Debian server basic setup](../debian-server/#initia
     1. Create a ZFS pool or something.
     1. Add it to `/etc/pve/storage.cfg`: See [Proxmox VE: Storage](https://pve.proxmox.com/wiki/Storage)
 
-### Setup PCI(e) Passthrough
+### Configure PCI(e) Passthrough
 
 **Possibly outdated**
 
@@ -88,18 +88,18 @@ Follow the instructions for [Debian server basic setup](../debian-server/#initia
 
 ### Troubleshooting
 
-#### Failed Login
+**Failed login:**
 
 Make sure `/etc/hosts` contains both the IPv4 and IPv6 addresses for the management networks.
 
 ## Cluster
 
-- `/etc/pve` will get synchronized across all nodes.
-    - This includes `storage.cfg`, so storage configuration must be the same for all nodes.
-- High availability:
-    - Clusters must be explicitly configured for HA.
-    - Provides live migration.
-    - Requires shared storage (e.g. Ceph).
+### Usage
+
+- The cluster file system (`/etc/pve`) will get synchronized across all nodes, meaning quorum rules applies to it.
+- The storage configiration (`storage.cfg`) is shared by all cluster nodes, as part of `/etc/pve`. This means all nodes must have the same storage configuration.
+- Show cluster status: `pvecm status`
+- Show HA status: `ha-manager status`
 
 ### Creating a Cluster
 
@@ -132,6 +132,8 @@ This is the recommended method to remove a node from a cluster. The removed node
 See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability)
 
 - Requires a cluster of at least 3 nodes.
+- Requires shared storage.
+- Provides live migration.
 - Configured using HA groups.
 - The local resource manager (LRM/"pve-ha-lrm") controls services running on the local node.
 - The cluster resource manager (CRM/"pve-ha-crm") communicates with the nodes' LRMs and handles things like migrations and node fencing.
@@ -147,11 +149,15 @@ See: [Proxmox: High Availability](https://pve.proxmox.com/wiki/High_Availability
 
 ### Troubleshooting
 
-#### Modify Without Quorum
+**Unable to modify because of lost quorum:**
 
 If you lost quorum because if connection problems and need to modify something (e.g. to fix the connection problems), run `pvecm expected 1` to set the expected quorum to 1.
 
 ## VMs
+
+### Usage
+
+- List: `qm list`
 
 ### Initial Setup
 
@@ -263,6 +269,12 @@ SPICE allows interacting with graphical VM desktop environments, including suppo
     - Linux: `spice-vdagent`
     - Windows: See [Windows Setup](#windows-setup).
 1. In the VM hardware configuration, set the display to SPICE.
+
+### Troubleshooting
+
+**VM failed to start, possibly after migration:**
+
+Check the host system logs. It may for instance be due to hardware changes or storage that's no longre available after migration.
 
 ## Firewall
 

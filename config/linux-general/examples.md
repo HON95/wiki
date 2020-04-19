@@ -44,9 +44,8 @@ breadcrumbs:
 
 - Monitor usage:
     - `nload <if>`
-    - `speedometer -t <if> -r <if>`
-      - Prettier than nload.
-      - Multiple interfaces can be specified.
+    - `iftop -i <if>`
+    - `speedometer -t <if> -r <if> [...]`
 - Monitor per-process usage:
     - `nethog`
 - Test throughput:
@@ -91,7 +90,7 @@ breadcrumbs:
 
 - Test read speed: `hdparm -t <dev>` (safe)
 - Show IO load for devices/partitions: `iostat [-xpm] [refresh-interval]`
-- Show IO usage for processes: `iotop`
+- Show IO usage for processes: `iotop -o [-a]`
 
 ### System
 
