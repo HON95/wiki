@@ -105,7 +105,8 @@ breadcrumbs:
     - The default journal directory is `/var/log/journal`. By default, it's not automatically created.
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
     - `auto` (the default) is like `persistent` but does not automatically create the log directory.
-1. (Recommended) Postfix mail relay: See [Linux Server Applications: Postfix](../applications/#postfix) (satellite system).
+1. (Recommended) Setup Postfix mail relay: See [Linux Server Applications: Postfix](../applications/#postfix).
+1. (Recommended) Setup APT update emails: See [Linux Server Applications: Apticron](../applications/#apticron).
 1. (Not recommended) Prevent root login:
     - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
     - Add a personal user first.

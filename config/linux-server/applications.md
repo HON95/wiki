@@ -29,6 +29,21 @@ breadcrumbs:
 - Enable/disable stuff: `a2<en|dis><conf|mod|site> <...>`
 - Test configuration: `apache2ctl`
 
+## Apticron
+
+Sends an emails when APT updates are available.
+
+### Setup
+
+1. Prerequesites:
+    - Setup Postfix or similar so the system can actually send mail.
+    - Make sure the root email alias is set appropriately.
+1. Install: `apt install apticron`
+1. Setup the config: `/etc/apticron/apticron.conf`
+    - The defaults are typically fine.
+1. Modify the check interval in `/etc/cron.d/apticron` (e.g. `30 23 * * *`).
+1. Test it: `apticron`
+
 ## AWS CLI
 
 **Possibly outdated**
@@ -321,11 +336,8 @@ This is not considered secure at all and should only be used on trusted networks
 1. Restart `postfix`.
 1. Try sending an email: `echo "Test from $(hostname) at time $(date)." | mail -s "Test" root`
 
-#### Examples
-
-```text
-# File: smtp_header_checks
-
+File `smtp_header_checks`:
+```
 /^From:\s*.*\S+@node\.example\.bet.*.*$/ REPLACE From: "Node" <node@example.net>
 /^To:\s*.*\S+@node\.example\.net.*$/ REPLACE To: "Someone" <someone@example.net>
 ```
@@ -351,7 +363,7 @@ This is not considered secure at all and should only be used on trusted networks
 
 **TODO**
 
-Logs are located in `/app/storage/logs/laravel/`.
+Logs are located in `/app/storage/logs/laravel/` inside the container.
 
 ### Daemon
 
@@ -443,16 +455,13 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 ### Setup
 
 1. Install `tftpd-hpa`.
-2. Update `/etc/default/tftpd-hpa` based on the config below.
-3. Create the folder `/var/tftp` with permissions `777` and user-group pair `tftp:tftp`.
-4. Restart it.
-5. If it shouldn't automatically start, disble it.
+1. Update `/etc/default/tftpd-hpa` based on the config below.
+1. Create the folder `/var/tftp` with permissions `777` and user-group pair `tftp:tftp`.
+1. Restart it.
+1. If it shouldn't automatically start, disble it.
 
-### Files
-
-```text
-# File: /etc/default/tftpd-hpa
-
+File `/etc/default/tftpd-hpa`:
+```
 TFTP_USERNAME="tftp"
 TFTP_DIRECTORY="/var/tftp"
 TFTP_ADDRESS=":69"
