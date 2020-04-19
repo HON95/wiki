@@ -15,7 +15,7 @@ breadcrumbs:
 
 **Outdated and missing information**
 
-## Setup
+### Setup
 
 1. Install: `apt install apache2`
 1. Update `security.conf`:
@@ -24,7 +24,7 @@ breadcrumbs:
     ServerSignature Off
     ```
 
-## Usage
+### Usage
 
 - Enable/disable stuff: `a2<en|dis><conf|mod|site> <...>`
 - Test configuration: `apache2ctl`
@@ -463,24 +463,29 @@ TFTP_OPTIONS="--create --secure"
 
 ### Setup
 
-1. Install: `unbound dns-root-data`
+1. Install: `apt install unbound dns-root-data`
+    - It may fail to start due to systemd-resolved listening to the DNS UDP port.
 1. Setup the config: `/etc/unbound/unbound.conf`
+1. Make sure `/etc/hosts` contains the short and FQDN hostnames.
+1. Setup systemd-resolved:
+    1. Open `/etc/resolv.conf`.
+    1. Set `DNSStubListener=no`.
+    1. Set `DNS=::1`.
+    1. Restart `systemd-resolved`.
+1. Setup resolv.conf:
+    1. Open `/etc/resolv.conf`.
+    1. Set:
+        ```
+        nameserver 127.0.0.1
+        nameserver ::1
+        domain <domain>
+        search <domain-list>
+        ```
+1. Restart unbound: `systemctl restart unbound`
 1. Test DNSSEC:
-    1. `drill sigfail.verteiltesysteme.net` should give an rcode of `SERVFAIL`.
-    2. `drill sigok.verteiltesysteme.net` should give an rcode of `NOERROR`.
+    - `drill sigfail.verteiltesysteme.net` should give an rcode of `SERVFAIL`.
+    - `drill sigok.verteiltesysteme.net` should give an rcode of `NOERROR`.
 1. Make sure dns-root-data is updating root hints in file `/usr/share/dns/root.hints`.
-
-#### Setup the Local Host to Use It
-
-1. Add hostname variants to `/etc/hosts`.
-1. Configure the local host to use it in `/etc/resolv.conf`:
-    - `nameserver 127.0.0.1`
-    - `search <domain>`
-    - `domain <domain>`
-1. Configure the local host to use it in `/etc/systemd/resolved.conf`:
-    - `DNSStubListener=no`
-    - `DNS=::1`
-    - Restart `systemd-resolved`.
 
 ### Notes
 
