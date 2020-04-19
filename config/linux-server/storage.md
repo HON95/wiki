@@ -24,7 +24,7 @@ breadcrumbs:
   See [smartmontools](../../linux-general/applications/#smartmontools).
 - Alignment and block sizes:
     - Using a logical block size smaller than the physical one or misaligning logical and physical blocks will cause reduced performance, mainly for small writes.
-    - Typical options:
+    - Main variants:
         - 512: The original, still used by some drives.
         - 4096: Aka "Advanced Format" or "AF". Newer than 512.
         - Emulated 512: Actually 4096 but emulating 512 for compatibility reasons. Problematic when automatically selecting block size.
@@ -36,6 +36,7 @@ breadcrumbs:
     - Most modern tools on modern Linux versions will automatically align file systems and partitions correctly.
     - The `relatime` mount flag is set by default, to reduce disk writes when a file is read.
     - For SSDs, don't enable TRIM (using neither the `discard` mount option nor `fstrim.timer`). TRIM typically don't provide much benefit and may actually reduce performance. Since SSDs are generally overprovisioned and may be overprovisioned further by the user (generally not needed), TRIM is generally not needed any more.
+- Swap/page file: Generally, all systems should have a swap file or volume to avoid invoking the OOM killer when running out of memory for whatever reason. Its existance will not slow down the system and it will typically not even be used if the system has enough memory. It does not need to be super fast since it's only used in suboptimal conditions to begin with.
 
 ### SSDs
 

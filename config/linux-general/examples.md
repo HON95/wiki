@@ -90,10 +90,12 @@ breadcrumbs:
 ### Storage
 
 - Test read speed: `hdparm -t <dev>` (safe)
+- Show IO load for devices/partitions: `iostat [-xpm] [refresh-interval]`
+- Show IO usage for processes: `iotop`
 
 ### System
 
-- Get version info:
+- Version info:
     - Release info files:
         - Debian (and Ubuntu): `/etc/debian_version`
         - RHEL: `/etc/redhat-release`
