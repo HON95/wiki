@@ -2,7 +2,7 @@
 title: Dell PowerEdge Series
 breadcrumbs:
 - title: Configuration
-- title: Machines
+- title: Computers
 ---
 {% include header.md %}
 

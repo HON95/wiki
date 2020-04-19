@@ -2,12 +2,11 @@
 title: Hardware Testing
 breadcrumbs:
 - title: Configuration
-- title: Machines
+- title: Computers
 ---
 {% include header.md %}
 
 ## Information Gathering
-
 
 ### Linux
 

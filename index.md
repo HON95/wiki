@@ -18,17 +18,12 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Linux Applications](config/linux-general/applications/)
 - [Linux Examples](config/linux-general/examples/)
 
-### Linux Servers
+### Linux Server
 
-- [Debian Server](config/linux-servers/debian/)
-- [Proxmox VE](config/linux-servers/proxmox-ve/)
-- [Linux Server Storage](config/linux-servers/storage/)
-- [Linux Server Applications](config/linux-servers/applications/)
-
-### Game Servers
-
-- [Counter-Strike: Global Offensive (CS:GO)](config/game-servers/csgo/)
-- [Team Fortress 2 (TF2)](config/game-servers/tf2/)
+- [Debian Server](config/linux-server/debian/)
+- [Proxmox VE](config/linux-server/proxmox-ve/)
+- [Linux Server Storage](config/linux-server/storage/)
+- [Linux Server Applications](config/linux-server/applications/)
 
 ### PC
 
@@ -40,12 +35,12 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [Raspberry Pi](config/iot/raspberry-pi/)
 
-### Machines
+### Computers
 
-- [Dell OptiPlex](config/machines/dell-optiplex/)
-- [Dell PowerEdge](config/machines/dell-poweredge/)
-- [Laptops](config/machines/laptops/)
-- [Testing](config/machines/testing/)
+- [Dell OptiPlex](config/computers/dell-optiplex/)
+- [Dell PowerEdge](config/computers/dell-poweredge/)
+- [Laptops](config/computers/laptops/)
+- [Hardware Testing](config/computers/testing/)
 
 ### Network
 
@@ -68,6 +63,15 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Linux Switching & Routing](config/network/linux/)
 - [pfSense](config/network/pfsense/)
 - [UniFi](config/network/unifi/)
+
+### Power
+
+- [APC PDUs](config/power/apc-pdus/)
+
+### Game Servers
+
+- [Counter-Strike: Global Offensive (CS:GO)](config/game-servers/csgo/)
+- [Team Fortress 2 (TF2)](config/game-servers/tf2/)
 
 ## Information Technology
 
