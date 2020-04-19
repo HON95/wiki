@@ -107,6 +107,12 @@ breadcrumbs:
     - `auto` (the default) is like `persistent` but does not automatically create the log directory.
 1. (Recommended) Setup Postfix mail relay: See [Linux Server Applications: Postfix](../applications/#postfix).
 1. (Recommended) Setup APT update emails: See [Linux Server Applications: Apticron](../applications/#apticron).
+1. (Recommended) Setup Fail2Ban:
+    - Recommended for public-facing servers.
+    - Fix the firewall first so it configures itself correctly wrt. which firewall is used.
+    - Install: `apt install fail2ban`
+    - Check status: `fail2ban-client status [sshd]`
+    - See [Linux Server Applications: Fail2Ban](applications.md#fail-2-ban) for more info.
 1. (Not recommended) Prevent root login:
     - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
     - Add a personal user first.
@@ -182,12 +188,6 @@ Everything here is optional.
     - Install `needrestart` and run it after upgrading.
     - Install `debsums` and run it after upgrading to check deb checksums.
     - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
-1. Install Fail2Ban.
-    - Recommended for public-facing servers.
-    - Fix the firewall first so it configures itself correctly wrt. which firewall is used.
-    - Install: `apt install fail2ban`
-    - Check status: `fail2ban-client status [sshd]`
-    - See [Applications](applications.md#fail-2-ban) for more info.
 1. Google Authenticator 2FA:
     - Recommended for public-facing servers.
     - **TODO**
