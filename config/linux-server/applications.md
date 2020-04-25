@@ -192,6 +192,26 @@ This setup requires pubkey plus MFA (if configured) plus password.
 - DHCPv6 uses lease pools of 9973 entries, so using range sizes below this number may be preferable as a very general reference.
   `/116` gives 8191 addresses.
 
+## MariaDB
+
+A MySQL fork that is generally MySQL compatible.
+
+### Setup
+
+1. Install: `apt install mariadb-server`
+1. Run the initial configuration: `mysql_secure_installation`
+    - Set a new MyriaDB root password.
+    - Remove all anmonymous/test stuff.
+    - Disallow remote root login.
+
+### Usage
+
+- Open prompt: `mariadb [-u <user> [-p]]`
+    - The default user is `root`.
+    - The password can be entered interactively by specifying `-p`.
+    - A password is typically not needed.
+- Add new admin user: `GRANT ALL ON *.* TO '<user>'@'127.0.0.1' IDENTIFIED BY '<password>' WITH GRANT OPTION;`
+
 ## NFS
 
 The instructions below use NFSv4 *without* Kerberos.
