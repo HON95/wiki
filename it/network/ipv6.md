@@ -66,7 +66,7 @@ breadcrumbs:
 
 - 128 bit addresses.
 - No broadcast.
-- Anycast.
+- Anycast:
     - Explicitly supported.
     - May use any unicast address.
     - Treated like unicast except by the last routers toward the hosts using the anycast address.
@@ -84,10 +84,11 @@ breadcrumbs:
         - 5: Site-local.
         - E: Global.
     - Some important addresses:
-        - `ff02::1`: All nodes.
-        - `ff02::2`: All routers.
-        - `ff02:6a`: All snoopers.
-        - `ff02::1:ff00/24`: Solicited node.
+        - `ff02::1`: All-nodes (link-local).
+        - `ff02::2`: All-routers (link-local).
+        - `ff02::3`: All-hosts (link-local).
+        - `ff02:6a`: All-snoopers (link-local).
+        - `ff02::1:ff00/24`: Solicited-node (link-local).
 - Solicited-node multicast address.
     - Solicited-node prefix plus last 64 bits of an IPv6 address.
 - Interface addresses:
