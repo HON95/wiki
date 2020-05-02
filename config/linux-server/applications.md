@@ -45,6 +45,14 @@ Sends an emails when APT updates are available.
 1. Modify the check interval in `/etc/cron.d/apticron` (e.g. `30 23 * * *`).
 1. Test it: `apticron`
 
+## Avahi Daemon
+
+**TODO**
+
+## Setup
+
+1. Install: `apt install avahi-daemon`
+
 ## AWS CLI
 
 **Possibly outdated**

@@ -71,6 +71,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 ### Game Servers
 
 - [Counter-Strike: Global Offensive (CS:GO)](config/game-servers/csgo/)
+- [Minecraft (Bukkit)](config/game-servers/minecraft-bukkit/)
 - [Team Fortress 2 (TF2)](config/game-servers/tf2/)
 
 ## Information Technology
@@ -98,6 +99,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 ### General
 
+- [DBMSes](se/general/dbmses/)
 - [Licenses](se/general/licenses/)
 
 ### Languages
