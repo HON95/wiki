@@ -8,6 +8,33 @@ breadcrumbs:
 
 This page is intended for the Bukkit server software or any of its derivatives, like SpigotMC, PaperMC and Tuinity.
 
+## Resource Requirements
+
+### Memory Usage
+
+- Allocate 1-10 GB per server, with 1G for tiny servers with few players and 10G+ for large servers with many players and worlds.
+- The usage scales with the number of worlds, players and plugins, as well as how scattered throughout the world(s) the players are.
+- Memory allocation for Minecraft or more about GC pressure than running completely out of memory, so deciding how much is enough can be hard.
+- Memory usage is set using the `Xmx` parameter, which specified how much memory the JVM is allowed to use (excluding internal usage). The server is expected to use all of it, which does *not* mean that the server is out of memory. `Xms`, the initial memory allocation, should be the same as `Xmx` to avoid unused memory.
+- Leave some of the available memory unused when setting `Xmx`, as the JVM internals, OS etc. requires memory too.
+- See [Tuning the JVM – G1GC Garbage Collector Flags for Minecraft (Aikar)](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).
+
+## Server Managers
+
+- [Pterodactyl](https://pterodactyl.io/):
+    - See [Linux Server Applications: Pterodactyl](../../linux-server/applications/#pterodactyl)).
+    - Open-source.
+    - Free to use.
+    - Modern.
+    - Generalized for many games and apps.
+    - Somewhat complex setup.
+- [McMyAdmin 2](https://www.mcmyadmin.com/):
+    - Requires cheap license, but has a restricted free version.
+    - Old, very common back in the day.
+    - Replaced by AMP.
+- [AMP](https://cubecoders.com/AMP):
+    - Haven't tested it.
+
 ## Server Variants
 
 - [Bukkit](https://bukkit.org/):
@@ -22,17 +49,6 @@ This page is intended for the Bukkit server software or any of its derivatives, 
 - [Tuinity](https://github.com/Spottedleaf/Tuinity):
     - A fork of PaperMC (or EmpireCraft (EMC)) with enhancements.
     - Attempts to merge enhancements back into PaperMC, but with some resistance due to personal disagreements.
-
-## Resource Requirements
-
-### Memory Usage
-
-- Allocate 1-10 GB per server, with 1G for tiny servers with few players and 10G+ for large servers with many players and worlds.
-- The usage scales with the number of worlds, players and plugins, as well as how scattered throughout the world(s) the players are.
-- Memory allocation for Minecraft or more about GC pressure than running completely out of memory, so deciding how much is enough can be hard.
-- Memory usage is set using the `Xmx` parameter, which specified how much memory the JVM is allowed to use (excluding internal usage). The server is expected to use all of it, which does *not* mean that the server is out of memory. `Xms`, the initial memory allocation, should be the same as `Xmx` to avoid unused memory.
-- Leave some of the available memory unused when setting `Xmx`, as the JVM internals, OS etc. requires memory too.
-- See [Tuning the JVM – G1GC Garbage Collector Flags for Minecraft (Aikar)](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).
 
 ## Configuration
 
