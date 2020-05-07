@@ -18,6 +18,7 @@ breadcrumbs:
     - Run `update-grub` and reboot.
 1. Configure `/etc/docker/daemon.json`:
     - Set DNS servers: `"dns": ["1.1.1.1", "1.0.0.1", "2606:4700:4700::1111", "2606:4700:4700::1001"]`
+        - If not set, containers will use `8.8.8.8` and `8.8.4.4` by default.
     - (Optional) Disable automatic IPTables rules: `"iptables": false`
     - Enable IPv6: `"ipv6": true`
     - Set IPv6 default subnet: `"fixed-cidr-v6": <64-prefix>`
