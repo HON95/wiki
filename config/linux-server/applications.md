@@ -308,6 +308,7 @@ This is not considered secure at all and should only be used on trusted networks
 
 - Many OpenSSL default options are insecure and must be specified.
 - Specifying `-noout -text` prints the data as formatted text instead of raw Base64.
+- Create self-signed cert: `openssl req -new -x509 -sha256 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 3650 -subj "/C=ZZ/ST=Local/L=Local/O=Local/OU=Local/CN=localhost"`
 
 ## Pi-hole (Docker)
  
