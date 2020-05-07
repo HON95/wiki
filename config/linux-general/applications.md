@@ -17,11 +17,10 @@ breadcrumbs:
     - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
     - Run `update-grub` and reboot.
 1. Configure `/etc/docker/daemon.json`:
+    - Enable IPv6: `"ipv6": true` and `"fixed-cidr-v6": <some-subnet>`
     - Set DNS servers: `"dns": ["1.1.1.1", "1.0.0.1", "2606:4700:4700::1111", "2606:4700:4700::1001"]`
         - If not set, containers will use `8.8.8.8` and `8.8.4.4` by default.
     - (Optional) Disable automatic IPTables rules: `"iptables": false`
-    - Enable IPv6: `"ipv6": true`
-    - Set IPv6 default subnet: `"fixed-cidr-v6": <64-prefix>`
 1. (Optional, not recommended on servers) Allow certain users to use Docker: Add them to the `docker` group.
 
 ### Usage
