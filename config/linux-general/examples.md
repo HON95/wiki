@@ -75,7 +75,7 @@ breadcrumbs:
 
 - Set the CPU frequency scaling governor mode:
     - High performance: `echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor`
-    - Power save: ` echo powersave | ...`
+    - Power save: `echo powersave | ...`
 - Show current core frequencies: `grep "cpu MHz" /proc/cpuinfo | cut -d' ' -f3`
 
 ### Processes and Memory

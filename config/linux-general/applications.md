@@ -17,10 +17,11 @@ breadcrumbs:
     - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
     - Run `update-grub` and reboot.
 1. Configure `/etc/docker/daemon.json`:
+    - Enable IPv6: `"ipv6": true` and `"fixed-cidr-v6": "<ipv6-subnet>/64"`
+        - Note that IPv6 it not NATed like IPv4 is in Docker.
     - Set DNS servers: `"dns": ["1.1.1.1", "1.0.0.1", "2606:4700:4700::1111", "2606:4700:4700::1001"]`
+        - If not set, containers will use `8.8.8.8` and `8.8.4.4` by default.
     - (Optional) Disable automatic IPTables rules: `"iptables": false`
-    - Enable IPv6: `"ipv6": true`
-    - Set IPv6 default subnet: `"fixed-cidr-v6": <64-prefix>`
 1. (Optional, not recommended on servers) Allow certain users to use Docker: Add them to the `docker` group.
 
 ### Usage
@@ -41,8 +42,8 @@ breadcrumbs:
     - Publish network port: `-p <host-port>:<cont-port>[/udp]`
     - Mount volume: `-v <vol>:<cont-path>` (`<vol>` must have a path prefix like `./` or `/` if it is a directory and not a named volume)
 - Networks:
-    - Create bridged network: `docker network create --driver=bridge --ipv6 --subnet=<ipv4-net> --subnet=<ipv6-net> <name>`
-    - Create bridged network connected to host interface: `docker network create --driver=bridge --ipv6 --subnet=<ipv4-net> --gateway=<ipv4-gateway> --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`
+    - Create bridged network: `docker network create --driver=bridge [--subnet=<ipv4-net>] --ipv6 --subnet=<ipv6-net> <name>`
+    - Create bridged network connected to host interface: `docker network create --driver=bridge --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`
     - Run container with network: `docker run --network=<net-name> --ip=<ipv4-addr> --ip6=<ipv6-addr> --dns=<dns-server> <image>`
 
 ## Docker Compose
