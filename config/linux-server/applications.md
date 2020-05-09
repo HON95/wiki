@@ -302,6 +302,51 @@ This is not considered secure at all and should only be used on trusted networks
 1. In `/etc/ntp.conf`, replace existing servers/pools with `ntp.justervesenet.no` with the `iburst` option.
 1. Test with `ntpq -pn` (it may take a minute to synchronize).
 
+## NUT
+
+### Setup Standalone or Server
+
+1. Install: `apt install nut`
+    - The service will fail to start since NUT is not configured yet.
+1. Set the mode: Open `/etc/nut/nut.conf` and set `MODE=standalone` for standalone or `MODE=netserver` for server.
+1. Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSs (see example below).
+    - Check the [hardware compatibility list](https://networkupstools.org/stable-hcl.html) to find the correct driver. If the exact model isn't there, try a similar one.
+    - For USB, `port = auto` is allowed.
+1. Restart driver service: `systemctl restart nut-driver.service`
+1. Set up access for localhost: Open `/etc/nut/upsd.conf` and set up access (see example below).
+    - **TODO:** Remote access.
+1. Set up a user for localhost: Open `/etc/nut/upsd.users` and add users (see example below).
+    - Each machine/client should have a separate user.
+1. Restart the server service: `systemctl restart nut-server.service`
+1. Monitor the UPS: Open `/etc/nut/upsmon.conf` and add `MONITOR <ups>@<host> 1 <user> <password> master`.
+1. Restart monitoring service: `systemctl restart nut-monitor.service`
+
+Example UPS declaration for USB (`/etc/nut/ups.conf`):
+
+```
+[alpha]
+    driver = usbhid-ups
+    port = auto
+```
+
+Example ACL for localhost (`/etc/nut/upsd.conf`):
+
+```
+ACL all 0.0.0.0/0
+ACL localhost 127.0.0.1/32
+ACCEPT localhost
+REJECT all
+```
+
+Example user for localhost (`/etc/nut/upsd.users`)
+
+```
+[local]
+    password = <password>
+    allowfrom = localhost
+    upsmon master
+```
+
 ## OpenSSL
 
 ### Usage
