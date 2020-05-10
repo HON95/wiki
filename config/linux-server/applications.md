@@ -315,7 +315,7 @@ Since SSL/TLS is not enabled by default for client-server communication, use onl
 1. Set the mode: Open `/etc/nut/nut.conf` and set `MODE=netserver` for server or `MODE=netclient` for client.
 1. (Server) Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSes (see example below).
     - Try using the `usbhid-ups` driver if using USB. Otherwise, check the [hardware compatibility list](https://networkupstools.org/stable-hcl.html) to find the correct driver. If the exact model isn't there, try a similar one.
-    - For `usbhid-ups`, see the example below and [usbhid-ups(8)](https://networkupstools.org/docs/man/usbhid-ups.html). Set `offdelay` and `ondelay` appropriately.
+    - For `usbhid-ups`, see the example below and [usbhid-ups(8)](https://networkupstools.org/docs/man/usbhid-ups.html).
     - You *may* need to modify some udev rules, but probably not.
 1. (Server) Restart driver service: `systemctl restart nut-driver.service`
 1. (Server) Set up local and remote access: Open `/etc/nut/upsd.conf` and set `LISTEN ::`.
@@ -329,13 +329,20 @@ Since SSL/TLS is not enabled by default for client-server communication, use onl
 1. (Optional) Tweak upsmon:
     - Set `RBWARNTIME` (how often upsmon should complain about batteries needing replacement) to an appropriate value, e.g. 604800 (1 week).
 1. (Optional) Add a notify script to run for certain events:
-    - In `/etc/nut/upsmon.conf`, add `EXEC` to all `NOTIFYFLAG` entries you want to run the script for.
+    - In `/etc/nut/upsmon.conf`, add `EXEC` to all `NOTIFYFLAG` entries you want to run the script for (typically all except `LOWBATT`).
     - In `/etc/nut/upsmon.conf`, set the script to run using format `NOTIFYCMD /opt/scripts/nut-notify.sh`.
     - Create the executable script. See an example below for sending email (if Postfix is set up).
 1. Restart monitoring service: `systemctl restart nut-monitor.service`
 1. Check the log to make sure `nut-monitor` successfully connected to the server.
     - Note that `upsc` does not use a server user or the monitoring service, so it's not very useful for debugging that.
-1. (Optional) Simulate a power loss, which should power off all monitoring clients and then the UPS: `upsmon -c fsd`
+1. Configure delays:
+    1. Figure out how much time is needed to shut down the master and all slaves, with some buffer time.
+    1. Set the remaining runtime and remaining battery charge for when the UPS should send the "battery low" event (requires admin login): `upsrw -s battery.runtime.low=<seconds> <ups>` and `upsrw -s battery.charge.low=<percent> <ups>`
+        - This may not work on all UPSes, even if the values appear to be modifiable. This means you're probably stuck with the defaults.
+    1. Set the delay from when the master issues the shutdown command to the UPS, to when the UPS powers off; and the delay from when the UPS receives power again to when it should turn on power: For `usbhid-ups`, this is set using `offdelay` and `ondelay`. Otherwise, it's set using `ups.delay.shutdown` and `ups.delay.start`. The start delay must be greater than the stop delay.
+        - The shutdown command is issued from the master after it's done waiting for itself and slaves and is shutting itself down. The shutdown delay may be useful to increase if there are slaves that take much longer than the master to shut down.
+    1. Restart the affected NUT services.
+1. Simulate a power loss, which should power off all monitoring clients and then the UPS: `upsmon -c fsd`
     - If the client machines are not given enough time to power off before the UPS powers off, you need to modify the shutdown delay settings in the UPS.
 
 Example USB UPS declaration for `usbhid-ups` (`/etc/nut/ups.conf`):
@@ -349,8 +356,8 @@ Example USB UPS declaration for `usbhid-ups` (`/etc/nut/ups.conf`):
     port = auto
     # Sets "ups.delay.shutdown", the delay between the shutdown command and when the UPS powers off (default 20s)
     offdelay = 60
-    # Sets "ups.delay.start", which I'm not entirely sure what it does (default 30s, must be greater than offdelay)
-    ondelay = 70
+    # Sets "ups.delay.start", which has something to do with letting the UPS charge enough to make sure devices may fully boot (default 30s, must be greater than offdelay)
+    ondelay = 120
 ```
 
 Example server users (`/etc/nut/upsd.users`):
