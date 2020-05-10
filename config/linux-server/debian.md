@@ -104,7 +104,7 @@ breadcrumbs:
 1. (Optional) Enable persistent logging:
     - The default journal directory is `/var/log/journal`. By default, it's not automatically created.
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
-    - `auto` (the default) is like `persistent` but does not automatically create the log directory.
+    - `auto` (the default) is like `persistent`, but does not automatically create the log directory.
 1. (Recommended) Setup Postfix mail relay: See [Linux Server Applications: Postfix](../applications/#postfix).
 1. (Recommended) Setup APT update emails: See [Linux Server Applications: Apticron](../applications/#apticron).
 1. (Recommended) Setup Fail2Ban:

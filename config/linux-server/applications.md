@@ -304,47 +304,71 @@ This is not considered secure at all and should only be used on trusted networks
 
 ## NUT
 
-### Setup Standalone or Server
+### Setup
+
+Instructions for both servers and clients. Exclusive steps are marked "(Server)" or "(Client)".
+
+Since SSL/TLS is not enabled by default for client-server communication, use only trusted networks for this communication.
 
 1. Install: `apt install nut`
     - The service will fail to start since NUT is not configured yet.
-1. Set the mode: Open `/etc/nut/nut.conf` and set `MODE=standalone` for standalone or `MODE=netserver` for server.
-1. Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSs (see example below).
-    - Check the [hardware compatibility list](https://networkupstools.org/stable-hcl.html) to find the correct driver. If the exact model isn't there, try a similar one.
-    - For USB, `port = auto` is allowed.
-1. Restart driver service: `systemctl restart nut-driver.service`
-1. Set up access for localhost: Open `/etc/nut/upsd.conf` and set up access (see example below).
-    - **TODO:** Remote access.
-1. Set up a user for localhost: Open `/etc/nut/upsd.users` and add users (see example below).
-    - Each machine/client should have a separate user.
-1. Restart the server service: `systemctl restart nut-server.service`
-1. Monitor the UPS: Open `/etc/nut/upsmon.conf` and add `MONITOR <ups>@<host> 1 <user> <password> master`.
+1. Set the mode: Open `/etc/nut/nut.conf` and set `MODE=netserver` for server or `MODE=netclient` for client.
+1. (Server) Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSs (see example below).
+    - Try using the `usbhid-ups` driver if using USB. Otherwise, check the [hardware compatibility list](https://networkupstools.org/stable-hcl.html) to find the correct driver. If the exact model isn't there, try a similar one.
+    - For `usbhid-ups`, see the example below and [usbhid-ups(8)](https://networkupstools.org/docs/man/usbhid-ups.html). Set `offdelay` and `ondelay` appropriately.
+    - You *may* need to modify some udev rules, but probably not.
+1. (Server) Restart driver service: `systemctl restart nut-driver.service`
+1. (Server) Set up local and remote access: Open `/etc/nut/upsd.conf` and set `LISTEN ::`.
+    - Alternatively add one or multiple `LISTEN` directives for only the endpoints you wish to listen on.
+1. (Server) Set up users: Open `/etc/nut/upsd.users` and add users (see example below).
+    - Each client should have a separate user.
+1. (Server) Restart the server service: `systemctl restart nut-server.service`
+1. (Client) **TODO:** Something about `nut-client.service`.
+1. Monitor the UPS: Open `/etc/nut/upsmon.conf` and add `MONITOR <ups>@<host>[:<port>] <ups-count> <user> <password> <master|slave>`.
+    - `ups-count` is typically `1`. If this system is not powered by the UPS but you want to monitor it without shutting down, set it to `0`.
+1. (Optional) Tweak upsmon:
+    - Set `RBWARNTIME` (how often upsmon should complain about batteries needing replacement) to an appropriate value, e.g. 604800 (1 week).
+1. (Optional) Add a notify script to run for certain events:
+    - In `/etc/nut/upsmon.conf`, add `EXEC` to all `NOTIFYFLAG` entries you want to run the script for.
+    - In `/etc/nut/upsmon.conf`, set the script to run using format `NOTIFYCMD /opt/scripts/nut-notify.sh`.
+    - Create the executable script. See an example below for sending email (if Postfix is set up).
 1. Restart monitoring service: `systemctl restart nut-monitor.service`
+1. Check the log to make sure `nut-monitor` successfully connected to the server.
+    - Note that `upsc` does not use a server user or the monitoring service, so it's not very useful for debugging that.
+1. (Optional) Simulate a power loss, which should power off all monitoring clients and then the UPS: `upsmon -c fsd`
+    - If the client machines are not given enough time to power off before the UPS powers off, you need to modify the shutdown delay settings in the UPS.
 
-Example UPS declaration for USB (`/etc/nut/ups.conf`):
+Example USB UPS declaration for `usbhid-ups` (`/etc/nut/ups.conf`):
 
 ```
 [alpha]
     driver = usbhid-ups
     port = auto
+    desc = "PowerWalker VI 3000 RLE"
+    # Sets "ups.delay.shutdown" (default 20s)
+    offdelay = 60
+    # Sets "ups.delay.start" (default 30s, must be greater than offdelay)
+    ondelay = 70
 ```
 
-Example ACL for localhost (`/etc/nut/upsd.conf`):
+Example server users (`/etc/nut/upsd.users`):
 
 ```
-ACL all 0.0.0.0/0
-ACL localhost 127.0.0.1/32
-ACCEPT localhost
-REJECT all
-```
+[admin]
+    password = <password>
+    actions = SET
+    instcmds = ALL
 
-Example user for localhost (`/etc/nut/upsd.users`)
-
-```
 [local]
     password = <password>
-    allowfrom = localhost
     upsmon master
+```
+
+Example notify script:
+
+```bash
+#!/bin/bash
+echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
 ```
 
 ## OpenSSL
