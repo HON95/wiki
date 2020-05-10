@@ -313,7 +313,7 @@ Since SSL/TLS is not enabled by default for client-server communication, use onl
 1. Install: `apt install nut`
     - The service will fail to start since NUT is not configured yet.
 1. Set the mode: Open `/etc/nut/nut.conf` and set `MODE=netserver` for server or `MODE=netclient` for client.
-1. (Server) Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSs (see example below).
+1. (Server) Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSes (see example below).
     - Try using the `usbhid-ups` driver if using USB. Otherwise, check the [hardware compatibility list](https://networkupstools.org/stable-hcl.html) to find the correct driver. If the exact model isn't there, try a similar one.
     - For `usbhid-ups`, see the example below and [usbhid-ups(8)](https://networkupstools.org/docs/man/usbhid-ups.html). Set `offdelay` and `ondelay` appropriately.
     - You *may* need to modify some udev rules, but probably not.
@@ -342,12 +342,14 @@ Example USB UPS declaration for `usbhid-ups` (`/etc/nut/ups.conf`):
 
 ```
 [alpha]
-    driver = usbhid-ups
-    port = auto
     desc = "PowerWalker VI 3000 RLE"
-    # Sets "ups.delay.shutdown" (default 20s)
+    # usbhid-ups should work for most UPSes with
+    driver = usbhid-ups
+    # If you have multiple UPSes connected, see usbhid-ups(8) for more specifying which USB device it should use
+    port = auto
+    # Sets "ups.delay.shutdown", the delay between the shutdown command and when the UPS powers off (default 20s)
     offdelay = 60
-    # Sets "ups.delay.start" (default 30s, must be greater than offdelay)
+    # Sets "ups.delay.start", which I'm not entirely sure what it does (default 30s, must be greater than offdelay)
     ondelay = 70
 ```
 

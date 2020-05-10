@@ -99,7 +99,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 ### General
 
-- [Database Management Systems (DBMSs)](se/general/dbmses/)
+- [Database Management Systems (DBMSes)](se/general/dbmses/)
 - [Licenses](se/general/licenses/)
 
 ### Languages

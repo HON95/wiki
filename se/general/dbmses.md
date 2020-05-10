@@ -1,20 +1,20 @@
 ---
-title: Database Management Systems (DBMSs)
+title: Database Management Systems (DBMSes)
 breadcrumbs:
 - title: Software Engineering
 - title: General
 ---
 {% include header.md %}
 
-A very brief comparison of different database management systems (DBMSs).
+A very brief comparison of different database management systems (DBMSes).
 
-## Relational DBMSs (RDBMSs)
+## Relational DBMSes (RDBMSes)
 
-- RDBMSs are based on tables consisting of rows and columns, and it thus apropriate for structured data.
-- RDBMSs require the core properties atomicity, consistency, isolation and durability (ACID).
+- RDBMSes are based on tables consisting of rows and columns, and it thus apropriate for structured data.
+- RDBMSes require the core properties atomicity, consistency, isolation and durability (ACID).
 - Normalization is heavily used (by the user) to remove data redundancy.
 - The need for consistency (and other properties) may hinder horizontal scaling.
-- Most RDBMSs use their own variation of standard SQL, with both extra and missing features.
+- Most RDBMSes use their own variation of standard SQL, with both extra and missing features.
 
 ### SQLite
 
@@ -36,14 +36,14 @@ A very brief comparison of different database management systems (DBMSs).
 - Not fully SQL compliant, lacking support for certain features.
 - Limited support for replication.
 
-## Object-Oriented DBMSs (OODBMSs)
+## Object-Oriented DBMSes (OODBMSes)
 
-- OODBMSs are based on objects from object-oriented programming and thus allows using a common representation and environment in both the application layer and database layer without the need for querying the data (unlike RDBMSs).
+- OODBMSes are based on objects from object-oriented programming and thus allows using a common representation and environment in both the application layer and database layer without the need for querying the data (unlike RDBMSes).
 
-## Object-Relational DBMSs (ORDBMSs)
+## Object-Relational DBMSes (ORDBMSes)
 
-- ORDBMSs are a hybrid of OODBMSs and RDBMSs which contains features from both.
-- Unline pure RDBMSs, they may support (e.g.) inheritance and custom data types.
+- ORDBMSes are a hybrid of OODBMSes and RDBMSes which contains features from both.
+- Unline pure RDBMSes, they may support (e.g.) inheritance and custom data types.
 
 ### PostgreSQL
 
@@ -55,10 +55,10 @@ A very brief comparison of different database management systems (DBMSs).
 
 ## NoSQL
 
-- NoSQL is an umbrella term for non-relational DBMSs and thus consists of many different categories.
+- NoSQL is an umbrella term for non-relational DBMSes and thus consists of many different categories.
 - It's aimed at non-structured data that wouldn't fit nicely in a (relational) table.
-- OODBMSs may technically be considered NoSQL, but they often contain features which make them more similar to RDBMSs.
-- While RDBMSs rely on strict consistency, NoSQL aims for eventual consistency, meaning it allows data changes to reach all database nodes in a short time rather than instantaneously. This means that the data received from the database(s) may in some cases be slightly outdated.
+- OODBMSes may technically be considered NoSQL, but they often contain features which make them more similar to RDBMSes.
+- While RDBMSes rely on strict consistency, NoSQL aims for eventual consistency, meaning it allows data changes to reach all database nodes in a short time rather than instantaneously. This means that the data received from the database(s) may in some cases be slightly outdated.
 
 ### Key-Value Stores
 
@@ -70,7 +70,7 @@ A very brief comparison of different database management systems (DBMSs).
 
 ### Columnar-Oriented Databases
 
-- Similar to RDBMSs, but splits all columns into different files. This allows for certain types of optimizations, which may improve both storage and querying for certain application types.
+- Similar to RDBMSes, but splits all columns into different files. This allows for certain types of optimizations, which may improve both storage and querying for certain application types.
 - Examples:
     - Apache Cassandra
     - Apache HBase

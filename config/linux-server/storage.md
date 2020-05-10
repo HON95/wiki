@@ -151,7 +151,7 @@ This is just a suggestion for how to partition your main system drive. Since LVM
     - Monitors (typically one per node) for monitoring the state of itself and other nodes.
     - Managers (at least two for HA) for serving metrics and statuses to users and external services.
     - OSDs (object storage daemon) (one per disk) for handles storing of data, replication, etc.
-    - Metadata Servers (MDSs) for storing metadata for POSIX file systems to function properly and efficiently.
+    - Metadata Servers (MDSes) for storing metadata for POSIX file systems to function properly and efficiently.
 - At least three monitors are required for HA, because of quorum.
 - Each node connects directly to OSDs when handling data.
 - Pools consist of a number of placement groups (PGs) and OSDs, where each PG uses a number of OSDs.
