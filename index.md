@@ -22,6 +22,8 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [Debian Server](config/linux-server/debian/)
 - [Proxmox VE](config/linux-server/proxmox-ve/)
+- [Ubiquiti UniFi Controller (Debian)](config/linux-server/unifi/)
+- [Home Assistant](config/linux-server/home-assistant/)
 - [Linux Server Storage](config/linux-server/storage/)
 - [Linux Server Applications](config/linux-server/applications/)
 
@@ -62,7 +64,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Linksys LGS Switches](config/network/linksys-lgs/)
 - [Linux Switching & Routing](config/network/linux/)
 - [pfSense](config/network/pfsense/)
-- [UniFi](config/network/unifi/)
+- [Uniquiti UniFi](config/network/unifi/)
 
 ### Power
 
