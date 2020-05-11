@@ -176,19 +176,38 @@ This setup requires pubkey plus MFA (if configured) plus password.
 
 ## Home Assistant
 
-### Setup
+**TODO** Non-core setup. Core is uselesss.
+
+### Core Setup
 
 - See [Installation on Docker (Home Assistant)](https://www.home-assistant.io/docs/installation/docker/).
 - Use [secrets](https://www.home-assistant.io/docs/configuration/secrets/) to store keys in the YAML configuration files.
 
 ### Telldus Live Integration
 
+**TODO** Fix. Maybe use the TellStick add-on.
+
 See [Telldus Live (Home Assistant)](https://www.home-assistant.io/integrations/tellduslive/).
 
-The integration supports using both the local API and the cloud API. As the local API is superior, make sure you have a Telldus device which supports it.
+These instructions use the local API, which is superior to the cloud API for devices that support it. TellStick Net v2 and ZNet lite v1/v2 (and possibly more) support the local API.
 
-**TODO**
+1. Make sure the device has a static IP address (use DHCP reservations).
+1. Set up the device with Telldus Live.
+    - The website is absolutely terrible, use the app when possible.
+1. Add the configuration snippet below to `configuration.yml` containing the IPv4 address of the device.
+    - This is required for using the local API.
+    - While it does request an IPv6 address, its services don't seem to listen to IPv6.
+1. Restart Home Assistant.
+1. Open Home Assistant and open the page to add integrations. "Telldus Live" should appear as discovered.
+1. Configure the discovered integration using the Telldus device, not the cloud API.
+    - If it fails and the discovered integration disappears, then restart Home Assistant again.
+    - It will take you to both Telldus Live and the device to authenticate the integration.
 
+```yaml
+# ...
+tellduslive:
+    host: <ipv4-or-hostname>
+```
 
 ## ISC DHCP Server
 

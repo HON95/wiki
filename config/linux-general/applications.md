@@ -19,8 +19,9 @@ breadcrumbs:
 1. Configure `/etc/docker/daemon.json`:
     - Enable IPv6: `"ipv6": true` and `"fixed-cidr-v6": "<ipv6-subnet>/64"`
         - Note that IPv6 it not NATed like IPv4 is in Docker.
-    - Set DNS servers: `"dns": ["1.1.1.1", "1.0.0.1", "2606:4700:4700::1111", "2606:4700:4700::1001"]`
+    - Set DNS servers: `"dns": ["1.1.1.1", "2606:4700:4700::1111"]`
         - If not set, containers will use `8.8.8.8` and `8.8.4.4` by default.
+        - `/etc/resolv.conf` is limited to only three name servers, so don't provide too many. One may be set by the container itself.
     - (Optional) Disable automatic IPTables rules: `"iptables": false`
 1. (Optional, not recommended on servers) Allow certain users to use Docker: Add them to the `docker` group.
 
