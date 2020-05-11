@@ -110,6 +110,35 @@ Use [cloudflare-ddns-updater.sh](https://github.com/HON95/scripts/tree/master/se
 2. Fix the firewall first so it configures itself correctly wrt. firewall blocking.
 3. Check the status with `fail2ban-client status [sshd]`.
 
+## Google Authenticator
+
+**Possibly outdated**
+
+This setup requires pubkey plus MFA (if configured) plus password.
+
+### Setup
+
+- Warning: Keep a shell open and test with a new shell during the process to make sure you don’t lock yourself out.
+- Install: `apt install libpam-google-authenticator`
+- In `/etc/pam.d/sshd`, add `auth required pam_google_authenticator.so nullok` after `@include common-auth`.
+- In `/etc/ssh/sshd_config`, set:
+    ```
+    ChallengeResponseAuthentication yes
+    UsePAM yes
+    AuthenticationMethods publickey,keyboard-interactive
+    ```
+- Restart `sshd` and check that you can login with pubkey and MFA now.
+- (Optional) Add my [google-auth-config-prompter.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/google-auth-config-prompter.sh) profile script to `/etc/profile.d/` to ask user to configure Google Auth on login.
+- To allow a group to use only pubkey (no password or OTP):
+    - In `/etc/ssh/sshd_config`, add `Match Group no-mfa` containing `AuthenticationMethods publickey` (indented) at the bottom.
+    - Add the system group `no-mfa` and add special users to it.
+- To manually configure MFA for a user:
+    - Example: `google-authenticator -tduW`
+    - Use time-based tokens.
+    - Restrict usage of the same token multiple times.
+    - Don’t rate limit.
+    - Allow 3 concurrent codes (1 before, 1 after).
+
 ## Intel SSD Data Center Tool (isdct)
 
 ### Setup
@@ -145,34 +174,21 @@ Use [cloudflare-ddns-updater.sh](https://github.com/HON95/scripts/tree/master/se
 1. Prepare it for removal: `isdct start -intelssd <target> -standby`
 1. Reconnect the drives or restart the system.
 
-## Google Authenticator
-
-**Possibly outdated**
-
-This setup requires pubkey plus MFA (if configured) plus password.
+## Home Assistant
 
 ### Setup
 
-- Warning: Keep a shell open and test with a new shell during the process to make sure you don’t lock yourself out.
-- Install: `apt install libpam-google-authenticator`
-- In `/etc/pam.d/sshd`, add `auth required pam_google_authenticator.so nullok` after `@include common-auth`.
-- In `/etc/ssh/sshd_config`, set:
-    ```
-    ChallengeResponseAuthentication yes
-    UsePAM yes
-    AuthenticationMethods publickey,keyboard-interactive
-    ```
-- Restart `sshd` and check that you can login with pubkey and MFA now.
-- (Optional) Add my [google-auth-config-prompter.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/google-auth-config-prompter.sh) profile script to `/etc/profile.d/` to ask user to configure Google Auth on login.
-- To allow a group to use only pubkey (no password or OTP):
-    - In `/etc/ssh/sshd_config`, add `Match Group no-mfa` containing `AuthenticationMethods publickey` (indented) at the bottom.
-    - Add the system group `no-mfa` and add special users to it.
-- To manually configure MFA for a user:
-    - Example: `google-authenticator -tduW`
-    - Use time-based tokens.
-    - Restrict usage of the same token multiple times.
-    - Don’t rate limit.
-    - Allow 3 concurrent codes (1 before, 1 after).
+- See [Installation on Docker (Home Assistant)](https://www.home-assistant.io/docs/installation/docker/).
+- Use [secrets](https://www.home-assistant.io/docs/configuration/secrets/) to store keys in the YAML configuration files.
+
+### Telldus Live Integration
+
+See [Telldus Live (Home Assistant)](https://www.home-assistant.io/integrations/tellduslive/).
+
+The integration supports using both the local API and the cloud API. As the local API is superior, make sure you have a Telldus device which supports it.
+
+**TODO**
+
 
 ## ISC DHCP Server
 
@@ -403,6 +419,25 @@ echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
     - Add blocklists to `/etc/pihole/adlists.list`.
     - Add whitelist domains to `/etc/pihole/whitelist.txt`.
     - Run `pihole -g` to update lists.
+
+## Portainer
+
+### Standalone Server Setup
+
+Is typically run on a Docker host. Includes the agent.
+
+1. `docker run -d -p 8000:8000 -p 9000:9000 --name=portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v ./data:/data portainer/portainer:<version>`
+    - Port 9000 is the web UI.
+    - Port 8000 is an SSH tunnel server for communicating with agents.
+1. Open the web UI through port 9000 (by default) or a reverse proxy to configure it.
+    - If `/var/run/docker.sock` was mounted, use "local".
+
+### Standalone Agent Setup
+
+Must be run on a Docker host. For extra Docker hosts you want to control with another Portainer server.
+
+1. `docker run -d -p 9001:9001 --name portainer_agent --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker/volumes:/var/lib/docker/volumes portainer/agent:<version>`
+1. **TODO**
 
 ## Postfix
 
