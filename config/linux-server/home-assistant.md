@@ -26,7 +26,7 @@ These steps are for installing the Home Assistant image in Proxmox. There is als
 1. (Optional) If you need to configure something from console, log in as root with no password.
     - Type `login` to open a shell.
 1. (Optional) Install some useful add-ons:
-    - "File editor"
+    - "File editor" or "Visual Studio Code"
 
 ## Integrations and Add-Ons
 
