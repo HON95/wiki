@@ -110,6 +110,10 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [BASH](se/langs/bash/)
 - [Markdown](se/langs/markdown/)
 
+### Web
+
+- [Web Security](se/web/security/)
+
 <!--
 ## External Resources
 
