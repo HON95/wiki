@@ -42,11 +42,26 @@ breadcrumbs:
     - Set env var: `-e <var>=<val>`
     - Publish network port: `-p <host-port>:<cont-port>[/udp]`
     - Mount volume: `-v <vol>:<cont-path>` (`<vol>` must have a path prefix like `./` or `/` if it is a directory and not a named volume)
-- Networks:
-    - Create simple bridged network: `docker network create --driver=bridge --subnet=<ipv4-net> --ipv6 --subnet=<ipv6-net> <name>`
-    - Create network connected to host bridge: `docker network create --driver=bridge --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`
-    - Create network connected to host interface (macvlan): `docker network create --driver=macvlan --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o parent=<netif> <name>`
-    - Run container with network: `docker run --network=<net-name> --ip=<ipv4-addr> --ip6=<ipv6-addr> --dns=<dns-server> <image>`
+
+#### Networking
+
+- Containers in production should not use the default Docker networks.
+- Try to isolate container communication into as small networks as possible (e.g. one network per group of containers for an application).
+- Docker doesn't integrate with ip6tables at all, meaning certain IPv6 features are lacking. For instance, IPv6 is not NATed like IPv4 and ICC can't be disabled. NAT66 shouldn't generally be used in the first place, but the lack of it means IPv6 requires a bit of extra configuration to get it working with containers. IPv6 routing and port publishing work as they should, though, as they don't use ip6tables.
+- Network types:
+    - Bridge: A plain bridge where all containers and the host can communicate. Can optionally be directly connected to a host bridge, but that doesn't always work as expected. Vulnerable to ARP/NDP spoofing.
+    - Overlay: Overlay network for swarm stuff.
+    - Host: The container use the network stack of the host. Ports are published directly to the host.
+    - MACVLAN: Bridges connected to a host (parent) interface, allowing containers to be connected to a network the host is part of. Can optionally use trunking on the host interface. All communication between containers and the host is dropped (consider using a host-connected bridge if you need this).
+    - L2 IPVLAN: Similar to MACVLAN, but all containers use the host's MAC address. Containers can communicate, but the host can't communicate with any containers.
+    - L3 IPVLAN: Every VM uses a separate subnet and all communication, internally and externally, is routed. Should avoid ARP/NDP spoofing. (**TODO:** Containers and the host can communicate?)
+- Create:
+    - Create bridged network: `docker network create --driver=bridge --subnet=<ipv4-net> --ipv6 --subnet=<ipv6-net> <name>`
+    - Create external bridged network (experimental, doesn't work as intented in some scenarios): `docker network create --driver=bridge --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`
+    - Create MACVLAN: `docker network create --driver=macvlan --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o parent=<netif>[.<vid>] <name>`
+    - Create L2 IPVLAN with parent interface: `docker network create --driver=ipvlan --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o parent=<netif> <name>`
+- Use:
+    - Run container with network: `docker run --network=<net-name> --ip=<ipv4-addr> --ip6=<ipv6-addr> --dns=<dns-server> [...] <image>`
 
 ## Docker Compose
 
