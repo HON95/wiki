@@ -43,6 +43,10 @@ Sends an emails when APT updates are available.
     - Create it: `cp /usr/lib/apticron/apticron.conf /etc/apticron/apticron.conf`
     - The defaults are typically fine.
 1. Modify the check interval in `/etc/cron.d/apticron` (e.g. `30 23 * * *`).
+1. Fix a bug causing it to ignore `IPADDRESSNUM` and always print all IP adresses:
+    1. Open `/usr/sbin/apticron`.
+    1. Find this line: ```IPADDRESSES=`(echo $( /bin/hostname --all-ip-addresses ) ;```
+    1. Change it to: ```IPADDRESSES=`(```
 1. Test it: `apticron`
 
 ## Avahi Daemon
