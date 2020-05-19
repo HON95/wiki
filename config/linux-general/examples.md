@@ -56,10 +56,11 @@ breadcrumbs:
         - `tu` for TCP and UDP, `l` for listening, `p` for protocol, `n` for numerical post numbers.
     - `ss <options>`
 - Show interface stats:
-    - `ip [-s] link`
+    - `ip -s link`
     - `netstat -i`
 - Show interfaces and addresses:
-    - `ip a` (MAC, IPv4, IPv6)
+    - IPv4 and/or IPv6 plus MAC: `ip [-46] a`
+    - Only global IPv4/IPv6: `ip <-46> a show scope global`
 - Show neighbors:
     - `ip n`
 - Show routes:
