@@ -594,8 +594,8 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 ### Setup (Docker)
 
 1. See [(Prometheus) Installation](https://prometheus.io/docs/prometheus/latest/installation/).
-1. Set the retention period:
-    - Add the command-line argument `--storage.tsdb.retention.time=15d` (for 15 days).
+1. Set the retention period and size:
+    - Add the command-line argument `--storage.tsdb.retention.time=15d` and/or `--storage.tsdb.retention.size=100GB` (with example values).
     - For the Docker image, this also means you have to re-specify all the default arguments (check with `docker inspect`).
 1. Mount:
     - Config: `./prometheus.yml:/etc/prometheus/prometheus.yml:ro`
@@ -603,7 +603,7 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 1. Configure `prometheus.yml`.
     - I.e. set global variables (like `scrape_interval`, `scrape_timeout` and `evaluation_interval`) and scrape configs.
 1. (Optional) Setup remote storage to replicate all scraped data to a remote backend.
-1. (Optional) Setup Cortex or Thanos for global view, HA and long-term storage.
+1. (Optional) Setup Cortex or Thanos for global view, HA and/or long-term storage.
 
 ### Notes
 
@@ -612,7 +612,16 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 - Prometheus does not store data forever, it's meant for short- to mid-term storage.
 - Prometheus should be "physically" close to the apps it's monitoring. For large infrastructures, you should use multiple instances, not one huge global instance.
 - If you need a "global view" (when using multiple instances), long-term storage and (in some way) HA, consider using Cortex or Thanos.
+- Since Prometheus receives an almost continuous stream of telemetry, any restart or crash will cause a gap in the stored data. Therefore you should generally always use some type of HA in production setups.
 - Cardinality is the number of time series. Each unique combination of metrics and key-value label pairs (yes, including the label value) amounts to a new time series. Very high cardinality (i.e. over 100 000 series, number taken from a Splunk presentation from 2019) amounts to significantly reduced performance and increased memory and resource usage, which is also shared by HA peers (fate sharing). Therefore, avoid using valueless labels, add labels only to metrics they belong with, try to limit the numer of unique values of a label and consider splitting metrics to use less labels. Some useful queries to monitor cardinality: `sum(scrape_series_added) by (job)`, `sum(scrape_samples_scraped) by (job)`, `prometheus_tsdb_symbol_table_size_bytes`, `rate(prometheus_tsdb_head_series_created_total[5m])`, `sum(sum_over_time(scrape_series_added[5m])) by (job)`. You can also find some useful stats in the dashboard.
+
+### Cortex and Thanos
+
+- Two similar projects, which both provide global view, HA and long-term storage.
+- Cortex is push-based using Prometheus remote writing, while Thanos is pull-based using Thanos sidecars for all Prometheus instances.
+- Global view: Cortex stores all data internally, while Thanos queries the Prometheus instances.
+- Prometheus HA: Cortex stores one instance of the received data (at write time), while Thanos queries Prometheus instances which have data (at query time). Both approaches removes gaps in the data.
+- Long-term storage: Cortex periodically flushes the NoSQL index and chunks to an external object store, while Thanos uploads TSDB blocks to an object store.
 
 ## Pterodactyl
 
