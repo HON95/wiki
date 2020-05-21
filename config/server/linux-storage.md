@@ -2,7 +2,7 @@
 title: Linux Server Storage
 breadcrumbs:
 - title: Configuration
-- title: Linux Servers
+- title: Server
 ---
 {% include header.md %}
 

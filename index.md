@@ -11,21 +11,17 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 ### General
 
 - [General Notes](config/general/general/)
+- [Linux General Notes](config/general/general/)
+- [Linux Examples](config/general/examples/)
 
-### Linux General
+### Server
 
-- [Linux General Notes](config/linux-general/general/)
-- [Linux Applications](config/linux-general/applications/)
-- [Linux Examples](config/linux-general/examples/)
-
-### Linux Server
-
-- [Debian Server](config/linux-server/debian/)
-- [Proxmox VE](config/linux-server/proxmox-ve/)
-- [Ubiquiti UniFi Controller (Debian)](config/linux-server/unifi/)
-- [Home Assistant](config/linux-server/home-assistant/)
-- [Linux Server Storage](config/linux-server/storage/)
-- [Linux Server Applications](config/linux-server/applications/)
+- [Debian Server](config/server/debian/)
+- [Linux Server Storage](config/server/storage/)
+- [Linux Server Applications](config/server/applications/)
+- [Proxmox VE](config/server/proxmox-ve/)
+- [Ubiquiti UniFi Controller](config/server/unifi/)
+- [Home Assistant](config/server/home-assistant/)
 
 ### PC
 
@@ -36,13 +32,6 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 ### IoT
 
 - [Raspberry Pi](config/iot/raspberry-pi/)
-
-### Computers
-
-- [Dell OptiPlex](config/computers/dell-optiplex/)
-- [Dell PowerEdge](config/computers/dell-poweredge/)
-- [Laptops](config/computers/laptops/)
-- [Hardware Testing](config/computers/testing/)
 
 ### Network
 
@@ -66,15 +55,19 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [pfSense](config/network/pfsense/)
 - [Uniquiti UniFi](config/network/unifi/)
 
-### Power
-
-- [APC PDUs](config/power/apc-pdus/)
-
 ### Game Servers
 
 - [Counter-Strike: Global Offensive (CS:GO)](config/game-servers/csgo/)
 - [Minecraft (Bukkit)](config/game-servers/minecraft-bukkit/)
 - [Team Fortress 2 (TF2)](config/game-servers/tf2/)
+
+### Hardware
+
+- [Dell OptiPlex](config/hardware/dell-optiplex/)
+- [Dell PowerEdge](config/hardware/dell-poweredge/)
+- [Laptops](config/hardware/laptops/)
+- [Computer Hardware Testing](config/hardware/computer-testing/)
+- [APC PDUs](config/hardware/apc-pdus/)
 
 ## Information Technology
 

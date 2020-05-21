@@ -2,7 +2,7 @@
 title: Debian Server
 breadcrumbs:
 - title: Configuration
-- title: Linux Servers
+- title: Server
 ---
 {% include header.md %}
 

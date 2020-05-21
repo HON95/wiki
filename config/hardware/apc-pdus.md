@@ -2,7 +2,7 @@
 title: APC PDUs
 breadcrumbs:
 - title: Configuration
-- title: Power
+- title: Hardware
 ---
 {% include header.md %}
 

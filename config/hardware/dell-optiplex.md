@@ -2,7 +2,7 @@
 title: Dell OptiPlex Series
 breadcrumbs:
 - title: Configuration
-- title: Computers
+- title: Hardware
 ---
 {% include header.md %}
 

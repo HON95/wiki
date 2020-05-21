@@ -1,8 +1,8 @@
 ---
-title: Ubiquiti UniFi Controller (Debian)
+title: Ubiquiti UniFi Controller
 breadcrumbs:
 - title: Configuration
-- title: Linux Servers
+- title: Server
 ---
 {% include header.md %}
 
@@ -13,7 +13,7 @@ breadcrumbs:
 - AP AC Lite
 - AP AC LR
 
-## Installation (Debian 9)
+## Installation on Debian 9
 
 UniFi 5 is the latest version and does only officially support Debian 9 (Stretch) and Ubuntu Desktop/Server 16.04 for Linux. It requires Java 8 and other stuff which is an absolute pain to install on later versions of Debian. There is also the official physical Cloud Key device and multiple unofficial Docker images and installation packages for Linux servers.
 

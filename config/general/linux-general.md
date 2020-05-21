@@ -2,7 +2,7 @@
 title: Linux General Notes
 breadcrumbs:
 - title: Configuration
-- title: Linux General
+- title: General
 ---
 {% include header.md %}
 
