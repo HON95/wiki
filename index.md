@@ -11,14 +11,14 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 ### General
 
 - [General Notes](config/general/general/)
-- [Linux General Notes](config/general/general/)
-- [Linux Examples](config/general/examples/)
+- [Linux General Notes](config/general/linux-general/)
+- [Linux Examples](config/general/linux-examples/)
 
 ### Server
 
 - [Debian Server](config/server/debian/)
-- [Linux Server Storage](config/server/storage/)
-- [Linux Server Applications](config/server/applications/)
+- [Linux Server Storage](config/server/linux-storage/)
+- [Linux Server Applications](config/server/linux-applications/)
 - [Proxmox VE](config/server/proxmox-ve/)
 - [Ubiquiti UniFi Controller](config/server/unifi/)
 - [Home Assistant](config/server/home-assistant/)
