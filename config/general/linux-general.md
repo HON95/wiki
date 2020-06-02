@@ -27,6 +27,6 @@ breadcrumbs:
 
 ## Miscellaneous
 
-- `urandom` VS `random`: `random` blocks when running out of entropy while `urandom` does not. Use `random` for creating keys etc. and urandom for everything else.
+- `urandom` VS `random`: `random` blocks when running out of entropy while `urandom` does not. For all practical purposes, `urandom` will almost never be *less random* than `random` and `random` may block at inappropriate times, so always use `urandom`.
 
 {% include footer.md %}
