@@ -83,6 +83,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 ### Services
 
 - [Email](it/services/email/)
+- [DNS](it/services/dns/)
 
 ## Media
 
@@ -96,12 +97,6 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [Database Management Systems (DBMSes)](se/general/dbmses/)
 - [Software Licensing](se/general/licensing/)
-
-### Languages
-
-- [General](se/langs/general/)
-- [BASH](se/langs/bash/)
-- [Markdown](se/langs/markdown/)
 
 ### Web
 
