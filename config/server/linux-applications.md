@@ -144,6 +144,11 @@ See [Storage: Ceph](../storage/#ceph).
     - Publish network port: `-p <host-port>:<cont-port>[/udp]`
     - Mount volume: `-v <vol>:<cont-path>` (`<vol>` must have a path prefix like `./` or `/` if it is a directory and not a named volume)
 
+### Miscellanea
+
+- For automatically updating containers, use e.g. [watchtower](https://github.com/containrrr/watchtower).
+- For managing containers in a pretty web UI, use e.g. [Portainer](https://www.portainer.io/).
+
 #### Networking
 
 - Containers in production should not use the default Docker networks.
