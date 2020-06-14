@@ -600,8 +600,9 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 
 1. See [(Prometheus) Installation](https://prometheus.io/docs/prometheus/latest/installation/).
 1. Set the retention period and size:
+    - (Docker) Find and re-specify all default arguments. Check with `docker inspect` or the source code.
     - Add the command-line argument `--storage.tsdb.retention.time=15d` and/or `--storage.tsdb.retention.size=100GB` (with example values).
-    - For the Docker image, this also means you have to re-specify all the default arguments (check with `docker inspect`).
+    - Note that the old `storage.local.*` and `storage.remote.*` flags no longer work.
 1. Mount:
     - Config: `./prometheus.yml:/etc/prometheus/prometheus.yml:ro`
     - Data: `./data/:/prometheus/:rw`
@@ -620,7 +621,7 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 - Since Prometheus receives an almost continuous stream of telemetry, any restart or crash will cause a gap in the stored data. Therefore you should generally always use some type of HA in production setups.
 - Cardinality is the number of time series. Each unique combination of metrics and key-value label pairs (yes, including the label value) amounts to a new time series. Very high cardinality (i.e. over 100 000 series, number taken from a Splunk presentation from 2019) amounts to significantly reduced performance and increased memory and resource usage, which is also shared by HA peers (fate sharing). Therefore, avoid using valueless labels, add labels only to metrics they belong with, try to limit the numer of unique values of a label and consider splitting metrics to use less labels. Some useful queries to monitor cardinality: `sum(scrape_series_added) by (job)`, `sum(scrape_samples_scraped) by (job)`, `prometheus_tsdb_symbol_table_size_bytes`, `rate(prometheus_tsdb_head_series_created_total[5m])`, `sum(sum_over_time(scrape_series_added[5m])) by (job)`. You can also find some useful stats in the dashboard.
 
-### Cortex and Thanos
+### About Cortex and Thanos
 
 - Two similar projects, which both provide global view, HA and long-term storage.
 - Cortex is push-based using Prometheus remote writing, while Thanos is pull-based using Thanos sidecars for all Prometheus instances.
