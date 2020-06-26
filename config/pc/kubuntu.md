@@ -31,11 +31,13 @@ breadcrumbs:
    1. Add a keyboard shortcut for Dolphin (e.g. `Meta+E`) by running `kmenuedit` and changing System, Dolphin.
 1. Setup panels for all screens. Only show tasks for the current screen.
 1. Setup an IPTables firewall:
-    - Remove other firewalls: `apt purge ufw firewalld`.
-    - Install `iptables iptables-persistent netfilter-persistent`.
-    - Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/configs/blob/master/pc/linux/iptables/iptables.sh).
+    1. Remove other firewalls: `apt purge ufw firewalld`.
+    1. Install `iptables iptables-persistent netfilter-persistent`.
+    1. Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/configs/blob/master/pc/linux/iptables/iptables.sh).
 1. Firefox:
-    - Disable middle mouse paste by setting `middlemouse.paste=false` in `about:config`.
+    1. Change the default search engine to DuckDuckGo.
+    1. Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
+    1. Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
 1. Setup audio devices:
     - In `/etc/pulse/daemon.conf`:
         - Set: `default-sample-format = S24LE`
