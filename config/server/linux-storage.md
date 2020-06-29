@@ -108,6 +108,41 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 | `/home` | EXT4 (LVM) | 10 | nodev,nosuid |
 | `/srv` | EXT4 (LVM) or none if external | 10 | nodev,nosuid |
 
+## Intel SSD Data Center Tool (isdct)
+
+### Setup
+
+1. Download the ZIP for Linux from Intel's site.
+1. Install the AMD64 deb package.
+
+### Usage
+
+- Command syntax: `isdct <verb> [options] [targets] [properties]`
+    - Target may be either index (as seen in *show*) or serial number.
+- Show all SSDs: `isdct show -intelssd`
+- Show SSD properties: `isdct show -all -intelssd [target]`
+- Show health: `isdct show -sensor`
+- Upgrade firmware: `isdct load -intelssd <target>`
+- Set physical sector size: `isdct set -intelssd <target> PhysicalSectorSize=<512|4096>`
+    - 4k is generally the most optimal choice.
+- Prepare a drive for removal by putting it in standby: `isdct start -intelssd <target> -standby`
+- Show speed: `isdct show -a -intelssd [target] | grep -i speed`
+- Fix SATA 3.0 speed: `isdct set -intelssd <target> PhySpeed=6`
+    - Check before and after either with *isdct* or *smartctl*.
+
+#### Change the Capacity
+
+1. Remove all partitions from the drive.
+1. Remove all data: `isdct delete -intelssd <target>`
+1. (Optional) Set the physical sector size: `isdct set -intelssd <target> PhysicalSectorSize=<512|4096>`
+1. Set the new size: `isdct set -intelssd <target> MaximumLBA=<size>`
+    - If this fails, run `isdct set -system EnableLSIAdapter=true`.
+      It will add another "version" of the SSDs, which you can try again with.
+    - The size can be specified either as "native", the LBA count, percent (`x%`) or in gigabytes (`xGB`).
+      Use "native" unless you have a reason not to.
+1. Prepare it for removal: `isdct start -intelssd <target> -standby`
+1. Reconnect the drives or restart the system.
+
 ## LUKS
 
 ### Setup
