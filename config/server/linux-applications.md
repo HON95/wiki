@@ -598,6 +598,29 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 - Prometheus HA: Cortex stores one instance of the received data (at write time), while Thanos queries Prometheus instances which have data (at query time). Both approaches removes gaps in the data.
 - Long-term storage: Cortex periodically flushes the NoSQL index and chunks to an external object store, while Thanos uploads TSDB blocks to an object store.
 
+## Prometheus Exporters
+
+### Prometheus Node Exporter
+
+#### Setup (Using Docker)
+
+- Info:
+    - Provides a level of protection by giving it read-only access to the host.
+- See [prom/node-exporter (Docker Hub)](https://hub.docker.com/r/prom/node-exporter/).
+
+#### Setup (Using the Package Manager)
+
+- Info:
+    - Doesn't require Docker, which may not be possible or practical for certain systems.
+    - May be outdated.
+- Files and dirs:
+    - Configuration file: `/etc/default/prometheus-node-exporter`
+    - Textfile directory: `/var/lib/prometheus/node-exporter/`
+- Installation: `apt install prometheus-node-exporter`
+- It may come with certain oneshot services and associated timers for.
+    - Some of these may cause minor problems (check the system log).
+    - To disable them, disable the systemd timer and remove any associated textfile output in the textfile directory.
+
 ## Pterodactyl
 
 ### General
