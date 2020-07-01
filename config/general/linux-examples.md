@@ -38,7 +38,16 @@ breadcrumbs:
 
 ### Installations and Packages
 
-- Find packages depending on the package (APT): `apt rdepends --installed <package>`
+#### APT (Debian)
+
+- Find packages depending on the package: `apt rdepends --installed <package>`
+- Quickly add new repo: `add-apt-repository <repo-line`
+    - It will add the line to `/etc/apt/sources.list`, where you can manually remove it again.
+- Keys:
+    - List: `apt-key list`
+        - It will also show which file contains it.
+    - Remvoe key: `apt-key del <key-id>`
+        - The 8-digit hex key ID may either be found on `pub` line or as the last 8 hex digits on the continuation line.
 
 ### Network
 
