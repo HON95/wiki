@@ -402,7 +402,9 @@ Some guides recommend using backport repos, but this way avoids that.
     - Resume interrupted transfer: Use `zfs get receive_resume_token` and `zfs send -t <token>`.
     - Consider running it in a screen session or something to avoid interruption.
     - If you want transfer information (throughput), pipe it through `pv`.
-- View activity: `zpool iostat [-v]`
+- View activity: `zpool iostat [-v] [interval]`
+    - Includes metadata operations.
+    - If no interval is specified, the operations and bandwidths are averaged from the system boot. If an interval is specified, the very first interval will still show this.
 
 #### Error Handling and Replacement
 
