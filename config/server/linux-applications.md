@@ -600,13 +600,40 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 
 ## Prometheus Exporters
 
+### Exporters and Software
+
+This list contains exporters and software with built-in exposed metrics I typically use. Some are described in more detail in separate subsections.
+
+#### Software with exposed metrics
+
+- Prometheus (exports metrics about itself)
+- [Grafana](https://grafana.com/docs/grafana/latest/administration/metrics/)
+- [Docker Daemon](https://docs.docker.com/config/daemon/prometheus/)
+- [Traefik](https://github.com/containous/traefik)
+- [AWX](https://docs.ansible.com/ansible-tower/latest/html/administration/metrics.html)
+
+#### Exporters
+
+- [Node exporter (Prometheus)](https://github.com/prometheus/node_exporter)
+- [Windows exporter (Prometheus Community)](https://github.com/prometheus-community/windows_exporter)
+- [SNMP exporter (Prometheus)](https://github.com/prometheus/snmp_exporter)
+- [IPMI exporter (Soundcloud)](https://github.com/soundcloud/ipmi_exporter)
+- [NVIDIA DCGM exporter (NVIDIA)](https://github.com/NVIDIA/gpu-monitoring-tools/)
+- [NVIDIA GPU exporter (mindprince)](https://github.com/mindprince/nvidia_gpu_prometheus_exporter)
+- [cAdvisor (Google)](https://github.com/google/cadvisor)
+- [UniFi exporter (jessestuart)](https://github.com/jessestuart/unifi_exporter)
+- [BIND exporter (Prometheus Community)](https://github.com/prometheus-community/bind_exporter)
+- [Blackbox exporter (Prometheus)](https://github.com/prometheus/blackbox_exporter)
+- [NUT Exporter (HON95)](https://github.com/HON95/prometheus-nut-exporter)
+- [ESP8266 DHT Exporter (HON95)](https://github.com/HON95/prometheus-esp8266-dht-exporter)
+
+#### Special
+
+- [Pushgateway (Prometheus)](https://github.com/prometheus/pushgateway)
+
 ### Prometheus Node Exporter
 
-#### Setup (Using Docker)
-
-- Info:
-    - Provides a level of protection by giving it read-only access to the host.
-- See [prom/node-exporter (Docker Hub)](https://hub.docker.com/r/prom/node-exporter/).
+Can be set up either using Docker ([prom/node-exporter](https://hub.docker.com/r/prom/node-exporter/)) or using the package manager. The Docker method provides a level of protection as it enables read-only system access and the image is always up-to-date, unlike the package version.
 
 #### Setup (Using the Package Manager)
 
@@ -620,6 +647,45 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 - It may come with certain oneshot services and associated timers for.
     - Some of these may cause minor problems (check the system log).
     - To disable them, disable the systemd timer and remove any associated textfile output in the textfile directory.
+
+#### Textfile Collector
+
+#### Collector scripts
+
+Some I typically use.
+
+- [apt.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/apt.sh)
+- [yum.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/yum.sh)
+- [deleted_libraries.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/deleted_libraries.py)
+- [ipmitool (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/ipmitool) (requires ipmitool)
+- [smartmon.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/smartmon.sh) (requires smartctl)
+
+#### Setup and Usage
+
+1. Set the collector script output directory using the CLI argument `--collector.textfile.directory=<dir>`.
+    - Example dir: `/var/lib/prometheus/node-exporter/`
+    - If the node exporter was installed as a package, it can be set in the `ARGS` variable in `/etc/default/prometheus-node-exporter`.
+    - If using Docker, the CLI argument specified as part of the command.
+1. Download the collector scripts and make them executable.
+    - Example dir: `/opt/prometheus/node-exporter/textfile-collectors/`
+1. Add cron jobs for the scripts using sponge to wrote to the output dir.
+    - Make sure `sponge` is installed. For Debian, it's found in the `moreutils` package.
+    - Example cron file: `/etc/cron.d/prometheus-node-exporter-textfile-collectors`
+    - Example cron entry: `0 * * * * root /opt/prometheus/node-exporter/textfile-collectors/apt.sh | sponge /var/lib/prometheus/node-exporter/apt.prom`
+
+### Prometheus Blackbox Exporter
+
+#### Monitor Service Availability
+
+Add a HTTP probe job for the services and query for probe success over time.
+
+Example query: `avg_over_time(probe_success{job="node"}[1d]) * 100`
+
+#### Monitor for Expiring Certificates
+
+Add a HTTP probe job for the services and query for `probe_ssl_earliest_cert_expiry - time()`.
+
+Example alert rule: `probe_ssl_earliest_cert_expiry{job="blackbox"} - time() < 86400 * 30` (30 days)
 
 ## Pterodactyl
 
