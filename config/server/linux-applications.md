@@ -624,6 +624,7 @@ This list contains exporters and software with built-in exposed metrics I typica
 - [UniFi exporter (jessestuart)](https://github.com/jessestuart/unifi_exporter)
 - [BIND exporter (Prometheus Community)](https://github.com/prometheus-community/bind_exporter)
 - [Blackbox exporter (Prometheus)](https://github.com/prometheus/blackbox_exporter)
+- [Prometheus Proxmox VE exporter (prometheus-pve)](https://github.com/prometheus-pve/prometheus-pve-exporter)
 - [NUT Exporter (HON95)](https://github.com/HON95/prometheus-nut-exporter)
 - [ESP8266 DHT Exporter (HON95)](https://github.com/HON95/prometheus-esp8266-dht-exporter)
 
