@@ -36,6 +36,18 @@ breadcrumbs:
 - `cowsay`
 - `fortune`
 
+### Hardware
+
+- Show hardware: `lshw`
+    - Run as root for more info.
+    - Specify `-X` to show GUI (requires `lshw-gtk`).
+- Show hardware topology: `lstopo` (requires hwloc)
+    - `lstopo` will try to present as a GUI. Use `lstopo-no-graphics` to force console output.
+- Show PCI devices: `lspci`
+- Show block devices: `lsblk`
+- Show USB devices: `lsusb`
+- Show CPUs: `lscpu`
+
 ### Installations and Packages
 
 #### APT (Debian)
@@ -88,10 +100,6 @@ breadcrumbs:
     - Power save: `echo powersave | ...`
 - Show current core frequencies: `grep "cpu MHz" /proc/cpuinfo | cut -d' ' -f3`
 
-### Processes and Memory
-
-- Useful ps args: `ps ax o uid,user:12,pid,comm`
-
 ### Security
 
 - Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`
@@ -99,7 +107,10 @@ breadcrumbs:
 ### Storage
 
 - Test read speed: `hdparm -t <dev>` (safe)
-- Show IO load for devices/partitions: `iostat [-xpm] [refresh-interval]`
+- Show IO load for devices: `iostat [-dxpm] [-t] [interval]`
+    - `-d`: Show only device usage.
+    - `-x` and `-p`: Include extended attributes and partitions.
+    - `-t` and interval: Show timestamp and repeat every x seconds.
 - Show IO usage for processes: `iotop -o [-a]`
 
 ### System
@@ -111,11 +122,15 @@ breadcrumbs:
         - CentOS: `/etc/centos-release`
     - General release info: `uname -a`
     - Slightly more distro-specific release info: `lsb_release -a`
-- Monitor a mix of everything: 
+- Monitor system load:
+    - `uptime`
+    - `iostat [-c] [-t] [interval]`
+- Monitor processes:
+    - `ps` (e.g. `ps aux` or `ps ax o uid,user:12,pid,comm`)
+- Monitor a mix of things:
+    - `htop`
     - `glances`
     - `ytop`
-- Monitor system and processes:
-    - `htop`
 - Monitor interrupts:
     - `irqtop`
     - `watch -n0.1 /proc/interrupts`
