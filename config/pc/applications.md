@@ -54,22 +54,27 @@ breadcrumbs:
 
 - To save, use the "save current configuration" button and save it to `/etc/X11/xorg.conf`.
 
-## Oh-My-ZSH (Linux)
+## ZSH (personal) (Linux)
 
-1. Install ZSH.
-2. Install Oh-My-ZSH:
-    1. See: [ohmyz.sh](https://ohmyz.sh/)
-3. Install the Powerlevel9k theme:
+This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Hack font.
+
+1. Install ZSH:
+    1. `apt install zsh`
+1. Install Oh-My-ZSH:
+    1. See [ohmyz.sh](https://ohmyz.sh/).
+    1. When it asks, set it as your default shell. This won't take effect until the next login.
+1. Install the Powerlevel9k theme:
     1. Run: `git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k`
-    2. In `~/.zshrc`, set `ZSH_THEME="powerlevel9k/powerlevel9k"`.
-4. Use the Hack font from Nerd Fonts:
-    2. Install it if missing: [https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack)
-    3. Change your terminal's font to it.
-    4. In `~/.zshrc`, set `POWERLEVEL9K_MODE="nerdfont-complete"`.
-5. Configure `~/.zshrc`: See the example below.
-6. Make zprofile include profile:
+    1. In `~/.zshrc`, set `ZSH_THEME="powerlevel9k/powerlevel9k"`.
+1. Use the Hack font from Nerd Fonts:
+    1. Check your terminal's fonts to see if it's installed.
+    1. Install it if missing: [https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack)
+    1. Change your terminal's font to it.
+    1. In `~/.zshrc`, set `POWERLEVEL9K_MODE="nerdfont-complete"`.
+1. Make zprofile include profile (to avoid breaking certain things):
     1. In `/etc/zprofile`, add: `emulate sh -c "source /etc/profile"`
-    2. This prevents Snaps and other profile stuff from breaking.
+1. Configure `~/.zshrc`:
+    1. See the example below.
 
 [Example zshrc](https://github.com/HON95/configs/blob/master/pc/common/zshrc).
 
@@ -81,7 +86,7 @@ GUI for configuring gaming mice.
 
 1. Install the piper [PPA](https://launchpad.net/~libratbag-piper/+archive/ubuntu/piper-libratbag-git).
 2. Install `piper`.
-3. Configure the mouse using the GUI.
+3. Configure the mouse using the GUI application.
 
 ## PuTTY (Windows)
 
