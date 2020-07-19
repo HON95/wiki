@@ -120,11 +120,12 @@ See [Storage: Ceph](../storage/#ceph).
 1. Configure `/etc/docker/daemon.json`:
     - Enable IPv6: `"ipv6": true` and `"fixed-cidr-v6": "<ipv6-subnet>/64"`
         - Note that IPv6 it not NATed like IPv4 is in Docker.
+        - Use something like [Simple DNS Plus' Private IPv6 address range](https://simpledns.plus/private-ipv6) to generate an IPv6 ULA prefix.
     - Set DNS servers: `"dns": ["1.1.1.1", "2606:4700:4700::1111"]`
         - If not set, containers will use `8.8.8.8` and `8.8.4.4` by default.
         - `/etc/resolv.conf` is limited to only three name servers, so don't provide too many. One may be set by the container itself.
-    - (Optional) Disable automatic IPTables rules: `"iptables": false`
-1. (Optional, not recommended on servers) Allow certain users to use Docker: Add them to the `docker` group.
+    - (Not recommended) Disable automatic IPTables rules: `"iptables": false`
+1. (Not recommended on servers) Allow certain users to use Docker: Add them to the `docker` group.
 
 ### Usage
 
