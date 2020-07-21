@@ -54,30 +54,6 @@ breadcrumbs:
 
 - To save, use the "save current configuration" button and save it to `/etc/X11/xorg.conf`.
 
-## ZSH (personal) (Linux)
-
-This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Hack font.
-
-1. Install ZSH:
-    1. `apt install zsh`
-1. Install Oh-My-ZSH:
-    1. See [ohmyz.sh](https://ohmyz.sh/).
-    1. When it asks, set it as your default shell. This won't take effect until the next login.
-1. Install the Powerlevel9k theme:
-    1. Run: `git clone https://github.com/bhilburn/powerlevel9k.git ~/.oh-my-zsh/custom/themes/powerlevel9k`
-    1. In `~/.zshrc`, set `ZSH_THEME="powerlevel9k/powerlevel9k"`.
-1. Use the Hack font from Nerd Fonts:
-    1. Check your terminal's fonts to see if it's installed.
-    1. Install it if missing: [https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack](https://github.com/ryanoasis/nerd-fonts/tree/master/patched-fonts/Hack)
-    1. Change your terminal's font to it.
-    1. In `~/.zshrc`, set `POWERLEVEL9K_MODE="nerdfont-complete"`.
-1. Make zprofile include profile (to avoid breaking certain things):
-    1. In `/etc/zprofile`, add: `emulate sh -c "source /etc/profile"`
-1. Configure `~/.zshrc`:
-    1. See the example below.
-
-[Example zshrc](https://github.com/HON95/configs/blob/master/pc/common/zshrc).
-
 ## Piper (Linux)
 
 GUI for configuring gaming mice.
@@ -153,5 +129,30 @@ GUI for configuring gaming mice.
     - Linux: `~/.config/Code/User/settings.json`
     - Windows: `%APPDATA%\Code\User\settings.json`
 - [Example](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
+
+## ZSH (personal) (Linux)
+
+This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Hack font.
+
+1. Install ZSH:
+    1. `apt install zsh`
+1. Install Oh-My-ZSH:
+    1. See [ohmyz.sh](https://ohmyz.sh/).
+    1. When it asks, set it as your default shell. This won't take effect until the next login.
+1. Setup Powerlevel10k theme:
+    1. (Optional) Setup font: [Fonts](https://github.com/romkatv/powerlevel10k#fonts)
+    1. Clone it: `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k`
+    1. In `~/.zshrc`, set `ZSH_THEME="powerlevel10k/owerlevel10k"`.
+    1. Restart ZSH/your terminal.
+    1. Configure the theme: `p10k configure`
+1. Setup syntax highlighting plugin:
+    1. Clone it: `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
+    1. Add it to `plugins` in `.zshrc` (e.g. `plugins=(git zsh-syntax-highlighting)`).
+1. Make zprofile include profile (to avoid breaking certain things):
+    1. In `/etc/zprofile` or `/etc/zsh/zprofile` (whichever exists), add: `emulate sh -c "source /etc/profile"`
+1. Configure `~/.zshrc`:
+    1. See the example below.
+
+[Example zshrc](https://github.com/HON95/configs/blob/master/pc/common/zshrc).
 
 {% include footer.md %}
