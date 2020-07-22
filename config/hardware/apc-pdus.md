@@ -25,7 +25,6 @@ The TCP/IP settings for the PDU may be configured using the following methods:
 1. Add a static ARP entry to the PC to bind the PDU's MAC address to the desired IPv4 address.
     - Windows: `arp -s 10.10.10.10 00-c0-b7-63-9f-67` (example)
     - Linux: `arp -s 10.10.10.10 00:c0:b7:63:9f:67` (example)
-    - One way to find the MAC address may be to look in the DHCP server log for the VLAN.
 1. Ping the IP address with a packet size of 113 bytes to set the address on the PDU.
     - Windows: `ping 10.10.10.10 -l 113`
     - Linux: `ping 10.10.10.10 -s 113`
