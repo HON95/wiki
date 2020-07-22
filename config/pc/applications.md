@@ -13,35 +13,35 @@ breadcrumbs:
 ### Configure Sensors
 
 1. Install `lm-sensors`.
-2. Run `sensors-detect`.
-   1. Answer with the default answers.
-   2. At the end, allow it to add the modules to `/etc/modules`.
-3. Reload the `kmod` service to reload the modules.
+1. Run `sensors-detect`.
+    1. Answer with the default answers.
+    1. At the end, allow it to add the modules to `/etc/modules`.
+1. Reload the `kmod` service to reload the modules.
 
 ### Configure Fancontrol
 
 1. Install `fancontrol`.
-2. (Optional) Install `gnuplot` if you want `pwmconfig` to generate graphical plots.
-3. Run `pwmconfig`.
-   1. Use manual mode for when asked.
-   2. Generate detailed correlations when asked.
-   3. Set up the config file when asked (`/etc/fancontrol`).
-   4. Decide which sensor each controller should depend on.
-   5. Configure all fan controllers.
-   6. Save and quit.
-4. Tweak the config:
-   1. Open `/etc/fancontrol`.
-   2. Round up all numbers, just to make it a little cleaner.
-   3. Set `interval` to around 2 seconds.
-5. Restart the `fancontrol` service.
+1. (Optional) Install `gnuplot` if you want `pwmconfig` to generate graphical plots.
+1. Run `pwmconfig`.
+    1. Use manual mode for when asked.
+    1. Generate detailed correlations when asked.
+    1. Set up the config file when asked (`/etc/fancontrol`).
+    1. Decide which sensor each controller should depend on.
+    1. Configure all fan controllers.
+    1. Save and quit.
+1. Tweak the config:
+    1. Open `/etc/fancontrol`.
+    1. Round up all numbers, just to make it a little cleaner.
+    1. Set `interval` to around 2 seconds.
+1. Restart the `fancontrol` service.
 
 ## Firefox
 
 ### Config
 
 - (Linux) Disable middle mouse paste:
-  - Go to `about:config`.
-  - Set `middlemouse.paste` to false.
+    - Go to `about:config`.
+    - Set `middlemouse.paste` to false.
 
 ## Git
 
@@ -61,8 +61,8 @@ GUI for configuring gaming mice.
 ### Setup
 
 1. Install the piper [PPA](https://launchpad.net/~libratbag-piper/+archive/ubuntu/piper-libratbag-git).
-2. Install `piper`.
-3. Configure the mouse using the GUI application.
+1. Install `piper`.
+1. Configure the mouse using the GUI application.
 
 ## PuTTY (Windows)
 
@@ -136,6 +136,8 @@ This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Ha
 
 1. Install ZSH:
     1. `apt install zsh`
+1. Make zprofile include profile (to avoid breaking certain things):
+    1. In `/etc/zprofile` or `/etc/zsh/zprofile` (whichever exists), add: `emulate sh -c "source /etc/profile"`
 1. Install Oh-My-ZSH:
     1. See [ohmyz.sh](https://ohmyz.sh/).
     1. When it asks, set it as your default shell. This won't take effect until the next login.
@@ -148,8 +150,6 @@ This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Ha
 1. Setup syntax highlighting plugin:
     1. Clone it: `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
     1. Add it to `plugins` in `.zshrc` (e.g. `plugins=(git zsh-syntax-highlighting)`).
-1. Make zprofile include profile (to avoid breaking certain things):
-    1. In `/etc/zprofile` or `/etc/zsh/zprofile` (whichever exists), add: `emulate sh -c "source /etc/profile"`
 1. Configure `~/.zshrc`:
     1. See the example below.
 
