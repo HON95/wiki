@@ -142,7 +142,7 @@ This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Ha
     1. See [ohmyz.sh](https://ohmyz.sh/).
     1. When it asks, set it as your default shell. This won't take effect until the next login.
 1. Setup Powerlevel10k theme:
-    1. (Optional) Setup font: [Fonts](https://github.com/romkatv/powerlevel10k#fonts)
+    1. Setup font: [Fonts](https://github.com/romkatv/powerlevel10k#fonts)
     1. Clone it: `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k`
     1. In `~/.zshrc`, set `ZSH_THEME="powerlevel10k/owerlevel10k"`.
     1. Restart ZSH/your terminal.
