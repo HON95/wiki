@@ -102,6 +102,11 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [Web Security](se/web/security/)
 
+### Frameworks
+
+- [CUDA](se/frameworks/cuda/)
+- [OpenMPI](se/frameworks/openmpi/)
+
 <!--
 ## External Resources
 
