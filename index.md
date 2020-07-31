@@ -65,6 +65,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [Dell OptiPlex](config/hardware/dell-optiplex/)
 - [Dell PowerEdge](config/hardware/dell-poweredge/)
+- [HP ProLiant](config/hardware/hp-proliant/)
 - [Laptops](config/hardware/laptops/)
 - [Computer Hardware Testing](config/hardware/computer-testing/)
 - [APC PDUs](config/hardware/apc-pdus/)

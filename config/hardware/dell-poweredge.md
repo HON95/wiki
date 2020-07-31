@@ -17,7 +17,7 @@ breadcrumbs:
 - R620
 - R720
 
-## Firmware Upgrades
+## Firmware Updates
 
 ### G11 and lower
 

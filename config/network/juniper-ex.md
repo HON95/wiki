@@ -19,13 +19,13 @@ breadcrumbs:
 ### WIP
 {:.no_toc}
 
-This page is super not done.
+This page is super not done. Just random notes for now.
 
 ## Initial Setup
 
 Enter configuration mode as necessary in the steps below with `configure` and `exit`.
 
-1. Connect to the switch using serial.
+1. Connect to the switch using serial (RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow contro).
 1. Login with username `root` and no password. You'll enter the shell.
 1. Enter the operation mode: `cli`
 1. Set hostname (conf mode): `set system host-name <hostname>`
@@ -38,11 +38,8 @@ Enter configuration mode as necessary in the steps below with `configure` and `e
 
 ## More Random Notes (TODO)
 
-- `show lldp neighbours`
 - No "unit 0" on LACP slave interfaces.
-- `show | compare`
 - `set virtual-chassis no-split-detection` (VC) (recommended for only 2 members) (The split and merge feature is enabled by default on EX Series and QFX Series Virtual Chassis. You can disable the split and merge feature by using the set virtual-chassis no-split-detection command.) (When disabled, both parts remain active after a split.)
-- `request system zeroize`
 - Discard route for supernet.
 - `show interfaces`, `show interfaces ae0 extensive`, `show interfaces terse`, `show interfaces terse | match ae`, `show interfaces terse ge-* | match up.*up`
 - `show chassis hardware`, `show version`, `show system uptime`
@@ -55,6 +52,18 @@ Enter configuration mode as necessary in the steps below with `configure` and `e
 - Set IP address: `set interfaces ae0 unit 0 family inet address 10.0.0.1/30`
 - Static route: `set routing-options static route 10.0.0.0/24 next-hop 10.0.1.1`
 - `show configuration [...] | display set`
+
+## Hardware
+
+### Serial
+
+- RS-232 w/ RJ45 (Cisco-like).
+- Default baud 9600.
+- 8 data bits, no parity, 1 stop bits, no flow control.
+
+### Modding
+
+- [Quieter fans for Juniper EX3300 switch (Jade.WTF)](https://jade.wtf/tech-notes/quiet-ex3300/)
 
 ## Theory
 

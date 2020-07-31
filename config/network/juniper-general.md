@@ -18,20 +18,38 @@ breadcrumbs:
 This page is based mainly on the devices/series I own.
 Some content may be specific to those devices and should be moved away from this page.
 
-## General Configuration
+## Usage
 
-### Simple Actions
+### General
 
-- Show the configuration: `show configuration [statement]`
-    - The optional statement path is space-separated.
+Commands are in oper. mode unless otherwise specified.
+
+- Open shell: `start shell` (local) or `request session member <vc-member-id>` (VC)
+- Open CLI from shell: `cli` (shell)
 - Show alarms: `show chassis alarms`
+- Show temperatures and fan speeds: `show chassis environment`
 - Show routing engine usage: `show chassis routing-engine`
 - Shut down: `request system <halt|power-off>`
-- Open shell: `request session member <vc-member-id>`
+- Erase all configuration and data: `request system zeroize`
 - Show interfaces:
-    - L2/L3 overview: `show interfaces terse`
+    - Overview: `show interfaces terse`
+    - Simple overview: `show interfaces routing`
+    - Some details: `show interfaces brief`
+    - Statistics: `show interfaces statistics`
+    - All details: `show interfaces detail`
+    - Physical details: `show interfaces media`
+- Show LLDP neighbors: `show lldp neighbors`
 
-### Upgrading Junos Using a USB Drive
+### Configuration
+
+Commands are in conf. mode unless otherwise specified.
+
+- Show configuration: `show configuration [statement]` (oper. mode) or `show [statement]` (conf. mode)
+    - Show changes: `show | compare`
+- Enter normal configuration mode: `configure` (oper. mode)
+- Run oper. command in conf. mode: `run [command]`
+
+### Upgrade Junos Using a USB Drive
 
 1. Format the USB drive using FAT32.
 1. Copy the software file to the drive.
@@ -48,8 +66,6 @@ Some content may be specific to those devices and should be moved away from this
     - `show system snapshot media internal`
 1. (Optional) Test that it's working.
 1. Overwrite the alternate root partition: See [Copy the Active Root Partition](#copy-the-active-root-partition)
-
-#### The Harder Way
 
 If the method above did not work, try this instead to completely format and flash the device.
 
