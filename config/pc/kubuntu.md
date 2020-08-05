@@ -30,23 +30,24 @@ breadcrumbs:
    1. Disable web shortcuts.
    1. Add a keyboard shortcut for Dolphin (e.g. `Meta+E`) by running `kmenuedit` and changing System, Dolphin.
 1. Setup panels for all screens. Only show tasks for the current screen.
-1. Setup an IPTables firewall:
+1. Setup firewall:
     1. Remove other firewalls: `apt purge ufw firewalld`.
     1. Install `iptables iptables-persistent netfilter-persistent`.
     1. Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/configs/blob/master/pc/linux/iptables/iptables.sh).
-1. Firefox:
-    1. Change the default search engine to DuckDuckGo.
-    1. Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
-    1. Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
 1. Setup audio devices:
     - In `/etc/pulse/daemon.conf`:
         - Set: `default-sample-format = S24LE`
         - Set: `default-sample-rate = 48000`
         - Reload (as user): `pulseaudio -k`
-1. Install encrypted DVD support:
+1. Firefox:
+    1. Change the default search engine to DuckDuckGo.
+    1. Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
+    1. Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
+    1. Install missing language support: `apt install $(check-language-support)`
+1. (Optional) Install encrypted DVD support:
     - Install: `sudo apt install libdvd-pkg && sudo dpkg-reconfigure libdvd-pkg`
     - Warning: Don't change the region if not necessary. It's typically limited to five changes.
-1. Install [GameMode](https://github.com/FeralInteractive/gamemode):
+1. (Optional) Install [GameMode](https://github.com/FeralInteractive/gamemode):
     - `sudo apt install gamemode`
 
 {% include footer.md %}
