@@ -143,6 +143,24 @@ breadcrumbs:
 
 1. Install the graphical application `woeusb` from `ppa:nilarimogard/webupd8`.
 
+### Download Videos from YouTube and Sites
+
+- Using [youtube-dl](http://ytdl-org.github.io/youtube-dl/) ([repo](https://github.com/ytdl-org/youtube-dl)).
+- Use Docker ([wernight's image](https://github.com/wernight/docker-youtube-dl)): `docker run --rm -v//$PWD:/downloads wernight/youtube-dl <...>`
+- Download single video: `youtube-dl -c <URL>`
+    - `-c`/`--continue` to re-run the command if it previously failed during download.
+- Download full channel or playlist: `youtube-dl -qiwc --no-warnings <URL>`
+    - `-q`/`--quiet` and `--no-warnings` to only errors. Alternatively, redirect STDERR to a log file and keep STDOUT non-quiet to be able to check the status. There may be videos that fail to download for different reasons, so do watch for errors.
+    - `-i`/`--ignore-errors` to avoid stopping on errors.
+    - `-wc`/`--no-overwrites --continue` to download only new/missing videos.
+- Download audio from video: `youtube-dl -c --extract-audio --audio-quality 0`
+    - `--audio-format <format>`: Audio format, like "mp3", "wav", etc. Defaults to "best".
+    - `--audio-quality <0-9>`: Audio quality, where 0 is best. Defaults to "5".
+- To modify the output file path and name, see [output template (youtube-dl)](https://github.com/ytdl-org/youtube-dl#output-template).
+- Common warnings and errors:
+    - "*WARNING: Requested formats are incompatible for merge and will be merged into mkv.*": The best quality video and audio are different formats and will therefore be merged into an MKV file. This is completely fine.
+    - "*ERROR: [...]: YouTube said: Unable to extract video data*": Try to open the video in an incognito browser to check what's up with it. If it's geo restricted, try using a VPN or the [geo bypass options](https://github.com/ytdl-org/youtube-dl#geo-restriction). If it requires you to log in, you may need to specify cookies and your user agent. You may be completely out of luck.
+
 ### Rip DVD to ISO
 
 CDs and DVDs use 2048 byte sectors and may have both unintentional and intentional data errors.
