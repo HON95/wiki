@@ -601,7 +601,7 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 
 ## Prometheus Exporters
 
-### Exporters and Software
+### List of Exporters and Software
 
 This list contains exporters and software with built-in exposed metrics I typically use. Some are described in more detail in separate subsections.
 
@@ -635,20 +635,34 @@ This list contains exporters and software with built-in exposed metrics I typica
 
 ### Prometheus Node Exporter
 
-Can be set up either using Docker ([prom/node-exporter](https://hub.docker.com/r/prom/node-exporter/)) or using the package manager. The Docker method provides a level of protection as it enables read-only system access and the image is always up-to-date, unlike the package version.
+Can be set up either using Docker ([prom/node-exporter](https://hub.docker.com/r/prom/node-exporter/)), using the package manager (`prometheus-node-exporter` on Debian), or by building it from source. The Docker method provides a small level of protection as it's given only read-only system access. The package version is almost always out of date and is typically not optimal to use. If Docker isn't available and you want the latest version, build it from source.
 
-#### Setup (Using the Package Manager)
+#### Setup (Downloaded Binary)
 
-- Info:
-    - Doesn't require Docker, which may not be possible or practical for certain systems.
-    - May be outdated.
-- Files and dirs:
-    - Configuration file: `/etc/default/prometheus-node-exporter`
-    - Textfile directory: `/var/lib/prometheus/node-exporter/`
-- Installation: `apt install prometheus-node-exporter`
-- It may come with certain oneshot services and associated timers for.
-    - Some of these may cause minor problems (check the system log).
-    - To disable them, disable the systemd timer and remove any associated textfile output in the textfile directory.
+See [Building and running](https://github.com/prometheus/node_exporter#building-and-running (node_exporter)).
+
+Details:
+
+- User: `prometheus`
+- Binary file: `/usr/bin/prometheus-node-exporter`
+- Service file: `/etc/systemd/system/prometheus-node-exporter.service`
+- Configuration file: `/etc/default/prometheus-node-exporter`
+- Textfile directory: `/var/lib/prometheus/node-exporter/`
+
+Instructions:
+
+1. Install requirements: `apt install moreutils`
+1. Find the link to the latest tarball from [the download page](https://prometheus.io/download/#node_exporter).
+1. Download and unzip it: `wget <url>` and `tar xvf <file>`
+1. Move the binary to the system: `cp node_exporter*/node_exporter /usr/bin/prometheus-node-exporter`
+1. Make sure it's runnable: `node_exporter -h`
+1. Add the user: `useradd -r prometheus`
+1. Create the required files and directories:
+    - `touch /etc/default/prometheus-node-exporter`
+    - `mkdir -p /var/lib/prometheus/node-exporter/`
+1. Create the systemd service `/etc/systemd/system/prometheus-node-exporter.service`, see [prometheus-node-exporter.service](res/prometheus-node-exporter.service).
+1. Enable and start the service: `systemctl enable --now prometheus-node-exporter`
+1. (Optional) Setup textfile exporters.
 
 #### Textfile Collector
 
