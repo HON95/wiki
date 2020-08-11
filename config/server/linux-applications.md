@@ -661,6 +661,10 @@ Instructions:
     - `touch /etc/default/prometheus-node-exporter`
     - `mkdir -p /var/lib/prometheus/node-exporter/`
 1. Create the systemd service `/etc/systemd/system/prometheus-node-exporter.service`, see [prometheus-node-exporter.service](res/prometheus-node-exporter.service).
+1. (Optional) Configure it:
+    - The defaults work fine.
+    - File: `/etc/default/prometheus-node-exporter`
+    - Example: `ARGS="--collector.processes --collector.interrupts"` (enables more detailed process and interrupt collectors)
 1. Enable and start the service: `systemctl enable --now prometheus-node-exporter`
 1. (Optional) Setup textfile exporters.
 
