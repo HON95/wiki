@@ -163,7 +163,7 @@ breadcrumbs:
     - Example: `-o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s]"`
 - Common warnings and errors:
     - "*WARNING: Requested formats are incompatible for merge and will be merged into mkv.*": The best quality video and audio are different formats and will therefore be merged into an MKV file. This is completely fine.
-    - "*ERROR: [...]: YouTube said: Unable to extract video data*": Try to open the video in an incognito browser to check what's up with it. If it's geo restricted, try using a VPN or the [geo bypass options](https://github.com/ytdl-org/youtube-dl#geo-restriction). If it requires you to log in, you may need to specify cookies and your user agent. You may be completely out of luck.
+    - "*ERROR: [...]: YouTube said: Unable to extract video data*": Try to open the video in an incognito browser to check what's up with it. If it requires you to log in, you may need to specify cookies and possibly your user agent. See [How do I pass cookies to youtube-dl?](https://github.com/ytdl-org/youtube-dl/blob/master/README.md#how-do-i-pass-cookies-to-youtube-dl).
 
 ### Rip DVD to ISO
 
