@@ -657,6 +657,7 @@ Instructions:
 1. Move the binary to the system: `cp node_exporter*/node_exporter /usr/bin/prometheus-node-exporter`
 1. Make sure it's runnable: `node_exporter -h`
 1. Add the user: `useradd -r prometheus`
+    - If you have hidepid setup to hide system process details from normal users, remember to add the user to a group with access to that information. This is only required for some metrics, most of them work fine without this extra access.
 1. Create the required files and directories:
     - `touch /etc/default/prometheus-node-exporter`
     - `mkdir -p /var/lib/prometheus/node-exporter/`
@@ -664,7 +665,7 @@ Instructions:
 1. (Optional) Configure it:
     - The defaults work fine.
     - File: `/etc/default/prometheus-node-exporter`
-    - Example: `ARGS="--collector.processes --collector.interrupts"` (enables more detailed process and interrupt collectors)
+    - Example: `ARGS="--collector.processes --collector.interrupts --collector.systemd"` (enables more detailed process and interrupt collectors)
 1. Enable and start the service: `systemctl enable --now prometheus-node-exporter`
 1. (Optional) Setup textfile exporters.
 
