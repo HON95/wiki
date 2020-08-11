@@ -17,6 +17,7 @@ breadcrumbs:
     1. Answer with the default answers.
     1. At the end, allow it to add the modules to `/etc/modules`.
 1. Reload the `kmod` service to reload the modules.
+1. Watch the kernel log to check for sensor errors. If so, try to remove the modules added to `/etc/modules` with `modprobe -r <module>` to see if the error goes away. If so, remove it from the modules file.
 
 ### Configure Fancontrol
 

@@ -131,7 +131,11 @@ breadcrumbs:
     - Install firmware from other sources (e.g. for some Intel NICs).
     - Update microcode: Install `intel-microcode` (for Intel) or `amd64-microcode` (for AMD) and reboot (now or later).
 1. Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
-1. Install `lm-sensors` and run `sensors-detect` to detect temperatur sensors etc. Add the modules to `/etc/modules` when asked.
+1. Setup `lm-sensors` to monitor sensors:
+    1. Install: `apt install lm-sensors`
+    1. Run `sensors-detect`. When it asks, add the modules to `/etc/modules` when asked.
+    1. Load new modules: `systemctl restart kmod`
+    1. Watch `journalctl` for sensor errors. If so, try to unload the modules with and then remove them from `/etc/modules` if it worked.
 1. Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
 
 #### QEMU Virtual Host
