@@ -44,7 +44,8 @@ Update through iDRAC 7 using HTTP site `downloads.dell.com`.
 
 ## Management
 
-- Password:
+- Default credentials: User `root`, password `calvin`.
+- Password recommendations:
     - No special symbols and no spaces. Dash should be fine.
     - Case sensitivity is inconsistent, so always use lower-case.
 
