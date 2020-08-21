@@ -1,5 +1,5 @@
 ---
-title: Cisco ASR
+title: Cisco ASR Series
 breadcrumbs:
 - title: Configuration
 - title: Network
@@ -14,9 +14,19 @@ Hardware and special configuration for Cisco ASRs (aggregation services routers)
 - [Cisco IOS General](../cisco-ios-general/)
 - [Cisco IOS Routers](../cisco-ios-routers/)
 
+## General
+
+- The ASR series runs IOS-XE, a more modern and less monolithic version of IOS running on top of Linux. The commands and configurations are mostly the same, but with some significant changes.
+
 ## Cisco ASR 920
 
-Runs IOS-XE.
+### Safe Shutdown
+
+This is the recommended way to shut the device down, instead of just pulling the power. It allows the system to clean up file systems and such.
+
+1. Issue the `reload` command in privileged exec mode and confirm.
+1. Wait for the system bootstrap messages.
+1. Remove power.
 
 ### Serial
 

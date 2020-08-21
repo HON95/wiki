@@ -71,6 +71,11 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [APC PDUs](config/power/apc-pdus/)
 
+### Automation
+
+- [Ansible General](config/automation/ansible-general/)
+- [Ansible Network](config/automation/ansible-network/)
+
 ## Information Technology
 
 ### Networking
