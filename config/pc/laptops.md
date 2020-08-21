@@ -2,7 +2,7 @@
 title: Laptops
 breadcrumbs:
 - title: Configuration
-- title: Hardware
+- title: PC
 ---
 {% include header.md %}
 

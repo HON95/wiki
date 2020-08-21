@@ -1,8 +1,8 @@
 ---
-title: Computer Hardware Testing
+title: Computer Testing
 breadcrumbs:
 - title: Configuration
-- title: Hardware
+- title: General
 ---
 {% include header.md %}
 

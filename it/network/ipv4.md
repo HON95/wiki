@@ -2,7 +2,7 @@
 title: IPv6 Theory
 breadcrumbs:
 - title: IT
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

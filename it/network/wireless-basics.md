@@ -2,7 +2,7 @@
 title: Wireless Basics
 breadcrumbs:
 - title: IT
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

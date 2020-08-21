@@ -13,6 +13,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [General Notes](config/general/general/)
 - [Linux General Notes](config/general/linux-general/)
 - [Linux Examples](config/general/linux-examples/)
+- [Computer Testing](config/hardware/computer-testing/)
 
 ### Server
 
@@ -22,12 +23,16 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Proxmox VE](config/server/proxmox-ve/)
 - [Ubiquiti UniFi Controller](config/server/unifi/)
 - [Home Assistant](config/server/home-assistant/)
+- [Dell PowerEdge](config/server/dell-poweredge/)
+- [HP ProLiant](config/server/hp-proliant/)
 
 ### PC
 
 - [Kubuntu](config/pc/kubuntu/)
 - [Windows](config/pc/windows/)
 - [PC Applications](config/pc/applications/)
+- [Dell OptiPlex](config/pc/dell-optiplex/)
+- [Laptops](config/pc/laptops/)
 
 ### IoT
 
@@ -45,6 +50,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 #### Specific
 
 - [Brocade ICX Switches](config/network/brocade-icx/)
+- [Cisco ASR](config/network/cisco-ios-general/)
 - [Cisco IOS General](config/network/cisco-ios-general/)
 - [Cisco IOS Routers](config/network/cisco-ios-routers/)
 - [Cisco IOS Switches](config/network/cisco-ios-switches/)
@@ -61,18 +67,13 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Minecraft (Bukkit)](config/game-servers/minecraft-bukkit/)
 - [Team Fortress 2 (TF2)](config/game-servers/tf2/)
 
-### Hardware
+### Power
 
-- [Dell OptiPlex](config/hardware/dell-optiplex/)
-- [Dell PowerEdge](config/hardware/dell-poweredge/)
-- [HP ProLiant](config/hardware/hp-proliant/)
-- [Laptops](config/hardware/laptops/)
-- [Computer Hardware Testing](config/hardware/computer-testing/)
-- [APC PDUs](config/hardware/apc-pdus/)
+- [APC PDUs](config/power/apc-pdus/)
 
 ## Information Technology
 
-### Network
+### Networking
 
 - [IPv4](it/network/ipv4/)
 - [IPv6](it/network/ipv6/)

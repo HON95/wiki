@@ -6,10 +6,12 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+Software configuration for Cisco routers running IOS or derivatives.
+
 ### Related Pages
 {:.no_toc}
 
-- [Cisco IOS](../cisco-ios/)
+- [Cisco IOS General](../cisco-ios-general/)
 - [Cisco IOS Switches](../cisco-ios-switches/)
 
 ### Using

@@ -2,7 +2,7 @@
 title: WLAN Theory
 breadcrumbs:
 - title: IT
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

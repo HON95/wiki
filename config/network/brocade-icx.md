@@ -9,7 +9,7 @@ breadcrumbs:
 ### Using
 {:.no_toc}
 
-- Brocade/Ruckus ICX 6610-24 running router/L3 software (**TODO** Version?)
+- Brocade/Ruckus ICX 6610 running router/L3 software (**TODO** Version?)
 
 ### Disclaimer
 {:.no_toc}
