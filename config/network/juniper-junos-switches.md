@@ -6,10 +6,13 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+**TODO** Clean up and add remaining stuff.
+
 ### Related Pages
 {:.no_toc}
 
-- [Juniper Junos OS](../juniper-junos/)
+- [Juniper Hardware](../juniper-hardware/)
+- [Juniper Junos General](../juniper-junos-general/)
 
 ### Using
 {:.no_toc}

@@ -1,17 +1,18 @@
 ---
-title: Juniper General
+title: Juniper Junos General
 breadcrumbs:
 - title: Configuration
 - title: Network
 ---
 {% include header.md %}
 
-**TODO** Reorganize and add missing basic stuff.
+**TODO** Clean up and add remaining stuff.
 
 ### Related Pages
 {:.no_toc}
 
-- [Juniper EX Series Switches](../juniper-ex/)
+- [Juniper Hardware](../juniper-hardware/)
+- [Juniper Junos Switches](../juniper-junos-switches/)
 
 ### Disclaimer
 {:.no_toc}

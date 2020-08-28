@@ -21,7 +21,6 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Linux Server Storage](config/server/linux-storage/)
 - [Linux Server Applications](config/server/linux-applications/)
 - [Proxmox VE](config/server/proxmox-ve/)
-- [Ubiquiti UniFi Controller](config/server/unifi/)
 - [Home Assistant](config/server/home-assistant/)
 - [Dell PowerEdge](config/server/dell-poweredge/)
 - [HP ProLiant](config/server/hp-proliant/)
@@ -49,17 +48,19 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 #### Specific
 
-- [Brocade ICX Switches](config/network/brocade-icx/)
-- [Cisco ASR](config/network/cisco-ios-general/)
+- [Brocade FastIron Switches](config/network/brocade-fastiron-switches/)
+- [Cisco Hardware](config/network/cisco-hardware/)
 - [Cisco IOS General](config/network/cisco-ios-general/)
 - [Cisco IOS Routers](config/network/cisco-ios-routers/)
 - [Cisco IOS Switches](config/network/cisco-ios-switches/)
-- [Juniper General](config/network/juniper-general/)
-- [Juniper EX Series Switches](config/network/juniper-ex/)
+- [Juniper Hardware](config/network/juniper-general/)
+- [Juniper Junos General](config/network/juniper-junos-general/)
+- [Juniper Junos Switches](config/network/juniper-junos-switches/)
 - [Linksys LGS Switches](config/network/linksys-lgs/)
 - [Linux Switching & Routing](config/network/linux/)
 - [pfSense](config/network/pfsense/)
-- [Uniquiti UniFi](config/network/unifi/)
+- [Ubiquiti UniFi Controllers](config/network/ubiquiti-unifi-controllers/)
+- [Uniquiti UniFi Access Points](config/network/ubiquiti-unifi-aps/)
 
 ### Game Servers
 

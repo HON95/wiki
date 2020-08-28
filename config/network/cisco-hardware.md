@@ -1,24 +1,25 @@
 ---
-title: Cisco ASR Series
+title: Cisco Hardware
 breadcrumbs:
 - title: Configuration
 - title: Network
 ---
 {% include header.md %}
 
-Hardware and special configuration for Cisco ASRs (aggregation services routers).
+Hardware and special configuration for Cisco equipment.
 
 ### Related Pages
 {:.no_toc}
 
 - [Cisco IOS General](../cisco-ios-general/)
 - [Cisco IOS Routers](../cisco-ios-routers/)
+- [Cisco IOS Switches](../cisco-ios-switches/)
 
-## General
+## ASR General
 
 - The ASR series runs IOS-XE, a more modern and less monolithic version of IOS running on top of Linux. The commands and configurations are mostly the same, but with some significant changes.
 
-## Cisco ASR 920
+## ASR 920
 
 ### Safe Shutdown
 
