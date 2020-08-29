@@ -68,6 +68,11 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Minecraft (Bukkit)](config/game-servers/minecraft-bukkit/)
 - [Team Fortress 2 (TF2)](config/game-servers/tf2/)
 
+### Media
+
+- [Media Ripping](config/media/ripping/)
+- [Video Streaming](config/media/video-streaming/)
+
 ### Power
 
 - [APC PDUs](config/power/apc-pdus/)
