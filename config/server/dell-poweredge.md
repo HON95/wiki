@@ -45,7 +45,7 @@ Update through iDRAC 7 using HTTP site `downloads.dell.com`.
 ## Management
 
 - Default credentials: User `root`, password `calvin`.
-- Password recommendations:
+- Password recommendations (mainly for older gens):
     - No special symbols and no spaces. Dash should be fine.
     - Case sensitivity is inconsistent, so always use lower-case.
 
@@ -100,6 +100,16 @@ For max performance, use two dual-rank 1333MHz DIMMS in slots 1 and 2 for all ch
 ## Power Efficiency
 
 - C-states and C1E: May significantly reduce power usage when idle.
+
+## Loudness
+
+Mostly based on empirical evidence.
+
+- Generally, the servers will attempt to adapt the fan speed to whatever hardware is used. To make is more silent, try to remove hardware you don't need.
+- The number of DIMMs doesn't seem to affect the fan speed.
+- For the R720, using 1600MHz DIMMs makes the server much louder than 1333MHz DIMMs.
+- For the R620 and R720, using a 10G SFP+ NIC module makes it louder than using a 1G copper module.
+- For the R320, using hard drives in the bays makes it much louder.
 
 ## Theory
 
