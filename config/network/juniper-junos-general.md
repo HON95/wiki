@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-**TODO** Clean up and add remaining stuff.
+**TODO** Clean up, reorganize and add remaining stuff.
 
 ### Related Pages
 {:.no_toc}
@@ -14,108 +14,40 @@ breadcrumbs:
 - [Juniper Hardware](../juniper-hardware/)
 - [Juniper Junos Switches](../juniper-junos-switches/)
 
-### Disclaimer
-{:.no_toc}
-This page is based mainly on the devices/series I own.
-Some content may be specific to those devices and should be moved away from this page.
-
-## Usage
-
-### General
-
-Commands are in oper. mode unless otherwise specified.
-
-- Open shell: `start shell` (local) or `request session member <vc-member-id>` (VC)
-- Open CLI from shell: `cli` (shell)
-- Show alarms: `show chassis alarms`
-- Show temperatures and fan speeds: `show chassis environment`
-- Show routing engine usage: `show chassis routing-engine`
-- Shut down: `request system <halt|power-off>`
-- Erase all configuration and data: `request system zeroize`
-- Show interfaces:
-    - Overview: `show interfaces terse`
-    - Simple overview: `show interfaces routing`
-    - Some details: `show interfaces brief`
-    - Statistics: `show interfaces statistics`
-    - All details: `show interfaces detail`
-    - Physical details: `show interfaces media`
-- Show LLDP neighbors: `show lldp neighbors`
-
-### Configuration
-
-Commands are in conf. mode unless otherwise specified.
-
-- Show configuration: `show configuration [statement]` (oper. mode) or `show [statement]` (conf. mode)
-    - Show changes: `show | compare`
-- Enter normal configuration mode: `configure` (oper. mode)
-- Run oper. command in conf. mode: `run [command]`
-
-### Upgrade Junos Using a USB Drive
-
-1. Format the USB drive using FAT32.
-1. Copy the software file to the drive.
-1. Mount it to `/var/tmp/flash` (see [mount a USB drive](#mount-a-usb-drive)).
-1. Verify that the drive contains the software file: `ls -l /bar/tmp/flash`
-1. (Optional) Copy the file to internal storage (`/var/tmp/`) before installing it.
-1. Install: `request system software add <path> no-validate no-copy [partition] [reboot]`
-    - If installing from internal storage, use the `partition` option.
-    - If not using the `reboot` option, manually reboot afterwards.
-1. Wait for the install to finish.
-    - It may produce some minor errors in the process.
-1. Validate it:
-    - `show system storage partitions`
-    - `show system snapshot media internal`
-1. (Optional) Test that it's working.
-1. Overwrite the alternate root partition: See [Copy the Active Root Partition](#copy-the-active-root-partition)
-
-If the method above did not work, try this instead to completely format and flash the device.
-
-1. Prepare the USB drive like above.
-1. Connect using a serial cable.
-1. When the device is booting, press space at the right time.
-1. Format and flash: `install --format file:///jinstall-whatever.tgz`
-
-### Copy the Active Root Partition
-
-This procedure clones the active partition to the alternate partition.
-This is also how you would clone to and boot from a USB device, but with `media external` instead of `media internal` and `slice alternate`.
-
-1. Clone the active partition to the alternate partition: `request system snapshot slice alternate`
-    - This may not be completely finished when the command returns. If the below commands fail, wait and try again.
-1. Validate it:
-    - `show system storage partitions`
-    - `show system snapshot media internal`
-1. (Optional) Boot to the alternate partition: `request system reboot slice alternate media internal`
-
-### Fix a Corrupt Root Partition
-
-If one of the root partitions get corrupted (e.g. due to sudden power loss),
-the device will boot to the alternate root partition.
-This can be fixed by cloning the new active partition to the alternate, corrupt partition.
-
-See [Copy the Active Root Partition](#copy-the-active-root-partition) or [[EX] Switch boots from backup root partition after file system corruption occurred on the primary root partition (Juniper)](https://kb.juniper.net/InfoCenter/index?page=content&id=KB23180).
-
-### Mount a USB Drive
-
-Note: USB3 drives may not work properly. Use USB2 drives.
-
-1. Make sure the drive is formatted as FAT32 (MS-DOS) (or something else supported).
-1. Don't insert it in the Juniper device yet.
-1. Show current storage devices: `ls -l /dev/da*`
-1. Insert the drive. It should print a few lines to the console.
-1. Show current storage devices again and find the new device.
-1. Create a dir to mount it to: `mkdir /vat/tmp/usb1`
-1. Mount it: `mount_msdosfs <device> /var/tmp/usb1`
-1. Do stuff with it.
-1. Unmount it: `umount /dev/tmp/usb1`
-
-## Theory
-
-### About
+## Info
 
 - Based on FreeBSD.
 - Used on all Juniper devices.
 - Juniper's next-generation OS "Junos OS evolved" (not Junos OS) is based on Linux.
+
+## General
+
+### Usage
+
+- Controlling the CLI:
+    - Tab: Auto-complete.
+    - Space: Like tab, generally.
+    - `?`: Prints the allowed keywords.
+    - `|`: Can be used to filter the output.
+- Open CLI in operational mode (from shell): `cli`
+- Open shell (from oper mode):
+    - Local: `start shell`
+    - VC: `request session member <vc-member-id>`
+- Enter configuration mode (from oper mode): `configure`
+- Exit any mode: `exit`
+- Show configuration:
+    - From oper mode: `show configuration [statement]`
+    - From config mode: `show [statement]`
+    - Show changes: `show | compare`
+- Run oper command in config mode: `run <command>`
+- Navigate config mode:
+    - The config is structures as nested container statements and leaf statements.
+    - Change context to container statement: `edit <path>`
+    - Go up in context: `up` or `top`
+    - Show configuration for current level: `show`
+- Commit config changes: `commit [comment <comment>] [confirmed] [and-quit]`
+    - `confirmed` automatically rolls back the commit if it is not confirmed within a time limit.
+    - `and-quit` will quit configuration mode after a successful commit.
 
 ### Booting
 
@@ -136,56 +68,91 @@ This will prevent corrupting the file system.
 
 Wait for the "The operating system has halted." text before pulling the power, so that system processess are stopped and disks are synchronized. The system LED turning off and the LCD saying "HALTING..." does *not* mean that the halting process is finished yet.
 
-### The Configuration
+### Basics
 
-- Hierarchical.
-- Statements:
-    - Container statements: Contains statements. Surround child statements in curly braces.
-    - Leaf statements: Terminated with a semicolon.
+- Shut down or reboot: `request system <halt|reboot> [local|all-members]`
+    - For `halt`, it will print "please press any key to reboot" when halted.
+- Erase all configuration and data: `request system zeroize`
+- Show alarms: `show chassis alarms`
+- Show temperatures and fan speeds: `show chassis environment`
+- Show routing engine usage: `show chassis routing-engine`
 
-### CLI Modes
+### Interfaces
 
-- Shell: A CSH shell. Entered by default when logging in as root.
-- CLI operational mode (op mode).
-- CLI configuration mode (conf mode).
+- Show interfaces:
+    - Overview: `show interfaces terse`
+    - Simple overview: `show interfaces routing`
+    - Some details: `show interfaces brief`
+    - Statistics: `show interfaces statistics`
+    - All details: `show interfaces detail`
+    - Physical details: `show interfaces media`
+- Show LLDP neighbors: `show lldp neighbors`
 
-### Using the CLI
+## Tasks
 
-(Not the shell.)
+### Mount a USB Drive
 
-- Space: Like tab, generally.
-- Tab: Auto-complete.
-- `?`: Prints the allowed keywords.
-- `|`: Can be used to filter the output.
-- Commit configuration changes: See commit section.
+Note: USB3 drives may not work properly. Use USB2 drives.
 
-#### Configuration Mode
+1. Make sure the drive is formatted as FAT32 (MS-DOS) (or something else supported).
+1. Don't insert it in the Juniper device yet.
+1. Show current storage devices: `ls -l /dev/da*`
+1. Insert the drive. It should print a few lines to the console.
+1. Show current storage devices again and find the new device.
+1. Create a dir to mount it to: `mkdir /var/tmp/usb1`
+1. Mount it: `mount_msdosfs <device> /var/tmp/usb1`
+1. Do stuff with it.
+1. Unmount it: `umount /dev/tmp/usb1`
 
-- Enter configuration mode: `configure`
-- Exit configuration mode: `exit`
-- Statements can be changed by either entering the container statement and changing it locally, or by specifying the full path for the statement.
-- Enter the container statements: `edit <container-statement>`
-    - Changes the local position in the hierarchy.
-    - Multiple levels can be specified separated by space.
-- Go up one level: `up`
-- Go to the top: `top`
-- Run operational command: `run <command>`
-- Show configuration for current level: `show`
+### Upgrade Junos Using a USB Drive
 
-### Making Changes
+1. Format the USB drive using FAT32.
+1. Copy the software file to the drive.
+1. Mount it to `/var/tmp/flash` (see [mount a USB drive](#mount-a-usb-drive)).
+1. Verify that the drive contains the software file: `ls -l /var/tmp/flash`
+1. (Optional) Copy the file to internal storage (`/var/tmp/`) before installing it.
+1. Install (oper mode): `request system software add <file> no-validate no-copy [partition] [reboot]`
+    - If installing from internal storage, use the `partition` option.
+    - If not using the `reboot` option, manually reboot afterwards to start the install.
+1. Wait for the install to finish.
+    - It will reboot first.
+    - It may produce some insignificant errors in the process (commands not found etc.).
+1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions`
+1. Unmount and remove the USB drive.
+1. Copy to the alternate root partition: `request system snapshot slice alternate`
+    - May take several minutes.
+1. Verify that the active and backup partitions have the same Junos version: `show system snapshot media internal`
+    - If this fails, wait a bit and try again. The copy may still be processing.
 
-Changes made in configuration mode are added to the candidate configuration and not immediately applied.
-To apply the candidate configuration to the active configuration, commit the changes.
+If the method above did not work, try this instead to completely format and flash the device.
 
-**TODO** which modes?
+1. Prepare the USB drive like above.
+1. Connect using a serial cable.
+1. When the device is booting, press space at the right time.
+1. Format and flash: `install --format file:///jinstall-whatever.tgz`
 
-- Show changes: `show | compare`
-- Commit the changes: `commit [comment <comment>] [confirmed] [and-quit]` (conf mode)
-    - Try to always add a short comment.
-    - `confirmed` automatically rolls back the commit if it is not confirmed within a time limit.
-    - `and-quit` will quit configuration mode after a successful commit.
+### Copy the Active Root Partition
 
-**TODO** Confirm how?
+This procedure clones the active partition to the alternate partition.
+This is also how you would clone to and boot from a USB device, but with `media external` instead of both `media internal` and `slice alternate`.
+
+1. Clone the active partition to the alternate partition: `request system snapshot slice alternate`
+    - This may not be completely finished when the command returns. If the below commands fail, wait and try again.
+1. Validate it:
+    - `show system storage partitions`
+    - `show system snapshot media internal`
+
+To boot to the alternate partition, use `request system reboot slice alternate media internal`.
+
+### Fix a Corrupt Root Partition
+
+If one of the root partitions get corrupted (e.g. due to sudden power loss),
+the device will boot to the alternate root partition.
+This can be fixed by cloning the new active partition to the alternate, corrupt partition.
+
+See [Copy the Active Root Partition](#copy-the-active-root-partition) or [[EX] Switch boots from backup root partition after file system corruption occurred on the primary root partition (Juniper)](https://kb.juniper.net/InfoCenter/index?page=content&id=KB23180).
+
+## Miscellanea
 
 ### Interface Names
 
@@ -195,7 +162,7 @@ To apply the candidate configuration to the active configuration, commit the cha
 - `et`: 40G Ethernet.
 - `em` and `fxp`: Management, possibly OOB.
 
-### Fusion
+## Fusion
 
 **TODO**
 
