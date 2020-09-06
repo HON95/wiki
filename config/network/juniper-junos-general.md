@@ -108,21 +108,20 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 
 1. Format the USB drive using FAT32.
 1. Copy the software file to the drive.
-1. Mount it to `/var/tmp/flash` (see [mount a USB drive](#mount-a-usb-drive)).
-1. Verify that the drive contains the software file: `ls -l /var/tmp/flash`
-1. (Optional) Copy the file to internal storage (`/var/tmp/`) before installing it.
-1. Install (oper mode): `request system software add <file> no-validate no-copy [partition] [reboot]`
-    - If installing from internal storage, use the `partition` option.
-    - If not using the `reboot` option, manually reboot afterwards to start the install.
-1. Wait for the install to finish.
-    - It will reboot first.
+1. Mount the USB drive: `mkdir /var/tmp/usb0` and `mount_msdosfs /dev/da1s1 /var/tmp/usb0`
+    - See [mount a USB drive](#mount-a-usb-drive).
+1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
+    - Run `ls -l /var/tmp/usb0` to get the full name of the file, you'll need it later.
+1. Unmount and remove the USB drive: `umount /var/tmp/usb1`
+1. Install (oper mode): `request system software add <file> no-validate no-copy reboot`
+    - It will reboot before and after.
     - It may produce some insignificant errors in the process (commands not found etc.).
 1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions`
-1. Unmount and remove the USB drive.
+1. Verify that the current Junos version is correct: `show system snapshot media internal`
 1. Copy to the alternate root partition: `request system snapshot slice alternate`
     - May take several minutes.
 1. Verify that the active and backup partitions have the same Junos version: `show system snapshot media internal`
-    - If this fails, wait a bit and try again. The copy may still be processing.
+    - If this fails, wait a bit and try again. The copy may still be working.
 
 If the method above did not work, try this instead to completely format and flash the device.
 
