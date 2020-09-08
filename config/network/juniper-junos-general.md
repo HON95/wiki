@@ -16,9 +16,11 @@ breadcrumbs:
 
 ## Info
 
+### Junos OS
+
 - Based on FreeBSD.
 - Used on all Juniper devices.
-- Juniper's next-generation OS "Junos OS evolved" (not Junos OS) is based on Linux.
+- Juniper's next-generation OS "Junos OS evolved" (not "Junos OS") is based on Linux.
 
 ## General
 
@@ -30,16 +32,16 @@ breadcrumbs:
     - `?`: Prints the allowed keywords.
     - `|`: Can be used to filter the output.
 - Open CLI in operational mode (from shell): `cli`
-- Open shell (from oper mode):
+- Open shell (from op mode):
     - Local: `start shell`
     - VC: `request session member <vc-member-id>`
-- Enter configuration mode (from oper mode): `configure`
+- Enter configuration mode (from op mode): `configure`
 - Exit any mode: `exit`
 - Show configuration:
-    - From oper mode: `show configuration [statement]`
+    - From op mode: `show configuration [statement]`
     - From config mode: `show [statement]`
     - Show changes: `show | compare`
-- Run oper command in config mode: `run <command>`
+- Run op command in config mode: `run <command>`
 - Navigate config mode:
     - The config is structures as nested container statements and leaf statements.
     - Change context to container statement: `edit <path>`
@@ -90,6 +92,16 @@ Wait for the "The operating system has halted." text before pulling the power, s
 
 ## Tasks
 
+### Reset Root Password
+
+1. Power on the device and prepare for the next step.
+1. Press space quickly as the "Hit [Enter] to boot immediately, or space bar for command prompt." message is shown. You should immediately enter a `loader>` prompt.
+1. Run `boot -s` to boot into single-user mode.
+1. When prompted for a shell, enter `recovery`.
+1. Wait for the device to fully boot.
+1. (Alternative 1) Zeroize the system by running `request system zeroize` (this will delete all configuration).
+1. (Alternative 2) Set a new root password and commit (there should be instructions before the prompt). Reboot the device afterwards.
+
 ### Mount a USB Drive
 
 Note: USB3 drives may not work properly. Use USB2 drives.
@@ -113,7 +125,8 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
     - Run `ls -l /var/tmp/usb0` to get the full name of the file, you'll need it later.
 1. Unmount and remove the USB drive: `umount /var/tmp/usb1`
-1. Install (oper mode): `request system software add <file> no-validate no-copy reboot`
+1. Install (op mode): `request system software add <file> no-copy reboot`
+    - If it complains about certificate problems, consider disabling verification using `no-validate`.
     - It will reboot before and after.
     - It may produce some insignificant errors in the process (commands not found etc.).
 1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions`
