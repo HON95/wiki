@@ -10,11 +10,11 @@ breadcrumbs:
 
 ### Single Layer
 
-- Switching, routing and firewalling is all done on the same layer, with clients directly connected.
+- Switching, routing and firewalling is all done by the same device or device stack, with clients directly connected.
 
 ### Three-layer Hierarchical Model
 
-- Appripriate for large networks spanning multiple regions (e.g. multiple buildings).
+- Appropriate for large networks spanning multiple regions (e.g. multiple buildings).
 - Scales well.
 - Focuses on north-south traffic.
 - Consists of three layers.
@@ -25,8 +25,9 @@ breadcrumbs:
     - Should implement first-hop security.
     - Connected upstream to distribution switches.
 - Distribution layer:
-    - L3 switches or routers.
-    - terminates access-layer VLANs.
+    - Aka "distro" layer.
+    - L3 switches.
+    - Terminates access-layer VLANs.
     - Implements features like filtering and QoS.
     - May manage individual WAN connections.
     - Connected upstream to core routers and ptionally interconnected with other distribution switches.
@@ -39,8 +40,10 @@ breadcrumbs:
 
 ### Collapsed Core
 
-- Similar to the three-layer hierarchical model, but with the core and distribution layers collapsed.
-- Appropriate for medium/small sites without multiples regions.
+- Similar to the three-layer hierarchical model, but with the core and distribution layers collapsed into the same devices.
+- This generally means that there is only one routed layer.
+- Distro layer devices may be interconnected directly or through one or more core _switches_ (not routers) which are not themselves interconnected.
+- Appropriate for medium/small sites without multiples regions, where a separate core network is not needed.
 
 ### Collapsed Distribution
 
@@ -65,9 +68,9 @@ breadcrumbs:
 ## Terms
 
 - Equal-cost multi-path routing (ECMP): Routing strategy for forwarding over multiple best paths to the same destination.
-- Oversubscription: Less uplink capacity than downlink capacity.
+- Oversubscription: Less uplink capacity than downlink capacity. Appropriate when downstream devices rarely use the uplink simultaneously, allowing them to share the uplink capacity without sacrifice.
 
-## Notes
+## Miscellanea
 
 - VXLAN or Q-in-Q may be used to span VLANs over different areas.
 
