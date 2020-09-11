@@ -71,7 +71,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 ### Media
 
 - [Media Ripping](config/media/ripping/)
-- [Video Streaming](config/media/video-streaming/)
+- [Video Streaming](config/media/streaming/)
 
 ### Power
 
