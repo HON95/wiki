@@ -124,7 +124,7 @@ breadcrumbs:
 - Record time lapse at 10x speed without audio:
     - Command: `ffmpeg -i http://localhost:5555/ -filter:v "setpts=0.1*PTS" -an out.mkv`
 
-### Video4Linux 2 (V4L2) (Linux)
+## Video4Linux 2 (V4L2) (Linux)
 
 - Install: `apt install v4l-utils`
 - Show video devices:
