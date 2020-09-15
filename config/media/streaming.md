@@ -102,10 +102,10 @@ breadcrumbs:
 - Stream webcam with HTTP (Linux):
     - Command: `cvlc v4l2:///dev/video0:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:standard{access=http,mux=ts}' --http-host=localhost --http-port=5555`
     - HTTP streams may be easily used as sources in e.g. OBS.
+- Stream capture card to display and HTTP stream (Windows):
+    - Command: `./vlc -I dummy --dummy-quiet dshow:// --dshow-vdev="Game Capture HD60 S (Video) (#01)" --dshow-adev=none  --dshow-size=1920x1080 --dshow-aspect-ratio=16:9 --dshow-fps=60  --live-caching=10 --sout='#transcode{vcodec=mp2v,acodec=none,sfilter=logo}:duplicate{dst=display,dst=standard{access=http,mux=ts}}' --http-host=localhost --http-port=5555`
 - Record network stream to file (Linux):
     - Command: `cvlc <input> --sout='#transcode{vcodec=mp4v,acodec=none}:std{access=file,mux=ps,dst=test.mpg}'`
-- Stream capture card to display and HTTP stream (Windows):
-    - Command: `./vlc -I dummy --dummy-quiet dshow:// --dshow-vdev="Game Capture HD60 S (Video) (#01)" --dshow-adev=none  --dshow-aspect-ratio=16:9 --dshow-fps=60  --live-caching=10 --sout='#transcode{vcodec=mp2v,acodec=none,sfilter=logo}:duplicate{dst=display,dst=standard{access=http,mux=ts}}' --http-host=localhost --http-port=5555`
 
 ## FFmpeg
 
