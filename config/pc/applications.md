@@ -138,14 +138,14 @@ This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Ha
 1. Install ZSH:
     1. `apt install zsh`
 1. Make zprofile include profile (to avoid breaking certain things):
-    1. In `/etc/zprofile` or `/etc/zsh/zprofile` (whichever exists), add: `emulate sh -c "source /etc/profile"`
+    1. In `~/.zprofile`, add: `emulate sh -c "source /etc/profile"`
 1. Install Oh-My-ZSH:
     1. See [ohmyz.sh](https://ohmyz.sh/).
     1. When it asks, set it as your default shell. This won't take effect until the next login.
 1. Setup Powerlevel10k theme:
-    1. Download and install fonts: [Fonts](https://github.com/romkatv/powerlevel10k#fonts)
+    1. Download and install the suggested fonts (manually is simplest): [Fonts](https://github.com/romkatv/powerlevel10k#fonts)
     1. Open a new terminal window and set the new font.
-    1. Clone it: `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k`
+    1. Clone the theme: `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k`
     1. In `~/.zshrc`, set `ZSH_THEME="powerlevel10k/powerlevel10k"`.
     1. Open a new ZSH session (or restart your terminal).
     1. Configure the theme (if it didn't automatically start): `p10k configure`
