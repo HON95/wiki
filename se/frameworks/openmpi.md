@@ -25,7 +25,7 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
 
 - Compile and link with `mpicc` (C) or `mpic++` (C++), which will include OpenMPI options and libs.
 - (Optional) Setup IDE to include MPI libs:
-    - VS Code: Set `{"C_Cpp.default.includePath": ["${myDefaultIncludePath}","/usr/lib/x86_64-linux-gnu/openmpi/include/"]}` in your project settings (`.vscode/settings.json`).
+    - VS Code: Set `{"C_Cpp.default.includePath": ["${myDefaultIncludePath}","/usr/lib/x86_64-linux-gnu/openmpi/include/"]}` in your project settings (`.vscode/settings.json` or `~/.config/Code/User/settings.json`).
 
 ## Run
 
