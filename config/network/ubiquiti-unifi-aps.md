@@ -35,7 +35,7 @@ breadcrumbs:
 - The APs can be adopted wirelessly if one of them is connected to the network.
 - APs that are adopted wirelessly are will automatically allow meshing to other APs while APs that are adopted while wired will not. This can be changed in the AP settings.
 - Disable wireless uplinks (meshing) if not used:
-  - (Alternative 1) Disable per site: Go to site settings and disable "uplink connectivity monitor".
-  - (Alternative 2) Disable per AP: Go to AP settings, "wireless uplinks" and disable everything.
+    - (Alternative 1) Disable per site: Go to site settings and disable "uplink connectivity monitor".
+    - (Alternative 2) Disable per AP: Go to AP settings, "wireless uplinks" and disable everything.
 
 {% include footer.md %}

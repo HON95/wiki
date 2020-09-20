@@ -28,6 +28,11 @@ breadcrumbs:
 | `fe80::/10` | Link-scoped unicast (non-routable) |
 | `ff00::/8` | Multicast |
 
+### Special addresses
+
+- Subnet-router anycast: The first interface ID in every subnet. (Does not apply to /127 and /128 addresses.)
+- Reserved: The last 128 interface IDs in every subnet. (Does not apply to /127 and /128 addresses.)
+
 ## Advantages over IPv4
 
 - Designed based on experience with the strengths and limitations of IPv4 and other protocols.
@@ -71,7 +76,7 @@ breadcrumbs:
     - May use any unicast address.
     - Treated like unicast except by the last routers toward the hosts using the anycast address.
     - Some important addresses:
-        - Subnet-router: The first interface ID in every subnet. All routers are required to listen to it. (RFC 4291)
+        - Subnet-router anycast: The first interface ID in every subnet. All routers are required to listen to it. (RFC 4291)
         - Reserved: The last 128 interface IDs in every subnet. (RFC 2526)
     - Shared unicast address approach:
         - An alternative approach to anycast.

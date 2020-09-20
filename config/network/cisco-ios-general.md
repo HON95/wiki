@@ -19,41 +19,9 @@ Software configuration for Cisco switches and routers running IOS or derivatives
 
 - [Cisco Config Analysis Tool (CCAT)](https://github.com/cisco-config-analysis-tool/ccat)
 
-## System
+## General Configuration
 
-- Memories:
-    - ROM: For bootstrap stuff.
-    - Flash: For IOS images.
-    - NVRAM: For startup configuration files.
-    - RAM: For running config, tables, etc.
-
-### Boot
-
-- IOS image sources (in default order): Flash, TFTP, ROM.
-- Startup config sources (in default order): NVRAM, TFTP, system configuration dialog.
-- Some details may be configured using the configuration register.
-
-### Modes
-
-- User EXEC mode (`Router>`):
-    - Used to run basic, non-privileged commands, like `ping` or `show` (limited).
-    - Entered when logging in as "not very privileged" users.
-- Privileged EXEC mode (`Router#`) (aka enable mode):
-    - Used to run more privileged (all) commands.
-    - Entered when logging in as "privileged" users or when running `enable` from user EXEC mode.
-- Global configuration mode (`Router(config)#`) and special configuration mode (`Router(config-xxx)#`):
-    - Used to configure the unit.
-    - Global configuration mode is entered by running `configure terminal` in privileged EXEC mode.
-    - "Special" configuration mode (it's not actually collectively called that) is entered when configuring an interface, a virtual router interface, a console line, a VLAN etc. from global configuration mode.
-- Setup mode:
-    - Used to interactivly configure some the "basics".
-    - Entered when loggin into a factory reset unit or when running `setup`.
-    - Completely useless, never use it.
-- ROM monitor mode (aka ROMMON).
-
-## Configuration
-
-### Usage and Basics
+### CLI Usage
 
 - Most commands take effect immediately.
 - Select range of interfaces: `int range g1/0/1-52` (example)
@@ -62,10 +30,18 @@ Software configuration for Cisco switches and routers running IOS or derivatives
     - Tab: Auto-complete.
     - `?`: Prints the allowed keywords.
     - `| <filter>`: Can be used to filter the output using one of the filter commands.
-- Save running config: `copy run start` or `write mem`
-- Restore startup config: `copy start run`
 - Show configurations: `show [run|start]`
     - `| section <section>` can be used to show a specific section.
+
+### Basics
+
+- Save/load config:
+    - Save running config: `copy run start` or `write mem`
+    - Restore startup config: `copy start run`
+- Interface status:
+    - L2/L3 oiverview: `sh ip int br`
+- Optics:
+    - Show transceivers: `sh interfaces transceiver`
 
 ### AAA
 
@@ -96,7 +72,72 @@ Software configuration for Cisco switches and routers running IOS or derivatives
     1. Enable login: `login`
     1. Set to use the local database: `login authentication default`
 
-## Miscellanea
+## Features
+
+### Port Aggregation Protocol (PAgP)
+
+- Cisco-proprietary protocol for link aggregation.
+- Use LACP instead.
+
+### Link Aggregation Control Protocol (LACP)
+
+- An IEEE protocol (aka 802.3ad) for link aggregation.
+
+### UniDirectional Link Detection (UDLD)
+
+- A Cisco-proprietary protocol for detecting unidirectional links.
+- Disabled by default.
+- This can happen when one fiber strand has been damaged but the other one works, which would make it hard to know that the link is down and it could cause STP loops.
+- It's mostly used for fiber ports, but can also be used for copper ports.
+- Use aggressive mode to err-disable the port when it stops receiving periodic UDLD messages.
+- A partial alternative is to use single member LACP.
+- Configuration:
+    - Set message interval: `udld message time <seconds>`
+    - Enable in normal og aggressive mode globally on all fiber ports: `udld <enable|aggressive>`
+    - Enable per-interface: `udld port <enable|aggressive>`
+
+### Cisco Discovery Protocol (CDP)
+
+- A Cisco-proprietary protocol for interchanging device information to neighbor devices.
+- Use LLDP instead.
+- Disable globally: `no cdp run`
+
+### Link Layer Discovery Protocol (LLDP)
+
+- An IEEE protocol (defined in IEEE 802.1AB) for interchanging device information to neighbor devices.
+- **TODO** LLDP and LLDP-MED
+
+## Information
+
+- Memories:
+    - ROM: For bootstrap stuff.
+    - Flash: For IOS images.
+    - NVRAM: For startup configuration files.
+    - RAM: For running config, tables, etc.
+
+### Boot
+
+- IOS image sources (in default order): Flash, TFTP, ROM.
+- Startup config sources (in default order): NVRAM, TFTP, system configuration dialog.
+- Some details may be configured using the configuration register.
+
+### Modes
+
+- User EXEC mode (`Router>`):
+    - Used to run basic, non-privileged commands, like `ping` or `show` (limited).
+    - Entered when logging in as "not very privileged" users.
+- Privileged EXEC mode (`Router#`) (aka enable mode):
+    - Used to run more privileged (all) commands.
+    - Entered when logging in as "privileged" users or when running `enable` from user EXEC mode.
+- Global configuration mode (`Router(config)#`) and special configuration mode (`Router(config-xxx)#`):
+    - Used to configure the unit.
+    - Global configuration mode is entered by running `configure terminal` in privileged EXEC mode.
+    - "Special" configuration mode (it's not actually collectively called that) is entered when configuring an interface, a virtual router interface, a console line, a VLAN etc. from global configuration mode.
+- Setup mode:
+    - Used to interactivly configure some the "basics".
+    - Entered when loggin into a factory reset unit or when running `setup`.
+    - Completely useless, never use it.
+- ROM monitor mode (aka ROMMON).
 
 ### Version and Image String Notations
 

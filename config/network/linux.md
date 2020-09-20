@@ -32,9 +32,9 @@ Issues may also be related to stupid things like which ports you're using on the
 - Setup the firewall for filtering both forwarded traffic and input/output to the router.
 - Setup the firewall for NAT.
 - Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:
-  - `net.ipv4.ip_forward=1`
-  - `net.ipv6.conf.all.forwarding=1`
-  - Run `sysctl -p` to reload.
+    - `net.ipv4.ip_forward=1`
+    - `net.ipv6.conf.all.forwarding=1`
+    - Run `sysctl -p` to reload.
 - Setup the network interfaces for all the directly connected networks.
 - Setup a default gateway, static routes and/or routing protocols.
 - Setup radvd for IPv6 NDP.

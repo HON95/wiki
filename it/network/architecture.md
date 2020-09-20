@@ -42,7 +42,7 @@ breadcrumbs:
 
 - Similar to the three-layer hierarchical model, but with the core and distribution layers collapsed into the same devices.
 - This generally means that there is only one routed layer.
-- Distro layer devices may be interconnected directly or through one or more core _switches_ (not routers) which are not themselves interconnected.
+- Distro layer devices may be interconnected directly or through one or more core _switches_ (not routers) which are _not_ themselves interconnected.
 - Appropriate for medium/small sites without multiples regions, where a separate core network is not needed.
 
 ### Collapsed Distribution
