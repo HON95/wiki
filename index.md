@@ -62,6 +62,10 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [Ubiquiti UniFi Controllers](config/network/ubiquiti-unifi-controllers/)
 - [Uniquiti UniFi Access Points](config/network/ubiquiti-unifi-aps/)
 
+### HPC
+
+- [Slurm Workload Manager](config/hpc/slurm/)
+
 ### Game Servers
 
 - [Counter-Strike: Global Offensive (CS:GO)](config/game-servers/csgo/)
