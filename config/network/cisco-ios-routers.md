@@ -48,6 +48,9 @@ An example of a full configuration.
 1. Setup console:
     1. Enter console config: `line con 0`
     1. Enable synchronous logging: `logging synchronous`
+1. Setup logging:
+    1. Change buffer size and max level: `logging buffered 16384 warnings`
+    1. Log important messages to console: `logging console critical`
 1. Setup user login:
     1. Enable new model AAA: `aaa new-model`
     1. Set the enable secret (e.g. to "secret"): `enable algorithm-type scrypt secret <secret>`
