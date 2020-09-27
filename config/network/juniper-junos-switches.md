@@ -45,15 +45,24 @@ This page is super not done. Just random notes for now.
 
 ## Virtual Chassis
 
-Virtual Chassis (VC) is a simple way of connecting multiple close or distant switches into a ring topology and managing them as a single logical device. All devices share a common management IP address. It simplifies loop prevention (otherwise using STP) and improves fault tolerance. A VC has one switch as master routing engine, one switch as backup routing engine and the remaining switches as linecards. The master is elected based on (in order) highest mastership priority, which member was master last time, which switch has been a member the longest, and which member has the lowest MAC address. You typically want to set the mastership priority to 255 for the two switches you want as master and backup routing engines.
+- Virtual Chassis (VC) is a simple way of connecting multiple close or distant switches into a ring topology and managing them as a single logical device. It simplifies loop prevention (otherwise using STP) and improves fault tolerance.
+- Roles: A VC has one switch as master routing engine, one switch as backup routing engine and the remaining switches as linecards.
+- Mastership election: The master is elected based on (in order) highest mastership priority, which member was master last time, which switch has been a member the longest, and which member has the lowest MAC address.
+- LEDs: The "MST" LED will be solid green on the master, blinking green on the backup and off on the linecards.
+- Alarms: Alarms for a specific device will only show on the master and the actual device.
+- FPCs: Each switch will show as separate FPCs (Flexible PIC (Physical Interface Cards) Concentrators).
+
+### Commands and Configuration
 
 - Show status:
-    - Show overview: `show virtual-chassis`
-    - Show VC ports (VCPs): `show virtual-chassis vc-port`
-- Commit on both routing engines (always recommended for committing on VC): `commit synchronize`
-- Enable synchronized commit as default commit: `set system commit synchronize`
-- Remove virtual chassis ports (VCPs): `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
-- Set mastership: [Configuring Mastership of a Virtual Chassis (Juniper)](https://www.juniper.net/documentation/en_US/junos/topics/task/configuration/virtual-chassis-ex4200-mastership-cli.html)
+    - Show overview and nodes: `show virtual-chassis`
+    - Show utilization of nodes: `show chassis fpc`
+- Configuration changes:
+    - Commit on both routing engines (always recommended for committing on VC): `commit synchronize`
+    - Enable synchronized commit as default commit: `set system commit synchronize`
+- Virtual chassis ports (VCPs):
+    - Show: `show virtual-chassis vc-port`
+    - Remove: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
 
 ### Virtual Chassis Fabric
 
