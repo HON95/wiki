@@ -158,6 +158,10 @@ An example of a full configuration.
 - Related:
     - Add black hole routes for local prefixes to avoid leakage when a local route is missing.
     - Enable strict unicast reverse path forwarding to avoid having traffic from places it shouldn't come from (typically spoofed).
-- **TODO**
+- Input bogon filter ACL (IPv4 and IPv6):
+    1. Create an ACL.
+    1. Add deny statements for prefixes to drop.
+    1. Add an explicit allow as the catch-all.
+    1. Attach it to an input interface.
 
 {% include footer.md %}

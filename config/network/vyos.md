@@ -55,6 +55,24 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Enable SSHD:
     1. Enable: `set service ssh`
     1. **TODO**
+1. Enable unicast reverse path forwarding (uRPF) globally: `set firewall source-validation strict`
+1. Set firewall options:
+    1. Enter firewall section.
+    1. `set all-ping enable`
+    1. `set broadcast-ping disable`
+    1. `set receive-redirects disable`
+    1. `set ipv6-receive-redirects disable`
+    1. `set ip-src-route disable`
+    1. `set ipv6-src-route disable`
+    1. `set log-martians disable`
+    1. `set send-redirects disable`
+1. Setup firewall:
+    1. Set default policies:
+        - `set firewall state-policy established action accept`
+        - `set firewall state-policy related action accept`
+        - `set firewall state-policy invalid action drop`
+    1. Create IPv4 and IPv6 rule sets. Note that IPv4 and IPv6 rule sets can't share names, so you can suffix the names with `-4` and `-6` to avoid conflict.
+    1. Attach rule sets to interfaces (typically "local" and "out").
 1. Commit and save: `commit` and `save`.
 
 ## General Configuration
@@ -75,7 +93,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 - Configuration changes:
     - Show configuration: `show`
     - Apply changes: `commit`
-    - Apply changes with confirmation: `commit-confirm [comment <comment>] [minutes]`, then `confirm` within X minutes when you've verified that the changes are working as intended.
+    - Apply changes with confirmation: `commit-confirm [comment <comment>] [minutes]`, then `confirm` within X minutes when you've verified that the changes are working as intended. Not confirming in time will cause the system to reboot.
     - Save changes: `save`
 
 ## Tasks
