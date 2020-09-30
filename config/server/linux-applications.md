@@ -316,9 +316,8 @@ This is not considered secure at all and should only be used on trusted networks
 #### Setup
 
 1. (Recommended) Use NTP on both server and clients to make sure the clocks are synchronized.
-1. Install: `apt install nfs-kernel-server portmap`
-    - "portmap" is only required for NFSv2 and v3, not for NFSv4.
-1. See which versions are running: `cat /proc/fs/nfsd/versions`
+1. Install: `apt install nfs-kernel-server`
+    - Install `portmap` if you need support for NFSv2 and v3 (not NFSv4).
 1. (Recommended) Enable only v4:
     1. In `/etc/default/nfs-common`, set:
       ```
@@ -332,9 +331,12 @@ This is not considered secure at all and should only be used on trusted networks
       ```
     1. Mask "rpcbind":
       ```
+      systemctl disable --now rpcbind.service
       systemctl mask rpcbind.service
       systemctl mask rpcbind.socket
       ```
+    1. Restart it: `systemctl restart nfs-server.service`
+    1. See which versions are running: `cat /proc/fs/nfsd/versions` (`-` means disabled)
 
 #### Usage
 
@@ -348,7 +350,7 @@ This is not considered secure at all and should only be used on trusted networks
     1. (Optional) For NFSv4, the container directory can be set as the root export by specifying option `fsid=root`.
     1. For a list of options, see `exports(5)`.
 1. Update the NFS table: `exportfs -ra`
-    - Or, restart the service: `systemctl restart nfs-server`
+    - Or, restart the service: `systemctl restart nfs-server.service`
 1. (Optional) Show exports: `exportfs -v`
 1. (Optional) Update the firewall:
     - NFSv4 uses only TCP port 2049.
