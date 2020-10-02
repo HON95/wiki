@@ -111,6 +111,7 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
     1. Add a default IPv4 route: `ip route 0.0.0.0/0 <gateway>`
     1. Add a default IPv6 route: `ipv6 route ::/0 <gateway>`
     1. Disable sending IPv6 RAs: `ipv6 nd suppress-ra`
+1. Enable LLDP: `lldp run`
 1. Configure spanning tree (802-1w):
     1. Enable globally: `spanning-tree single 802-1w`
     1. Set priority: `spanning-tree single 802-1w priority 0` (0 for root)
@@ -154,6 +155,11 @@ Security features like port security, dynamic ARP inspection, DHCP snooping, IP 
     - Restore the startup config: `reload`
 - Transceivers:
     - Show transceivers: `show media validation`
+- LLDP:
+    - Enable (config): `lldp run`
+    - Show status: `show lldp`
+    - Show neighbors overview: `show lldp neigh`
+    - Show neighbor details: `show lldp neigh ports <port>`
 
 ### Ports
 

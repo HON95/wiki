@@ -38,6 +38,8 @@ Software configuration for Cisco switches and routers running IOS or derivatives
 - Save/load config:
     - Save running config: `copy run start` or `write mem`
     - Restore startup config: `copy start run`
+- System status:
+    - Show alarms: `show facility-alarm status`
 - Interface status:
     - L2/L3 oiverview: `sh ip int br`
 - Optics:
@@ -72,40 +74,32 @@ Software configuration for Cisco switches and routers running IOS or derivatives
     1. Enable login: `login`
     1. Set to use the local database: `login authentication default`
 
-## Features
+## Tasks
 
-### Port Aggregation Protocol (PAgP)
+### Reset Password
 
-- Cisco-proprietary protocol for link aggregation.
-- Use LACP instead.
+1. Power off the device.
+1. Connect using serial.
+1. Power on the device and immediately prepare for the next step.
+1. Press Ctrl+Break to enter ROMMON.
+1. Type `confreg 0x2142` to make it ignore the startup config.
+1. (Required?) Type `sync` to save the environment.
+1. Type `boot` to start booting the IOS image. Wait for it to boot.
+1. Log in using default (no) credentials and make the necessary changes.
+    - To reset the startup config, run `erase startup-config`.
+1. Enter config mode and run `config-register 0x2102` to re-enable loading the startup config.
+1. Reboot: `reload`
 
-### Link Aggregation Control Protocol (LACP)
+### Copy Config to Device Using SCP
 
-- An IEEE protocol (aka 802.3ad) for link aggregation.
+Note: Copying to the running config will merge it into it instead of overwriting it. Copying it to the startup config instead and restarting is one way around that.
 
-### UniDirectional Link Detection (UDLD)
-
-- A Cisco-proprietary protocol for detecting unidirectional links.
-- Disabled by default.
-- This can happen when one fiber strand has been damaged but the other one works, which would make it hard to know that the link is down and it could cause STP loops.
-- It's mostly used for fiber ports, but can also be used for copper ports.
-- Use aggressive mode to err-disable the port when it stops receiving periodic UDLD messages.
-- A partial alternative is to use single member LACP.
-- Configuration:
-    - Set message interval: `udld message time <seconds>`
-    - Enable in normal og aggressive mode globally on all fiber ports: `udld <enable|aggressive>`
-    - Enable per-interface: `udld port <enable|aggressive>`
-
-### Cisco Discovery Protocol (CDP)
-
-- A Cisco-proprietary protocol for interchanging device information to neighbor devices.
-- Use LLDP instead.
-- Disable globally: `no cdp run`
-
-### Link Layer Discovery Protocol (LLDP)
-
-- An IEEE protocol (defined in IEEE 802.1AB) for interchanging device information to neighbor devices.
-- **TODO** LLDP and LLDP-MED
+1. Enable SSH.
+1. Enable local authentication and authorization.
+1. Copy from PC to device: `scp new-config.txt admin@10.10.10.10:flash:/new-config` (example)
+1. (Optional) Backup the old startup config: `copy startup-config flash:startup-config.backup`
+1. Copy new config to running config: `copy flash:new-config nvram:startup-config`
+1. Reload: `reload`
 
 ## Information
 
@@ -138,6 +132,41 @@ Software configuration for Cisco switches and routers running IOS or derivatives
     - Entered when loggin into a factory reset unit or when running `setup`.
     - Completely useless, never use it.
 - ROM monitor mode (aka ROMMON).
+
+### Features
+
+#### Port Aggregation Protocol (PAgP)
+
+- Cisco-proprietary protocol for link aggregation.
+- Use LACP instead.
+
+#### Link Aggregation Control Protocol (LACP)
+
+- An IEEE protocol (aka 802.3ad) for link aggregation.
+
+#### UniDirectional Link Detection (UDLD)
+
+- A Cisco-proprietary protocol for detecting unidirectional links.
+- Disabled by default.
+- This can happen when one fiber strand has been damaged but the other one works, which would make it hard to know that the link is down and it could cause STP loops.
+- It's mostly used for fiber ports, but can also be used for copper ports.
+- Use aggressive mode to err-disable the port when it stops receiving periodic UDLD messages.
+- A partial alternative is to use single member LACP.
+- Configuration:
+    - Set message interval: `udld message time <seconds>`
+    - Enable in normal og aggressive mode globally on all fiber ports: `udld <enable|aggressive>`
+    - Enable per-interface: `udld port <enable|aggressive>`
+
+#### Cisco Discovery Protocol (CDP)
+
+- A Cisco-proprietary protocol for interchanging device information to neighbor devices.
+- Use LLDP instead.
+- Disable globally: `no cdp run`
+
+#### Link Layer Discovery Protocol (LLDP)
+
+- An IEEE protocol (defined in IEEE 802.1AB) for interchanging device information to neighbor devices.
+- **TODO** LLDP and LLDP-MED
 
 ### Version and Image String Notations
 

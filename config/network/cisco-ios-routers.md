@@ -28,13 +28,15 @@ An example of a full configuration.
 1. Don't enter initial configuration (it's useless).
 1. Enter privileged exec mode: `enable`
 1. Enter configuration mode: `conf t`
+1. Disable zero touch provisioning (ZTP): `ztp disable`
 1. Disable unused features/services:
     1. `no service config`
     1. `no service pad`
     1. `no service password-encryption`
     1. `no cdp run`
     1. `no ip source-route`
-    1. `no ip domain-lookup`
+    1. `no ipv6 source-route`
+    1. `no ip domain-lookup` (optional)
     1. `no ip http server`
     1. `no ip http secure-server`
 1. Set the hostname and domain name:
@@ -62,12 +64,12 @@ An example of a full configuration.
         1. `login authentication default`
 1. Configure SSH:
     1. Set hostname and domain name (see above).
-    1. Generate SSH server cert: `crypto key generate rsa modulus 2048`
+    1. Generate SSH server cert: `crypto key generate rsa modulus <2048|4096>`
     1. Set version: `ip ssh version 2`
     1. Set VTY lines to use SSH:
         1. Enter line config: `line vty 0 15`
         1. Set to use SSH: `transport input ssh`
-        1. Set the timeout: `exec-timeout <minutes> <seconds>` (e.g. 15 minutes)
+        1. Set the timeout: `exec-timeout <minutes> <seconds>` (e.g. 60 minutes)
         1. Enter priv exec mode after login: `privilege level 15`
 1. Configure DNS: `ip name-server <addr1> <addr2> [...]`
 1. Enable IPv6 forwarding: `ipv6 unicast-routing`
