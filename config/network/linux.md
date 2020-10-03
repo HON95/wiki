@@ -50,6 +50,13 @@ Issues may also be related to stupid things like which ports you're using on the
 - Disable protocol hardware offloading as it typically causes more problems than it solves.
 - Make sure network interrupts from a given NIC are distributed across all cores.
     - See `/proc/interrupts`.
+- Enable or disable hardware offloading (needs testing):
+    - Enable/disable large receive offload (LRO) or generic receive offload (LRO): `ethtool -K <if> <lro|gro> on` (temporary)
+    - Enable/disable TX/RX checksum offload: `ethtool -K <if> tx on rx on`
+    - (And some others.)
+- Change NIC RX/TX buffer sizes:
+    - Show supported and current sizes: `ethtool -g <if>`
+    - Set new sizes: `ethtool -G <if> tx 4096 rx 4096`
 
 ## Notes
 

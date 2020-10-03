@@ -6,6 +6,10 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## Foreword
+
+As VyOS is Debian-based, the Linux router notes are also highly related.
+
 ## Resources
 
 - [VyOS User Guide](https://docs.vyos.io/)
@@ -73,6 +77,11 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
         - `set firewall state-policy invalid action drop`
     1. Create IPv4 and IPv6 rule sets. Note that IPv4 and IPv6 rule sets can't share names, so you can suffix the names with `-4` and `-6` to avoid conflict.
     1. Attach rule sets to interfaces (typically "local" and "out").
+1. Tuning:
+    - See the Linux router notes.
+    - Enable GRO (example): `ethtool -K <if> gro on`
+    - Increase RX/TX buffer sizes (example): `ethtool -K <if> gro on`
+    - Make any ethtool (e.g.) commands permanent by adding them to `/config/scripts/vyos-postconfig-bootup.script`.
 1. Commit and save: `commit` and `save`.
 
 ## General Configuration
