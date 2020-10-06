@@ -41,20 +41,22 @@ Follow the instructions for [Debian server basic setup](../debian/#initial-setup
 1. Don't install any of the firmware packages, it will remove the PVE firmware packages.
 1. Update network config and hostname:
     1. Do NOT manually modify the configs for network, DNS, NTP, firewall, etc. as specified in the Debian guide.
-    1. Install `ifupdown2`.
+    1. (Optional) Install `ifupdown2` to enable live network reloading. This does not work if using OVS interfaces.
     1. Update network config: Use the web GUI.
-    1. (Optional) Update hostname: See the Debian guide.
-    1. Update `/etc/hosts`: The short and FQDN hostnames must resolve to the IPv4 and IPv6 management address.
+    1. (Optional) Update hostname: See the Debian guide. Note that the short and FQDN hostnames must resolve to the IPv4 and IPv6 management address to avoid breaking the GUI.
 1. Update MOTD:
     1. Disable the special PVE banner: `systemctl disable --now pvebanner.service`
     1. Clear or update `/etc/issue` and `/etc/motd`.
     1. (Optional) Set up dynamic MOTD: See the Debian guide.
 1. Setup firewall:
     1. Open an SSH session, as this will prevent full lock-out.
-    1. Enable the cluster/datacenter firewall.
-    1. Disable NDP. This is because of a vulnerability in Proxmox where it autoconfigures itself on all bridges.
-    1. Add incoming rules on the management network for NDP (ICMPv6), ping (macro), SSH (macro) and the web GUI (TCP port 8006).
-    1. Enable the host/node firewall.
+    1. Go to the datacenter firewall page.
+    1. Enable the datacenter firewall.
+    1. Add incoming rules on the management network for NDP (ipv6-icmp), ping (macro ping), SSH (tcp 22) and the web GUI (tcp 8006).
+    1. Go to the host firewall page.
+    1. Enable the host firewall (TODO disable and re-enable to make sure).
+    1. Disable NDP on the nodes. (This is because of a vulnerability in Proxmox where it autoconfigures itself on all bridges.)
+    1. Enable TCP flags filter to block illegal TCP flag combinations.
     1. Make sure ping, SSH and the web GUI is working both for IPv4 and IPv6.
 1. Set up storage:
     1. Create a ZFS pool or something.
