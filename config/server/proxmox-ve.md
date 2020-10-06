@@ -35,8 +35,8 @@ breadcrumbs:
 Follow the instructions for [Debian server basic setup](../debian-server/#initial-setup), but with the following exceptions and extra steps:
 
 1. Before installing updates, setup the PVE repos (assuming no subscription):
-    1. In `/etc/apt/sources.list.d/pve-enterprise.list`, comment out the Enterprise repo.
-    1. In `/etc/apt/sources.list`, add the PVE No-Subscription repo: `deb http://download.proxmox.com/debian/pve buster pve-no-subscription`
+    1. Comment out all content from `/etc/apt/sources.list.d/pve-enterprise.list` to disable the enterprise repo.
+    1. Create `/etc/apt/sources.list.d/pve-no-subscription.list` containing `deb http://download.proxmox.com/debian/pve buster pve-no-subscription` to enable the no-subscription repo.
     1. More info: [Proxmox VE: Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
 1. Don't install any of the firmware packages, it will remove the PVE firmware packages.
 1. Update network config and hostname:
