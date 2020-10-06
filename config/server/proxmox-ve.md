@@ -32,7 +32,7 @@ breadcrumbs:
 
 ### Initial Configuration
 
-Follow the instructions for [Debian server basic setup](../debian-server/#initial-setup), but with the following exceptions and extra steps:
+Follow the instructions for [Debian server basic setup](../debian/#initial-setup), but with the following exceptions and extra steps:
 
 1. Before installing updates, setup the PVE repos (assuming no subscription):
     1. Comment out all content from `/etc/apt/sources.list.d/pve-enterprise.list` to disable the enterprise repo.
