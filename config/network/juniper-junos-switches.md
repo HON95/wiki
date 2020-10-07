@@ -33,7 +33,9 @@ This page is super not done. Just random notes for now.
 1. Connect to the switch using serial (RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow control).
 1. Login with username `root` and no password. You'll enter the shell.
 1. Enter the operation mode: `cli`
-1. Enter configuration mode (implicit hereafter, use `exit` to return to CLI): `configure`
+1. Enter configuration mode: `configure`
+    - Use `exit` to return to CLI.
+1. 
 1. Set hostname: `set system host-name <hostname>` (conf mode)
 
 **TODO**

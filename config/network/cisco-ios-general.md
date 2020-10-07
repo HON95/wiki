@@ -94,11 +94,12 @@ Software configuration for Cisco switches and routers running IOS or derivatives
 
 Note: Copying to the running config will merge it into it instead of overwriting it. Copying it to the startup config instead and restarting is one way around that.
 
-1. Enable SSH.
-1. Enable local authentication and authorization.
+1. Enable SSH, SCP, default login authentication and default exec authorization.
+1. Backup the old startup config: `copy startup-config flash:startup-config.backup`
 1. Copy from PC to device: `scp new-config.txt admin@10.10.10.10:flash:/new-config` (example)
-1. (Optional) Backup the old startup config: `copy startup-config flash:startup-config.backup`
-1. Copy new config to running config: `copy flash:new-config nvram:startup-config`
+1. Copy new config to running config to validate it: `copy flash:new-config running-config`
+    - Note that this will merge the two configs, which may lead to some new warnings or errors.
+1. Copy new config to startup config: `copy flash:new-config startup-config`
 1. Reload: `reload`
 
 ## Information

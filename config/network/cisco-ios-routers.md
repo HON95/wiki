@@ -94,8 +94,8 @@ An example of a full configuration.
     1. (Optional) Set IPv4 address: `ip address <address> <mask>`
     1. (Optional) Set IPv6 address: `ipv6 address <address>/<prefix-length>`
     1. (Optional) Disable sending IPv6 RAs: `ipv6 nd ra suppress all`
-    1. Enable strict uRPF for IPv4: `ip verify unicast source reachable-via rx`
-    1. Enable strict uRPF for IPv6: `ipv6 verify unicast source reachable-via rx`
+    1. Enable strict uRPF for IPv4 (downlinks only): `ip verify unicast source reachable-via rx`
+    1. Enable strict uRPF for IPv6 (downlinks only): `ipv6 verify unicast source reachable-via rx`
     1. VLAN subinterfaces: See separate section.
     1. IPv6 router advertisements: See separate section.
 1. Setup default routes:

@@ -53,6 +53,7 @@ Issues may also be related to stupid things like which ports you're using on the
 - Enable or disable hardware offloading (needs testing):
     - Enable/disable large receive offload (LRO) or generic receive offload (LRO): `ethtool -K <if> <lro|gro> on` (temporary)
     - Enable/disable TX/RX checksum offload: `ethtool -K <if> tx on rx on`
+    - Enable/disable scatter/gather aka vectored I/O: `ethtool -K <if> sg on`
     - (And some others.)
 - Change NIC RX/TX buffer sizes:
     - Show supported and current sizes: `ethtool -g <if>`

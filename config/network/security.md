@@ -54,11 +54,20 @@ breadcrumbs:
     - Should be handled somehow if possible.
     - May prevent spoofed IP addresses, especially
     - Can be done with firewall rules, reverse path forwarding (RPF), DHCP snooping-based verification, etc. based on scenario.
-- Reverse path filtering:
-    - Should be enabled. Use strict mode for most cases and loose mode if using asymmetric routing.
+- Reverse path filtering (RPF):
+    - Should be enabled for downlinks, but probably not for uplinks and transit links. For the latter two, use ACLs/firewall rules instead. Be especially careful for links with a default route pointing to it.
+    - Use strict mode most of the cases, but loose mode if assymmetrical routing may happen.
     - Filters packets from sources that are not reachable by the FIB (loose mode); or filter packets from sources that are not received on the interface that would be used to reach the source (strict mode).
     - Linux:
-        - Enable strict RPF (1) or loose RPF (2): `net.ipv4.conf.all.rp_filter=<0|1|2>` (default varies by distro, but generally disabled by default)
+        - Enable for IPv4 globally or per interface: `net.ipv4.conf.all.rp_filter=<0|1|2>`
+        - Status for IPv6: Unknown.
+        - Disabled (0), strict (1) or loose (2).
+    - Cisco IOS:
+        - Enable per interface: `<ip|ipv6> verify unicast source reachable-via <any|rx>`
+        - Loose ("any") or strict ("rx").
+    - VyOS (global):
+        - Enable globally: `firewall source-validation strict`
+        - TODO: Status for IPv6.
 - Directed broadcast forwarding:
     - Should be disabled.
     - Exploited by e.g. smurf and fraggle attacks.
