@@ -112,4 +112,8 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 
 Reboot the device and wait for the boot screen. In the boot screen, select the "lost password change (KVM)" option. It will boot to into a prompt asking you to set a new password. After setting a new password, the device will automatically reboot.
 
+## Random Notes
+
+- The DHCPv4 relay requires the interface towards the upstream DHCP server to be included in the relay interfaces. Otherwise the responses from the upstream server will be dropped.
+
 {% include footer.md %}
