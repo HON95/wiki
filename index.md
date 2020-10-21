@@ -61,6 +61,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 - [pfSense](config/network/pfsense/)
 - [Ubiquiti UniFi Controllers](config/network/ubiquiti-unifi-controllers/)
 - [Uniquiti UniFi Access Points](config/network/ubiquiti-unifi-aps/)
+- [VyOS](/config/network/vyos/)
 
 ### HPC
 
