@@ -45,21 +45,20 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Set the DNS servers: `set system name-server <ip-address>` (for each server)
 1. Set the time zone: `set system time-zone Europe/Oslo` (Norway)
 1. Set NTP servers:
-    1. Enter section `system ntp`.
-    1. Remove default NTP servers.
-    1. Add new NTP servers: `set server ntp.justervesenet.no` (example)
+    1. Remove default NTP servers: `delete system ntp <server>` (for each server)
+    1. Add new NTP servers: `set system ntp server ntp.justervesenet.no` (example)
 1. Enable Ctrl+Alt+Del reboot: `set system options ctrl-alt-del-action reboot` (or `ignore`)
 1. Replace default user:
-    1. Add new user with password: `set system login user <username> authentication plaintext-password <password>`
+    1. Add new user with password: `set system login user <username> authentication plaintext-password "<password>"` (remember quotation marks if it contains spaces)
     1. Commit and log into the new user.
     1. Delete the default user: `delete system login user vyos`
-1. Set up an Internet-facing interface with an IP address: Details not included.
+1. Set up a WAN-facing interface with an IP address (steps not included).
 1. Set default routes: `set protocols static route[6] <0.0.0.0/0|::/0> next-hop <next-hop>` (for IPv4 and IPv6)
 1. (Optional) Set black hole route: `set protocols static route[6] <prefix> blackhole` (for IPv4 and IPv6)
 1. Enable LLDP: `set service lldp interface all`
 1. Enable SSHD:
     1. Enable: `set service ssh`
-    1. **TODO**
+    1. More options: [VyOS SSH](https://docs.vyos.io/en/latest/services/ssh.html)
 1. Enable unicast reverse path forwarding (uRPF) globally: `set firewall source-validation strict`
 1. Set firewall options:
     1. Enter firewall section.
@@ -79,6 +78,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. Create IPv4 and IPv6 rule sets. Note that IPv4 and IPv6 rule sets can't share names, so you can suffix the names with `-4` and `-6` to avoid conflict.
     1. Attach rule sets to interfaces (typically "local" and "out").
 1. Tuning:
+    - **TODO** This can be done in the interface ethernet configs instead.
     - See the Linux router notes.
     - Enable GRO (example): `ethtool -K <if> gro on`
     - Increase RX/TX buffer sizes (example): `ethtool -K <if> gro on`
