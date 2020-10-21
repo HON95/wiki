@@ -23,7 +23,8 @@ See [Installation (VyOS)](https://docs.vyos.io/en/latest/install.html).
 1. Burn and boot from it (it's a live image).
 1. Log in using user `vyos` and password `vyos`.
 1. Run `install image` to run the permanent installation wizard.
-    - Copy the `config.boot.default` config file.
+    - Keep the suggested image name.
+    - Use the `/opt/vyatta/etc/config.boot.default` default config file.
 1. Remove the live image and reboot.
 
 ## Initial Configuration
