@@ -41,7 +41,7 @@ This page is super not done. Just random notes for now.
 1. Set host name: `set system host-name <host-name>`
 1. Set domain name: `set system domain-name <domain-name>`
 1. Set loopback addresses:
-    1. `set interfaces lo0.0 family inet address 127.0.0.1/8`
+    1. `set interfaces lo0.0 family inet address 127.0.0.1/32`
     1. `set interfaces lo0.0 family inet6 address ::1/128`
 1. Set DNS: `set system name-server <addr>` (once for each address)
 1. Set time:
@@ -50,15 +50,22 @@ This page is super not done. Just random notes for now.
     1. Set server to use periodically: `set system ntp server <address>`
     1. Set time zone: `set system time-zone Europe/Oslo` (example)
     1. Note: After committing, use `show ntp associations` to verify NTP.
-1. Disable dedicated management port and alarm:
-    1. `set int me0 disable`
-    1. `set chassis alarm management-ethernet link-down ignore`
 1. Disable default virtual chassis ports (VCPs) if not used:
     1. Enter op mode.
     1. Show VCPs: `show virtual-chassis vc-port`
     1. Remove VCPs: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
     1. Show again to make sure they disappear. This may take a few seconds.
+1. Delete default interfaces configs: `wildcard range delete interface ge-0/0/[0-47]` (example, repeat for all FPSc/PICs)
+1. Disable unused interfaces: `wildcard range set interface ge-0/0/[0-47] disable` (example, repeat for all FPSc/PICs)
+1. Disable dedicated management port and alarm:
+    1. Disable: `set int me0 disable`
+    1. Delete logical interface: `delete int me0.0`
+    1. Disable link-down alarm: `set chassis alarm management-ethernet link-down ignore`
+1. Disable default VLAN:
+    1. Delete logical interface: `delete vlan.0` (before disabling)
+    1. Disable logical interface: `set vlan.0 disable`
 1. Setup port-ranges: **TODO**
+1. Setup VLANs (not interfaces): `set vlans <name> vlan-id <VID>`
 1. Setup LACP:
     1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
     1. Add individual Ethernet interfaces (not using interface range):
@@ -69,8 +76,7 @@ This page is super not done. Just random notes for now.
     1. Set LACP options: `set aggregated-ether-options lacp active [periodic fast]`
     1. Setup default logical unit: `edit unit 0`
     1. Setup VLAN/address/etc.
-1. Setup VLANs:
-    1. Create named VLANs: `set vlans <name> vlan-id <VID>`
+1. Setup VLAN interfaces:
     1. Setup trunk ports:
         1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
         1. Set mode: `set port-mode trunk`
@@ -80,11 +86,15 @@ This page is super not done. Just random notes for now.
         1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
         1. Set access VLAN: `set vlan members <VLAN-name>`
 1. Setup L3 interfaces:
+    1. (VLAN) Set L3-interface: `set vlans <name> l3-interface vlan.<VID>`
     1. Enter unit 0 of physical/LACP interface or `vlan.<VID>` for VLAN interfaces.
     1. Set IPv4 address: `set family inet address <address>/<prefix-length>`
     1. Set IPv6 address: `set family inet6 address <address>/<prefix-length>`
-    1. (VLAN) Set L3-interface: `set vlans <name> l3-interface vlan.<VID>`
+1. Setup static IP routes:
+    1. IPv4 default gateway: `set routing-options rib inet.0 static route 0.0.0.0/0 next-hop <next-hop>`
+    1. IPv6 default gateway: ``set routing-options rib inet6.0 static route ::0/0 next-hop <next-hop>``
 1. Configure RSTP: **TODO**
+1. Configure SNMP (public RO): `set snmp community public authorization read-only`
 1. Enable auto snapshotting and restoration on corruption: `set system auto-snapshot`
 1. Disable DHCP auto image upgrade: `delete chassis auto-image-upgrade`
 1. Commit configuration: `commit [confirmed]`
@@ -159,7 +169,7 @@ Virtual Chassis Fabric (VCF) evolves VC into a spine-and-leaf architecture. Whil
     - (Optional) Create range or do it per phys. int.
     - `set interfaces ge-0/0/0 ether-options 802.3ad ae0`
     - `set interfaces ae0 aggregated-ether-options lacp active`
-    - `set aggregated-devices ethernet device-count <n>` (0-127)
+    - `set aggregated-devices ethernet device-count <n>` (0-64)
 - Set IP address: `set interfaces ae0 unit 0 family inet address 10.0.0.1/30`
 - Static route: `set routing-options static route 10.0.0.0/24 next-hop 10.0.1.1`
 - `show configuration [...] | display set`
