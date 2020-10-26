@@ -36,14 +36,14 @@ This page is super not done. Just random notes for now.
 1. Enter configuration mode: `configure`
     - Use `exit` to return to CLI.
 1. Set root password: `set system root-authentication plain-text-password`
+1. Setup a non-root user: `set system login user <user> [full-name <full-name>] class super-user authentication plain-text-password`
 1. Disable root login from SSH: `set system services ssh root-login deny`
-1. Setup a non-root user: **TODO**
 1. Set host name: `set system host-name <host-name>`
 1. Set domain name: `set system domain-name <domain-name>`
 1. Set loopback addresses:
-    1. `set interfaces lo0 unit 0 family inet address 127.0.0.1/32`
-    1. `set interfaces lo0 unit 0 family inet6 address ::1/128`
-1. Set DNS: `set system name-server <addr>` (IPv4+IPv6)
+    1. `set interfaces lo0.0 family inet address 127.0.0.1/8`
+    1. `set interfaces lo0.0 family inet6 address ::1/128`
+1. Set DNS: `set system name-server <addr>` (once for each address)
 1. Set time:
     1. (Optional) Set time locally: `set date <YYYYMMDDhhmm.ss>`
     1. Set server to use while booting: `set system ntp boot-server <address>`
@@ -53,9 +53,37 @@ This page is super not done. Just random notes for now.
 1. Disable dedicated management port and alarm:
     1. `set int me0 disable`
     1. `set chassis alarm management-ethernet link-down ignore`
-1. Setup LACP: **TODO**
-1. Setup VLANs: **TODO**
-1. Set management VLAN interface: **TODO**
+1. Disable default virtual chassis ports (VCPs) if not used:
+    1. Enter op mode.
+    1. Show VCPs: `show virtual-chassis vc-port`
+    1. Remove VCPs: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
+    1. Show again to make sure they disappear. This may take a few seconds.
+1. Setup port-ranges: **TODO**
+1. Setup LACP:
+    1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
+    1. Add individual Ethernet interfaces (not using interface range):
+        1. Delete logical units (or the whole interfaces): `wildcard range delete interfaces ge-0/0/[0-1] unit 0` (example)
+        1. Set as members: `wildcard range set ge-0/0/[0-1] ether-options 802.3ad ae<n>` (for LACP interface ae\<n\>)
+    1. Enter LACP interface: `edit interface ae<n>`
+    1. Set description: `desc <desc>`
+    1. Set LACP options: `set aggregated-ether-options lacp active [periodic fast]`
+    1. Setup default logical unit: `edit unit 0`
+    1. Setup VLAN/address/etc.
+1. Setup VLANs:
+    1. Create named VLANs: `set vlans <name> vlan-id <VID>`
+    1. Setup trunk ports:
+        1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
+        1. Set mode: `set port-mode trunk`
+        1. Set non-native VLANs: `set vlan members <vlan-name> [members <VLAN-name>]` (once per VLAN or repeated syntax)
+        1. (Optional) Set native VLAN: `set native-vlan-id <VID>`
+    1. Setup access ports:
+        1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
+        1. Set access VLAN: `set vlan members <VLAN-name>`
+1. Setup L3 interfaces:
+    1. Enter unit 0 of physical/LACP interface or `vlan.<VID>` for VLAN interfaces.
+    1. Set IPv4 address: `set family inet address <address>/<prefix-length>`
+    1. Set IPv6 address: `set family inet6 address <address>/<prefix-length>`
+    1. (VLAN) Set L3-interface: `set vlans <name> l3-interface vlan.<VID>`
 1. Configure RSTP: **TODO**
 1. Enable auto snapshotting and restoration on corruption: `set system auto-snapshot`
 1. Disable DHCP auto image upgrade: `delete chassis auto-image-upgrade`
