@@ -3,6 +3,7 @@ title: Juniper EX3300 Fan Mod
 breadcrumbs:
 - title: Guides
 - title: Network
+header_image: files/switch-modded-2.jpg
 ---
 {% include header.md %}
 
