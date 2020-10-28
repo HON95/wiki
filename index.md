@@ -4,7 +4,7 @@ no_toc: true
 ---
 {% include header.md %}
 
-Random collection of config notes and miscellaneous theory. Technically not a wiki.
+Random collection of config notes and miscellaneous stuff. _Technically not a wiki._
 
 ## Configuration
 
