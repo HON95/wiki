@@ -53,7 +53,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Cisco IOS General](config/network/cisco-ios-general/)
 - [Cisco IOS Routers](config/network/cisco-ios-routers/)
 - [Cisco IOS Switches](config/network/cisco-ios-switches/)
-- [Juniper Hardware](config/network/juniper-general/)
+- [Juniper Hardware](config/network/juniper-hardware/)
 - [Juniper Junos General](config/network/juniper-junos-general/)
 - [Juniper Junos Switches](config/network/juniper-junos-switches/)
 - [Linksys LGS Switches](config/network/linksys-lgs/)
