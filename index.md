@@ -69,9 +69,9 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 ### Game Servers
 
-- [Counter-Strike: Global Offensive (CS:GO)](config/game-servers/csgo/)
-- [Minecraft (Bukkit)](config/game-servers/minecraft-bukkit/)
-- [Team Fortress 2 (TF2)](config/game-servers/tf2/)
+- [Counter-Strike: Global Offensive (CS:GO)](config/game-server/csgo/)
+- [Minecraft (Bukkit)](config/game-server/minecraft-bukkit/)
+- [Team Fortress 2 (TF2)](config/game-server/tf2/)
 
 ### Media
 

@@ -286,6 +286,24 @@ See [Home Assistant](../home-assistant/).
 - DHCPv6 uses lease pools of 9973 entries, so using range sizes below this number may be preferable as a very general reference.
   `/116` gives 8191 addresses.
 
+## lm_sensors
+
+Get sensor values like temperature, voltage, fan speeds, etc.
+
+### Setup
+
+1. Install: `apt install lm-sensors`
+1. Test run it: `sensors`
+1. Run `sensors-detect`. When it asks, add the modules to `/etc/modules`.
+1. Load new modules: `systemctl restart kmod`
+1. Test run it: `sensors`
+
+### Troubleshooting
+
+- There's module/chip/sensor errors in the output or `journalctl`:
+    - If you know which chip and sensor (e.g. if it shows it during output), try adding `chip "<chip>"\n    ignore <sensor>` in `/etc/sensors3.conf`. Re-run `sensors`. (See [Kernel ACPI Error SMBus/IPMI/GenericSerialBus (ServerAdminBlog)](https://www.serveradminblog.com/2015/05/kernel-acpi-error-smbusipmigenericserialbus/) for an example on certain HP servers.)
+    - If you know which module it is, try to unload it. Re-run `sensors`. If it worked, then remove it from `/etc/modules` to make it permanent.
+
 ## MariaDB
 
 A MySQL fork that is generally MySQL compatible.
@@ -663,7 +681,7 @@ Instructions:
 1. Create the required files and directories:
     - `touch /etc/default/prometheus-node-exporter`
     - `mkdir -p /var/lib/prometheus/node-exporter/`
-1. Create the systemd service `/etc/systemd/system/prometheus-node-exporter.service`, see [prometheus-node-exporter.service](res/prometheus-node-exporter.service).
+1. Create the systemd service `/etc/systemd/system/prometheus-node-exporter.service`, see [prometheus-node-exporter.service](_files/prometheus-node-exporter.service).
 1. (Optional) Configure it:
     - The defaults work fine.
     - File: `/etc/default/prometheus-node-exporter`
