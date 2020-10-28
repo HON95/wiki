@@ -22,6 +22,10 @@
 {% endif %}
 {% endif %}
 
+{% if page.header_image %}
+![Header image]({{ page.header_image }})
+{% endif %}
+
 {% if page.no_toc != true %}
 ### Contents
 {:.no_toc}
