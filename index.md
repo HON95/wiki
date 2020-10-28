@@ -89,7 +89,7 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 ## Information Technology
 
-### Networking
+### Network
 
 - [IPv4](it/network/ipv4/)
 - [IPv6](it/network/ipv6/)
@@ -124,6 +124,12 @@ Random collection of config notes and miscellaneous theory. Technically not a wi
 
 - [CUDA](se/frameworks/cuda/)
 - [OpenMPI](se/frameworks/openmpi/)
+
+## Guides
+
+### Network
+
+- [Juniper EX3300 Fan Mod](guides/network/juniper-ex3300-fanmod/)
 
 <!--
 ## External Resources

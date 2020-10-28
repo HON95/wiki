@@ -2,7 +2,7 @@
 title: Network Architecture
 breadcrumbs:
 - title: IT
-- title: Networking
+- title: Network
 ---
 {% include header.md %}
 
