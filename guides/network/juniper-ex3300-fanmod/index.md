@@ -19,10 +19,44 @@ It uses two beefy 40mm fans with standard 3-pin fan pinout, running at pretty lo
 
 ## Images
 
-![Original switch](files/switch-original.jpg)
+Old and new fans (the one with screws is the back fan):
+
+[![All fans](files/fans-all.jpg)](files/fans-all.jpg)
+
+Original switch:
+
+[![Original switch](files/switch-original.jpg)](files/switch-original.jpg)
+
+Original back fan:
+
+[![Original back fan](files/fan-old-back.jpg)](files/fan-old-back.jpg)
+
+Original PSU fan:
+
+[![Original PSU fan](files/fan-old-psu.jpg)](files/fan-old-psu.jpg)
+
+Modded switch:
+
+[![Modded switch](files/switch-modded.jpg)](files/switch-modded.jpg)
+
+Modded switch again:
+
+[![Modded switch, different angle](files/switch-modded-2.jpg)](files/switch-modded-2.jpg)
+
+Backside of PSU with fan cable extenders soldered onto it:
+
+[![PSU backside](files/psu-back.jpg)](files/psu-back.jpg)
 
 ## Steps
 
-**TODO**
+1. Open the chassis. There are some hidden screws behind the rack ears and the DC input cover.
+1. Unmount the back fan, the PSU chassis, the PSU fan and the PSU PCB.
+1. Disconnect the GND and 12V wires from the connector on the new fan cables, but keep the tachometer wire connected. Solder the GND and 12V wires onto the backside of the through-hole solder points for the power outputs of the PSU (where the cable to the switch PCB is connected). Conect the fan connectors with the tachometer wire to the original fan outputs on the switch.
+1. Remount the PSU PCB, PSU fan, PSU chassis and back fan.
+1. Cable manage the new fan cables a bit as to not restrict airflow too much.
+1. Power the switch on with the chassis still open.
+1. Make sure both fans are physically blowing at full speed.
+1. Wait for it to boot. Make sure that it registers the fans as spinning (`show chassis environment`) and that no alarm is present for the fans (`show chassis alarms`).
+1. Power off the switch and close the chassis.
 
 {% include footer.md %}
