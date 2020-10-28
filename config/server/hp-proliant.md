@@ -11,6 +11,10 @@ breadcrumbs:
 
 - DL380p Gen8
 
+## Noise Level
+
+Not quiet. Somtimes quiet but for unknown reasons.
+
 ## Firmware Updates
 
 **TODO**
