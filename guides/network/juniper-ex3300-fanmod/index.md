@@ -23,31 +23,31 @@ I take no responsibility if this destroys your switch, burns your house down and
 
 ## Images
 
-Old and new fans (the one with screws is the back fan):
+**Old and new fans.** The one with screws is the back fan.
 
 [![All fans](files/fans-all.jpg)](files/fans-all.jpg)
 
-Original switch:
+**Original switch.**
 
 [![Original switch](files/switch-original.jpg)](files/switch-original.jpg)
 
-Original back fan:
+**Original back fan.**
 
 [![Original back fan](files/fan-old-back.jpg)](files/fan-old-back.jpg)
 
-Original PSU fan:
+**Original PSU fan.**
 
 [![Original PSU fan](files/fan-old-psu.jpg)](files/fan-old-psu.jpg)
 
-Modded switch:
+**Modded switch.**
 
 [![Modded switch](files/switch-modded.jpg)](files/switch-modded.jpg)
 
-Modded switch again:
+**Modded switch again.**
 
 [![Modded switch, different angle](files/switch-modded-2.jpg)](files/switch-modded-2.jpg)
 
-Backside of PSU with fan cable extenders soldered onto it:
+**Backside of PSU.** Notice the 12V and GND wires from the fan cable extenders soldered onto it.
 
 [![PSU backside](files/psu-back.jpg)](files/psu-back.jpg)
 
