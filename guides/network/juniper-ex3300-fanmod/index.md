@@ -19,7 +19,7 @@ It uses two beefy 40mm fans with standard 3-pin fan pinout, running at pretty lo
 
 ## Images
 
-![Original switch](_files/switch-original.jpg)
+![Original switch](files/switch-original.jpg)
 
 ## Steps
 
