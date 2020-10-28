@@ -12,6 +12,10 @@ Juniper EX3300 is an L3 switch with 24/48 Gigabit ports, 4 SFP+ ports and option
 
 It uses two beefy 40mm fans with standard 3-pin fan pinout, running at pretty low RPMs at idle. As my quiet replacement fans aren't as beefy and would not provide enough airflow at these low RPMs, I've connected them directly to the PSU 12V output to always run them at 100% (which is upstream of the original fan headers, so it should be completely fine). If you have more beefy fans available, you can avoid this little hack and just drop-in replace the original fans.
 
+## Disclaimer
+
+I take no responsibility if this destroys your switch, burns your house down or electrocutes you.
+
 ## Parts
 
 - 2x Noctua NF-A4x20 FLX (3-pin 40mm). Any 3-pin or 4-pin fan should work if you're going for the 100% fan speed hack.
