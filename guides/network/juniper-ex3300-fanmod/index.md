@@ -14,7 +14,7 @@ It uses two beefy 40mm fans with standard 3-pin fan pinout, running at pretty lo
 
 ## Disclaimer
 
-I take no responsibility if this destroys your switch, burns your house down or electrocutes you.
+I take no responsibility if this destroys your switch, burns your house down and/or electrocutes you.
 
 ## Parts
 
