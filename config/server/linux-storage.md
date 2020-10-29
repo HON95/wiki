@@ -459,8 +459,7 @@ Some guides recommend using backport repos, but this way avoids that.
 - Make sure regular automatic scrubs are enabled.
     - There should be a cron job/script or something.
     - Run it e.g. every 2 weeks or monthly.
-- Snapshots are great for incremental backups. They're easy to send placesOS
-
+- Snapshots are great for incremental backups. They're easy to send places.
 - Use quotas, reservations and compression.
 - Very frequent reads:
     - E.g. for a static web root.
