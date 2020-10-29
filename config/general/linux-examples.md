@@ -17,7 +17,9 @@ breadcrumbs:
     - Run `systemctl daemon-reload` to avoid having systemd remount stuff that was removed from fstab or other weird shit.
 - Benchmark with IOzone:
     - Install (Debian): `apt install iozone3`
-    - Test all-ish in current dir: `iozone -a`
+    - It uses the current dir.
+    - Test with various record sizes and file sizes: `iozone -a`
+    - Benchmark: `iozone -t1` (1 thread)
     - Plot results: **TODO** It should be doable with gnuplot somehow.
 
 ### Files
