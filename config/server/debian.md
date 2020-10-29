@@ -129,13 +129,13 @@ Using ifupdown (default, alternative 1):
 1. For VLAN support, install `vlan`.
 1. For bonding/LACP support, install `ifenslave`.
 1. Configure `/etc/network/interfaces`.
-1. Restart `networking.service` and run `ifdown` and `ifup` on all changed interfaces.
+1. Run `ifdown` and `ifup` on all changed interfaces.
 
 Using ifupdown2 (alternative 2):
 
 1. Install `ifupdown2`.
 1. Configure `/etc/network/interfaces`.
-1. Restart `networking.service` (**TODO** enough?).
+1. Run `ifdown` and `ifup` on all changed interfaces.
 
 Using systemd-networkd (alternative 3):
 
