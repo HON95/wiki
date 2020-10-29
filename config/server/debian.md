@@ -57,7 +57,7 @@ If you didn't already configure this during the installation. Typically the case
 ### Basic Configuration
 
 1. Packages:
-    - (Optional) Enable the `contrib` and `non-free` repo areas by setting `free contrib non-free` to every line in `/etc/apt/sources.list`.
+    - (Optional) Enable the `contrib` and `non-free` repo areas by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
     - Update, upgrade and auto-remove.
     - Install basics: `sudo ca-certificates`
     - Install tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
