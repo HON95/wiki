@@ -15,6 +15,10 @@ breadcrumbs:
 - Modify fstab:
     - Test it with `mount -a` to make sure it doesn't have errors that may cause boot to fail.
     - Run `systemctl daemon-reload` to avoid having systemd remount stuff that was removed from fstab or other weird shit.
+- Benchmark with IOzone:
+    - Install (Debian): `apt install iozone3`
+    - Test all-ish in current dir: `iozone -a`
+    - Plot results: **TODO** It should be doable with gnuplot somehow.
 
 ### Files
 
@@ -134,7 +138,8 @@ breadcrumbs:
 - Monitor interrupts:
     - `irqtop`
     - `watch -n0.1 /proc/interrupts`
-- Stress test:
+- Stress test with stress-mg:
+    - Install (Debian): `apt install stress-ng`
     - Stress CPU: `stress-ng -c $(nproc) -t 600`
 
 ## Tasks
