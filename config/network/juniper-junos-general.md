@@ -78,6 +78,7 @@ Wait for the "The operating system has halted." text before pulling the power, s
 - Show alarms: `show chassis alarms`
 - Show temperatures and fan speeds: `show chassis environment`
 - Show routing engine usage: `show chassis routing-engine`
+- Show effective configuration (with inheritance): `show <configuration> | display inheritance`
 
 ### Interfaces
 
@@ -89,6 +90,16 @@ Wait for the "The operating system has halted." text before pulling the power, s
     - All details: `show interfaces detail`
     - Physical details: `show interfaces media`
 - Show LLDP neighbors: `show lldp neighbors`
+
+### Events
+
+- Show event type info: `help syslog SNMP_TRAP_LINK_DOWN` (op mode) (example)
+- Show available event attributes: Use ?-completion.
+- Show log: `run show log escript.log | last`
+
+#### Info
+
+- "Do not use the change-configuration statement to modify the configuration on dual Routing Engine devices that have nonstop active routing (NSR) enabled, because both Routing Engines might attempt to acquire a lock on the configuration database, which can cause the commit to fail." (From docs.)
 
 ## Tasks
 

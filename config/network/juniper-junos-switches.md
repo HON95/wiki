@@ -64,16 +64,18 @@ This page is super not done. Just random notes for now.
 1. Disable default VLAN:
     1. Delete logical interface: `delete vlan.0` (before disabling)
     1. Disable logical interface: `set vlan.0 disable`
+1. Setup config groups: **TODO**
 1. Setup port-ranges: **TODO**
 1. Setup VLANs (not interfaces): `set vlans <name> vlan-id <VID>`
 1. Setup LACP:
+    1. Note: Make sure you allocate enough LACP interfaces and that the interface numbers are below 512 (empirically discovered on EX3300).
     1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
     1. Add individual Ethernet interfaces (not using interface range):
         1. Delete logical units (or the whole interfaces): `wildcard range delete interfaces ge-0/0/[0-1] unit 0` (example)
         1. Set as members: `wildcard range set ge-0/0/[0-1] ether-options 802.3ad ae<n>` (for LACP interface ae\<n\>)
     1. Enter LACP interface: `edit interface ae<n>`
     1. Set description: `desc <desc>`
-    1. Set LACP options: `set aggregated-ether-options lacp active [periodic fast]`
+    1. Set LACP options: `set aggregated-ether-options lacp active`
     1. Setup default logical unit: `edit unit 0`
     1. Setup VLAN/address/etc.
 1. Setup VLAN interfaces:
@@ -97,6 +99,7 @@ This page is super not done. Just random notes for now.
 1. Configure SNMP (public RO): `set snmp community public authorization read-only`
 1. Enable auto snapshotting and restoration on corruption: `set system auto-snapshot`
 1. Disable DHCP auto image upgrade: `delete chassis auto-image-upgrade`
+1. Setup event policies: **TODO**
 1. Commit configuration: `commit [confirmed]`
 1. Backup config to rescue config: `request system configuration rescue save`
 
@@ -159,19 +162,5 @@ Virtual Chassis Fabric (VCF) evolves VC into a spine-and-leaf architecture. Whil
     - RS-232 w/ RJ45 (Cisco-like).
     - Baud 9600 (default).
     - 8 data bits, no parity, 1 stop bits, no flow control.
-
-## Random Notes (TODO)
-
-- `show interfaces`, `show interfaces ae0 extensive`, `show interfaces terse`, `show interfaces terse | match ae`, `show interfaces terse ge-* | match up.*up`
-- Int. range: `set interfaces interface-range <whatever> [member-range ge-0/0/0 to ge-0/0/1]`
-- LACP:
-    - No "unit 0" on LACP slave interfaces.
-    - (Optional) Create range or do it per phys. int.
-    - `set interfaces ge-0/0/0 ether-options 802.3ad ae0`
-    - `set interfaces ae0 aggregated-ether-options lacp active`
-    - `set aggregated-devices ethernet device-count <n>` (0-64)
-- Set IP address: `set interfaces ae0 unit 0 family inet address 10.0.0.1/30`
-- Static route: `set routing-options static route 10.0.0.0/24 next-hop 10.0.1.1`
-- `show configuration [...] | display set`
 
 {% include footer.md %}
