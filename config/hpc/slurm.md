@@ -12,6 +12,7 @@ breadcrumbs:
 
 - Cluster information:
     - Show partitions: `scontrol show partition [-a]`
+    - Show partition/node usage: `sinfo [-a]`
     - Show node capabilities: `sinfo -o "%20N    %8c    %10m    %25f    %10G"` (example)
 - Accounting:
     - Show accounts for user: `sacctmgr show assoc where user=<username> format=account`
