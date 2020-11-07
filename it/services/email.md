@@ -65,6 +65,7 @@ Does not include useless ones.
 - Domain-based Message Authentication, Reporting and Conformance (DMARC):
     - Tells the receiver how it should handle SPF and DKIM.
     - The record is distributed using a DNS TXT record using the `_dmarc` subdomain directly below the `From:` domain.
+    - DMARC records are inherited by subdomains if they don't have their own.
     - The alignment mode specifies how the `From:` domain must match the domain name from DKIM and SPF individually.
         - Strict: They must match exactly.
         - Relaxed: The Organizational Domains for both domains must match.
