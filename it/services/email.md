@@ -45,8 +45,9 @@ Does not include useless ones.
     - Specifies which IP addresses are allowed to send messages from the the `MAIL FROM` domain.
     - The record is distrubuted using a DNS TXT record with the same domain name.
     - Helps prevent email spoofing when used with DMARC.
-    - Don't specify or include more than 10 IP addresses as only 10 will be used.
+    - Don't specify or include (recursively) more than 10 IP addresses as only 10 will be used.
     - When used with DMARC, the signing domain for one of the signatures must match the `From:` domain according to the DMARC alignment mode.
+    - SPF records are not inherited by subdomains. They're only applied at the exact level.
     - Example TXT record: `v=spf1 mx include:example.net ~all`
         - `mx`: Allow sending from MX records for the same domain.
         - `include:example.net`: Include SFP records from the specified domain.
