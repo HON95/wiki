@@ -388,15 +388,21 @@ Some guides recommend using backport repos, but this way avoids that.
 
 ### Usage
 
-- Create pool: `zpool create -o ashift=<9|12> <name> <levels-and-drives>`
+- Recommended pool options:
+    - Set thr right physical block size: `ashift=<9|12>` (for 2^9 and 2^12, use 12 if unsure)
+    - Enabel compression: `compression=lz4` (use `zstd` when supported)
+    - Store extended attributes in the inodes: `xattr=sa` (`on` is default and stores them in a hidden file)
+- Recommended dataset options:
+    - Set quota: `quota=<size>`
+    - Set reservation: `reservation=<size>`
+- Create pool: `zpool create [options] <name> <levels-and-drives>`
     - Create encrypted pool: See [encryption](#encryption-1).
-    - Example: `zpool create -o ashift=<9|12> -o compression=lz4 <name> [mirror|raidz|raidz2|...] <drives>`
-- Create dataset: `zfs create <pool>/<name>`
-    - Realistic example: `zfs create -o quota=<size> -o reservation=<size> <pool>/<other-datasets>/<name>`
-- Create and destroy snapshots:
+    - Example: `zpool create -o ashift=<9|12> -o compression=lz4 -o xattr=sa <name> [mirror|raidz|raidz2|...] <drives>`
+- Create dataset: `zfs create [options] <pool>/<name>`
+    - Example: `zfs create -o quota=<size> -o reservation=<size> <pool>/<other-datasets>/<name>`
+- Handle snapshots:
     - Create: `zfs snapshot [-r] <dataset>@<snapshot>` (`-r` for "recursive")
-    - Destroy: `zfs destroy [-r] <dataset>@<snapshot>` (Careful!)
-- Send and receive snapshots:
+    - Destroy: `zfs destroy [-r] <dataset>@<snapshot>` (careful!)
     - Send to STDOUT: `zfs send [-R] <snapshot>` (`-R` for "recursive")
     - Receive from STDIN: `zfs recv <snapshot>`
     - Resume interrupted transfer: Use `zfs get receive_resume_token` and `zfs send -t <token>`.
