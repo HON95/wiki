@@ -389,9 +389,10 @@ Some guides recommend using backport repos, but this way avoids that.
 ### Usage
 
 - Recommended pool options:
-    - Set thr right physical block size: `ashift=<9|12>` (for 2^9 and 2^12, use 12 if unsure)
+    - Set thr right physical block/sector size: `ashift=<9|12>` (for 2^9 and 2^12, use 12 if unsure)
     - Enabel compression: `compression=lz4` (use `zstd` when supported)
     - Store extended attributes in the inodes: `xattr=sa` (`on` is default and stores them in a hidden file)
+    - Don't enable dedup.
 - Recommended dataset options:
     - Set quota: `quota=<size>`
     - Set reservation: `reservation=<size>`
