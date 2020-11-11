@@ -691,7 +691,7 @@ Instructions:
 
 #### Textfile Collector
 
-#### Collector scripts
+#### Collector Scripts
 
 Some I typically use.
 
@@ -700,6 +700,7 @@ Some I typically use.
 - [deleted_libraries.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/deleted_libraries.py)
 - [ipmitool (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/ipmitool) (requires ipmitool) (**Warning:** This is slow, don't run it frequently. If you do, it may spawn more and more processes waiting to read the IPMI sensors. Run it manually to get a feeling.)
 - [smartmon.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/smartmon.sh) (requires smartctl)
+- [My own textfile exporters](https://github.com/HON95/prometheus-textfile-exporters)
 
 #### Setup and Usage
 
