@@ -131,7 +131,8 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 
 1. Format the USB drive using FAT32.
 1. Copy the software file to the drive.
-1. Mount the USB drive: `mkdir /var/tmp/usb0` and `mount_msdosfs /dev/da1s1 /var/tmp/usb0`
+1. Mount the USB drive:
+    - Example: `mkdir /var/tmp/usb0` and `mount_msdosfs /dev/da1s1 /var/tmp/usb0`
     - See [mount a USB drive](#mount-a-usb-drive).
 1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
     - Run `ls -l /var/tmp/usb0` to get the full name of the file, you'll need it later.
