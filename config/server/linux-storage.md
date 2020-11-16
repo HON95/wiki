@@ -371,9 +371,9 @@ The installation part is highly specific to Debian 10.
 Some guides recommend using backport repos, but this way avoids that.
 
 1. Enable the `contrib` and `non-free` repo areas.
-1. Install (will probably stall a bit because of errors): `apt install zfs-dkms zfsutils-linux zfs-zed`
-1. Load the ZFS module: `modprobe zfs`
-1. Fix the ZFS install: `apt install`
+1. Install (will probably stall and fail): `apt install zfsutils-linux`
+1. Load the module: `modprobe zfs`
+1. Fix the install: `apt install`
 
 #### Configuration
 
@@ -398,7 +398,7 @@ Some guides recommend using backport repos, but this way avoids that.
     - Set reservation: `reservation=<size>`
 - Create pool: `zpool create [options] <name> <levels-and-drives>`
     - Create encrypted pool: See [encryption](#encryption-1).
-    - Example: `zpool create -o ashift=<9|12> -o compression=lz4 -o xattr=sa <name> [mirror|raidz|raidz2|...] <drives>`
+    - Example: `zpool create -o ashift=<9|12> -O compression=lz4 -O xattr=sa <name> [mirror|raidz|raidz2|...] <drives>`
 - Create dataset: `zfs create [options] <pool>/<name>`
     - Example: `zfs create -o quota=<size> -o reservation=<size> <pool>/<other-datasets>/<name>`
 - Handle snapshots:
