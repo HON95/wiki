@@ -197,7 +197,7 @@ Everything here is optional.
     - Check status: `fail2ban-client status [sshd]`
     - See [Linux Server Applications: Fail2Ban](applications.md#fail-2-ban) for more info.
 - Set up a swap file:
-    1. (Note) Avoid using swapping if possible. If you really need it but don't intend on using it too often (e.g. for hibernation), consider putting it on a larger, slower disk.
+    1. Note: You should have enough memory installed to never need swapping, but it's a nice backup to prevent the system from potentially crashing if anything bugs out and eats up too much memory.
     1. Show if swap is already enabled: `swapon --show`
     1. Allocate the swap file: `fallocate -l <size> /swapfile`
         - Alternatively, use dd.
