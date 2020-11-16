@@ -167,7 +167,7 @@ Using systemd-resolved (alternative 2):
 1. Set the timezone: `timedatectl set-timezone Europe/Oslo`
 1. Enable network time: `timedatectl set-ntp true`
 1. Configure `/etc/systemd/timesyncd.conf`:
-    - `NTP`: A space-separated list of NTP servers.
+    - `NTP` (optional): A space-separated list of NTP servers. The defaults are fine.
 1. Restart `systemd-timesyncd`.
 1. Check status works: `timedatectl` and `timedatectl timesync-status` (check which servers are used)
 
