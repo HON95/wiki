@@ -121,8 +121,9 @@ GUI for configuring gaming mice.
 
 ### Some Extensions
 
-- GitLens (eamodio.gitlens)
-- HTML CSS Support (ecmel.vscode-html-css)
+- HTML CSS Support (`ecmel.vscode-html-css`): Adds better CSS support.
+- GitLens (`eamodio.gitlens`): Show more git info (like authorship) in editor. Can be a bit verbose/annoying.
+- Vuln Cost (`snyk-security.vscode-vuln-cost`): Show inline security vulnerabilities for imports. Only JS support for now.
 
 ### Config
 
