@@ -30,7 +30,9 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
 ## Run
 
 - Command: `mpirun [opts] <app> [app_opts]`
-- To run it with `n` processes, specify `-n <n>`. Specify `-n $(nproc)` to use all cores. If it complains about "not enough slots", specify `--oversubscribe`.
-- If you need to run it as root (strongly discouraged), specify `--allow-run-as-root`.
+- Number of processes to use: `-n <n>`
+- Allow more processes than physical cores: `--oversubscribe`
+- Allow running as root (discouraged): `--allow-run-as-root`
+- Run on a specific TCP/IP subnet: `-mca btl_tcp_if_include <subnet>`
 
 {% include footer.md %}
