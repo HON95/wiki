@@ -326,10 +326,9 @@ A MySQL fork that is generally MySQL compatible.
 
 ## NFS
 
-The instructions below use NFSv4 *without* Kerberos.
-This is not considered secure at all and should only be used on trusted networks and systems.
+The instructions below use NFSv4 *without* Kerberos. This should only be used on trusted networks and requires manual user and group ID management.
 
-### Server
+### Server (without Kerberos)
 
 #### Setup
 
@@ -359,21 +358,33 @@ This is not considered secure at all and should only be used on trusted networks
 #### Usage
 
 1. Setup a new directory contain all exports in:
-    1. Create the container: `mkdir /export`
+    1. Create the root export containing other export dirs: `mkdir /export`
     1. Create the export mount dirs within the container.
     1. Mount the exports in the container using bind mounts.
-        - Example fstab entry using ZFS: `/mnt/zfspool /srv/nfs4/music none bind,defaults,nofail,x-systemd.requires=zfs-mount.service 0 0`
+        - Example fstab entry using ZFS: `/zfspool/alpha /export/alpha none bind,defaults,nofail,x-systemd.requires=zfs-mount.service 0 0`
     1. Remember to set appropriate permissions.
 1. Add filesystems to export in `/etc/exports`.
-    1. (Optional) For NFSv4, the container directory can be set as the root export by specifying option `fsid=root`.
-    1. For a list of options, see `exports(5)`.
+    - See the example config below.
+    - For a list of options, see `exports(5)`.
 1. Update the NFS table: `exportfs -ra`
     - Or, restart the service: `systemctl restart nfs-server.service`
 1. (Optional) Show exports: `exportfs -v`
 1. (Optional) Update the firewall:
     - NFSv4 uses only TCP port 2049.
 
-### Client
+Example `/etc/exports`:
+
+```
+# "fsid=root" is a special root export in NFSv4 where other exports are accessible relative to it.
+# "sync" should generally always be used. While "async" gives better performance, it violates the spec and may cause data loss in case of power loss.
+# "root_squash" maps client root users to an anon user to prevent remote root access. If that's desired, set "no_root_squash" instead.
+# "no_subtree_check" disables subtree checking. Subtree checking may be appropriate for certain file systems, but in general it may cause more problems than it solves.
+# "insecure" allows clients connecting from non-well-known ports.
+/export/ *(fsid=root,ro,sync,root_squash,no_subtree_check,insecure)
+/export/projects/ *(rw,sync,root_squash,no_subtree_check,insecure)
+```
+
+### Client (without Kerberos)
 
 #### Setup
 
@@ -382,9 +393,11 @@ This is not considered secure at all and should only be used on trusted networks
 #### Usage
 
 1. Create a dir to mount the export to.
-1. (Optional) Try to mount it: `mount -t nfs4 <server-hostname>:<export> <mountpoint>`
+1. (Optional) Try to mount it:
+    - Command: `mount -t nfs4 <server-hostname>:<export> <mountpoint>`
     - Note that for NFSv4 with a root export, the export path is relative to the root export.
 1. (Optional) Make it permanent by adding it to fstab.
+    - `/etc/fstab` entry: `<nfs-server>:<export> <local-dir> nfs4 defaults 0 0`
 
 ## ntopng
 
