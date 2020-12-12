@@ -37,4 +37,8 @@ Note that the toolkit requires a matching NVIDIA driver to be installed.
 
 See [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html).
 
+## Running
+
+- To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
+
 {% include footer.md %}
