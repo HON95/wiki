@@ -33,6 +33,10 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
 - Number of processes to use: `-n <n>`
 - Allow more processes than physical cores: `--oversubscribe`
 - Allow running as root (discouraged): `--allow-run-as-root`
-- Run on a specific TCP/IP subnet: `-mca btl_tcp_if_include <subnet>`
+- Specify which network type or subnet to use:
+    - Specify/include IP subnet (TCP): `--mca btl_tcp_if_<include|exclude> <subnet|device>,...`
+    - Disable TCP: `--mca btl ^tcp`
+    - Specify BTLs exactly: `--mca btl self,vader,tcp`
+    - *Something* (**TODO**): `--mca pml ob1`
 
 {% include footer.md %}

@@ -81,7 +81,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     - **TODO** This can be done in the interface ethernet configs instead.
     - See the Linux router notes.
     - Enable GRO (example): `ethtool -K <if> gro on`
-    - Increase RX/TX buffer sizes (example): `ethtool -K <if> gro on`
+    - Increase RX/TX buffer sizes (example): `ethtool -G <if> tx 4096 rx 4096`
     - Enable scatter/gather aka vectored I/O (example): `ethtool -K <if> sg on`
     - Make any ethtool (e.g.) commands permanent by adding them to `/config/scripts/vyos-postconfig-bootup.script`.
 1. Commit and save: `commit` and `save`.

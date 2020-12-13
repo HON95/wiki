@@ -18,8 +18,9 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ### Server
 
 - [Debian Server](config/server/debian/)
-- [Linux Server Storage](config/server/linux-storage/)
 - [Linux Server Applications](config/server/linux-applications/)
+- [Linux Server Storage](config/server/linux-storage/)
+- [Linux Server Networking](config/server/linux-networking/)
 - [Proxmox VE](config/server/proxmox-ve/)
 - [Home Assistant](config/server/home-assistant/)
 - [Dell PowerEdge](config/server/dell-poweredge/)

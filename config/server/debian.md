@@ -124,7 +124,7 @@ If you didn't already configure this during the installation. Typically the case
 
 #### Network Manager
 
-Using ifupdown (default, alternative 1):
+Using ifupdown (alternative 1, default):
 
 1. For VLAN support, install `vlan`.
 1. For bonding/LACP support, install `ifenslave`.
