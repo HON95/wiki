@@ -27,8 +27,11 @@ breadcrumbs:
 
 ### Usage
 
-- Check L2 status: `ibstat`
-- Check L3 status: `ip a`
+- Show IPoIB status: `ip a`
+- Show port status: `ibstat`
+- Show hosts: `ibhosts`
+- Show switches: `ibswitches`
+- Show link statuses for network: `iblinkinfo`
 - Show active subnet manager(s): `sminfo`
 
 #### Testing
