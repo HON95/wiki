@@ -6,6 +6,10 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## General
+
+- For benchmarking etc., see [Computer Testing (General)](/config/general/computer-testing/).
+
 ## Guidelines and Miscellaneous Notes
 
 - While file/block sizes typically use base-2 prefixes, storage mediums typically use base-10 prefixes.
