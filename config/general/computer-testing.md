@@ -39,6 +39,7 @@ breadcrumbs:
 - Usage:
     - Add `--fsync=1` for synchronous IO.
     - Add `--time_based --runtime=<seconds>` to repeat the test for the provided duration.
+    - Configuration arguments may be placed in a config file instead, specified as a positional argument to fio.
     - Note that write performance may sharply degrade after a while when the hardware write cache(s) fill up, so make sure the tests are run for long enough.
     - Examples: See below.
 
@@ -46,13 +47,13 @@ Usage examples:
 
 ```sh
 # Sequential, asynchronous, 4kiB, random write
-fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=4k --size=4g --numjobs=1 --iodepth=1 --runtime=60 --time_based --end_fsync=1
+fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=4k --size=4G --numjobs=1 --iodepth=1 --runtime=60 --time_based --end_fsync=1
 
 # 16 parallel, asynchronous, 64kiB, random write
-fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=64k --size=256m --numjobs=16 --iodepth=16 --runtime=60 --time_based --end_fsync=1
+fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=64k --size=256M --numjobs=16 --iodepth=16 --runtime=60 --time_based --end_fsync=1
 
 # Sequential, asynchronous, 1MiB, random write
-fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=1m --size=16g --numjobs=1 --iodepth=1 --runtime=60 --time_based --end_fsync=1
+fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=1m --size=16G --numjobs=1 --iodepth=1 --runtime=60 --time_based --end_fsync=1
 ```
 
 ### smartmontools (Linux)
