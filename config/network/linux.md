@@ -50,14 +50,23 @@ Issues may also be related to stupid things like which ports you're using on the
 - Disable protocol hardware offloading as it typically causes more problems than it solves.
 - Make sure network interrupts from a given NIC are distributed across all cores.
     - See `/proc/interrupts`.
-- Enable or disable hardware offloading (needs testing):
-    - Enable/disable large receive offload (LRO) or generic receive offload (LRO): `ethtool -K <if> <lro|gro> on` (temporary)
+- Enable or disable hardware offloading (temporary):
+    - Enable/disable large receive offload (LRO) or generic receive offload (GRO): `ethtool -K <if> <lro|gro> on`
     - Enable/disable TX/RX checksum offload: `ethtool -K <if> tx on rx on`
     - Enable/disable scatter/gather aka vectored I/O: `ethtool -K <if> sg on`
     - (And some others.)
 - Change NIC RX/TX buffer sizes:
     - Show supported and current sizes: `ethtool -g <if>`
     - Set new sizes: `ethtool -G <if> tx 4096 rx 4096`
+- Change MTU:
+    - Typical Ethernet MTUs: 1500 (normal), 9000 (jumbo frames).
+    - Typical InfiniBand MTUs: 2044 (2048), 4092 (4096).
+    - Set: `ip link set <if> mtu <mtu>`
+- Increase TCP buffer sizes:
+    - **TODO**
+- **TODO**
+    - [https://fasterdata.es.net/host-tuning/linux/](https://fasterdata.es.net/host-tuning/linux/)
+    - [https://community.mellanox.com/s/article/performance-tuning-for-mellanox-adapters](https://community.mellanox.com/s/article/performance-tuning-for-mellanox-adapters)
 
 ## Notes
 
