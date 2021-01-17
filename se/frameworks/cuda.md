@@ -39,6 +39,12 @@ See [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/
 
 ## Running
 
+- Gathering system/GPU information with `nvidia-smi`:
+    - Show overview: `nvidia-smi`
+    - Show topology matrix: `nvidia-smi topo --matrix`
+    - Show topology info: `nvidia-smi topo <option>`
+    - Show NVLink info: `nvidia-smi  nvlink --status -i 0` (for GPU #0)
+    - Monitor device stats: `nvidia-smi dmon`
 - To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
 
 {% include footer.md %}
