@@ -1,8 +1,8 @@
 ---
-title: Laptops
+title: PCs
 breadcrumbs:
 - title: Configuration
-- title: PC
+- title: Computers
 ---
 {% include header.md %}
 

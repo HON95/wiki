@@ -1,8 +1,8 @@
 ---
 title: CUDA
 breadcrumbs:
-- title: Software Engineering
-- title: Frameworks
+- title: Configuration
+- title: High-Performance Computing (HPC)
 ---
 {% include header.md %}
 

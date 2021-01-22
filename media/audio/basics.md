@@ -20,7 +20,7 @@ breadcrumbs:
   - Unbalanced: Ground and signal.
   - Balanced: Ground and hot and cold signal with equal impedance. The cold signal is 0V but not (directly) connected to ground.
   - Differential: Balanced but the cold signal is the opposite voltage of the hot signal instead of 0V.
-  - Balanced and unbalanced mono plugs/sockets can generally be connected together (with the loss of the balanced signal), but don't connect e.g. a stereo unbalanced TRS to a mono balanced TRS. It'll sound weird.
+  - Balanced and unbalanced mono plugs/sockets can generally be connected together (with the loss of the balanced signal), but don't connect e.g. a stereo unbalanced TRS to a mono balanced TRS. It'll sound weird due to the signal mismatch.
 - Ground loops:
   - When there exists physical loop in the ground wires. Typically when devices are connected to different grounded power outlets.
   - Different potentials in the loop will cause undesired current flow.

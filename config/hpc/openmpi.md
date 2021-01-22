@@ -1,8 +1,8 @@
 ---
-title: OpenMPI
+title: Open MPI
 breadcrumbs:
-- title: Software Engineering
-- title: Frameworks
+- title: Configuration
+- title: High-Performance Computing (HPC)
 ---
 {% include header.md %}
 
@@ -12,7 +12,7 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
 
 - [Frequently Asked Questions (OpenMPI)](https://www.open-mpi.org/faq/)
 
-## Installation
+## Setup
 
 ### Linux
 
@@ -20,6 +20,10 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
 
 1. (Prerequisite) Install buid tools: `apt install build-essetial`
 1. Install OpenMPI binaries, docs and libs: `apt install openmpi-bin openmpi-doc libopenmpi-dev`
+
+### Notes
+
+- For optimal interconnect performance, use an RDMA interconnect like InfiniBand.
 
 ## Build
 

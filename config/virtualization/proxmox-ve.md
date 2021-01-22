@@ -2,7 +2,7 @@
 title: Proxmox VE
 breadcrumbs:
 - title: Configuration
-- title: Server
+- title: Virtualization
 ---
 {% include header.md %}
 

@@ -2,15 +2,20 @@
 title: Linux Server Networking
 breadcrumbs:
 - title: Configuration
-- title: Server
+- title: Linux Server
 ---
 {% include header.md %}
 
-**TODO**:
+### TODO
+{:.no_toc}
 
 - Migrate stuff from Debian page.
 - Add link to Linux router page. Maybe combine.
 - Add ethtool notes from VyOS.
+
+## Related Pages
+
+- [Linux Switching & Routing](/config/network/linux/)
 
 ## InfiniBand
 

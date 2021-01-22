@@ -2,11 +2,13 @@
 title: Home Assistant
 breadcrumbs:
 - title: Configuration
-- title: Server
+- title: IoT & Home Automation
 ---
 {% include header.md %}
 
-## Installation (Proxmox)
+## Installation
+
+### Proxmox Variant
 
 These steps are for installing the Home Assistant image in Proxmox. There is also a "Core" variant which can be installed as a Docker image, but don't doesn't include the add-on store.
 

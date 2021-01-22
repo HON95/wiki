@@ -2,7 +2,7 @@
 title: Raspberry Pi
 breadcrumbs:
 - title: Configuration
-- title: IoT
+- title: IoT & Home Automation
 ---
 {% include header.md %}
 

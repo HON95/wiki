@@ -15,28 +15,46 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Linux Examples](config/general/linux-examples/)
 - [Computer Testing](config/general/computer-testing/)
 
-### Server
+### Automation
+
+- [Ansible General](config/automation/ansible-general/)
+- [Ansible Network](config/automation/ansible-network/)
+
+### Computers
+
+- [Dell OptiPlex Series](config/computers/dell-optiplex/)
+- [Dell PowerEdge Series](config/computers/dell-poweredge/)
+- [HP ProLiant](config/computers/hp-proliant/)
+- [PCs](config/computers/pcs/)
+
+### Game Servers
+
+- [Counter-Strike: Global Offensive (CS:GO)](config/game-server/csgo/)
+- [Minecraft (Bukkit)](config/game-server/minecraft-bukkit/)
+- [Team Fortress 2 (TF2)](config/game-server/tf2/)
+
+### HPC
+
+- [CUDA](config/hpc/cuda/)
+- [OpenMPI](config/hpc/openmpi/)
+- [Slurm Workload Manager](config/hpc/slurm/)
+
+### IoT & Home Automation
+
+- [Raspberry Pi](config/iot-ha/raspberry-pi/)
+- [Home Assistant](config/iot-ha/home-assistant/)
+
+### Linux Server
 
 - [Debian Server](config/server/debian/)
-- [Linux Server Applications](config/server/linux-applications/)
-- [Linux Server Storage](config/server/linux-storage/)
-- [Linux Server Networking](config/server/linux-networking/)
-- [Proxmox VE](config/server/proxmox-ve/)
-- [Home Assistant](config/server/home-assistant/)
-- [Dell PowerEdge](config/server/dell-poweredge/)
-- [HP ProLiant](config/server/hp-proliant/)
+- [Applications](config/server/linux-applications/)
+- [Storage](config/server/linux-storage/)
+- [Networking](config/server/linux-networking/)
 
-### PC
+### Media
 
-- [Kubuntu](config/pc/kubuntu/)
-- [Windows](config/pc/windows/)
-- [PC Applications](config/pc/applications/)
-- [Dell OptiPlex](config/pc/dell-optiplex/)
-- [Laptops](config/pc/laptops/)
-
-### IoT
-
-- [Raspberry Pi](config/iot/raspberry-pi/)
+- [Media Ripping](config/media/ripping/)
+- [Video Streaming](config/media/streaming/)
 
 ### Network
 
@@ -64,29 +82,19 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Uniquiti UniFi Access Points](config/network/ubiquiti-unifi-aps/)
 - [VyOS](/config/network/vyos/)
 
-### HPC
+### PC
 
-- [Slurm Workload Manager](config/hpc/slurm/)
-
-### Game Servers
-
-- [Counter-Strike: Global Offensive (CS:GO)](config/game-server/csgo/)
-- [Minecraft (Bukkit)](config/game-server/minecraft-bukkit/)
-- [Team Fortress 2 (TF2)](config/game-server/tf2/)
-
-### Media
-
-- [Media Ripping](config/media/ripping/)
-- [Video Streaming](config/media/streaming/)
+- [Kubuntu](config/pc/kubuntu/)
+- [Windows](config/pc/windows/)
+- [PC Applications](config/pc/applications/)
 
 ### Power
 
 - [APC PDUs](config/power/apc-pdus/)
 
-### Automation
+### Virtualization
 
-- [Ansible General](config/automation/ansible-general/)
-- [Ansible Network](config/automation/ansible-network/)
+- [Proxmox VE](config/virtualization/proxmox-ve/)
 
 ## Information Technology
 
@@ -120,11 +128,6 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ### Web
 
 - [Web Security](se/web/security/)
-
-### Frameworks
-
-- [CUDA](se/frameworks/cuda/)
-- [OpenMPI](se/frameworks/openmpi/)
 
 ## Guides
 

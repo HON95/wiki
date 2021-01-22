@@ -18,11 +18,15 @@ Using Linux servers as switches and routers may often be an inexpensive option a
 allows you to implement most network functionalities in one box.
 They may be virtualized to possibly reduce power usage and noise and take up no physical space.
 It is generally more unreliable than using enterprise routers and switches, though,
-and may require a good amount of time troubleshooting performance issues at times.
+and may require a good amount of time troubleshooting performance and compatibility issues.
 The issues may not become apparent until tested live with tens to houndreds of clients,
 as a simple throughput test will not uncover bottlenecks related to large amounts of connections
 (which can be hard to test realistically in lab environments).
 Issues may also be related to stupid things like which ports you're using on the *same* NIC.
+
+## Related Pages
+
+- [Linux Server Networking](/config/linux-server/networking/)
 
 ## Setup
 
