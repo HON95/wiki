@@ -15,6 +15,10 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Linux Examples](config/general/linux-examples/)
 - [Computer Testing](config/general/computer-testing/)
 
+### Authentication, Authorization and Accounting (AAA)
+
+- [Kerberos](config/aaa/kerberos/)
+
 ### Automation
 
 - [Ansible General](config/automation/ansible-general/)

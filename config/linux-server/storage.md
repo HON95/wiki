@@ -63,25 +63,7 @@ breadcrumbs:
 - After replacing a bad drive, the resilvering of the new drive typically puts a high load on the other drives.
   It's not uncommon for other drives to fail during this process, which is why you never use RAID 5 with HDDs.
 
-## Monitoring
-
-### SMART
-
-See [smartmontools](../../linux-general/applications/#smartmontools).
-
-For HDDs, the following attributes should stay near 0 and should not be rising. If they are, it may indicate the drive is about to commit seppuku.
-
-- 005 (Reallocated Sectors Count)
-- 187 (Reported Uncorrectable Errors)
-- 188 (Command Timeout)
-- 197 (Current Pending Sector Count)
-- 198 (Uncorrectable Sector Count)
-
-#### Seagate
-
-Attributes 1 (Raw Read Error Rate) and 7 (Seek Error Rate) can be a bit misleading, as a non-zero value does not mean there are errors. They are 48-bit values where the most significant 16 bits are the error count and the lower 32 bits are the number of operations (acting sort of like a fraction/rate).
-
-## System Storage
+### System Storage
 
 - The system drive doesn’t need to be super fast if not used a lot for service stuff. It's typically built from one SSD (optionally overprovisioned) or 2 mirrored HDDs (as they're less reliable).
 - Set the boot flag on `/boot/efi` (UEFI) or `/boot` (BIOS). It's not used, but some hardware may require it to try booting the drive.
@@ -90,7 +72,7 @@ Attributes 1 (Raw Read Error Rate) and 7 (Seek Error Rate) can be a bit misleadi
 - Preferred file system: EXT4 or ZFS.
 - Optionally use only the first half of the disk for LVM/system stuff and the other half for ZFS.
 
-### System Volumes Suggestion
+#### System Volumes Suggestion
 
 This is just a suggestion for how to partition your main system drive. Since LVM volumes can be expanded later, it's fine to make them initially small. Create the volumes during system installation and set the mount options later in `/etc/fstab`.
 
@@ -112,14 +94,34 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 | `/home` | EXT4 (LVM) | 10 | nodev,nosuid |
 | `/srv` | EXT4 (LVM) or none if external | 10 | nodev,nosuid |
 
-## Intel SSD Data Center Tool (isdct)
+## Disks
 
-### Setup
+### Seagate
+
+Attributes 1 (Raw Read Error Rate) and 7 (Seek Error Rate) can be a bit misleading, as a non-zero value does not mean there are errors. They are 48-bit values where the most significant 16 bits are the error count and the lower 32 bits are the number of operations (acting sort of like a fraction/rate).
+
+## Applications
+
+### SMART
+
+See [smartmontools](../../linux-general/applications/#smartmontools).
+
+For HDDs, the following attributes should stay near 0 and should not be rising. If they are, it may indicate the drive is about to commit seppuku.
+
+- 005 (Reallocated Sectors Count)
+- 187 (Reported Uncorrectable Errors)
+- 188 (Command Timeout)
+- 197 (Current Pending Sector Count)
+- 198 (Uncorrectable Sector Count)
+
+### Intel SSD Data Center Tool (isdct)
+
+#### Setup
 
 1. Download the ZIP for Linux from Intel's site.
 1. Install the AMD64 deb package.
 
-### Usage
+#### Usage
 
 - Command syntax: `isdct <verb> [options] [targets] [properties]`
     - Target may be either index (as seen in *show*) or serial number.
@@ -134,7 +136,7 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 - Fix SATA 3.0 speed: `isdct set -intelssd <target> PhySpeed=6`
     - Check before and after either with *isdct* or *smartctl*.
 
-#### Change the Capacity
+##### Change the Capacity
 
 1. Remove all partitions from the drive.
 1. Remove all data: `isdct delete -intelssd <target>`
@@ -147,15 +149,43 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 1. Prepare it for removal: `isdct start -intelssd <target> -standby`
 1. Reconnect the drives or restart the system.
 
-## LUKS
+## Volume Managers, File Systems, Etc.
 
-### Setup
+### Autofs
+
+Autofs automatically mounts directories when accessed and unmounts them after a period of inactivity.
+Note that `ls` will not reveal an unmounted autofs mount.
+To automount it, you need to actually enter it (or equivalent).
+
+#### Setup
+
+1. Install: `apt install autofs`
+1. Configure master map config:
+    - File: `/etc/auto.master`
+    - Each line declares a direct or indirect map, which consists of a path and a set of mounts in a separate configuration file. Indirect maps mount the mountpoints inside the path in the master config, while direct maps (specified using path `/-` in the master config) mount the mountpoints using absolute paths.
+    - Map line format: `<mountpoint> [options] <mapfile> [options]`
+1. Configure map configs:
+    - File path convention: `/etc/auto.<id>` (matching entry in master map config)
+    - Mount line format: `<mountpoint> [options] <location>`
+    - The location may e.g. be an NFS export.
+1. (Optional) Automount home dirs or similar using wildcards:
+    - As specifying all dirs would be cumbersome, wildcards may be used instead.
+    - Add `/home /etc/auto.home` to the master map.
+    - Add `* <server>:/home/&` to the home map (using NFS).
+1. (Optional) Run in foreground for debugging:
+    - Stop the daemon: `sudo service autofs stop`
+    - Run in foreground: `sudo automount -f -v`
+    - Test stuff in other terminal.
+
+### LUKS
+
+#### Setup
 
 1. Install: `apt install cryptsetup`
 
-### Usage
+#### Usage
 
-#### Encrypt Normal Partition
+##### Encrypt Normal Partition
 
 1. Format the device/partition: `cryptsetup -v luksFormat <dev> [keyfile]`
     - If not keyfile is specified, a password is required instead.
@@ -175,14 +205,14 @@ This is just a suggestion for how to partition your main system drive. Since LVM
     1. Reload `/etc/crypttab`: `systemctl reload-daemons`
     1. Reload `/etc/fstab`: `mount -a`
 
-## Ceph
+### Ceph
 
-### Resources
+#### Resources
 
 - (Ceph: Ceph PGs per Pool Calculator)[https://ceph.com/pgcalc/]
 - (Ceph Documentation: Placement Group States)[https://docs.ceph.com/docs/mimic/rados/operations/pg-states/]
 
-### Info
+#### Info
 
 - Distributed storage for HA.
 - Redundant and self-healing without any single point of failure.
@@ -218,7 +248,7 @@ This is just a suggestion for how to partition your main system drive. Since LVM
     - Using a DB device will also provide the benefits of a WAL device, as the journal is always placed on the fastest device.
     - A lost OSD WAL/DB will be equivalent to lose all OSDs. (For the older Filestore back-end, it used to be possible to recover it.)
 
-### Guidelines
+#### Guidelines
 
 - Use at least 3 nodes.
 - CPU: Metadata servers and partially OSDs are somewhat CPU intensive. Monitors are not.
@@ -234,7 +264,7 @@ This is just a suggestion for how to partition your main system drive. Since LVM
     - 10-50 OSDs: 4096
     - \>50 OSDs: See (pgcalc)[https://ceph.com/pgcalc/].
 
-### Usage
+#### Usage
 
 - General:
     - List pools: `rados lspools` or `ceph osd lspools`
@@ -273,7 +303,7 @@ This is just a suggestion for how to partition your main system drive. Since LVM
     - Export image to file: `rbd export <pool/image> <file>`
     - Mount image: TODO
 
-#### Failure Handling
+##### Failure Handling
 
 **Down + peering:**
 
@@ -302,7 +332,7 @@ Typically an early indicator of faulty hardware, so take note of which disk it i
     - Alternatively: `rados list-inconsistent pg <pool>`
 1. Repair the PG: `ceph pg repair <pg>`
 
-#### OSD Replacement
+##### OSD Replacement
 
 1. Stop the daemon: `systemctl stop ceph-osd@<id>`
     - Check: `systemctl status ceph-osd@<id>`
@@ -324,15 +354,15 @@ Typically an early indicator of faulty hardware, so take note of which disk it i
 1. Wait for rebalancing: `ceph -s [-w]`
 1. Check the health: `ceph health [detail]`
 
-## ZFS
+### ZFS
 
 Using ZFS on Linux (ZoL).
 
-### Info
+#### Info
 
 Note: ZFS's history (Oracle) and license (CDDL, which is incompatible with the Linux mainline kernel) are pretty good reasons to avoid ZFS.
 
-#### Features
+##### Features
 
 - Filesystem and physical storage decoupled
 - Always consistent
@@ -349,7 +379,7 @@ Note: ZFS's history (Oracle) and license (CDDL, which is incompatible with the L
 - Log-strucrured filesystem
 - Tunable
 
-#### Terminology
+##### Terminology
 
 - Vdev
 - Pool
@@ -360,16 +390,16 @@ Note: ZFS's history (Oracle) and license (CDDL, which is incompatible with the L
 - Adaptive Replacement Cache (ARC) and L2ARC
 - ZFS Event Daemon (ZED)
 
-#### Encryption
+##### Encryption
 
 - ZoL v0.8.0 and newer supports native encryption of pools and datasets. This encrypts all data except some metadata like pool/dataset structure, dataset names and file sizes.
 - Datasets can be scrubbed, resilvered, renamed and deleted without unlocking them first.
 - Datasets will by default inherit encryption and the encryption key (the "encryption root") from the parent pool/dataset.
 - The encryption suite can't be changed after creation, but the keyformat can.
 
-### Setup
+#### Setup
 
-#### Installation
+##### Installation
 
 The installation part is highly specific to Debian 10.
 Some guides recommend using backport repos, but this way avoids that.
@@ -379,7 +409,7 @@ Some guides recommend using backport repos, but this way avoids that.
 1. Load the module: `modprobe zfs`
 1. Fix the install: `apt install`
 
-#### Configuration
+##### Configuration
 
 1. (Optional) Set the max ARC size: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
     - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
@@ -390,7 +420,7 @@ Some guides recommend using backport repos, but this way avoids that.
 1. Check that ZED is set up to send emails.
     - In `/etc/zfs/zed.d/zed.rc`, make sure `ZED_EMAIL_ADDR="root"` is uncommented.
 
-### Usage
+#### Usage
 
 - Recommended pool options:
     - Set thr right physical block/sector size: `ashift=<9|12>` (for 2^9 and 2^12, use 12 if unsure)
@@ -417,7 +447,7 @@ Some guides recommend using backport repos, but this way avoids that.
     - Includes metadata operations.
     - If no interval is specified, the operations and bandwidths are averaged from the system boot. If an interval is specified, the very first interval will still show this.
 
-#### Error Handling and Replacement
+##### Error Handling and Replacement
 
 - Clear transient device errors: `zpool clear <pool> [device]`
 - If a pool is "UNAVAIL", it means it can't be recovered without corrupted data.
@@ -425,7 +455,7 @@ Some guides recommend using backport repos, but this way avoids that.
 - Bring a device online or offline: `zpool (online|offline) <pool> <device>`
 - Re-add device that got wiped: Take it offline and then online again.
 
-#### Encryption
+##### Encryption
 
 - Check stuff:
     - Encryption root: `zfs get encryptionroot`
@@ -448,7 +478,7 @@ Some guides recommend using backport repos, but this way avoids that.
     - All child datasets will be encrypted too (if `-r` and `-R` were used).
     - The new dataset will become its own encryption root instead of inheriting from any parent dataset/pool.
 
-### Best Practices and Suggestions
+#### Best Practices and Suggestions
 
 - As far as possible, use raw disks and HBA disk controllers (or RAID controllers in IT mode).
 - Always use `/etc/disk/by-id/X`, not `/dev/sdX`.
@@ -492,7 +522,7 @@ Some guides recommend using backport repos, but this way avoids that.
         - Don't use PostgreSQL checksums or compression.
         - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
 
-### Extra Notes
+#### Extra Notes
 
 - ECC memory is recommended but not required. It does not affect data corruption on disk.
 - It does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC. By default it's limited to 1/2 of all available RAM. Under memory pressure, it releases some of it to other applications.
