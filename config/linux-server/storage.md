@@ -6,6 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+Using **Debian**, unless otherwise stated.
+
 ## General
 
 - For benchmarking etc., see [Computer Testing (General)](/config/general/computer-testing/).

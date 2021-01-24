@@ -6,6 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+Using **Debian**, unless otherwise stated.
+
 ### TODO
 {:.no_toc}
 

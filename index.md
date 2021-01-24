@@ -50,10 +50,10 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Linux Server
 
-- [Debian Server](config/server/debian/)
-- [Applications](config/server/linux-applications/)
-- [Storage](config/server/linux-storage/)
-- [Networking](config/server/linux-networking/)
+- [Debian](config/linux-server/debian/)
+- [Applications](config/linux-server/applications/)
+- [Storage](config/linux-server/storage/)
+- [Networking](config/linux-server/networking/)
 
 ### Media
 
@@ -96,9 +96,14 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 - [APC PDUs](config/power/apc-pdus/)
 
-### Virtualization
+### Server Applications
 
-- [Proxmox VE](config/virtualization/proxmox-ve/)
+- [Linux Server Applications](config/server-apps/linux/)
+
+### Virtualization & Containerization
+
+- [Docker](config/virt-kont/docker/)
+- [Proxmox VE](config/virt-kont/proxmox-ve/)
 
 ## Information Technology
 

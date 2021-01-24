@@ -6,10 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-### Using
-{:.no_toc}
-
-- Debian 10 Buster
+Using **Debian 10 (Buster)**.
 
 ## Basic Setup
 
