@@ -86,9 +86,6 @@ Using **Debian**, unless otherwise stated.
 
 ## Miscellanea
 
-- Use [watchtower](https://github.com/containrrr/watchtower) to automatically update images and restart containers.
-- Use [cAdvisor](https://github.com/google/cadvisor) to monitor containers (including a Prometheus metrics endpoint).
-
 ### IPv6 Support
 
 - TL;DR: Docker doesn't prioritize implementing IPv6 properly.
@@ -122,5 +119,10 @@ New `docker-compose`:
 export TMPDIR=/var/lib/docker-compose-tmp
 /usr/local/bin/docker-compose-normal "$@"
 ```
+
+## Useful Software
+
+- [watchtower](https://github.com/containrrr/watchtower): Automatically update images and restart containers.
+- [cAdvisor](https://github.com/google/cadvisor): Monitor containers (including a Prometheus metrics endpoint).
 
 {% include footer.md %}
