@@ -68,12 +68,13 @@ Using **Debian**, unless otherwise stated.
 - Try to isolate container communication into as small networks as possible (e.g. one network per group of containers for an application).
 - Docker doesn't integrate with ip6tables at all, meaning certain IPv6 features are lacking. For instance, IPv6 is not NATed like IPv4 and ICC can't be disabled. NAT66 shouldn't generally be used in the first place, but the lack of it means IPv6 requires a bit of extra configuration to get it working with containers. IPv6 routing and port publishing work as they should, though, as they don't use ip6tables.
 - Network types:
-    - Bridge: A plain bridge where all containers and the host can communicate. Can optionally be directly connected to a host bridge, but that doesn't always work as expected. Vulnerable to ARP/NDP spoofing.
+    - Bridge: A plain virtual bridge where all containers and the host are connected and can communicate. It can optionally be directly connected to a host bridge, but that doesn't always work as expected.
     - Overlay: Overlay network for swarm stuff.
     - Host: The container use the network stack of the host. Ports are published directly to the host.
     - MACVLAN: Bridges connected to a host (parent) interface, allowing containers to be connected to a network the host is part of. Can optionally use trunking on the host interface. All communication between containers and the host is dropped (consider using a host-connected bridge if you need this).
     - L2 IPVLAN: Similar to MACVLAN, but all containers use the host's MAC address. Containers can communicate, but the host can't communicate with any containers.
-    - L3 IPVLAN: Every VM uses a separate subnet and all communication, internally and externally, is routed. Should avoid ARP/NDP spoofing. (**TODO:** Containers and the host can communicate?)
+    - L3 IPVLAN: Every VM uses a separate subnet and all communication, internally and externally, is routed. (**TODO:** Containers and the host can communicate?)
+- Note that most L2 network types (with multiple containers present on the same L2 broadcast domain) are likely to be vulnerable to ARP/NDP spoofing.
 - Create:
     - Create bridged network: `docker network create --driver=bridge --subnet=<ipv4-net> --ipv6 --subnet=<ipv6-net> <name>`
     - Create external bridged network (experimental, doesn't work as intented in some scenarios): `docker network create --driver=bridge --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`

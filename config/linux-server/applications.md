@@ -541,6 +541,10 @@ Typically used with [Grafana](#grafana) and sometimes with Cortex/Thanos in-betw
 
 ## Prometheus Exporters
 
+### General
+
+- Exporters often expose the metrics endpoint over plain HTTP without any scraper or exporter authentication. Prometheus supports exporters using HTTPS for scraping (for integrity, confidentiality and authenticating the Prometheus), as well as using client authentication (from Prometheus, for authenticating Prometheus), providing mutual authentication if both are used. This may require setting up a reverse web proxy in front of the exporter. Therefore, the simplest alternative (where appropriate) is often to just secure the network itself using segmentation and segregation.
+
 ### List of Exporters and Software
 
 This list contains exporters and software with built-in exposed metrics I typically use. Some are described in more detail in separate subsections.
