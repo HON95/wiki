@@ -33,8 +33,9 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
 
 ## Run
 
-- Command: `mpirun [opts] <app> [app_opts]`
-- Number of processes to use: `-n <n>`
+- Run: `mpirun [opts] <app> [app_opts]`
+    - On certain Slurm clusters it's advised to use `srun` or `srun --mpi=pmix` instead.
+- Set number of processes to use: `-n <n>`
 - Allow more processes than physical cores: `--oversubscribe`
 - Allow running as root (discouraged): `--allow-run-as-root`
 - Specify which network type or subnet to use:
