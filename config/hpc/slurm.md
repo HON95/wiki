@@ -46,8 +46,8 @@ breadcrumbs:
 ## SBATCH --mail-user=user@example.net
 # #SBATCH --mail-type=ALL
 
-# Run some program on all processors using mpirun
-mpirun uname -a
+# Run some program on all processors (or use mpirun)
+srun uname -a
 ```
 
 {% include footer.md %}
