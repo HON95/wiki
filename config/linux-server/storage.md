@@ -473,8 +473,8 @@ Some guides recommend using backport repos, but this way avoids that.
     - Create the pool: `zpool create -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/.credentials/zfs/<tank> ...`
 - Encrypt an existing dataset by sending and receiving:
     1. Rename the old dataset: `zfs rename <dataset> <old-dataset>`
-    1. Snapshot the old dataset: `zfs snapshot -r <dataset>@<snapshot>`
-    1. Command: `zfs send [-R] <old-dataset> | zfs recv -o encryption=aes-128-gcm -o keyformat=raw -o keylocation=file:///root/.credentials/zfs/<tank> <new-dataset>`
+    1. Snapshot the old dataset: `zfs snapshot -r <dataset>@<snapshot-name>`
+    1. Command: `zfs send [-R] <snapshot> | zfs recv -o encryption=aes-128-gcm -o keyformat=raw -o keylocation=file:///root/.credentials/zfs/<tank> <new-dataset>`
     1. Test the new dataset.
     1. Delete the snapshots and the old dataset.
     - All child datasets will be encrypted too (if `-r` and `-R` were used).
