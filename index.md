@@ -40,7 +40,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ### HPC
 
 - [CUDA](config/hpc/cuda/)
-- [OpenMPI](config/hpc/openmpi/)
+- [Open MPI](config/hpc/openmpi/)
 - [Slurm Workload Manager](config/hpc/slurm/)
 
 ### IoT & Home Automation
@@ -96,14 +96,10 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 - [APC PDUs](config/power/apc-pdus/)
 
-### Server Applications
-
-- [Linux Server Applications](config/server-apps/linux/)
-
 ### Virtualization & Containerization
 
-- [Docker](config/virt-kont/docker/)
-- [Proxmox VE](config/virt-kont/proxmox-ve/)
+- [Docker](config/virt-cont/docker/)
+- [Proxmox VE](config/virt-cont/proxmox-ve/)
 
 ## Information Technology
 
