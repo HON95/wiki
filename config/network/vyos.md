@@ -63,6 +63,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. (Optional) Set firewall policies: `set firewall {local | in | out} <...>`
 1. (Optional) Set up a LAG interface:
     1. Enter interface config: `edit interfaces bonding bond<n>`
+    1. Set member interfaces: `set member interface <if>`
     1. Enable LACP: `set mode 802.3ad`
     1. Set hashing policy: `set hash-policy layer2+3`
     1. Configure as a normal interface.
