@@ -152,6 +152,7 @@ Using systemd-networkd (alternative 2):
     - Don't save the current rules when it asks.
 1. Manually add IPTables rules or make [a simple iptables script](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh) or something.
 1. Open a new SSH session and make sure you can still log in without closing the current one.
+1. Note: If you flush the firewall and reconfigure it, remember to restart services modifying it (like libvirt, Docker, Fail2Ban).
 
 #### DNS
 
