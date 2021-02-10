@@ -49,6 +49,7 @@ If you didn't already configure this during the installation. Typically the case
 1. Set the hostname:
     - Set the shortname: `hostnamectl set-hostname <shortname>`
     - Set both the shortname and FQDN in `/etc/hosts` using the following format: `127.0.0.1 <fqdn> <shortname>`
+        - If the server has a static IP address, use that instead of 127.0.0.1.
     - Check the hostnames with `hostname` (shortname) and `hostname --fqdn` (FQDN).
 
 ### Basic Configuration
