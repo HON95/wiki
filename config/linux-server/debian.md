@@ -60,7 +60,10 @@ If you didn't already configure this during the installation. Typically the case
     - Install basics: `sudo ca-certificates`
     - Install tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
     - (Optional) Install per-user tmpdirs: `libpam-tmpdir`
-1. (Optional) Update the default editor: `update-alternatives --config editor`
+1. (Optional) Configure editor (Vim):
+    - Update the default editor: `update-alternatives --config editor`
+    - Disable mouse globally: In `/etc/vim/vimrc.local`, add `set mouse=` and `set ttymouse=`.
+    - Fix YAML formatting globally: In `/etc/vim/vimrc.local`, add `autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab`.
 1. Add mount options:
     - Setup hidepid:
         - Add PID monitor group: `groupadd -g 500 hidepid` (example GID)
