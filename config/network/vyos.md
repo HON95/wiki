@@ -52,7 +52,24 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. Add new user with password: `set system login user <username> authentication plaintext-password "<password>"` (remember quotation marks if it contains spaces)
     1. Commit and log into the new user.
     1. Delete the default user: `delete system login user vyos`
-1. Set up a WAN-facing interface with an IP address (steps not included).
+1. Set up a plain WAN-facing interface with an IP address (without LAG or VLAN):
+    1. Show all Ethernet interfaces: `run show interfaces ethernet`
+    1. Enter interface config: `edit interfaces ethernet <if>`
+    1. Set description: `set description <description>`
+    1. (Alternative) Set static address (IPv4 + IPv6): `set address <addr>/<prefix-length>`
+    1. (Alternative) Set to get IPv4 address from DHCPv4: `set address dhcp`
+    1. (Alternative) Set to get IPv6 address from DHCPv6: `set address dhcpv6`
+    1. (Alternative) Set to get IPv6 address from SLAAC: `set ipv6 address autoconf`
+    1. (Optional) Set firewall policies: `set firewall {local | in | out} <...>`
+1. (Optional) Set up a LAG interface:
+    1. Enter interface config: `edit interfaces bonding bond<n>`
+    1. Enable LACP: `set mode 802.3ad`
+    1. Set hashing policy: `set hash-policy layer2+3`
+    1. Configure as a normal interface.
+1. (Optional) Set up a VLAN interface:
+    1. Enter the parent/physical interface config.
+    1. Enter the VLAN subinterface config: `edit vif <VID>`
+    1. Configure as a normal interface.
 1. Set default routes: `set protocols static route[6] <0.0.0.0/0|::/0> next-hop <next-hop>` (for IPv4 and IPv6)
 1. (Optional) Set black hole route: `set protocols static route[6] <prefix> blackhole` (for IPv4 and IPv6)
 1. Enable LLDP: `set service lldp interface all`
