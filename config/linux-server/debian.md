@@ -63,8 +63,8 @@ If you didn't already configure this during the installation. Typically the case
 1. (Optional) Update the default editor: `update-alternatives --config editor`
 1. Add mount options:
     - Setup hidepid:
-        - Add PID monitor group: `groupadd -g 500 pidmonitor` (example GID)
-        - Add your personal user to the PID monitor group: `usermod -aG pidmonitor <user>`
+        - Add PID monitor group: `groupadd -g 500 hidepid` (example GID)
+        - Add your personal user to the PID monitor group: `usermod -aG hidepid <user>`
         - Enable hidepid in `/etc/fstab`: `proc /proc proc defaults,hidepid=2,gid=500 0 0`
     - (Optional) Setup extra mount options: See [Storage](system.md).
     - Run `mount -a` to validate fstab.
