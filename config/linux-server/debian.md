@@ -58,7 +58,7 @@ If you didn't already configure this during the installation. Typically the case
     - (Optional) Enable the `contrib` and `non-free` repo areas by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
     - Update, upgrade and auto-remove.
     - Install basics: `sudo ca-certificates`
-    - Install tools: `tree vim screen curl net-tools htop iotop irqtop nmap`
+    - Install tools: `tree vim screen curl net-tools dnsutils htop iotop irqtop nmap`
     - (Optional) Install per-user tmpdirs: `libpam-tmpdir`
 1. (Optional) Configure editor (Vim):
     - Update the default editor: `update-alternatives --config editor`
@@ -86,18 +86,20 @@ If you didn't already configure this during the installation. Typically the case
       ```
       PermitRootLogin no
       PasswordAuthentication no
+      # Optional, disable TCP port forwarding
       AllowTcpForwarding no
       GatewayPorts no
+      # Comment out to avoid locale issues (or fix it some proper way)
       #AcceptEnv ...
       ```
     - Restart `sshd`.
 1. Update MOTD:
-    - Clear `/etc/motd` and `/etc/issue`.
+    - Clear `/etc/motd`, `/etc/issue` and `/etc/issue.net`.
     - (Optional) Add a MOTD script (see below).
 1. (Optional) Enable persistent logging:
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
-    - `auto` (the default) is like `persistent`, but does not automatically create the log directory.
-    - The default journal directory is `/var/log/journal`.
+    - Note: `auto` (the default) is like `persistent`, but does not automatically create the log directory.
+    - Note: The default journal directory is `/var/log/journal`.
 
 ### Machine-Specific Configuration
 
@@ -105,17 +107,19 @@ If you didn't already configure this during the installation. Typically the case
 
 1. Install extra firmware:
     - Enable the `non-free` repo areas.
-    - Install `firmware-linux` (or `firmware-linux-free`) for some common firmware and microcode.
-    - APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
+    - Update microcode: Install `intel-microcode` (for Intel) or `amd64-microcode` (for AMD) and reboot (now or later).
+    - Note: APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
     - If it asked to install non-free firmware in the initial installation installation, try to install it now.
     - Install firmware from other sources (e.g. for some Intel NICs).
-    - Update microcode: Install `intel-microcode` (for Intel) or `amd64-microcode` (for AMD) and reboot (now or later).
-1. Install `smartmontools` and run `smartctl -s on <dev>` for all physical drives to enable SMART monitoring.
+    - (Optional) To install all common common firmware and microcode, install `firmware-linux` (or `firmware-linux-free`) (includes e.g. microcode packages).
+1. Setup smartmontools to monitor S.M.A.R.T. disks:
+    1. Install: `apt install smartmontools`
+    1. Monitor disk: `smartctl -s on <dev>`.
 1. Setup lm_sensors to monitor sensors:
     1. Install: `apt install lm-sensors`
     1. Run `sensors` to make sure it runs without errors.
     1. For further configuration (more sensors) and more info, see [Linux Server Applications: lm_sensors](../applications/#lm_sensors).
-1. Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
+1. (Optional) Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
 
 #### QEMU Virtual Host
 
@@ -125,20 +129,15 @@ If you didn't already configure this during the installation. Typically the case
 
 #### Network Manager
 
-Using ifupdown (alternative 1, default):
+Using ifupdown (not ifupdown2) (alternative 1, default):
 
 1. For VLAN support, install `vlan`.
 1. For bonding/LACP support, install `ifenslave`.
 1. Configure `/etc/network/interfaces`.
-1. Run `ifdown` and `ifup` on all changed interfaces.
+1. Validate the interfaces: `ifup --no-act <if>`
+1. Reload the config: Reboot or run `ifdown` and `ifup` on all changed interfaces.
 
-Using ifupdown2 (alternative 2):
-
-1. Install `ifupdown2`.
-1. Configure `/etc/network/interfaces`.
-1. Run `ifdown` and `ifup` on all changed interfaces.
-
-Using systemd-networkd (alternative 3):
+Using systemd-networkd (alternative 2):
 
 1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/server/linux/networkd/main.network).
 1. Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
@@ -146,6 +145,13 @@ Using systemd-networkd (alternative 3):
 1. Purge `ifupdown` and `ifupdown2`.
 1. Check status: `networkctl [status [-a]]`
 1. Restart the system and check if still working. This will also kill any dhclient daemons which could trigger a DHCP renew at some point.
+
+#### Firewall
+
+1. Install `apt install iptables iptables-persistent netfilter-persistent`
+    - Don't save the current rules when it asks.
+1. Manually add IPTables rules or make [a simple iptables script](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh) or something.
+1. Open a new SSH session and make sure you can still log in without closing the current one.
 
 #### DNS
 
@@ -155,6 +161,7 @@ Manual (default, alternative 1):
 
 Using systemd-resolved (alternative 2):
 
+1. (Optional) Make sure no other local DNS servers (like dnsmasq) is running.
 1. Configure `/etc/systemd/resolved.conf`
     - `DNS`: A space-separated list of DNS servers.
     - `Domains`: A space-separated list of search domains.
@@ -165,26 +172,19 @@ Using systemd-resolved (alternative 2):
 
 #### NTP
 
-1. Set the timezone: `timedatectl set-timezone Europe/Oslo`
-1. Enable network time: `timedatectl set-ntp true`
+1. Check the timezome and network time status: `timedatectl`
+1. Fix the timezone: `timedatectl set-timezone Europe/Oslo`
+1. Fix enable network time: `timedatectl set-ntp true`
 1. Configure `/etc/systemd/timesyncd.conf`:
     - `NTP` (optional): A space-separated list of NTP servers. The defaults are fine.
 1. Restart `systemd-timesyncd`.
 1. Check status works: `timedatectl` and `timedatectl timesync-status` (check which servers are used)
 
-#### Firewall
-
-1. Install `apt install iptables iptables-persistent netfilter-persistent`
-    - Don't save the current rules when it asks.
-1. Make [a simple iptables script](https://github.com/HON95/scripts/blob/master/server/linux/iptables/iptables-simple.sh) or something.
-
 #### Miscellanea
 
-1. Make sure IPv6 and NDP is configured securely:
-    - If IPv6 and NDP is enabled and accepting RAs on insecure (i.e. public-facing) interfaces, the server may autoconfigure itself for those interfaces.
-    - ifupdown with `inet6 static` does not use autoconfiguration.
-    - By configuration: Disable "Accept-RA" on interfaces that should not autoconfigure themselves. It's typically enabled by default.
-    - By firewalling (not recommended if avoidable): Block ICMPv6/NDP on untrusted interfaces so that the host can't autoconfigure itself. This prevents all IPv6 configuration for the interface, but may be required in some cases.
+1. Make sure IPv6 and NDP is configured securely (prevent accidental autoconfiguration on untrusted interfaces):
+    - For ifupdown, set `accept_ra 0` for all `inet6` interface sections which should not use SLAAC.
+    - If configuring the interface to not accept RAs, ICMPv6/NDP may be firewalled on the untrusted interfaces.
 1. Reboot and make sure everything still works.
 
 ### Extra
