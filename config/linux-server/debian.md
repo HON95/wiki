@@ -234,7 +234,7 @@ Everything here is optional.
     - (Optional) Add a MOTD to `/etc/motd`.
     - (Optional) Clear or change the pre-login message in `/etc/issue`.
     - Test it: `su - <some-normal-user>`
-- Monitor free disk space:
+- Monitor free disk space (using custom script):
     - Download [disk-space-checker.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
     - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
     - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
