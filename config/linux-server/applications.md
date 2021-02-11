@@ -73,6 +73,12 @@ Sends an emails when APT updates are available.
 - Examples:
     - Upload file: `aws s3 cp <local_file> s3://<bucket>/`
 
+## BIND
+
+- Aka "named".
+
+**TODO**
+
 ## bitwarden_rs
 
 A free community backend for Bitwarden.
@@ -81,7 +87,7 @@ A free community backend for Bitwarden.
 
 ## Ceph
 
-See [Storage: Ceph](../storage/#ceph).
+See [Storage: Ceph](/config/linux-server/storage/#ceph).
 
 ## Certbot
 
@@ -143,7 +149,7 @@ This setup requires pubkey plus MFA (if configured) plus password.
 
 ## Intel SSD Data Center Tool (isdct)
 
-See [Storage: isdct](../linux-storage/#intel-ssd-data-center-tool-isdct).
+See [Storage: isdct](/config/linux-server/storage/#intel-ssd-data-center-tool-isdct).
 
 ## Grafana
 
@@ -165,7 +171,7 @@ Typically used with a data source like [Prometheus](#prometheus).
 
 ## Home Assistant
 
-See [Home Assistant](../home-assistant/).
+See [Home Assistant](/config/iot-ha/home-assistant/).
 
 ## ISC DHCP Server
 
@@ -451,49 +457,57 @@ Must be run on a Docker host. For extra Docker hosts you want to control with an
 
 ## Postfix
 
-### Satellite system
+### Setup (Satellite System)
+
+#### References
+
+- [How to Set Up a Mail Relay with Postfix and Mailgun on Ubuntu 16.04 (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)
+- [How To Start Sending Email (Mailgun)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
+- [Postfix (SendGrid)](https://sendgrid.com/docs/for-developers/sending-email/postfix/)
 
 #### Notes
 
-- When using an SMTP relay, the original IP address will likely be found in the mail headers.
+- When using an SMTP relay, the original IP address will likely be found in the mail headers. So this will generelly not provide any privacy.
 - Make sure DNS is configured correctly (SPF, DKIM, DMARC).
+    - Example DMARC record for the `_dmarc` subdomain: `v=DMARC1; adkim=r; aspf=r; p=quarantine;`
+- In certain config places, specifying a domain name will use the MX record for it, but putting it in square brackets will use the A/AAAA record for it.
 
 #### Setup
 
 1. Install: `postfix libsasl2-modules mailutils`
     - If asked, choose to configure Postfix as a satellite system.
-1. Set the FQDN in `/etc/postfix/main.cf`.
-1. Update the root alias to point your real email address in `/etc/aliases`, then run `newaliases`.
-1. Update the `main.cf` config (example not provided here).
-    1. Only listen to localhost: Set `inet_interfaces = loopback-only`
-    1. Disable relaying: Set `mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128`
-    1. Anonymize banner: `smtpd_banner = $myhostname ESMTP`
-1. See the specific relay guides:
-    - Mailgun:
-        - [How To Start Sending Email (Mailgun)](https://documentation.mailgun.com/en/latest/quickstart-sending.html)
-        - [How to Set Up a Mail Relay with Postfix and Mailgun on Ubuntu 16.04 (](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)[DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-set-up-a-mail-relay-with-postfix-and-mailgun-on-ubuntu-16-04)
-    - SendGrid:
-        - [Postfix (SendGrid)](https://sendgrid.com/docs/for-developers/sending-email/postfix/)
-        - Use API-key with permission to send mail only.
-        - The API-key username is `apikey`.
-1. Setup address rewrite rules:
-    - For fixing the `To` and `From` fields, which is typically from root to root.
-    - Add the rewrite config (see example below).
-    - Reference the config using `smtp_header_checks` in the main config.
-    - Test: `postmap -fq "From: root@$(hostname --fqdn)" regexp:smtp_header_checks`
+1. Update the root alias:
+    - In `/etc/aliases`, add `root: admin@example.net` (for forward everything to `admin@example.net`).
+    - Run `newaliases` to update the alias DB file.
+1. Update the `main.cf` config.
+    - Example: [main.cf](https://github.com/HON95/configs/blob/master/postfix/main.cf)
+    - Update FQDN.
+    - Only listen to localhost: Set `inet_interfaces = loopback-only`
+    - Disable relaying: Set `mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128`
+    - Anonymize banner: `smtpd_banner = $myhostname ESMTP`
+    - Disable backward compatibility before a certain level: `compatibility_level = 2`
+1. Configure the relay provider:
+    - See the references above.
+    - SendGrid uses `apikey` as the username for API key access.
 1. Setup relay credentials (SASL):
-    1. Credentials file: `/etc/postfix/sasl_passwd`
-    2. Add your credentials using format: `[relay_domain]:port user@domain:password`
-    3. Run: `postmap sasl_passwd`
-    4. Fix permissions: `chmod 600 sasl_passwd*`
+    1. Create and secure credentials file: `touch sasl_passwd && chmod 600 sasl_passwd`
+    1. Add your credentials using this format: `[relay_domain]:port user@domain:password`
+        - Example: [sasl_passwd](https://github.com/HON95/configs/blob/master/postfix/sasl_passwd)
+    1. Update database: `postmap sasl_passwd`
+1. (Optional) Rewrite from-to fields: See below.
 1. Restart `postfix`.
 1. Try sending an email: `echo "Test from $(hostname) at time $(date)." | mail -s "Test" root`
 
-File `smtp_header_checks`:
-```
-/^From:\s*.*\S+@node\.example\.bet.*.*$/ REPLACE From: "Node" <node@example.net>
-/^To:\s*.*\S+@node\.example\.net.*$/ REPLACE To: "Someone" <someone@example.net>
-```
+##### Fancy To-From Fields
+
+Use this mess to change the ugly `From: root@node.example.net` and `To: root@node.example.net` to `From: "Node" <root@node.example.net>` and `To: "Admin" <admin@example.net>` when most/all email coming from the system is from root to some root alias.
+
+1. Add a `smtp_header_checks` file (arbitrary name).
+    - Example: [smtp_header_checks](https://github.com/HON95/configs/blob/master/postfix/smtp_header_checks)
+1. Add it to `main.cf`: `smtp_header_checks = regexp:/etc/postfix/smtp_header_checks`
+1. Test it locally: `postmap -fq "From: root@$(hostname --fqdn)" regexp:smtp_header_checks`
+1. Restart `postfix`.
+1. Test it with a real email.
 
 ### Usage
 
@@ -821,10 +835,10 @@ TFTP_OPTIONS="--create --secure"
 
 ## UniFi
 
-See [Ubiquiti UniFi Controller (Debian)](../unifi-debian/).
+See [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/).
 
 ## ZFS
 
-See [Storage: ZFS](../linux-storage/#zfs).
+See [Storage: ZFS](/config/linux-server/storage/#zfs).
 
 {% include footer.md %}
