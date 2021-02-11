@@ -15,6 +15,7 @@ Using **Debian**.
 
 - Requires Intel VT or AMD-V to be enabled to function optimally.
 - Note that running commands as non-root or not in the libvirt group will generally work but will not show all VMs. etc.
+- KVM was merged into the Linux kernel mainline in kernel version 2.6.20.
 
 ## Installation
 
@@ -24,14 +25,20 @@ Using **Debian**.
 
 ## Usage
 
+### General
+
+- Use `LIBVIRT_DEFAULT_URI=qemu:///system` to explicitly use the system URI (rarely needed).
+- Show version: `virsh version`
+
 ### Manage VMs
 
 - Show VMs: `virsh list --all`
+- Show VM details: `virsh dominfo <vm>`
 - Start/shutdown/reboot/kill VM: `virsh {start | shutdown | reboot | kill} <vm>`
 - Suspend/resume VM: `virsh {suspend | resume} <vm>`
 - Enter/exit console for VM:
     - Enter: `virsh console <vm>`
-    - Exit: `Ctrl+¨` (Norwegian) or `Ctrl+]` (US)
+    - Exit: `Ctrl+]` (US) or `Ctrl+¨` (NO)
 - Create VM:
     - Example: `virt-install --name=example-vm --network=network=default,model=virtio --os-variant=debian10 --ram=$((1*1024)) --vcpus=1 --disk=path=/var/lib/libvirt/images/example-vm.qcow2,bus=virtio,size=5 --graphics=none --check=all=off --extra-args="console=ttyS0" --location=debian-10.7.0-amd64-netinst.iso`
     - The disk path should match a storage pool path.
@@ -50,6 +57,7 @@ Using **Debian**.
 - Show VM graphics URI: `virsh domdisplay <vm>`
     - For VNC, the shown port is offset from port 5900.
 - Run QEMU monitor command: `qemu-monitor-command <vm> --hmp <command>`
+- Show VM logs: See log dir `/var/log/libvirt/qemu/`.
 
 ### Networking
 
@@ -94,14 +102,13 @@ Using **Debian**.
 
 ### Tuning
 
-Assign more CPU cores. When adding many, attempt to assign every hyperthreaded twin to the same VM.
-TODO Cache mode write-through and write-back.
-Consider enabling huge pages.
-Consider using memory ballooning to save memory on the host when the VM doesn't need it.
+- Assign more CPU cores. When adding many, attempt to assign every hyperthreaded twin to the same VM.
+- **TODO**: Cache mode write-through and write-back.
+- Consider enabling huge pages.
+- Consider using memory ballooning to save memory on the host when the VM doesn't need it.
 
 ### Miscellanea
 
-- Use `LIBVIRT_DEFAULT_URI=qemu:///system` to use the system URI.
 - To repair a corrupted QEMU disk, try using `guestfish`.
 
 {% include footer.md %}
