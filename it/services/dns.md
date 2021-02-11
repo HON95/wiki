@@ -12,10 +12,11 @@ Everyone knows this, no point reiterating.
 
 ## Special TLDs
 
-- `.localhost`: For statically defined domain names pointing to localhost. (RFC 2606)
-- `.example`: For documentation or examples. (RFC 2606)
-- `.test`: For testing. (RFC 2606)
-- `.invalid`: For domain names that should never be valid. (RFC 2626)
+- `localhost`: For statically defined domain names pointing to localhost. (RFC 2606)
+- `example`: For documentation or examples. (RFC 2606)
+- `test`: For testing. (RFC 2606)
+- `invalid`: For domain names that should never be valid. (RFC 2626)
+- `local`: Used for mDNS and zeroconf. Not available from root servers. (RFC 6762)
 
 ## DNSSEC
 
