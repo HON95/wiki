@@ -22,7 +22,7 @@ This page is intended for the Bukkit server software or any of its derivatives, 
 ## Server Managers
 
 - [Pterodactyl](https://pterodactyl.io/):
-    - See [Linux Server Applications: Pterodactyl](../../linux-server/applications/#pterodactyl)).
+    - See [Linux Server Applications: Pterodactyl](/config/linux-server/applications/#pterodactyl)).
     - Open-source.
     - Free to use.
     - Modern.

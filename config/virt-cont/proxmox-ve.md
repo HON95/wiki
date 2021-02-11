@@ -29,7 +29,7 @@ Using **Proxmox VE 6**.
 
 ### Initial Configuration
 
-Follow the instructions for [Debian server basic setup](../debian/#initial-setup), but with the following exceptions and extra steps:
+Follow the instructions for [Debian](/config/linux-server/debian/), but with the following changes:
 
 1. Before installing updates, setup the PVE repos (assuming no subscription):
     1. Comment out all content from `/etc/apt/sources.list.d/pve-enterprise.list` to disable the enterprise repo.
@@ -318,7 +318,7 @@ Check the host system logs. It may for instance be due to hardware changes or st
 
 ## Ceph
 
-See [Storage: Ceph](../storage/#ceph) for general notes.
+See [Storage: Ceph](/config/linux-server/storage/#ceph) for general notes.
 The notes below are PVE-specific.
 
 ### Notes

@@ -9,8 +9,8 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Juniper Junos General](../juniper-junos-general/)
-- [Juniper Junos Switches](../juniper-junos-switches/)
+- [Juniper Junos General](/config/network/juniper-junos-general/)
+- [Juniper Junos Switches](/config/network/juniper-junos-switches/)
 
 ## EX3300
 

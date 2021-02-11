@@ -27,7 +27,7 @@ Using **Debian**, unless otherwise stated.
 - Addressing modes: Cylinder, head and sector (CHS) (old and HDD-based) and logical block addressing (LBA) (new and hardware agnostic).
 - After receiving a new drive or after transporting an existing drive, you should run a SMART conveyance test,
   which is similar to a short test but targeted at this scenario.
-  See [smartmontools](../../linux-general/applications/#smartmontools).
+  See [smartmontools](/config/linux-server/applications/#smartmontools).
 - Alignment and block sizes:
     - Using a logical block size smaller than the physical one or misaligning logical and physical blocks will cause reduced performance, mainly for small writes.
     - Main variants:
@@ -106,7 +106,7 @@ Attributes 1 (Raw Read Error Rate) and 7 (Seek Error Rate) can be a bit misleadi
 
 ### SMART
 
-See [smartmontools](../../linux-general/applications/#smartmontools).
+See [smartmontools](/config/linux-server/applications/#smartmontools).
 
 For HDDs, the following attributes should stay near 0 and should not be rising. If they are, it may indicate the drive is about to commit seppuku.
 

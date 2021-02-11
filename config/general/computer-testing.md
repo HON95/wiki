@@ -59,6 +59,6 @@ fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=1m --size=16G --
 ### smartmontools (Linux)
 
 - For health testing.
-- See [smartmontools](../../linux-general/applications/#smartmontools).
+- See [smartmontools](/config/linux-general/applications/#smartmontools).
 
 {% include footer.md %}

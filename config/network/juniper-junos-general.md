@@ -11,8 +11,8 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Juniper Hardware](../juniper-hardware/)
-- [Juniper Junos Switches](../juniper-junos-switches/)
+- [Juniper Hardware](/config/network/juniper-hardware/)
+- [Juniper Junos Switches](/config/network/juniper-junos-switches/)
 
 ## Info
 

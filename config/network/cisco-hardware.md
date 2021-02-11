@@ -11,9 +11,9 @@ Hardware and special configuration for Cisco equipment.
 ### Related Pages
 {:.no_toc}
 
-- [Cisco IOS General](../cisco-ios-general/)
-- [Cisco IOS Routers](../cisco-ios-routers/)
-- [Cisco IOS Switches](../cisco-ios-switches/)
+- [Cisco IOS General](/config/network/cisco-ios-general/)
+- [Cisco IOS Routers](/config/network/cisco-ios-routers/)
+- [Cisco IOS Switches](/config/network/cisco-ios-switches/)
 
 ## ASR General
 

@@ -9,7 +9,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Ubiquiti UniFi Access Points](../ubiquiti-unifi-aps/)
+- [Ubiquiti UniFi Access Points](/config/network/ubiquiti-unifi-aps/)
 
 ## Cloud Key
 
@@ -26,7 +26,7 @@ UniFi 5 is the latest version and does only officially support Debian 9 (Stretch
 Official installation instructions: [UniFi: How to Install & Upgrade the UniFi Network Controller Software](https://help.ubnt.com/hc/en-us/articles/360012282453-UniFi-How-to-Install-Upgrade-the-UniFi-Network-Controller-Software)
 
 1. Install Debian 9 (later versions don't have the required versions of Java etc.).
-1. Configure it: See [Debian Server](../server/../debian/) (for Debian 10).
+1. Configure it: See [Debian Server](/config/linux-server/debian/) (for Debian 10).
 1. Allow the following incoming ports (see [UniFi - Ports Used](https://help.ubnt.com/hc/en-us/articles/218506997-UniFi-Ports-Used)):
     - TCP 8080: Device-controller communication (for devices)
     - TCP 8443: GUI/API (for admins)

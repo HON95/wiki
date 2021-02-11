@@ -11,9 +11,9 @@ Software configuration for Cisco switches running IOS or derivatives.
 ### Related Pages
 {:.no_toc}
 
-- [Cisco Hardware](../cisco-hardware/)
-- [Cisco IOS General](../cisco-ios-general/)
-- [Cisco IOS Routers](../cisco-ios-routers/)
+- [Cisco Hardware](/config/network/cisco-hardware/)
+- [Cisco IOS General](/config/network/cisco-ios-general/)
+- [Cisco IOS Routers](/config/network/cisco-ios-routers/)
 
 ### Using
 {:.no_toc}

@@ -24,7 +24,7 @@ Using **Debian 10 (Buster)**.
 - Use separate password for root and your personal admin user.
 - System disk partitioning:
     - (Recommended for "simple" systems) Manually partition: One partition using all space, mounted as EXT4 at `/`.
-    - (Recommended for "complex" systems) Manually partition, see [system storage](../storage/#system-storage).
+    - (Recommended for "complex" systems) Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
     - Swap can be set up later as a file or LVM volume.
     - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - At the software selection menu, select only "SSH server" and "standard system utilities".
@@ -117,8 +117,12 @@ If you didn't already configure this during the installation. Typically the case
     1. Monitor disk: `smartctl -s on <dev>`.
 1. Setup lm_sensors to monitor sensors:
     1. Install: `apt install lm-sensors`
-    1. Run `sensors` to make sure it runs without errors.
-    1. For further configuration (more sensors) and more info, see [Linux Server Applications: lm_sensors](../applications/#lm_sensors).
+    1. Run `sensors` to make sure it runs without errors and shows some (default-ish) sensors.
+    1. For further configuration (more sensors) and more info, see [Linux Server Applications: lm_sensors](/config/linux-server/applications/#lm_sensors).
+1. Check the performance governor and other frequency settings:
+    1. Install `linux-cpupower`.
+    1. Run `cpupower frequency-info` to show the boost state (should be on) (Intel) and current performance governor (should be "ondemand" or "performance").
+    1. Fix it something is wrong: Google it.
 1. (Optional) Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
 
 #### QEMU Virtual Host
@@ -209,7 +213,7 @@ Everything here is optional.
         - Check: `swapon --show`
     1. Add it to fstab using this line: `/swapfile swap swap defaults 0 0`
         - Check: `mount -a`
-- Setup Postfix mail relay: See [Linux Server Applications: Postfix](../applications/#postfix).
+- Setup Postfix mail relay: See [Linux Server Applications: Postfix](/config/linux-server/applications/#postfix).
 - Prevent root local login:
     - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
     - Add a personal user first.
