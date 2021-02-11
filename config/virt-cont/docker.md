@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian**, unless otherwise stated.
+Using **Debian**.
 
 ## Setup
 

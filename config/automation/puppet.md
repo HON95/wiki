@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian 10 (Buster)**.
+Using **Debian**.
 
 ## General
 
