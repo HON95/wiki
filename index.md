@@ -21,8 +21,8 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Automation
 
-- [Ansible General](config/automation/ansible-general/)
-- [Ansible Network](config/automation/ansible-network/)
+- [Ansible](config/automation/ansible/)
+- [Puppet](config/automation/puppet/)
 
 ### Computers
 

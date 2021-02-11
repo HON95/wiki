@@ -1,19 +1,14 @@
 ---
-title: Ansible Networking
+title: Ansible
 breadcrumbs:
 - title: Configuration
 - title: Automation
 ---
 {% include header.md %}
 
-### Related Pages
-{:.no_toc}
+## Modules-ish
 
-- [Ansible General](../ansible-general/)
-
-## Resources
-
-### General
+### General Networking
 
 - [Ansible network platform options](https://docs.ansible.com/ansible/latest/network/user_guide/platform_index.html)
 - [Ansible cli_config module](https://docs.ansible.com/ansible/latest/modules/cli_config_module.html)
