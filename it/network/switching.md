@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Switching Modes (Ethernet)
+## Ethernet Switching Modes
 
 - Store and forward switching:
     - Receive the whole packet befoe forwarding it.
