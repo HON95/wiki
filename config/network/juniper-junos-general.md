@@ -33,14 +33,15 @@ breadcrumbs:
     - `|`: Can be used to filter the output.
 - Open CLI in operational mode (from shell): `cli`
 - Open shell (from op mode):
-    - Local: `start shell`
+    - Local: `start shell user root`
     - VC: `request session member <vc-member-id>`
 - Enter configuration mode (from op mode): `configure`
 - Exit any mode: `exit`
 - Show configuration:
-    - From op mode: `show configuration [statement]`
-    - From config mode: `show [statement]`
-    - Show changes: `show | compare`
+    - From (op mode): `show configuration [statement]`
+    - From (conf mode): `show [statement]`
+    - Show changes (conf mode): `show | compare`
+    - Show as set-statements (op mode): `show configuration | display set`
 - Run op command in config mode: `run <command>`
 - Navigate config mode:
     - The config is structures as nested container statements and leaf statements.
@@ -50,6 +51,7 @@ breadcrumbs:
 - Commit config changes: `commit [comment <comment>] [confirmed] [and-quit]`
     - `confirmed` automatically rolls back the commit if it is not confirmed within a time limit.
     - `and-quit` will quit configuration mode after a successful commit.
+- Delete all existing configuration while in config mode: `load override terminal`, then Ctrl+D.
 
 ### Booting
 
@@ -80,6 +82,14 @@ Wait for the "The operating system has halted." text before pulling the power, s
 - Show routing engine usage: `show chassis routing-engine`
 - Show effective configuration (with inheritance): `show <configuration> | display inheritance`
 
+### Move Config
+
+- Copy config from host to device over SCP:
+    1. Copy (host): `scp <config> <device>:/config/juniper.conf.new`
+    1. Load (conf mode): `load override /config/juniper.conf.new`
+    1. Show changes and commit.
+    1. Delete tmp config (op mode): `file delete /config/juniper.conf.new`
+
 ### Interfaces
 
 - Show interfaces:
@@ -106,7 +116,7 @@ Wait for the "The operating system has halted." text before pulling the power, s
 ### Reset Root Password
 
 1. Power on the device and prepare for the next step.
-1. Press space quickly as the "Hit [Enter] to boot immediately, or space bar for command prompt." message is shown. You should immediately enter a `loader>` prompt.
+1. Press space quickly as the "Hit \[Enter\] to boot immediately, or space bar for command prompt." message is shown (right before the kernel is loaded). You should immediately enter a `loader>` prompt.
 1. Run `boot -s` to boot into single-user mode.
 1. When prompted for a shell, enter `recovery`.
 1. Wait for the device to fully boot.
@@ -122,31 +132,31 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 1. Show current storage devices: `ls -l /dev/da*`
 1. Insert the drive. It should print a few lines to the console.
 1. Show current storage devices again and find the new device.
-1. Create a dir to mount it to: `mkdir /var/tmp/usb1`
-1. Mount it: `mount_msdosfs <device> /var/tmp/usb1`
+1. Mount it: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0` (arbitrary path)
+1. Check that it's mounted properly: `ls -l /var/tmp/usb0`
 1. Do stuff with it.
-1. Unmount it: `umount /dev/tmp/usb1`
+1. Unmount it: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
 
 ### Upgrade Junos Using a USB Drive
 
 1. Format the USB drive using FAT32.
 1. Copy the software file to the drive.
 1. Mount the USB drive:
-    - Example: `mkdir /var/tmp/usb0` and `mount_msdosfs /dev/da1s1 /var/tmp/usb0`
+    - TL;DR: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0`
     - See [mount a USB drive](#mount-a-usb-drive).
+1. Check the contents: `ls -l /var/tmp/usb0`
 1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
-    - Run `ls -l /var/tmp/usb0` to get the full name of the file, you'll need it later.
-1. Unmount and remove the USB drive: `umount /var/tmp/usb1`
-1. Install (op mode): `request system software add <file> no-copy reboot`
+1. Unmount and remove the USB drive: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
+1. Enter op CLI: `cli`
+1. Install: `request system software add <file> no-copy reboot`
     - If it complains about certificate problems, consider disabling verification using `no-validate`.
     - It will reboot before and after.
     - It may produce some insignificant errors in the process (commands not found etc.).
 1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions`
-1. Verify that the current Junos version is correct: `show system snapshot media internal`
-1. Copy to the alternate root partition: `request system snapshot slice alternate`
-    - May take several minutes.
-1. Verify that the active and backup partitions have the same Junos version: `show system snapshot media internal`
-    - If this fails, wait a bit and try again. The copy may still be working.
+1. Verify that the current Junos version for the primary partition is correct: `show system snapshot media internal`
+1. Copy to the alternate root partition (may take several minutes): `request system snapshot slice alternate`
+1. Verify that the primary and backup partitions have the same Junos version: `show system snapshot media internal`
+    - If it fails, wait a bit and try again. The copy may still be happening.
 
 If the method above did not work, try this instead to completely format and flash the device.
 

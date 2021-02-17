@@ -19,44 +19,42 @@ breadcrumbs:
 
 - EX3300 w/ Junos 15.1R7
 
-### WIP
-{:.no_toc}
-
-This page is super not done. Just random notes for now.
-
 ## Resources
 
-- [Quieter fans for Juniper EX3300 switch (Jade.WTF)](https://jade.wtf/tech-notes/quiet-ex3300/)
+- [Juniper EX3300 Fan Mod](/guides/network/juniper-ex3300-fanmod/)
 
 ## Initial Setup
 
 1. Connect to the switch using serial (RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow control).
 1. Login with username `root` and no password. You'll enter the shell.
 1. Enter the operation mode: `cli`
+1. Disable default virtual chassis ports (VCPs) if not used:
+    1. Enter op mode.
+    1. Show VCPs: `show virtual-chassis vc-port`
+    1. Remove VCPs: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
+    1. Show again to make sure they disappear. This may take a few seconds.
 1. Enter configuration mode: `configure`
-    - Use `exit` to return to CLI.
-1. Set root password: `set system root-authentication plain-text-password`
-1. Setup a non-root user: `set system login user <user> [full-name <full-name>] class super-user authentication plain-text-password`
-1. Disable root login from SSH: `set system services ssh root-login deny`
+    - Use `exit` to return to op. mode.
 1. Set host name: `set system host-name <host-name>`
 1. Set domain name: `set system domain-name <domain-name>`
+1. Enable auto snapshotting and restoration on corruption: `set system auto-snapshot`
+1. Disable DHCP auto image upgrade: `delete chassis auto-image-upgrade`
+1. Set root password: `set system root-authentication plain-text-password` (prompts for password)
+1. Setup a non-root user: `set system login user <user> [full-name <full-name>] class super-user authentication plain-text-password` (prompts for password)
+1. Enable SSH server: `set system services ssh`
+1. Disable root login from SSH: `set system services ssh root-login deny`
 1. Set loopback addresses:
     1. `set interfaces lo0.0 family inet address 127.0.0.1/32`
     1. `set interfaces lo0.0 family inet6 address ::1/128`
-1. Set DNS: `set system name-server <addr>` (once for each address)
+1. Set DNS servers: `set system name-server <addr>` (once for each address)
 1. Set time:
     1. (Optional) Set time locally: `set date <YYYYMMDDhhmm.ss>`
     1. Set server to use while booting: `set system ntp boot-server <address>`
     1. Set server to use periodically: `set system ntp server <address>`
     1. Set time zone: `set system time-zone Europe/Oslo` (example)
     1. Note: After committing, use `show ntp associations` to verify NTP.
-1. Disable default virtual chassis ports (VCPs) if not used:
-    1. Enter op mode.
-    1. Show VCPs: `show virtual-chassis vc-port`
-    1. Remove VCPs: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
-    1. Show again to make sure they disappear. This may take a few seconds.
-1. Delete default interfaces configs: `wildcard range delete interface ge-0/0/[0-47]` (example, repeat for all FPSc/PICs)
-1. Disable unused interfaces: `wildcard range set interface ge-0/0/[0-47] disable` (example, repeat for all FPSc/PICs)
+1. Delete default interfaces configs: `wildcard range delete interface ge-0/0/[0-47]` (example, repeat for all FPCs/PICs)
+1. Disable unused interfaces: `wildcard range set interface ge-0/0/[0-47] disable` (example, repeat for all FPCs/PICs)
 1. Disable dedicated management port and alarm:
     1. Disable: `set int me0 disable`
     1. Delete logical interface: `delete int me0.0`
@@ -95,10 +93,9 @@ This page is super not done. Just random notes for now.
 1. Setup static IP routes:
     1. IPv4 default gateway: `set routing-options rib inet.0 static route 0.0.0.0/0 next-hop <next-hop>`
     1. IPv6 default gateway: ``set routing-options rib inet6.0 static route ::0/0 next-hop <next-hop>``
+1. Enable Ethernet flow control: **TODO**
 1. Configure RSTP: **TODO**
 1. Configure SNMP (public RO): `set snmp community public authorization read-only`
-1. Enable auto snapshotting and restoration on corruption: `set system auto-snapshot`
-1. Disable DHCP auto image upgrade: `delete chassis auto-image-upgrade`
 1. Setup event policies: **TODO**
 1. Commit configuration: `commit [confirmed]`
 1. Backup config to rescue config: `request system configuration rescue save`

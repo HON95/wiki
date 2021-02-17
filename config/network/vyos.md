@@ -23,8 +23,8 @@ See [Installation (VyOS)](https://docs.vyos.io/en/latest/install.html).
 1. Burn and boot from it (it's a live image).
 1. Log in using user `vyos` and password `vyos`.
 1. Run `install image` to run the permanent installation wizard.
-    - Keep the suggested image name.
-    - Use the `/opt/vyatta/etc/config.boot.default` default config file.
+    - Keep the suggested image name to keep track of versions.
+    - If asked about which config to copy, any one is fine.
 1. Remove the live image and reboot.
 
 ## Initial Configuration
@@ -44,10 +44,10 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. Domain name: `set system domain-name <domain-name>`
 1. Set the DNS servers: `set system name-server <ip-address>` (for each server)
 1. Set the time zone: `set system time-zone Europe/Oslo` (Norway)
-1. Set NTP servers:
+1. (Optional) Replace the NTP servers:
     1. Remove default NTP servers: `delete system ntp <server>` (for each server)
     1. Add new NTP servers: `set system ntp server ntp.justervesenet.no` (example)
-1. Enable Ctrl+Alt+Del reboot: `set system options ctrl-alt-del-action reboot` (or `ignore`)
+1. (Optional) Enable Ctrl+Alt+Del reboot: `set system options ctrl-alt-del-action reboot` (or `ignore`)
 1. Replace default user:
     1. Add new user with password: `set system login user <username> authentication plaintext-password "<password>"` (remember quotation marks if it contains spaces)
     1. Commit and log into the new user.
@@ -74,9 +74,15 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Set default routes: `set protocols static route[6] <0.0.0.0/0|::/0> next-hop <next-hop>` (for IPv4 and IPv6)
 1. (Optional) Set black hole route: `set protocols static route[6] <prefix> blackhole` (for IPv4 and IPv6)
 1. Enable LLDP: `set service lldp interface all`
-1. Enable SSHD:
-    1. Enable: `set service ssh`
-    1. More options: [VyOS SSH](https://docs.vyos.io/en/latest/services/ssh.html)
+1. Setup SSHD:
+    1. Enable server: `set service ssh`
+    1. (Optional) Commit and log in through SSH instead of the console.
+    1. (Optional) Add your personal pubkey by entering it:
+        1. Enter section: `edit system login user <user> authentication public-keys <some-key-id>`
+        1. Set key type: `set type ssh-rsa`
+        1. Set key (only the Base64-encoded part): `set key <key>`
+    1. (Optional) Add your personal pubkey bu downloading it: `loadkey <username> <URI>`
+    1. Disable password login (pubkeys only): `set service ssh disable-password-authentication`
 1. Enable unicast reverse path forwarding (uRPF) globally: `set firewall source-validation strict`
 1. Set firewall options:
     1. Enter firewall section.
@@ -133,6 +139,6 @@ Reboot the device and wait for the boot screen. In the boot screen, select the "
 
 ## Random Notes
 
-- The DHCPv4 relay requires the interface towards the upstream DHCP server to be included in the relay interfaces. Otherwise the responses from the upstream server will be dropped.
+- The DHCPv4 relay requires the interface towards the upstream DHCP server to be included in the relay interfaces. Otherwise the responses from the upstream server will be dropped. The relay is also very bugged at the moment so I'd recommend not using it until it gets fixed. See [T377](https://phabricator.vyos.net/T377) and [T1276](https://phabricator.vyos.net/T1276).
 
 {% include footer.md %}

@@ -22,6 +22,19 @@ Using **Debian**.
 1. Install without extra stuff (like GUIs): `apt-get install --no-install-recommends iptables bridge-utils qemu-system qemu-utils libvirt-clients libvirt-daemon-system virtinst libosinfo-bin`
 1. (Optional) Install `dnsmasq-base` for accessing guests using their hostnames.
 1. (Optional) Add users to the `libvirt` group to allow them to manage libvirt without sudo.
+1. Set up the default network:
+    1. It's already created, using NAT, DNS and DHCP.
+    1. If not using dnsmasq, disable DNS and DHCP:
+        1. Open the config: `virsh net-edit default`
+        1. Disable DNS: Set `<dns enable='no'/>`.
+        1. Disable DHCP: Remove `<dhcp>...</dhcp>`.
+        1. Restart libvirtd.
+    1. Start it: `virsh net-start default`
+    1. (Optional) Autostart it: `virsh net-autostart default`
+1. Set up the default storage pool:
+    1. Create it: `virsh pool-define-as default --type=dir --target=/var/lib/libvirt/images`
+    1. Start it: `virsh pool-start default`
+    1. Autostart it: `virsh pool-autostart default`
 
 ## Usage
 
@@ -40,19 +53,23 @@ Using **Debian**.
     - Enter: `virsh console <vm>`
     - Exit: `Ctrl+]` (US) or `Ctrl+¨` (NO)
 - Create VM:
-    - Example: `virt-install --name=example-vm --network=network=default,model=virtio --os-variant=debian10 --ram=$((1*1024)) --vcpus=1 --disk=path=/var/lib/libvirt/images/example-vm.qcow2,bus=virtio,size=5 --graphics=none --check=all=off --extra-args="console=ttyS0" --location=debian-10.7.0-amd64-netinst.iso`
+    - Example: `virt-install --name=example-vm --os-variant=debian10 --ram=$((1*1024)) --vcpus=1 --disk=path=/var/lib/libvirt/images/example-vm.qcow2,bus=virtio,size=5 --network=network=default,model=virtio --graphics=none --extra-args="console=ttyS0" --location=debian-10.7.0-amd64-netinst.iso`
     - The disk path should match a storage pool path.
     - Show available OS variants: `osinfo-query os`
-    - This will automatically open a console for the VM. Specify `--noautoconsole` to avoid that.
+    - To disable various checks, specify `--check=all=off`.
+    - To use a host bridge instead of a libvirt network, specify `--network=bridge=something` instead of `--network=network=something`.
+    - To avoid opening a console (or waiting if there is no console), specify `--noautoconsole` to avoid that.
     - If it "can't find the kernel" when using `--location`, use `--cdrom` instead. This disallows using arguments like `--extra-args`, so you'll need to find another console.
     - Make sure the ISO is readable by the QEMU user.
-    - To install using a VNC screen instead of console (e.g. if you need richer graphics or when using `--cdrom` and no console is allocated), replace `--graphics=none` with `--noautoconsole --graphics=vnc,password=<password>`. It only binds to localhost by default, so use something like SSH port forwarding (`ssh -L 5900:127.0.0.1:5900 <user>@<addr>`) to access it remotely.
+    - To install using a VNC screen instead of console (e.g. if you need richer graphics or when using `--cdrom` and no console is allocated), replace `--graphics=none` with `--noautoconsole --graphics=vnc,password=<password>`. It only binds to localhost by default, so use something like SSH port forwarding (`ssh -L 5900:127.0.0.1:5900 <user>@<addr>`) to access it remotely. Remember to disable it in the VM config when no longer needed.
 - Clone VM:
     1. Create a source/template VM and make sure it's not running.
     1. Clone it: `virt-clone --original=<source-vm> --name=<vm> -f <vm>.qcow2`
 - Remove VM: `virsh undefine <vm>`
 - Set VM to automatically start (or disable it): `virsh autostart [--disable] <vm>`
-- Edit VM config: `virsh edit <vm>`
+- Edit VM config:
+    1. Open tmp. config in editor: `virsh edit <vm>`
+    1. Shutdown and start the VM (rebooting it doesn't work).
 - Show VM config: `virsh dumpxml <vm>`
 - Show VM graphics URI: `virsh domdisplay <vm>`
     - For VNC, the shown port is offset from port 5900.
@@ -61,16 +78,14 @@ Using **Debian**.
 
 ### Networking
 
-- Set up networking on host:
-    1. Enable IP forwarding on the system (IPv4 and IPv6).
-    1. Create bridges to connect VMs to networks.
-    1. Add firewall rules to allow traffic.
+- The default network interface is `virbr0`, called `default` in libvirt.
 - Show networks: `virsh net-list`
 - Show network config: `virsh net-dumpxml <network>`
 - Edit network config (without applying it): `virsh net-edit <network>`
 - Apply changed network config: Restart libvirt or reboot the system.
-- The default network interface is `virbr0`, called `default` in libvirt.
-- Enable the default network: `virsh net-start default && virsh net-autostart default`
+- Create bridge connected to physical NIC:
+    - Note: If you're connected remotely, try to avoid locking yourself out.
+    - Create bridge on the host: See [BridgeNetworkConnections (Debian Wiki)](https://wiki.debian.org/BridgeNetworkConnections) or something.
 
 ### Storage
 
@@ -80,10 +95,6 @@ Using **Debian**.
 - Volume basics:
     - Show volumes: `virsh list-vol <pool> [--details]`
     - Show volume info: `virsh vol-info <file>`
-- Create default storage pool:
-    1. Create it: `virsh pool-define-as default --type=dir --target=/var/lib/libvirt/images`
-    1. Start it: `virsh pool-start default`
-    1. Autostart it: `virsh pool-autostart default`
 - Resize disk: `qemu-img resize <file> <size-change>` (e.g. +1G)
 - Cold backup of VM:
     - Make sure the VM is stopped so that the disk image is consistent.
