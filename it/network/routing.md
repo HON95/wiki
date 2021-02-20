@@ -68,7 +68,7 @@ breadcrumbs:
 - eBGP peers are generally required to be directly connected, which is enforced by using an IP TTL of 1. This limit may be relaxed by using multihop sessions. iBGP however is not subject to thus requirement.
 - The synchronization rule: When a router receives a new route to announce from iBGP, it must first wait until it can validate the route from the IGP (in case iBGP is faster). This prevents announcing over eBGP a route that can't yet be routed within the AS.
 - Full BGP tables are exchanged only during the start of peer sessions. Thereafter, only new announcements or withdrawals are exchanged.
-- Network layer reachability information (NLRI) is basically what BGP calls prefixes (and some extra information for address families other than IPv4).
+- Network layer reachability information (NLRI) is basically what BGP calls prefixes/routes (and some extra information for address families other than IPv4).
 - Message types:
     - Open: The first message sent when starting a session, for identifying eachother's capabilities and exchange basic information (not routes).
     - Update: Exchanges new route advertisements or withdrawals.
@@ -91,7 +91,7 @@ Some important attributes:
 - Multi-exit discriminator (MED) (optional, non-transitive): When two ASes peer with multiple eBGP peerings, this number signals which of the two eBGP peerings should be used for incoming traffic (lower is preferred). This is only of significance between friendly ASes as ASes are selfish and free to ignore it (other alternatives for steering incoming traffic are AS path prepending, special communities and (as a very last resort) advertising more specific prefixes).
 - Local preference (well-known, discretionary, non-transitive): A number used to prioritise outgoing paths to another AS (higher is preferred).
 - Weight (Cisco-proprietary): Like local pref., but not exchanged between iBGP peers.
-- Community (optional, transitive): A text string which may be used for routing decisions by carrying arbitrary information between AS peers. There exists a few well-known communities.
+- Community (optional, transitive): A bit of extra information used to group prefixes that should be treated similarly within or between ASes. There exists a few well-known communities such as "internet" (advertise to all neighbors), "no-advertise" (don't advertise toBGP neighbors), "no-export" (don't export to eBGP neighbors) and "local-as" (don't advertise outside the sub-AS).
 
 ### Path Selection
 

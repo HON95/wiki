@@ -6,6 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+**TODO**: Distribute this into relevant pages. Maybe the theory section.
+
 ## Hosts
 
 - Smurf and Fraggle attacks:
