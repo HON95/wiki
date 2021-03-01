@@ -23,13 +23,13 @@ Using **Debian 10 (Buster)**.
 - Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
 - Use separate password for root and your personal admin user.
 - System disk partitioning:
-    - (Recommended for "simple" systems) Manually partition: One partition using all space, mounted as EXT4 at `/`.
-    - (Recommended for "complex" systems) Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
+    - "Simple" system: Guided, single partition, use all available space.
+    - "Complex" system: Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
     - Swap can be set up later as a file or LVM volume.
     - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - At the software selection menu, select only "SSH server" and "standard system utilities".
 - If it asks to install non-free firmware, take note of the packages so they can be installed later.
-- Install GRUB to the used disk.
+- Install GRUB to the used disk (not partition).
 
 ### Reconfigure Clones
 
@@ -69,6 +69,7 @@ If you didn't already configure this during the installation. Typically the case
         - Add PID monitor group: `groupadd -g 500 hidepid` (example GID)
         - Add your personal user to the PID monitor group: `usermod -aG hidepid <user>`
         - Enable hidepid in `/etc/fstab`: `proc /proc proc defaults,hidepid=2,gid=500 0 0`
+    - (Optional) Disable the tiny swap partition added by the guided installer by commenting it in the fstab.
     - (Optional) Setup extra mount options: See [Storage](system.md).
     - Run `mount -a` to validate fstab.
     - (Optional) Restart the system.
@@ -77,7 +78,7 @@ If you didn't already configure this during the installation. Typically the case
     - Add the relevant groups (using `usermod -aG <group> <user>`):
         - `sudo` for sudo access.
         - `systemd-journal` for system log access.
-        - `pidmonitor` (whatever it's called) if using hidepid, to see all processes.
+        - `hidepid` (whatever it's called) if using hidepid, to see all processes.
     - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
         - Hint: Get `https://github.com/<user>.keys` and filter the results.
     - Try logging in remotely and gain root access through sudo.
@@ -114,15 +115,18 @@ If you didn't already configure this during the installation. Typically the case
     - (Optional) To install all common common firmware and microcode, install `firmware-linux` (or `firmware-linux-free`) (includes e.g. microcode packages).
 1. Setup smartmontools to monitor S.M.A.R.T. disks:
     1. Install: `apt install smartmontools`
-    1. Monitor disk: `smartctl -s on <dev>`.
+    1. (Optional) Monitor disk: `smartctl -s on <dev>`.
 1. Setup lm_sensors to monitor sensors:
     1. Install: `apt install lm-sensors`
     1. Run `sensors` to make sure it runs without errors and shows some (default-ish) sensors.
     1. For further configuration (more sensors) and more info, see [Linux Server Applications: lm_sensors](/config/linux-server/applications/#lm_sensors).
 1. Check the performance governor and other frequency settings:
     1. Install `linux-cpupower`.
-    1. Run `cpupower frequency-info` to show the boost state (should be on) (Intel) and current performance governor (should be "ondemand" or "performance").
-    1. Fix it something is wrong: Google it.
+    1. Show: `cpupower frequency-info`
+        - Check the boost state should be on (Intel). 
+        - Check the current performance governor (e.g. "powersave", "ondemand" or "performance").
+    1. (Optional) Temporarily change performance governor: `cpupower frequency-set -g <governor>`
+    1. (Optional) Permanently change performance governor: **TODO**
 1. (Optional) Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
 
 #### QEMU Virtual Host
@@ -133,22 +137,34 @@ If you didn't already configure this during the installation. Typically the case
 
 #### Network Manager
 
-Using ifupdown (not ifupdown2) (alternative 1, default):
+##### Using ifupdown (Alternative 1)
+
+This is used by default and is the simplest to use for simple setups.
 
 1. For VLAN support, install `vlan`.
 1. For bonding/LACP support, install `ifenslave`.
 1. Configure `/etc/network/interfaces`.
-1. Validate the interfaces: `ifup --no-act <if>`
-1. Reload the config: Reboot or run `ifdown` and `ifup` on all changed interfaces.
+1. Reload the config (per interface): `systemctl restart ifup@<if>.service`
+    - Don't restart `networking.service` or call `ifup`/`ifdown` directly, this is deprecated and may cause problems.
 
-Using systemd-networkd (alternative 2):
+##### Using systemd-networkd (Alternative 2)
+
+This is the systemd way of doing it and is recommended for more advanced setups as ifupdown is riddled with legacy/compatibility crap.
 
 1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/server/linux/networkd/main.network).
 1. Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
-1. Enable and (re)start systemd-networkd: `systemctl enable systemd-networkd`
+1. Enable the service: `systemctl enable --now systemd-networkd`
 1. Purge `ifupdown` and `ifupdown2`.
 1. Check status: `networkctl [status [-a]]`
-1. Restart the system and check if still working. This will also kill any dhclient daemons which could trigger a DHCP renew at some point.
+1. Restart the system to make sure all ifupdown stuff is stopped (like orphaned dhclients).
+
+##### Configure IPv6/NDP/RA Securely
+
+Prevent enabled (and potentially untrusted) interfaces from accepting router advertisements and autoconfiguring themselves, unless autoconfiguration is what you intended.
+
+- Using ifupdown: Set `accept_ra 0` for all `inet6` interface sections.
+- Using systemd-networked **TODO**
+- Using firewall: If the network manager can't be set to ignore RAs, just block them. Alternatively, block all ICMPv6 in/out if IPv6 shouldn't be used on this interface at all.
 
 #### Firewall
 
@@ -160,26 +176,30 @@ Using systemd-networkd (alternative 2):
 
 #### DNS
 
-Manual (default, alternative 1):
+##### Using resolv.conf (Alternative 1)
+
+The simplest alternative, without any local system caching.
 
 1. Manually configure `/etc/resolv.conf`.
 
-Using systemd-resolved (alternative 2):
+##### Using systemd-resolved (Alternative 2)
 
 1. (Optional) Make sure no other local DNS servers (like dnsmasq) is running.
 1. Configure `/etc/systemd/resolved.conf`
     - `DNS`: A space-separated list of DNS servers.
     - `Domains`: A space-separated list of search domains.
 1. (Optional) If you're hosting a DNS server on this machine, set `DNSStubListener=no` to avoid binding to port 53.
-1. Enable and start `systemd-resolved.service`.
-1. Point `/etc/resolv.conf` to the one generated by systemd: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
+1. Enable the service: `systemctl enable --now systemd-resolved.service`
+1. Point `resolv.conf` to the one generated by systemd: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
 1. Check status: `resolvectl`
 
 #### NTP
 
+This is typically correct by default.
+
 1. Check the timezome and network time status: `timedatectl`
-1. Fix the timezone: `timedatectl set-timezone Europe/Oslo`
-1. Fix enable network time: `timedatectl set-ntp true`
+1. (Optional) Fix the timezone: `timedatectl set-timezone Europe/Oslo`
+1. (Optional) Fix enable network time: `timedatectl set-ntp true`
 1. Configure `/etc/systemd/timesyncd.conf`:
     - `NTP` (optional): A space-separated list of NTP servers. The defaults are fine.
 1. Restart `systemd-timesyncd`.
@@ -238,10 +258,8 @@ Everything here is optional.
     - (Optional) Add a MOTD to `/etc/motd`.
     - (Optional) Clear or change the pre-login message in `/etc/issue`.
     - Test it: `su - <some-normal-user>`
-- Monitor free disk space (using custom script):
-    - Download [disk-space-checker.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/disk-space-checker.sh) either to `/cron/cron.daily/` or to `/opt/bin` and create a cron job for it.
-    - Example cron job (15 minutes past every 4 hours): `15 */4 * * * root /opt/bin/disk-space-checker`
-    - Configure which disks/file systems it should exclude and how full they should be before it sends an email alert.
+- Setup monitoring:
+    - Use Prometheus with node exporter or something and set up alerts.
 
 ## Troubleshooting
 

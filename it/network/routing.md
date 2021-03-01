@@ -74,6 +74,9 @@ breadcrumbs:
     - Update: Exchanges new route advertisements or withdrawals.
     - Notification: Signals errors and/or closes the session.
     - Keepalive: Shows it's still alive in the absence of update messages. Both keepalives and updates reset the hold timer.
+- Letter of Agency (LOA), Internet Routing Registry (IRR) and Resource Public Key Infrastructure (RPKI) are methods to secure BGP in order to prevent route leaks/hijacks.
+- The "default-free zone" (DFZ) is the set of ASes which have full-ish BGP tables instead of default routes.
+- Communities are used to exchange arbitrary policy information for announcements between peers. See [BGP Well-known Communities (IANA)](https://www.iana.org/assignments/bgp-well-known-communities/bgp-well-known-communities.xhtml).
 
 ### Attributes
 
@@ -91,11 +94,11 @@ Some important attributes:
 - Multi-exit discriminator (MED) (optional, non-transitive): When two ASes peer with multiple eBGP peerings, this number signals which of the two eBGP peerings should be used for incoming traffic (lower is preferred). This is only of significance between friendly ASes as ASes are selfish and free to ignore it (other alternatives for steering incoming traffic are AS path prepending, special communities and (as a very last resort) advertising more specific prefixes).
 - Local preference (well-known, discretionary, non-transitive): A number used to prioritise outgoing paths to another AS (higher is preferred).
 - Weight (Cisco-proprietary): Like local pref., but not exchanged between iBGP peers.
-- Community (optional, transitive): A bit of extra information used to group prefixes that should be treated similarly within or between ASes. There exists a few well-known communities such as "internet" (advertise to all neighbors), "no-advertise" (don't advertise toBGP neighbors), "no-export" (don't export to eBGP neighbors) and "local-as" (don't advertise outside the sub-AS).
+- Community (optional, transitive): A bit of extra information used to group routes that should be treated similarly within or between ASes.
 
 ### Path Selection
 
-The path selection algorithm is used to select a single best path for each prefix. The following shows an ordered list of decisions for which route to use (based on Cisco, may be inaccurate):
+The path selection algorithm is used to select a single best path for a prefix. The following shows an ordered list of decisions for which route to use, based on Cisco routers:
 
 1. (Before path selection) Longest prefix match.
 1. Highest weight (Cisco).
@@ -107,5 +110,66 @@ The path selection algorithm is used to select a single best path for each prefi
 1. eBGP over iBGP.
 1. Lowest IGP metric.
 1. Lowest BGP router ID.
+
+### Internet Routing Registry (IRR)
+
+- IRR is a mechanism for BGP route origin validation using a set of routing registries.
+- It consists of IRR routing policy records which are hosted in one of the multiple IRR registries.
+- Records are typically created for the route (`route`), the ASN (`aut-num`) and the upstream ISP AS-SET (`as-set`).
+- IRR is out-of-band, meaning it does not affect how originating routers are configured. It should however be able to source filtering policies for peering ASNs somehow.
+- IRR uses the Routing Policy Specification Language (RPSL) for describing routing policies.
+- Due to outdated, inaccurate or missing data, IRR has not seen global deployment.
+
+#### Setting Up IRR in the RIPE Database
+
+- See [Managing Route Objects in the IRR (RIPE)](https://www.ripe.net/manage-ips-and-asns/db/support/managing-route-objects-in-the-irr).
+- The RIPE Database is tightly couples with it's IRR.
+- IRR policies are handled by `route(6)` objects, containing the ASN and IPv4/IPv6 prefix.
+- Authorization for managing `route(6)` objects can be a little complicated. Generally, the LIR is always allowed to manage it.
+
+### Resource Public Key Infrastructure (RPKI)
+
+- RPKI is a mechanism for BGP route origin validation using cryptographic methods.
+- Like IRR, it validates the route origin only instead of the full path. Since routes typically use the shortest path due to both economical and operational incentives, this is generally not a big problem. It's also typically the case that route leaks are misconfigurations rather than malicious attacks, which origin validation would mostly prevent.
+- It's certificate authority (CA)-based, but RPKI calls the CAs "trust anchors" (TAs). The fire RIRs act as root CAs, which are also the entities allocating the ASN and IP prefixes which RPKI attempts to secure. This also simplifies RPKI management, as it's managed the same place as ASNs and IP prefixes. This also helps lock down access control for which orgs may create ROAs for which resources.
+- The main component are route origin authorization (ROA) records, which are certificates containing a prefix and an ASN.
+- ROAs are X.509 certificates. See RFCs 5280 and 3779.
+- IANA maintains lists for which ASNs, IPv4 prefixes and IPv6 prefixes are assigned to which RIR, which is also used to determine which RIR to use for RPKI.
+- Unlike DNSSEC where IANA is the single CA root (and IANA reporting to the US government), RPKI uses separate trees/TAs for each RIR, slightly more similar to web CAs (with arguably _too many_ CAs). There are some legal/political issues when the RIRs operate as TAs too, though.
+- RPKI is typically running out-of-band on servers called "validators" paired with the routers. For routers supporting it, the RPKI router protocol (RTR) may be used to feed the list of validated ROAs (aka VRPs or the validated cache, see other notes). It's recommended to use multiple validators for each router for redundancy. To reduce the number of validators, many routers may access common, remote validators over some secure transport link. The validators must periodidcally update their local databases from the RIRs' ones. It the route validator are running in parallel with the routers, it has a negligible impact on convergence speed.
+- RPKI Repository Delta Protocol (RRDP) (RFC 8182) is designed to fetch RPKI data from TAs and is based on HTTPS. It has replaced rsync due to rsync being inefficient and not scalable for the purpose.
+- If all validators become unavailable or all ROAs expire, RPKI will fall back to accepting all routes (the standard policy when a ROA is not found).
+- Trust anchor locators (TALs) are used to retrieve the RIRs' TAs and consists of the URL to retrieve it as well as a public key to verify its authenticity. This allows TAs to be rotated more easily.
+- RIPE, APNIC, AFRNIC and LACNIC distribute their TALs publicly, but for ARIN you have to explicitly agree to their terms before you can get it.
+- All RIRs offer hosted RPKI managed through the RIR portal, but it can also be hosted internally for large organizations, called delegated RPKI.
+- ROAs contain a max prefix length field, which limits how long prefixes the AS is allowed to advertise. This limits segmentation and helps prevent longer-prefix attacks.
+- Validation of a ROA results in a validated ROA payload (VRP), consisting of the IP prefix (same length or shorter), the maximum length and the origin ASN. Comparing router advertisements with VRPs has one of three possible outcomes:
+    - Valid: At least one VRP (maybe multiple) contains the prefix with the correct origin ASN and allowed prefix length. The route should be accepted.
+    - Invalid: A VRP for the prefix exists, but the ASN doesn't match or the length is longer than the maximum. The route should be rejected.
+    - Not found: No VRP with a matching prefix was found. The route should be accepted (until RPKI is globally deployed, at least).
+- ROAs are fetched and processed periodically (30-60 minutes preferably) to produce a list of VRPs, aka a validated cache. ROAs that are expired or are otherwise cryptographically erraneous are discarded and thus will not be used to validate route announcements.
+- Local overrides may be used for VRPs, e.g. for cases where a temporarily invalid announcement must be accepted. See Simplified Local Internet Number Resource Management with the RPKI (SLURM) (RFC 8416)
+
+#### Setting Up RPKI ROAs in the RIPE Database
+
+- See [Managing ROAs (Ripe)](https://www.ripe.net/manage-ips-and-asns/resource-management/rpki/resource-certification-roa-management).
+- For PA space, only the LIR is authorized to manage ROAs.
+
+#### Resources
+
+- [RPKI Documentation (NLnet Labs)](https://rpki.readthedocs.io)
+- [RPKI Test (RIPE)](http://www.ripe.net/s/rpki-test)
+
+### Best Practices
+
+- Announced prefix lengths (max /24 and /48): Generally, use a maximum length of 24 for IPv4 and 48 for IPv6, due to longer prefixes being commonly filtered. See [Visibility of IPv4 and IPv6 Prefix Lengths in 2019 (RIPE)](https://labs.ripe.net/Members/stephen_strowes/visibility-of-prefix-lengths-in-ipv4-and-ipv6).
+- IRR and RPKI: Add `route(6)` objects (for IRR) and ROAs (for RPKI) for all prefixes, both to avoid having your prefixes hijacked and to reduce the risk of getting filtered.
+- Explicit import & export policies: Always explicitly define the input and output policies to avoid route leakage. Certain routers defaults to announcing everything if no policy is defined, but RFC 8212 defines a safe default policy of filtering all routes if no policy is explicitly defined.
+- Enable large communities: 2-byte communities are outdated, enable 12-byte communities to allow for more advanced policies and to keep up up to date with 4-byte ASNs. See RFCs 8092 and 8195.
+- Administrative shutdown message: When administratively shutting down a session (due to maintenance or something), set a message to explain why to the other peer. Peers should log received shutdown messages. See RFC 9003, which adds support for this free-form 128-byte UTF-8 message in the BGP notification message.
+- Voluntary shutdown (for BGP-speaking routers): Before maintenance where the router is unable to route traffic, shutdown BGP peering sessions and wait for BGP convergence around the router to avoid/reduce temporary blackholing. Aka voluntary session culling and voluntary session teradown. See RFC 8327.
+- Involuntary shutdown (for IXPs): Before maintenance which will prevent connected routers from forwarding traffic through the IXP, apply an ACL or similar to filter all BGP communication (TCP/179) between directly connected routers and wait for BGP convergence around the IXP to avoid/reduce temporary blackholing. Multihop sessions may be allowed. This is as an alternative to or in addition to voluntary shutdown, as the routers are generally managed by orgs other than the one managing the IXP. Related to voluntary shutdown and described by the same RFC.
+- Use and support the graceful shutdown community: The well-known community GRACEFUL_SHUTDOWN (65535:0) is used to signal graceful shutdown of announced routes. Peers should support this community by adding a policy matching the community, which reduces the LOCAL_PREF to 0 or similar such that other paths are preferred and installed in the routing table, to eliminate the impact when the router finally shuts down the session. See RFC 8326.
+- Use and support the blackhole community: The well-known community BLACKHOLE (65535:666) is used to signal that the peer should discard traffic destined toward the prefix. This is mainly intended to stop DDoS attacks targeting the certain prefix before reaching the router advertising it, such that other non-targeted traffic may continue to use the link. While announced prefixes should generally avoid exceeding a certain max length, announcements with the blackhole community are typically allowed to be as specific as possible to narrow down the blackhole addresses (e.g. /32 for IPv4 and /128 for IPv6). See RFC 7999.
 
 {% include footer.md %}

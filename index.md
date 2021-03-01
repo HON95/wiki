@@ -53,6 +53,8 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Debian](config/linux-server/debian/)
 - [Applications](config/linux-server/applications/)
 - [Storage](config/linux-server/storage/)
+- [Storage: ZFS](config/linux-server/storage-zfs/)
+- [Storage: Ceph](config/linux-server/storage-ceph/)
 - [Networking](config/linux-server/networking/)
 
 ### Media
