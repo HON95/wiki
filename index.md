@@ -112,6 +112,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [IPv6](it/network/ipv6/)
 - [Network Architecture](it/network/architecture/)
 - [Switching](it/network/switching/)
+- [Routing](it/network/routing/)
 - [Wireless Basics](it/network/wireless-basics/)
 - [WLAN](it/network/wlan/)
 

@@ -66,6 +66,7 @@ breadcrumbs:
 - Exterior BGP (eBGP) is used to advertise and receive routes from peers in other ASes, while interior BGP (iBGP) is used to distribute routes between all eBGP routers in the same AS. iBGP is used instead of an IGP because an IGP would lose BGP information.
 - The iBGP split horizon rule: Routers are not allowed to adversise a route learned from one iBGP peering to another iBGP peering. This prevents loops in iBGP, but requires that peers must be connected in a full mesh. To reduce the complexity of the iBGP full mesh, techniques like route reflectors (RRs) (dividing the AS into clusters) and confederations (dividing the AS into sub-ASes) may be used.
 - eBGP peers are generally required to be directly connected, which is enforced by using an IP TTL of 1. This limit may be relaxed by using multihop sessions. iBGP however is not subject to thus requirement.
+- Both multihop sessions and TTL security are mutually exclusive features for increasing the number of allowed hops between eBGP peers, which is limited to 1 by default. TTL security (aka Generalized TTL Security Mechanism (GTSM), RFC 5082) inverts the TTL check for a value of minimum 255 minus the configured number of hops. This prevents remote attackers from spoofing the number of hops, as the TTL is limited by it's maximum value of 255.
 - The synchronization rule: When a router receives a new route to announce from iBGP, it must first wait until it can validate the route from the IGP (in case iBGP is faster). This prevents announcing over eBGP a route that can't yet be routed within the AS.
 - Full BGP tables are exchanged only during the start of peer sessions. Thereafter, only new announcements or withdrawals are exchanged.
 - Network layer reachability information (NLRI) is basically what BGP calls prefixes/routes (and some extra information for address families other than IPv4).
@@ -77,6 +78,7 @@ breadcrumbs:
 - Letter of Agency (LOA), Internet Routing Registry (IRR) and Resource Public Key Infrastructure (RPKI) are methods to secure BGP in order to prevent route leaks/hijacks.
 - The "default-free zone" (DFZ) is the set of ASes which have full-ish BGP tables instead of default routes.
 - Communities are used to exchange arbitrary policy information for announcements between peers. See [BGP Well-known Communities (IANA)](https://www.iana.org/assignments/bgp-well-known-communities/bgp-well-known-communities.xhtml).
+- "Soft reconfiguration" is a feature to cache all incoming raw announcements from peers, such that the BGP table can be quickly rebuilt if it needs to be cleared. This reduces the impact of clearing the table and is recommended, but does increase memory usage.
 
 ### Attributes
 

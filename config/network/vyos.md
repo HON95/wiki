@@ -127,8 +127,12 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     - Routes: `show ip routes` and `show ipv6 routes`
 - Configuration changes:
     - Show configuration: `show`
+        - Running this in conf mode shows any changes.
+        - Run this in op mode if you intend to copy it from the terminal, to avoid the change indentation.
     - Apply changes: `commit`
-    - Apply changes with confirmation: `commit-confirm [comment <comment>] [minutes]`, then `confirm` within X minutes when you've verified that the changes are working as intended. Not confirming in time will cause the system to reboot.
+    - Apply changes with confirmation: `commit-confirm [comment <comment>] [minutes]`
+        - Run `confirm` within N minutes when you've verified that the changes are working as intended.
+        - Not confirming in time will cause the system to reboot.
     - Save changes: `save`
 
 ## Tasks
