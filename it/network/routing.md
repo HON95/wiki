@@ -75,7 +75,8 @@ breadcrumbs:
     - Update: Exchanges new route advertisements or withdrawals.
     - Notification: Signals errors and/or closes the session.
     - Keepalive: Shows it's still alive in the absence of update messages. Both keepalives and updates reset the hold timer.
-- Letter of Agency (LOA), Internet Routing Registry (IRR) and Resource Public Key Infrastructure (RPKI) are methods to secure BGP in order to prevent route leaks/hijacks.
+- Internet Routing Registry (IRR) and Resource Public Key Infrastructure (RPKI) are methods to secure BGP in order to prevent route leaks/hijacks. While all routes should use IRR and RPKI (for providing valid bindings of prefixes to ASNs).
+- Letter of Agency (aka Letter of Authorization) (LOA) required in certain countries to be allowed to announce a prefix.
 - The "default-free zone" (DFZ) is the set of ASes which have full-ish BGP tables instead of default routes.
 - Communities are used to exchange arbitrary policy information for announcements between peers. See [BGP Well-known Communities (IANA)](https://www.iana.org/assignments/bgp-well-known-communities/bgp-well-known-communities.xhtml).
 - "Soft reconfiguration" is a feature to cache all incoming raw announcements from peers, such that the BGP table can be quickly rebuilt if it needs to be cleared. This reduces the impact of clearing the table and is recommended, but does increase memory usage.

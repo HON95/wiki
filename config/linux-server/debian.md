@@ -57,8 +57,8 @@ If you didn't already configure this during the installation. Typically the case
 1. Packages:
     - (Optional) Enable the `contrib` and `non-free` repo areas by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
     - Update, upgrade and auto-remove.
-    - Install basics: `sudo ca-certificates`
-    - Install tools: `tree vim screen curl net-tools dnsutils htop iotop irqtop nmap`
+    - Install (essentials): `sudo ca-certificates`
+    - Install (extra): `tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
     - (Optional) Install per-user tmpdirs: `libpam-tmpdir`
 1. (Optional) Configure editor (Vim):
     - Update the default editor: `update-alternatives --config editor`
@@ -216,6 +216,10 @@ This is typically correct by default.
 
 Everything here is optional.
 
+- Setup BASH auto-completion:
+    - This is typically installed by default.
+    - Install it: `apt install bash-completion`
+    - Enable it globally: Find the commented `bash-completion` block in `/etc/bash.bashrc` and uncomment it.
 - Setup Fail2Ban:
     - Recommended for public-facing servers.
     - Fix the firewall first so it configures itself correctly wrt. which firewall is used.

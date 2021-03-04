@@ -79,18 +79,24 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 ### General
 
 - Show version: `zfs --version` or `modinfo zfs | grep '^version:'`
-- Be super careful when destroying stuff! ZFS never asks for confirmation. When entering dangerous commands, considering adding a `#` to the start to prevent running it half-way by accident.
+    - The kernel module and userland tools should match.
+- Be super careful when destroying stuff! ZFS never asks for confirmation.
+    - When entering dangerous commands, considering adding a `#` to the start to prevent running it half-way by accident.
+- Upgrade pool to support new features: `zpool upgrade <pool>`
+    - `zpool status` shows if any pool required upgrades.
+    - This is needed/recommended after upgrading ZFS.
 
 ### Pools
 
 - Recommended pool options:
     - Set thr right physical block/sector size: `ashift=<9|12>` (for 2^9 and 2^12, use 12 if unsure)
-    - Enabel compression: `compression=lz4` (use `zstd` when supported)
+    - Enabel compression: `compression=zstd`
+        - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
     - Store extended attributes in the inodes: `xattr=sa` (`on` is default and stores them in a hidden file)
     - Don't enable dedup.
 - Create pool:
     - Format: `zpool create [options] <name> <levels-and-drives>`
-    - Basic example: `zpool create -o ashift=<9|12> -O compression=lz4 -O xattr=sa <name> [mirror|raidz|raidz2|...] <drives>`
+    - Basic example: `zpool create -o ashift=<9|12> -O compression=zstd -O xattr=sa <name> [mirror|raidz|raidz2|...] <drives>`
     - Create encrypted pool: See encryption section.
     - Use absolute drive paths (`/dev/disk/by-id/` or similar).
 - View pool activity: `zpool iostat [-v] [interval]`
@@ -194,8 +200,8 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).
     - Check the physical block size with `smartctl -i <dev>`.
     - Keep in mind that some 4kB disks emulate/report 512B. They should be used as 4kB disks.
-- Always enable compression.
-    - Generally `lz4`. Maybe `zstd` when implemented. Maybe `gzip-9` for archiving.
+- Always enable compression on datasets (or pools so all datasets inherit it).
+    - Generally `zstd`, but `lz4` for bootable pools or old installations without `zstd` support.
     - For uncompressable data, worst case it that it does nothing (i.e. no loss for enabling it).
     - The overhead is typically negligible. Only for super-high-bandwidth use cases (large NVMe RAIDs), the compression overhead may become noticable.
 - Never use deduplication.
