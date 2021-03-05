@@ -86,7 +86,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Enable unicast reverse path forwarding (uRPF) globally: `set firewall source-validation strict`
 1. Set firewall options:
     1. Enter firewall section.
-    1. `set all-ping enable`
+    1. `set all-ping enable` (default) (still recommended to add ping rules)
     1. `set broadcast-ping disable`
     1. `set receive-redirects disable`
     1. `set ipv6-receive-redirects disable`

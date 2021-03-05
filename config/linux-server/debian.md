@@ -58,7 +58,7 @@ If you didn't already configure this during the installation. Typically the case
     - (Optional) Enable the `contrib` and `non-free` repo areas by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
     - Update, upgrade and auto-remove.
     - Install (essentials): `sudo ca-certificates`
-    - Install (extra): `tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
+    - Install (extra): `man-db tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
     - (Optional) Install per-user tmpdirs: `libpam-tmpdir`
 1. (Optional) Configure editor (Vim):
     - Update the default editor: `update-alternatives --config editor`

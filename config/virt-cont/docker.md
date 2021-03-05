@@ -20,8 +20,8 @@ Using **Debian**.
     - By default, Docker does not add any IPTables NAT rules or filter rules, which leaves Docker IPv6 networks open (bad) and requires using a routed prefix (sometimes inpractical). While using using globally routable IPv6 is the gold standard, Docker does not provide firewalling for that when not using NAT as well.
     - Open `/etc/docker/daemon.json`.
     - Set `"ipv6": true` to enable IPv6 support at all.
-    - Set `"ip6tables": true` to enable adding filter and NAT rules to IP6Tables (required for both security and NAT).
     - Set `"fixed-cidr-v6": "<prefix/64>"` to some [generated](https://simpledns.plus/private-ipv6) (ULA) or publicly routable (GUA) /64 prefix, to be used by the default bridge.
+    - Set `"ip6tables": true` to enable adding filter and NAT rules to IP6Tables (required for both security and NAT). This only affects non-internal bridges and not e.g. MACVLANs with external routers.
 1. (Optional) Change default DNS servers for containers:
     - In `/etc/docker/daemon.json`, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
     - It defaults to `8.8.8.8` and `8.8.4.4` (Google).
@@ -34,13 +34,6 @@ Using **Debian**.
 
 ## Usage
 
-**TODO** Clean up this section.
-
-- Miscellanea:
-    - Show disk usage: `docker system df -v`
-- Cleanup:
-    - Prune unused images: `docker image prune -a`
-    - Prune unused volumes: `docker volume prune`
 - Docker run options:
     - Set name: `--name=<name>`
     - Run in detatched mode: `-d`
@@ -49,16 +42,18 @@ Using **Debian**.
     - Automatically restart: `--restart=unless-stopped`
     - Use "tini" as entrypoint and use PID 1: `--init`
     - Set env var: `-e <var>=<val>`
-    - Publish network port: `-p <host-port>:<cont-port>[/udp]`
-    - Mount volume: `-v <vol>:<cont-path>` (`<vol>` must have a path prefix like `./` or `/` if it is a directory and not a named volume)
+    - Publish network port on host: `-p <host-port>:<cont-port>[/udp]`
+    - Mount volume: `-v <host-path>:<container-path>`
+        - The host path must have a path prefix like `./` or `/` if it is a file/dir and not a named volume.
+- Cleanup:
+    - Prune unused images: `docker image prune -a`
+    - Prune unused volumes: `docker volume prune`
+- Miscellanea:
+    - Show disk usage: `docker system df -v`
 
 ### Networking
 
-**TODO** Clean up this subsection too.
-
-- Containers in production should not use the default Docker networks.
-- Try to isolate container communication into as small networks as possible (e.g. one network per group of containers for an application).
-- Docker doesn't integrate with ip6tables at all, meaning certain IPv6 features are lacking. For instance, IPv6 is not NATed like IPv4 and ICC can't be disabled. NAT66 shouldn't generally be used in the first place, but the lack of it means IPv6 requires a bit of extra configuration to get it working with containers. IPv6 routing and port publishing work as they should, though, as they don't use ip6tables.
+- See the miscellaneous note about IPv6 support in Docker.
 - Network types:
     - Bridge: A plain virtual bridge where all containers and the host are connected and can communicate. It can optionally be directly connected to a host bridge, but that doesn't always work as expected.
     - Overlay: Overlay network for swarm stuff.
