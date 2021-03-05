@@ -16,20 +16,12 @@ Using **Debian**.
     - Enabling/fixing it incurs a small performance degredation and is optional but recommended.
     - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
     - Run `update-grub` and reboot the system.
-1. Configure `/etc/docker/daemon.json`:
-    - Enable IPv6: `"ipv6": true` and `"fixed-cidr-v6": "<ipv6-subnet>/64"`
-        - Note that IPv6 it not NATed like IPv4 is in Docker.
-        - Use something like [Simple DNS Plus' Private IPv6 address range](https://simpledns.plus/private-ipv6) to generate an IPv6 ULA prefix.
-    - Set DNS servers for containers: `"dns": ["1.1.1.1", "2606:4700:4700::1111"]`
-        - If not set, containers will use `8.8.8.8` and `8.8.4.4` by default.
-        - `/etc/resolv.conf` is limited to only three name servers, so don't provide too many. One may be set by the container itself.
-    - (Optional) Disable automatic IPTables rules: `"iptables": false`
-1. Setup IPv6 firewall and NAT:
-    - By default, Docker does not add any IPTables NAT rules or filter rules, which leaves Docker IPv6 networks open (bad) and requires using a routed prefix (sometimes bad).
-    - For the changes below, open `/etc/docker/daemon.json`.
+1. (Recommended) Setup IPv6 firewall and NAT:
+    - By default, Docker does not add any IPTables NAT rules or filter rules, which leaves Docker IPv6 networks open (bad) and requires using a routed prefix (sometimes inpractical). While using using globally routable IPv6 is the gold standard, Docker does not provide firewalling for that when not using NAT as well.
+    - Open `/etc/docker/daemon.json`.
     - Set `"ipv6": true` to enable IPv6 support at all.
     - Set `"ip6tables": true` to enable adding filter and NAT rules to IP6Tables (required for both security and NAT).
-    - Set `"fixed-cidr-v6"` to some IPv6 prefix shorter than 64 bits, for use by Docker networks. If not using IPv6 NAT, this needs to be routable.
+    - Set `"fixed-cidr-v6": "<prefix/64>"` to some [generated](https://simpledns.plus/private-ipv6) (ULA) or publicly routable (GUA) /64 prefix, to be used by the default bridge.
 1. (Optional) Change default DNS servers for containers:
     - In `/etc/docker/daemon.json`, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
     - It defaults to `8.8.8.8` and `8.8.4.4` (Google).
@@ -37,8 +29,8 @@ Using **Debian**.
     - This only exports internal Docker metrics, not anything about the containers (use cAdvisor for that).
     - In `/etc/docker/daemon.json`, set `"experimental": true` and `"metrics-addr": "[::]:9323"`.
 1. (Optional) Allow non-root users to use Docker:
+    - This is not recommended on servers as it effectively grants them root access without sudo.
     - Add them to the `docker` group.
-    - This is not recommended as it effectively grants them root access, so sudo is a cleaner alternative.
 
 ## Usage
 
@@ -75,11 +67,12 @@ Using **Debian**.
     - L2 IPVLAN: Similar to MACVLAN, but all containers use the host's MAC address. Containers can communicate, but the host can't communicate with any containers.
     - L3 IPVLAN: Every VM uses a separate subnet and all communication, internally and externally, is routed. (**TODO:** Containers and the host can communicate?)
 - Note that most L2 network types (with multiple containers present on the same L2 broadcast domain) are likely to be vulnerable to ARP/NDP spoofing.
+- While Docker will automatically generate a private IPv4 subnet for networks, you need to [generate](https://simpledns.plus/private-ipv6) the private IPv6 /64 prefix yourself (or use a routable one).
 - Create:
-    - Create bridged network: `docker network create --driver=bridge --subnet=<ipv4-net> --ipv6 --subnet=<ipv6-net> <name>`
-    - Create external bridged network (experimental, doesn't work as intented in some scenarios): `docker network create --driver=bridge --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o "com.docker.network.bridge.name=<host-if> <name>`
+    - Create bridged network: `docker network create [--internal] --subnet=<ipv4-net> --ipv6 --subnet=<ipv6-net> <name>`
     - Create MACVLAN: `docker network create --driver=macvlan --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o parent=<netif>[.<vid>] <name>`
-    - Create L2 IPVLAN with parent interface: `docker network create --driver=ipvlan --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o parent=<netif> <name>`
+    - Create L2 IPVLAN with parent interface: `docker network create --driver=ipvlan <subnets-and-gateways> -o parent=<netif> <name>`
+    - Create external bridged network (not recommended): `docker network create --driver=bridge <subnets-and-gateways> -o "com.docker.network.bridge.name=<host-if> <name>`
 - Use:
     - Run container with network: `docker run --network=<net-name> --ip=<ipv4-addr> --ip6=<ipv6-addr> --dns=<dns-server> [...] <image>`
 - Disable IPv4 and IPv6 NAT/masquerade for a bridge network: `docker network create <...> -o "com.docker.network.bridge.enable_ip_masquerade=false" <name>`
