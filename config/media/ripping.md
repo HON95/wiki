@@ -10,6 +10,9 @@ breadcrumbs:
 
 Using [youtube-dl](http://ytdl-org.github.io/youtube-dl/) ([repo](https://github.com/ytdl-org/youtube-dl)).
 
+- Examples:
+    - YouTube video/xyz in Docker: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s"`
+    - YouTube video/channel/playlist w/ cookie: `youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s" <url>`
 - Run in Docker:
     - Using ([wernight's image](https://github.com/wernight/docker-youtube-dl)).
     - Command prefix: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl <...>`
@@ -32,8 +35,6 @@ Using [youtube-dl](http://ytdl-org.github.io/youtube-dl/) ([repo](https://github
     - Supports a Python-style format string.
     - See [output template (youtube-dl)](https://github.com/ytdl-org/youtube-dl#output-template) for a list of variables.
     - Example: `-o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s"`
-- Full examples:
-    - YouTube video (video/channel/playlist): `youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s" <url>`
 - Common warnings and errors:
     - "*WARNING: Requested formats are incompatible for merge and will be merged into mkv.*": The best quality video and audio are different formats and will therefore be merged into an MKV file. This is completely fine.
     - "*ERROR: [...]: YouTube said: Unable to extract video data*": Try to open the video in an incognito browser to check what's up with it. If it requires you to log in, you may need to specify cookies and possibly your user agent. To specify cookies, log into a browser (Firefox or Chrome), export the cookies to file using the "cookie.txt" extension, and specify the cookie file for youtube-dl with the `--cookie <file>` option (see [How do I pass cookies to youtube-dl? (youtube-dl)](https://github.com/ytdl-org/youtube-dl/blob/master/README.md#how-do-i-pass-cookies-to-youtube-dl)).
