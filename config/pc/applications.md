@@ -138,24 +138,22 @@ This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Ha
 
 1. Install ZSH:
     1. `apt install zsh`
-1. Make zprofile include profile (to avoid breaking certain things):
-    1. In `~/.zprofile`, add: `emulate sh -c "source /etc/profile"`
 1. Install Oh-My-ZSH:
     1. See [ohmyz.sh](https://ohmyz.sh/).
     1. When it asks, set it as your default shell. This won't take effect until the next login.
 1. Setup Powerlevel10k theme:
-    1. Download and install the suggested fonts (manually is simplest): [Fonts](https://github.com/romkatv/powerlevel10k#fonts)
-    1. Open a new terminal window and set the new font.
+    1. Download and install the suggested fonts (manually is simplest): [Fonts (powerlevel10k)](https://github.com/romkatv/powerlevel10k#fonts)
+    1. Open a new terminal window and set change the profile to use the new font.
     1. Clone the theme: `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k`
     1. In `~/.zshrc`, set `ZSH_THEME="powerlevel10k/powerlevel10k"`.
     1. Open a new ZSH session (or restart your terminal).
     1. Configure the theme (if it didn't automatically start): `p10k configure`
+1. Make zprofile include profile (to avoid breaking certain things):
+    1. In `~/.zprofile`, add: `emulate sh -c "source /etc/profile"`
 1. Setup syntax highlighting plugin:
     1. Clone it: `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
     1. Add it to `plugins` in `.zshrc` (e.g. `plugins=(git zsh-syntax-highlighting)`).
 1. Configure `~/.zshrc`:
-    1. See the example below.
-
-[Example zshrc](https://github.com/HON95/configs/blob/master/pc/common/zshrc).
+    1. Example [zshrc](https://github.com/HON95/configs/blob/master/zsh/zshrc).
 
 {% include footer.md %}
