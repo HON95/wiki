@@ -50,6 +50,7 @@ breadcrumbs:
 1. Firefox:
     - Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
     - Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
+    - Disable external media keys by setting `media.hardwaremediakeys.enabled` to false in `about:config`.
     - Install missing language support: `apt install $(check-language-support)`
 
 ### Extra
