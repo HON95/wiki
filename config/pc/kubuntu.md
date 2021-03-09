@@ -20,8 +20,11 @@ breadcrumbs:
 
 ## Setup
 
-1. Upgrade all packages.
-1. Install `vim` and change the default editor to vim by running `update-alternatives --config editor` and selecting `vim.basic`.
+1. Packages:
+    - Install upgrades: `sudo apt update && sudo apt dist-upgrade --autoremove`
+    - Install extra stuff: `sudo apt install curl vim nmap`
+1. Setup default editor:
+    - Set editor: `sudo update-alternatives --config editor` and select `vim.basic`.
 1. Disable password for the sudo group by running `visudo` and changing the sudo group line to `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`.
 1. Make sure the correct graphics drivers are in use (e.g. the proprietary Nvidia driver).
 1. Fix the displays (positions, resolutions, refresh rates).
@@ -51,6 +54,7 @@ breadcrumbs:
 
 ### Extra
 
+1. Install applications: See [PC Appluications](/config/pc/applications/).
 1. (Optional) Install encrypted DVD support:
     - Install: `sudo apt install libdvd-pkg && sudo dpkg-reconfigure libdvd-pkg`
     - Warning: Don't change the region if not necessary. It's typically limited to five changes.
