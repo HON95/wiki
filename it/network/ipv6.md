@@ -23,6 +23,7 @@ breadcrumbs:
 | `2001:20::/28` | ORCHIDv2 |
 | `2001:db8::/32` | Documentation (non-routable) |
 | `2002::/16` | 6to4 (deprecated) |
+| `3ffe::/16` | IPv6 Testing Address Allocation (6bone) (reverted) |
 | `fc00::/7` | Unique local address (ULA) |
 | `fd00::/8` | Locally administered ULA |
 | `fe80::/10` | Link-scoped unicast (non-routable) |

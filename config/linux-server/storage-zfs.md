@@ -60,7 +60,23 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
         deb-src http://deb.debian.org/debian buster-backports main contrib non-free
         ```
 1. Install: `apt install -t buster-backports zfsutils-linux`
-1. (Optional) Fix automatic unlocking of encrypted datasets: See encryption usage subsection.
+1. Fix automatic unlocking of encrypted pools/datasets:
+    1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
+    1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a`, so that it loads encryption keys.
+    1. Reboot and test. It may fail due to dependency/boot order stuff.
+1. (Optional) Fix pool cache causing pool loading problems at boot:
+    1. Note: Do this if `systemctl status zfs-import-cache.service` shows that no pools were found.
+    1. Make sure the pools are not set to use a cache file: `zpool get cachefile` and `zpool set cachefile=none <pool>`
+    1. Disable the caching import service: `systemctl disable zfs-import-cache.service`
+    1. Enable the scanning import service: `systemctl enable zfs-import-scan.service`
+    1. In `/etc/default/zfs`, set:
+        - `ZPOOL_CACHE=''` (no cache file)
+        - `ZFS_INITRD_PRE_MOUNTROOT_SLEEP='5'` (or higher)
+        - `ZFS_INITRD_POST_MODPROBE_SLEEP='5'` (or higher)
+    1. Update initramfs: `update-initramfs -u -k all`
+    1. Delete the existing cache file: `rm /etc/zfs/zpool.cache`
+    1. Reboot.
+    1. Check if the pools are loaded correctly _at boot_ (see `systemctl status zfs-import-cache.service`).
 
 ### Configuration
 
@@ -149,11 +165,7 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - Encryption root: `zfs get encryptionroot`
     - Key status: `zfs get keystatus`. `unavailable` means locked and `-` means not encrypted.
     - Mount status: `zfs get mountpoint` and `zfs get mounted`.
-- Fix automatic unlock when mounting at boot time:
-    1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
-    1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a` (add `-l`), so that it loads encryption keys.
-    1. Reboot and test. It may fail due to dependency/boot order stuff.
-- Create a password encrypted pool: 
+- Create a password encrypted pool:
     - Create: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
 - Create a raw key encrypted pool:
     - Generate the key: `dd if=/dev/urandom of=/root/keys/zfs/<tank> bs=32 count=1`

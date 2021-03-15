@@ -42,11 +42,6 @@ breadcrumbs:
     - Remove other firewalls: `apt purge ufw firewalld`.
     - Install `iptables iptables-persistent netfilter-persistent`.
     - Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/configs/blob/master/pc/linux/iptables/iptables.sh).
-1. Setup audio devices:
-    - Open `/etc/pulse/daemon.conf`.
-    - Set: `default-sample-format = S24LE`
-    - Set: `default-sample-rate = 48000`
-    - Reload (as user): `pulseaudio -k`
 1. Firefox:
     - Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
     - Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.

@@ -8,8 +8,9 @@ breadcrumbs:
 
 ## Models
 
-### Single Layer
+### Flat
 
+- A single L2 domain/layer.
 - Switching, routing and firewalling is all done by the same device or device stack, with clients directly connected.
 
 ### Three-layer Hierarchical Model
@@ -52,17 +53,18 @@ breadcrumbs:
 
 ### Spine Leaf
 
-- Two or three layers: Leaf layer, spine layer and an optional super-spine layer.
+- A type of Clos network (non-hierarchical).
+- Two or three layers: Leaf layer, spine layer and an optional super-spine layer (for larger networks).
 - Leaf switches connect to every spine switch and not to any other leaf switches.
 - Spine routers (or switches) are not connected to any other spine routers.
 - Hosts connect only to leaf switches.
-- All spine-leaf links are routed.
+- All spine-leaf links are L3 (routed).
 - Every pair of leaf switches are always two hops away from each other.
 - Routers to external areas, firewalls and load balancers are added connected leaf switches called border leaves.
 - Large spine-leaf networks may be broken into multiple networks where the spine rouers are connected to routers in the super-spine layer.
 - Focuses on east-west traffic.
+- Requires ECMP for optimal utilization.
 - Well suited for data centers.
-- Well suited for ECMP.
 - Well suited for VXLAN for allowing hosts to move easily between leaf switches.
 
 ## Terms
@@ -72,6 +74,6 @@ breadcrumbs:
 
 ## Miscellanea
 
-- VXLAN or Q-in-Q may be used to span VLANs over different areas.
+- Q-in-Q (simple) or VXLAN (sophisticated) may be used to span VLANs over different areas.
 
 {% include footer.md %}
