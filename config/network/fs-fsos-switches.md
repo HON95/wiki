@@ -13,17 +13,10 @@ breadcrumbs:
 
 ## Info
 
-- The CLI is very Cisco IOS-like.
-- The default credentials are username `admin` and password `admin`.
-- The default mgmt. IP address is `192.168.1.1/24`.
+- Default credentials: Username `admin` and password `admin`.
+- Default mgmt. IP address: `192.168.1.1/24`
 - By default, SSH, Telnet and HTTP servers are accessible using the default mgmt. address and credentials.
 - The default VLAN is VLAN1.
-
-### Supported Security Mechanisms
-
-For the FS S3700-24T4F.
-
-**TODO**
 
 ## Initial Setup
 
