@@ -12,7 +12,7 @@ Software configuration for Cisco switches and routers running IOS or derivatives
 {:.no_toc}
 
 - [Cisco Hardware](/config/network/cisco-hardware/)
-- [Cisco IOS Routers]/config/network/cisco-ios-routers/)
+- [Cisco IOS Routers](/config/network/cisco-ios-routers/)
 - [Cisco IOS Switches](/config/network/cisco-ios-switches/)
 
 ## Resources
