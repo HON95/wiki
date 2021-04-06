@@ -22,6 +22,8 @@ Using **Debian**.
     - Set `"ipv6": true` to enable IPv6 support at all.
     - Set `"fixed-cidr-v6": "<prefix/64>"` to some [generated](https://simpledns.plus/private-ipv6) (ULA) or publicly routable (GUA) /64 prefix, to be used by the default bridge.
     - Set `"ip6tables": true` to enable adding filter and NAT rules to IP6Tables (required for both security and NAT). This only affects non-internal bridges and not e.g. MACVLANs with external routers.
+1. (Optional) Change IPv4 network pool:
+    - - In `/etc/docker/daemon.json`, set `"default-address-pools": [{"base": "10.0.0.0/16", "size": "24"}]`.
 1. (Optional) Change default DNS servers for containers:
     - In `/etc/docker/daemon.json`, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
     - It defaults to `8.8.8.8` and `8.8.4.4` (Google).
@@ -64,8 +66,9 @@ Using **Debian**.
 - Note that most L2 network types (with multiple containers present on the same L2 broadcast domain) are likely to be vulnerable to ARP/NDP spoofing.
 - While Docker will automatically generate a private IPv4 subnet for networks, you need to [generate](https://simpledns.plus/private-ipv6) the private IPv6 /64 prefix yourself (or use a routable one).
 - Create:
-    - Create bridged network: `docker network create [--internal] --subnet=<ipv4-net> --ipv6 --subnet=<ipv6-net> <name>`
-    - Create MACVLAN: `docker network create --driver=macvlan --subnet=<ipv4-net> --gateway=<ipv4-gateway> --ipv6 --subnet=<ipv6-net> --gateway=<ipv6-gateway> -o parent=<netif>[.<vid>] <name>`
+    - Create bridged network: `docker network create [--internal] [--subnet=<ipv4-net>] [--ipv6 --subnet=<ipv6-net>] <name>`
+        - For internal, set the subnet(s) explicitly to avoid setting a default gateway.
+    - Create MACVLAN: `docker network create --driver=macvlan --subnet=<ipv4-net> --ipv6 --subnet=<ipv6-net> -o parent=<netif>[.<vid>] <name>`
     - Create L2 IPVLAN with parent interface: `docker network create --driver=ipvlan <subnets-and-gateways> -o parent=<netif> <name>`
     - Create external bridged network (not recommended): `docker network create --driver=bridge <subnets-and-gateways> -o "com.docker.network.bridge.name=<host-if> <name>`
 - Use:
@@ -78,8 +81,9 @@ Using **Debian**.
 ### IPv6 Support
 
 - TL;DR: Docker doesn't prioritize implementing IPv6 properly.
-- While IPv4 uses IPTables filter rules for firewalling and and IPTables NAT rules for masquerading and port forwarding, it generally uses no such mechanisms when enabling IPv6 (using `"ipv6": true`). Setting `"ip6tables": true` explicitly (it's disabled by default) is required to mimic the IPv4 behavior of filtering and NAT-ing. To disable NAT masquerading for both IPv4 and IPv6, set `enable_ip_masquerade=false` on individual networks. Disabling NAT masquerading for only IPv6 is not yet possible. (See [moby/moby #13481](https://github.com/moby/moby/issues/13481), [moby/moby #21951](https://github.com/moby/moby/issues/21951), [moby/moby #25407](https://github.com/moby/moby/issues/25407), [moby/libnetwork #2557](https://github.com/moby/libnetwork/issues/2557).)
+- While IPv4 uses IPTables filter rules for firewalling and IPTables NAT rules for masquerading and port forwarding, it generally uses no such mechanisms when enabling IPv6 (using `"ipv6": true`). Setting `"ip6tables": true` (disabled by default) is required to mimic the IPv4 behavior of filtering and NAT-ing. To disable NAT masquerading for both IPv4 and IPv6, set `enable_ip_masquerade=false` on individual networks. Disabling NAT masquerading for only IPv6 is not yet possible. (See [moby/moby #13481](https://github.com/moby/moby/issues/13481), [moby/moby #21951](https://github.com/moby/moby/issues/21951), [moby/moby #25407](https://github.com/moby/moby/issues/25407), [moby/libnetwork #2557](https://github.com/moby/libnetwork/issues/2557).)
 - IPv6-only networks (without IPv4) are not supported. (See [moby/moby #32675](https://github.com/moby/moby/issues/32675), [moby/libnetwork #826](https://github.com/moby/libnetwork/pull/826).)
+- IPv6 communication between containers (ICC) on IPv6-enabled bridges with IP6Tables enabled is broken, due to NDP (using multicast) being blocked by IP6Tables. On non-internal bridges it works fine. One workaround is to not use IPv6 on internal bridges or to not use internal bridges. (See [libnetwork/issues #2626](https://github.com/moby/libnetwork/issues/2626).)
 - The userland proxy (enabled by default, can be disabled) accepts both IPv4 and IPv6 incoming traffic but uses only IPv4 toward containers, which replaces the IPv6 source address with an internal IPv4 address (I'm not sure which), effectively hiding the real address and may bypass certain defences as it's apparently coming from within the local network. It also has other non-IPv6-related problems. (See [moby/moby #11185](https://github.com/moby/moby/issues/11185), [moby/moby #14856](https://github.com/moby/moby/issues/14856), [moby/moby #17666](https://github.com/moby/moby/issues/17666).)
 
 ## Docker Compose

@@ -141,6 +141,50 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 
 Reboot the device and wait for the boot screen. In the boot screen, select the "lost password change (KVM)" option. It will boot to into a prompt asking you to set a new password. After setting a new password, the device will automatically reboot.
 
+### Add Service
+
+This example shows how to download an application to persistent storage and run it at boot as a service.
+
+1. Enter persistent storage: `cd /usr/lib/live/mount/persistence/`
+1. Create an `opt` dir to store apps in: `mkdir opt` and `cd opt`.
+1. Download the app: `wget <whatever-v0>` and extract it (keep the version number).
+1. Make a symlink without the version number: `ln -s <whatever-v0> <whatever>`
+1. Try to run the executable to make sure it works.
+1. Make a folder too keep systemd service files: `mkdir systemd`
+1. Create a service file for the application as `systemd/<whatever>.service` (see example below).
+1. Make sure the service works by manually adding it and starting it (see the script to do it automatically at boot).
+1. Add and start the service at boot by adding it through `/config/scripts/vyos-postconfig-bootup.script` (see example below).
+1. Reboot and make sure it works (`systemctl status <whatever>.service`).
+
+Example service file (`<whatever>.service`):
+
+```
+[Unit]
+Description=Node Exporter
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/lib/live/mount/persistence/opt/node_exporter/node_exporter --collector.interrupts
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Example `/config/scripts/vyos-postconfig-bootup.script` (excluding old stuff):
+
+```sh
+# ...
+
+# Enable Node Exporter
+if [[ -f /usr/lib/live/mount/persistence/opt/systemd/node-exporter.service ]]; then
+    ln -s /usr/lib/live/mount/persistence/opt/systemd/node-exporter.service /etc/systemd/system/node-exporter.service
+    systemctl daemon-reload
+    systemctl enable --now node-exporter.service
+fi
+```
+
 ## Random Notes
 
 - The DHCPv4 relay requires the interface towards the upstream DHCP server to be included in the relay interfaces. Otherwise the responses from the upstream server will be dropped. The relay is also very bugged at the moment so I'd recommend not using it until it gets fixed. See [T377](https://phabricator.vyos.net/T377) and [T1276](https://phabricator.vyos.net/T1276).

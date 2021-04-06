@@ -412,6 +412,14 @@ Example notify script:
 echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
 ```
 
+### Usage
+
+#### Query the Server
+
+1. Telnet into it: `telnet localhost 3493`
+1. List UPSes: `LIST UPS` (the second field is the UPS ID)
+1. List variables: `LIST VAR <ups>`
+
 ## OpenSSL
 
 ### Usage
@@ -421,7 +429,7 @@ echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
 - Create self-signed cert: `openssl req -new -x509 -sha256 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 3650 -subj "/C=ZZ/ST=Local/L=Local/O=Local/OU=Local/CN=localhost"`
 
 ## Pi-hole (Docker)
- 
+
 - (Optional) Set up an upstream DNS server.
 - Image: pihole/pihole
 - Run on LAN-accessible bridge.
