@@ -37,11 +37,12 @@ breadcrumbs:
 1. Setup panels for all screens. Only show tasks for the current screen.
 1. Setup clipboard:
     - Open the clipboard settings from the taskbar.
+    - Select "ignore selection" to avoid copying when selecting text.
     - Set the history size to 1 (effectively disabling the history).
 1. Setup firewall:
     - Remove other firewalls: `apt purge ufw firewalld`.
     - Install `iptables iptables-persistent netfilter-persistent`.
-    - Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/configs/blob/master/pc/linux/iptables/iptables.sh).
+    - Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh).
 1. Firefox:
     - Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
     - Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.

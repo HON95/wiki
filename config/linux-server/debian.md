@@ -123,7 +123,7 @@ If you didn't already configure this during the installation. Typically the case
 1. Check the performance governor and other frequency settings:
     1. Install `linux-cpupower`.
     1. Show: `cpupower frequency-info`
-        - Check the boost state should be on (Intel). 
+        - Check the boost state should be on (Intel).
         - Check the current performance governor (e.g. "powersave", "ondemand" or "performance").
     1. (Optional) Temporarily change performance governor: `cpupower frequency-set -g <governor>`
     1. (Optional) Permanently change performance governor: **TODO**
@@ -151,7 +151,7 @@ This is used by default and is the simplest to use for simple setups.
 
 This is the systemd way of doing it and is recommended for more advanced setups as ifupdown is riddled with legacy/compatibility crap.
 
-1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/server/linux/networkd/main.network).
+1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/networkd/main.network).
 1. Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
 1. Enable the service: `systemctl enable --now systemd-networkd`
 1. Purge `ifupdown` and `ifupdown2`.
