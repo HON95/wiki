@@ -10,6 +10,9 @@ Using **Debian 10 (Buster)**.
 
 ## Basic Setup
 
+If using automation to provision the system, only the "installation" part is necessary.
+If using a hypervisor, the VM may be turned into a template after the "installation" part, so that you only need to do the manual installation once and then clone the template when you need more VMs.
+
 ### Installation
 
 - Always verify the downloaded installation image after downloading it.
@@ -21,7 +24,9 @@ Using **Debian 10 (Buster)**.
     - Locale: United States UTF-8 (`en_US.UTF-8`).
     - Keymap: Your keyboard's keymap.
 - Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
+    - If using automation to manage the system, this doen't matter.
 - Use separate password for root and your personal admin user.
+    - If using automation to manage the system, the passwords may be something temporary and the non-root user may be called e.g. `ansible` and used for automation.
 - System disk partitioning:
     - "Simple" system: Guided, single partition, use all available space.
     - "Complex" system: Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
@@ -33,7 +38,7 @@ Using **Debian 10 (Buster)**.
 
 ### Reconfigure Clones
 
-If you didn't already configure this during the installation. Typically the case if cloning a template VMs or something.
+If you didn't already configure this during the installation, e.g. if cloning a template VMs or something.
 
 1. Check the system status:
     - Check for failed services: `systemctl --failed`
