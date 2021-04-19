@@ -271,6 +271,12 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - One app per database.
     - Encode the environment and DMBS version into the dataset name, e.g. `theapp-prod-pg10`.
 
+## Troubleshooting
+
+**"cannot create 'pool': URI scheme is not supported"**:
+
+Reboot.
+
 ## Related Software
 
 ### zfs-auto-snapshot
