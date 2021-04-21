@@ -26,7 +26,7 @@ The toolkit on Linux can be installed in different ways:
 
 Note that the toolkit requires a matching NVIDIA driver to be installed.
 
-#### Ubuntu (Main Repos)
+#### Ubuntu (Ubuntu Repos)
 
 Note: May be outdated.
 
@@ -46,7 +46,14 @@ See [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/
 1. Install CUDA from the new repo (includes the NVIDIA driver): `apt install cuda`
 1. Setup path: In `/etc/environment`, append `:/usr/local/cuda/bin` to the end of the PATH list.
 
-## Running
+### Docker Containers
+
+- Docker containers may run NVIDIA applications using the NVIDIA runtime for Docker.
+- **TODO**
+
+## Usage
+
+### General
 
 - Gathering system/GPU information with `nvidia-smi`:
     - Show overview: `nvidia-smi`
@@ -55,5 +62,10 @@ See [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/
     - Show NVLink info: `nvidia-smi  nvlink --status -i 0` (for GPU #0)
     - Monitor device stats: `nvidia-smi dmon`
 - To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
+
+### DCGM
+
+- For monitoring GPU hardware and performance.
+- See the DCGM exporter for Prometheus for monitoring NVIDIA GPUs from Prometheus.
 
 {% include footer.md %}
