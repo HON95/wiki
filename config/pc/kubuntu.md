@@ -42,7 +42,8 @@ breadcrumbs:
 1. Setup firewall:
     - Remove other firewalls: `apt purge ufw firewalld`.
     - Install `iptables iptables-persistent netfilter-persistent`.
-    - Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh).
+    - (Alternative 1) Create an IPTables script (e.g. [iptables.sh](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh)).
+    - (Alternative 2) Run my preset (basics only, no SSH etc.): `curl https://raw.githubusercontent.com/HON95/scripts/master/linux/iptables/iptables.sh | bash`
 1. Firefox:
     - Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
     - Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
