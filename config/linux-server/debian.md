@@ -10,6 +10,9 @@ Using **Debian 10 (Buster)**.
 
 ## Basic Setup
 
+If using automation to provision the system, only the "installation" part is necessary.
+If using a hypervisor, the VM may be turned into a template after the "installation" part, so that you only need to do the manual installation once and then clone the template when you need more VMs.
+
 ### Installation
 
 - Always verify the downloaded installation image after downloading it.
@@ -21,7 +24,9 @@ Using **Debian 10 (Buster)**.
     - Locale: United States UTF-8 (`en_US.UTF-8`).
     - Keymap: Your keyboard's keymap.
 - Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
+    - If using automation to manage the system, this doen't matter.
 - Use separate password for root and your personal admin user.
+    - If using automation to manage the system, the passwords may be something temporary and the non-root user may be called e.g. `ansible` and used for automation.
 - System disk partitioning:
     - "Simple" system: Guided, single partition, use all available space.
     - "Complex" system: Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
@@ -33,7 +38,7 @@ Using **Debian 10 (Buster)**.
 
 ### Reconfigure Clones
 
-If you didn't already configure this during the installation. Typically the case if cloning a template VMs or something.
+If you didn't already configure this during the installation, e.g. if cloning a template VMs or something.
 
 1. Check the system status:
     - Check for failed services: `systemctl --failed`
@@ -55,10 +60,10 @@ If you didn't already configure this during the installation. Typically the case
 ### Basic Configuration
 
 1. Packages:
-    - (Optional) Enable the `contrib` and `non-free` repo areas by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
+    - (Optional) Enable the `contrib` and `non-free` repo areas: `add-apt-repository <area>`
+        - Or by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
     - Update, upgrade and auto-remove.
-    - Install (essentials): `sudo ca-certificates`
-    - Install (extra): `man-db tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
+    - Install: `sudo ca-certificates software-properties-common man-db tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
     - (Optional) Install per-user tmpdirs: `libpam-tmpdir`
 1. (Optional) Configure editor (Vim):
     - Update the default editor: `update-alternatives --config editor`
@@ -152,7 +157,7 @@ This is used by default and is the simplest to use for simple setups.
 
 This is the systemd way of doing it and is recommended for more advanced setups as ifupdown is riddled with legacy/compatibility crap.
 
-1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/server/linux/networkd/main.network).
+1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/networkd/main.network).
 1. Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
 1. Enable the service: `systemctl enable --now systemd-networkd`
 1. Purge `ifupdown` and `ifupdown2`.

@@ -20,7 +20,7 @@ NVIDIA CUDA (Compute Unified Device Architecture) Toolkit, for programming CUDA-
 - [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
 - [CUDA GPUs (NVIDIA)](https://developer.nvidia.com/cuda-gpus)
 
-## Installation
+## Setup
 
 ### Linux
 
@@ -34,13 +34,30 @@ If an NVIDIA driver is already installed, it must match the CUDA version.
 
 Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
 
-## Usage
+#### Ubuntu (NVIDIA CUDA Repo)
 
-### Programming
+1. Follow the steps to add the NVIDIA CUDA repo: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
+    - But don't install `cuda` yet.
+1. Remove anything NVIDIA or CUDA from the system to avoid conflicts: `apt purge --autoremove cuda nvidia-* libnvidia-*`
+    - Warning: May break your PC. There may be better ways to do this.
+1. Install CUDA from the new repo (includes the NVIDIA driver): `apt install cuda`
+1. Setup path: In `/etc/environment`, append `:/usr/local/cuda/bin` to the end of the PATH list.
+
+### Docker Containers
+
+- Docker containers may run NVIDIA applications using the NVIDIA runtime for Docker.
+- **TODO**
+
+### DCGM
+
+- For monitoring GPU hardware and performance.
+- See the DCGM exporter for Prometheus for monitoring NVIDIA GPUs from Prometheus.
+
+## Programming
 
 See [CUDA (software engineering)](/config/se/general/cuda.md).
 
-### General Tools
+## Usage and Tools
 
 - Gathering system/GPU information with `nvidia-smi`:
     - Show overview: `nvidia-smi`

@@ -40,16 +40,17 @@ breadcrumbs:
 
 ### Config
 
-- (Linux) Disable middle mouse paste:
-    - Go to `about:config`.
-    - Set `middlemouse.paste` to false.
+- Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
+- Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
+- Disable external media keys by setting `media.hardwaremediakeys.enabled` to false in `about:config`.
+- (Linux) Install missing language support: `apt install $(check-language-support)`
 
 ## Git
 
 ### Config
 
 - Location: `~/.gitconfig`
-- [Example](https://github.com/HON95/configs/blob/master/pc/common/gitconfig).
+- [Example](https://github.com/HON95/configs/blob/master/git/config).
 
 ## Nvidia Settings (Linux)
 
@@ -94,7 +95,7 @@ GUI for configuring gaming mice.
 ### Config
 
 - Location: `~/.ssh/config`
-- [Example](https://github.com/HON95/configs/blob/master/pc/common/ssh_config).
+- [Example](https://github.com/HON95/configs/blob/master/pc/ssh/config).
 
 ## Steam (Linux)
 
@@ -106,7 +107,7 @@ GUI for configuring gaming mice.
 - Location:
     - Global: `/etc/vim/vimrc`
     - User: `~/.vimrc`
-- [Example](https://github.com/HON95/configs/blob/master/pc/common/vimrc).
+- [Example](https://github.com/HON95/configs/blob/master/vim/vimrc).
 
 ## VS Code
 
@@ -130,7 +131,7 @@ GUI for configuring gaming mice.
 - Location:
     - Linux: `~/.config/Code/User/settings.json`
     - Windows: `%APPDATA%\Code\User\settings.json`
-- [Example](https://github.com/HON95/configs/blob/master/pc/common/vscode_settings.json).
+- [Example](https://github.com/HON95/configs/blob/master/pc/vscode/settings.json).
 
 ## ZSH (personal) (Linux)
 

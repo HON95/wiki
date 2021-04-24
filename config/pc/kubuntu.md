@@ -37,11 +37,13 @@ breadcrumbs:
 1. Setup panels for all screens. Only show tasks for the current screen.
 1. Setup clipboard:
     - Open the clipboard settings from the taskbar.
+    - Select "ignore selection" to avoid copying when selecting text.
     - Set the history size to 1 (effectively disabling the history).
 1. Setup firewall:
-    - Remove other firewalls: `apt purge ufw firewalld`.
-    - Install `iptables iptables-persistent netfilter-persistent`.
-    - Create and run an IPTables script, e.g. [iptables.sh](https://github.com/HON95/configs/blob/master/pc/linux/iptables/iptables.sh).
+    - Remove other firewalls: `sudo apt purge ufw firewalld`.
+    - Install IPTables stuff: `sudo apt install iptables iptables-persistent netfilter-persistent`.
+    - (Alternative 1) Create an IPTables script (e.g. [iptables.sh](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh)).
+    - (Alternative 2) Run my preset (basics only, no SSH etc.): `curl https://raw.githubusercontent.com/HON95/scripts/master/linux/iptables/iptables.sh | sudo bash`
 1. Firefox:
     - Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
     - Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
@@ -50,7 +52,7 @@ breadcrumbs:
 
 ### Extra
 
-1. Install applications: See [PC Appluications](/config/pc/applications/).
+1. Install applications: See [PC Applications](/config/pc/applications/).
 1. (Optional) Install encrypted DVD support:
     - Install: `sudo apt install libdvd-pkg && sudo dpkg-reconfigure libdvd-pkg`
     - Warning: Don't change the region if not necessary. It's typically limited to five changes.
