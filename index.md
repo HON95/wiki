@@ -136,22 +136,22 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Database Management Systems (DBMSes)](se/general/dbmses/)
 - [Software Licensing](se/general/licensing/)
 
+### HPC
+
+- [CUDA](se/general/cuda/)
+
 ### Web
 
 - [Web Security](se/web/security/)
 
 ## Guides
 
+### Mining
+
+- [Headless Linux ETH Mining](guides/mining/headless-linux-eth-mining/)
+
 ### Network
 
 - [Juniper EX3300 Fan Mod](guides/network/juniper-ex3300-fanmod/)
-
-<!--
-## External Resources
-
-- [My miscellaneous configs and scripts](https://github.com/HON95/configs)
-- [My miscellaneous code snippets and dev scripts](https://github.com/HON95/code)
-- [My miscellaneous Ansible playbooks](https://github.com/HON95/ansible-playbooks)
--->
 
 {% include footer.md %}

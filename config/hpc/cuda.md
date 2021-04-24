@@ -8,6 +8,11 @@ breadcrumbs:
 
 NVIDIA CUDA (Compute Unified Device Architecture) Toolkit, for programming CUDA-capable GPUs.
 
+### Related Pages
+{:.no_toc}
+
+- [CUDA (software engineering)](/config/se/general/cuda.md)
+
 ## Resources
 
 - [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
@@ -20,24 +25,22 @@ NVIDIA CUDA (Compute Unified Device Architecture) Toolkit, for programming CUDA-
 ### Linux
 
 The toolkit on Linux can be installed in different ways:
-- Through an an existing package in your distro's repos (simplest and most compatible, but may be outdated).
+
+- Through an an existing package in your distro's repos (simplest and most compatible with other packages, but may be outdated).
 - Through a downloaded package manager package (up to date but may be incompatible with your installed NVIDIA driver).
-- Through a runfile (same as previous but more cross-distro and harder to manage). 
+- Through a runfile (same as previous but more cross-distro and harder to manage).
 
-Note that the toolkit requires a matching NVIDIA driver to be installed.
+If an NVIDIA driver is already installed, it must match the CUDA version.
 
-**Ubuntu (package from main repos):**
+Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
 
-1. Update your NVIDIA driver.
-    - Typically through the "Driver Manager" on Ubuntu-based distros, which installs it through the package manager.
-    - Check which version you have installed with `dpkg -l | grep nvidia-driver`.
-1. Install the CUDA toolkit: `apt install nvidia-cuda-toolkit`
+## Usage
 
-**Ubuntu (downloaded package or runfile):**
+### Programming
 
-See [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html).
+See [CUDA (software engineering)](/config/se/general/cuda.md).
 
-## Running
+### General Tools
 
 - Gathering system/GPU information with `nvidia-smi`:
     - Show overview: `nvidia-smi`

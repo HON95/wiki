@@ -17,10 +17,11 @@ breadcrumbs:
 
 ### Installation
 
-1. Download Raspbian: [Download Raspbian (Raspberry Pi)](https://www.raspberrypi.org/downloads/raspbian/)
-    - Use the desktop version for DE and the Lite version for no DE.
+1. Download ~~Raspbian~~ Raspberry Pi OS: [Operating system images (Raspberry Pi)](https://www.raspberrypi.org/software/operating-systems/)
+    - If you don't need a desktop, use "Raspberry Pi OS Lite".
 1. Burn it to the SD card.
     - Make sure the SD card is compatible: [SD Cards (Raspberry Pi)](https://www.raspberrypi.org/documentation/installation/sd-cards.md)
+    - Linux: `dd if=<img-file> of=<sd-dev> bs=4M conv=fdatasync status=progress`
     - Windows: Use Win32DiskImager.
 1. Mount the SD card in the Raspi and power it on.
 
@@ -37,11 +38,11 @@ breadcrumbs:
 ### Basic Setup without Desktop Environment
 
 1. Default credentials: Username `pi`, password `raspberry`.
-1. Configure through the menu: `raspi-config`
-    - Go through all the options.
-    - Locale and default locale: Use `en_US.UTF-8`.
-    - Disable all interfaces except SSH (disable SSH too if not needed).
-    - If a black border is present, disable overscan.
+1. Configure through the menu: `sudo raspi-config`
+    - If a black border is present, disable overscan (**TODO** enable or disable underscan?).
+    - Set the installed locale and default locale to `en_US.UTF-8`.
+    - Fix the keyboard layout.
+    - Enable SSHD.
 1. Upgrade the system and install stuff:
     - Upgrade: `apt update && apt upgrade`
     - Install basics: `apt install vim htop screen`
@@ -60,11 +61,11 @@ breadcrumbs:
 1. Configure SSHD:
     - `PermitRootLogin no`
     - `PasswordAuthentication no`
-    - `AllowTcpForwarding no`
-    - `GatewayPorts no`
-    - `AcceptEnv LANG LC_*`
+    - `#AcceptEnv LANG LC_*` (comment it)
     - Restart `sshd` and try to open a new session.
 1. Remove the MOTD: `> /etc/motd`
+1. Setup firewall:
+    1. **TODO**
 
 ## Applications
 

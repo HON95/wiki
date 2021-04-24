@@ -637,18 +637,7 @@ Instructions:
 
 #### Textfile Collector
 
-#### Collector Scripts
-
-Some I typically use.
-
-- [apt.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/apt.sh)
-- [yum.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/yum.sh)
-- [deleted_libraries.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/deleted_libraries.py)
-- [ipmitool (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/ipmitool) (requires ipmitool) (**Warning:** This is slow, don't run it frequently. If you do, it may spawn more and more processes waiting to read the IPMI sensors. Run it manually to get a feeling.)
-- [smartmon.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/smartmon.sh) (requires smartctl)
-- [My own textfile exporters](https://github.com/HON95/prometheus-textfile-exporters)
-
-#### Setup and Usage
+##### Setup and Usage
 
 1. Set the collector script output directory using the CLI argument `--collector.textfile.directory=<dir>`.
     - Example dir: `/var/lib/prometheus/node-exporter/`
@@ -660,6 +649,17 @@ Some I typically use.
     - Make sure `sponge` is installed. For Debian, it's found in the `moreutils` package.
     - Example cron file: `/etc/cron.d/prometheus-node-exporter-textfile-collectors`
     - Example cron entry: `0 * * * * root /opt/prometheus/node-exporter/textfile-collectors/apt.sh | sponge /var/lib/prometheus/node-exporter/apt.prom`
+
+##### Collector Scripts
+
+Some I typically use.
+
+- [apt.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/apt.sh)
+- [yum.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/yum.sh)
+- [deleted_libraries.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/deleted_libraries.py)
+- [ipmitool (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/ipmitool) (requires ipmitool) (**Warning:** This is slow, don't run it frequently. If you do, it may spawn more and more processes waiting to read the IPMI sensors. Run it manually to get a feeling.)
+- [smartmon.sh (Prometheus Community)](https://github.com/prometheus-community/node-exporter-textfile-collector-scripts/blob/master/smartmon.sh) (requires smartctl)
+- [My own textfile exporters](https://github.com/HON95/prometheus-textfile-exporters)
 
 ### Prometheus Blackbox Exporter
 
@@ -844,6 +844,42 @@ TFTP_OPTIONS="--create --secure"
 ## UniFi
 
 See [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/).
+
+## WireGuard
+
+### Installation
+
+1. Install: `apt install wireguard`
+1. (Debian) Fix broken DNS (using systemd resolved):
+    1. Enable systemd resolved: See [systemd-resolved (Debian server setup)](/config/linux-server/debian/#using-systemd-resolved-alternative-2).
+    1. Fix missing link: `ln -s /usr/bin/resolvectl /usr/local/bin/resolvconf`
+
+### Usage
+
+- Default config path (not world readable): `/etc/wireguard/*.conf`
+- Bring up or down a tunnel based on a config: `wg-quick {up|down} <conf>`
+- Start a tunnel on boot: `systemctl enable wg-quick@wg0.service` (for config `/etc/wireguard/wg0.conf`)
+
+**Example tunnel config**:
+
+```
+[Interface]
+# Generate with "wg genkey"
+PrivateKey = <HIDDEN>
+# Address for the local tunnel interface
+Address = 10.234.0.3/31, 2a0f:9400:800f:ff01::1/127
+DNS = 1.1.1.1, 2606:4700:4700::1111
+
+[Peer]
+# Get with "echo <privkey> | wg pubkey"
+PublicKey = <HIDDEN>
+# Add static route and reverse path filtering
+# "0.0.0.0/0, ::/0" means this will be the default gateway, capturing all traffic
+AllowedIPs = 0.0.0.0/0, ::/0
+Endpoint = vpn.oolacile.hon.systems.:51823
+# Keep the connection alive to keep firewall state alive (not very stealthy, though)
+PersistentKeepalive = 25
+```
 
 ## ZFS
 

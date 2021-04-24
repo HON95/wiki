@@ -18,6 +18,7 @@ breadcrumbs:
 ### Debian/Ubuntu
 
 - Nobody user and group: `nobody:nogroup`
+- List of default groups: (SystemGroups (Debian Wiki))[https://wiki.debian.org/SystemGroups#Other_System_Groups]
 - Release info file: `/etc/debian_version`
 
 ### RHEL/CentOS

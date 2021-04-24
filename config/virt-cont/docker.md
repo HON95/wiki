@@ -76,16 +76,6 @@ Using **Debian**.
 - Disable IPv4 and IPv6 NAT/masquerade for a bridge network: `docker network create <...> -o "com.docker.network.bridge.enable_ip_masquerade=false" <name>`
 - Set the Linux name of a bridge network: `docker network create <...> -o "com.docker.network.bridge.name=<name>" <name>`
 
-## Miscellanea
-
-### IPv6 Support
-
-- TL;DR: Docker doesn't prioritize implementing IPv6 properly.
-- While IPv4 uses IPTables filter rules for firewalling and IPTables NAT rules for masquerading and port forwarding, it generally uses no such mechanisms when enabling IPv6 (using `"ipv6": true`). Setting `"ip6tables": true` (disabled by default) is required to mimic the IPv4 behavior of filtering and NAT-ing. To disable NAT masquerading for both IPv4 and IPv6, set `enable_ip_masquerade=false` on individual networks. Disabling NAT masquerading for only IPv6 is not yet possible. (See [moby/moby #13481](https://github.com/moby/moby/issues/13481), [moby/moby #21951](https://github.com/moby/moby/issues/21951), [moby/moby #25407](https://github.com/moby/moby/issues/25407), [moby/libnetwork #2557](https://github.com/moby/libnetwork/issues/2557).)
-- IPv6-only networks (without IPv4) are not supported. (See [moby/moby #32675](https://github.com/moby/moby/issues/32675), [moby/libnetwork #826](https://github.com/moby/libnetwork/pull/826).)
-- IPv6 communication between containers (ICC) on IPv6-enabled bridges with IP6Tables enabled is broken, due to NDP (using multicast) being blocked by IP6Tables. On non-internal bridges it works fine. One workaround is to not use IPv6 on internal bridges or to not use internal bridges. (See [libnetwork/issues #2626](https://github.com/moby/libnetwork/issues/2626).)
-- The userland proxy (enabled by default, can be disabled) accepts both IPv4 and IPv6 incoming traffic but uses only IPv4 toward containers, which replaces the IPv6 source address with an internal IPv4 address (I'm not sure which), effectively hiding the real address and may bypass certain defences as it's apparently coming from within the local network. It also has other non-IPv6-related problems. (See [moby/moby #11185](https://github.com/moby/moby/issues/11185), [moby/moby #14856](https://github.com/moby/moby/issues/14856), [moby/moby #17666](https://github.com/moby/moby/issues/17666).)
-
 ## Docker Compose
 
 ### Setup
@@ -112,6 +102,24 @@ New `docker-compose`:
 export TMPDIR=/var/lib/docker-compose-tmp
 /usr/local/bin/docker-compose-normal "$@"
 ```
+
+## NVIDIA Container Toolkit
+
+The toolkit is used for running CUDA applications within containers.
+
+### Setup
+
+See the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
+
+## Miscellanea
+
+### IPv6 Support
+
+- TL;DR: Docker doesn't prioritize implementing IPv6 properly.
+- While IPv4 uses IPTables filter rules for firewalling and IPTables NAT rules for masquerading and port forwarding, it generally uses no such mechanisms when enabling IPv6 (using `"ipv6": true`). Setting `"ip6tables": true` (disabled by default) is required to mimic the IPv4 behavior of filtering and NAT-ing. To disable NAT masquerading for both IPv4 and IPv6, set `enable_ip_masquerade=false` on individual networks. Disabling NAT masquerading for only IPv6 is not yet possible. (See [moby/moby #13481](https://github.com/moby/moby/issues/13481), [moby/moby #21951](https://github.com/moby/moby/issues/21951), [moby/moby #25407](https://github.com/moby/moby/issues/25407), [moby/libnetwork #2557](https://github.com/moby/libnetwork/issues/2557).)
+- IPv6-only networks (without IPv4) are not supported. (See [moby/moby #32675](https://github.com/moby/moby/issues/32675), [moby/libnetwork #826](https://github.com/moby/libnetwork/pull/826).)
+- IPv6 communication between containers (ICC) on IPv6-enabled bridges with IP6Tables enabled is broken, due to NDP (using multicast) being blocked by IP6Tables. On non-internal bridges it works fine. One workaround is to not use IPv6 on internal bridges or to not use internal bridges. (See [libnetwork/issues #2626](https://github.com/moby/libnetwork/issues/2626).)
+- The userland proxy (enabled by default, can be disabled) accepts both IPv4 and IPv6 incoming traffic but uses only IPv4 toward containers, which replaces the IPv6 source address with an internal IPv4 address (I'm not sure which), effectively hiding the real address and may bypass certain defences as it's apparently coming from within the local network. It also has other non-IPv6-related problems. (See [moby/moby #11185](https://github.com/moby/moby/issues/11185), [moby/moby #14856](https://github.com/moby/moby/issues/14856), [moby/moby #17666](https://github.com/moby/moby/issues/17666).)
 
 ## Useful Software
 

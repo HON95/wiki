@@ -24,10 +24,23 @@ breadcrumbs:
 
 ### MemTest86 (Standalone)
 
-- For health error testing.
+- Runs multiple tests and passes over (almost) all the memory to test for errors.
+- Useful for testing bad DIMMs and overclocking stability.
 - Install: [Download](https://www.memtest86.com/download.htm)
     - Use v4 for systems without UEFI support.
-- Not the same as Memtest86+. Memtest86+ is an old fork of Memtest86.
+- Not the same as "Memtest86+". Memtest86+ is an old fork of Memtest86.
+
+### stress-ng (Linux)
+
+- Among other usages, it can test a part of the memory (since the OS is running it obviously can't use everything).
+- Useful for quickly finding severe memory errors without e.g. rebooting into MemTest.
+
+Example usage:
+
+```sh
+# 1 stressor, 75% of memory, with verification, for 10 minutes
+stress-ng --vm 1 --vm-bytes 75% --vm-method all --verify -t 10m -v
+```
 
 ## Storage
 
@@ -43,7 +56,7 @@ breadcrumbs:
     - Note that write performance may sharply degrade after a while when the hardware write cache(s) fill up, so make sure the tests are run for long enough.
     - Examples: See below.
 
-Usage examples:
+Examples usage:
 
 ```sh
 # Sequential, asynchronous, 4kiB, random write
