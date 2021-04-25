@@ -157,5 +157,6 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ## Miscellanea
 
 - [Betzy (Supercomputer)](/miscellanea/betzy/)
+- [Vilje (Supercomputer)](/miscellanea/vilje/)
 
 {% include footer.md %}

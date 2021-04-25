@@ -5,7 +5,20 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Norways most powerful supercomputer from 2020, managed by UNINETT Sigma2.
+Norway's most powerful supercomputer as of its inauguration in late 2020.
+Managed by UNINETT Sigma2 and partially NTNU Trondheim.
+
+## Resources
+
+- [Betzy (TOP500)](https://www.top500.org/system/179861/)
+- [Betzy documentation (Sigma2)](https://documentation.sigma2.no/hpc_machines/betzy.html)
+
+## History
+
+- 2018: Procurement started. \[13\]
+- June 2020: Placed #55 on the TOP500 list. \[12\]
+- 7 December 2020: Inauguration. \[11\]
+- April 2021: Four new X2415 blades (A100) and 5.3PB more storage (from 2.5PB to 7.8PB). \[10\]
 
 ## Specifications
 
@@ -66,11 +79,6 @@ A mix of general XH2000 specifications and specific Betzy specifications.
         - Primary (external) loop connected to customer water loop.
         - Secondary (internal) loop connected to blades, management switches, interconnect switches and PSUs.
 
-## History
-
-- 7 December 2020: Inauguration. \[11\]
-- April 2021 (unknown date): Four new X2415 blades (A100) and 5.3PB more storage (from 2.5PB to 7.8PB). \[10\]
-
 ## References
 
 - \[1\] UNINETT Sigma2. "Betzy." (Accessed 2020-09-03.) https://documentation.sigma2.no/hpc_machines/betzy.html
@@ -83,5 +91,7 @@ A mix of general XH2000 specifications and specific Betzy specifications.
 - \[9\] Atos. "BullSequana XH2000 features." (Accessed 2020-09-03.) https://atos.net/wp-content/uploads/2020/07/BullSequanaXH2000_Features_Atos_supercomputers.pdf
 - \[10\] Digi.no. "Sigma2 skal utvide to av de norske superdatamaskinene." (Accessed 2021-04-21.) https://www.digi.no/artikler/sigma2-skal-utvide-to-av-de-norske-superdatamaskinene/509303
 - \[11\] UNINETT Sigma2. "Betzy Inauguration." (Accessed 2021-04-21.) https://www.sigma2.no/betzy-inauguration
+- \[12\] TOP500. "Betzy." (Accessed 2021-04-25.) https://top500.org/system/179861/
+- \[13\] UNINETT Sigma2. "Procurement Project HPC B1 (Betzy)." (Accessed 2021-04-25.) https://www.sigma2.no/procurement-project-hpc-b1
 
 {% include footer.md %}
