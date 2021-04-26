@@ -444,6 +444,44 @@ echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
     - Add whitelist domains to `/etc/pihole/whitelist.txt`.
     - Run `pihole -g` to update lists.
 
+## Processor Counter Monitor (PCM)
+
+### Setup
+
+1. Load the MSR (x86 model-specific register) module: `modprobe msr`
+    - Make this persistent or load it when you need PCM.
+1. Install the perf toolkit: `apt install linux-tools-generic`
+1. Download the source: `git clone https://github.com/opcm/pcm`
+1. Build it: `make`
+    - The output binaries are contained in the current dir with `.x` suffixes.
+
+### Usage
+
+#### CLI
+
+- Basic process monitoring: `pcm`
+- Memory bandwidth monitoring: `pcm-memory`
+- Memory/cache latency monitoring: `pcm-latency`
+- PCIe per-socket bandwidth monitoring: `pcm-pcie`
+- PCIe per-device bandwidth monitoring: `pcm-iio`
+- NUMA monitoring: `pcm-numa`
+- Energy-related monitoring: `pcm-power`
+- Intel TSX monitoring: `pcm-tsx`
+- Procesor core event monitoring: `pcm-core`
+- Procesor core event querying: `pcm-query`
+- Program core/uncore events: `pcm-raw`
+- Collect memory bandwidth utilization histogram: `pcm-hw-histogram`
+
+#### GUI
+
+- Grafana dashboard using Prometheus exporter (`pcm-sensor-server`).
+- KDE KSysGuard: `pcm-sensor`
+- WIndows perfmon: `pcm-service`
+
+#### Miscellanea
+
+- JSON or Prometheus exporter: `pcm-sensor-server`
+
 ## Portainer
 
 ### Standalone Server Setup
