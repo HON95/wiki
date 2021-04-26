@@ -16,8 +16,12 @@ In addition to research, it was used for numerical weather prediction for MET.
 
 ## History
 
-- 2012: Procurement finished as a cooperation between NTNU, Norwegian Meteorological Institute (MET) and UNINETT Sigma2. \[2\]
+- 2012: Procurement finished as a cooperation between NTNU, Norwegian Meteorological Institute (MET) and UNINETT Sigma (not Sigma2?). \[2\]
 - June 2012: Placed #44 on TOP500. \[4\]
+- November 2016: Last appearance on TOP500, placed #442. \[4\]
+- Q4 2020: Decommission in connection with Betzy being inaugurated. \[5\]
+- Q1 2021: Login nodes closed. \[1\]\[5\]
+- Q1 2021: Dismantled. \[1\]
 
 ## Specifications
 
@@ -50,5 +54,6 @@ In addition to research, it was used for numerical weather prediction for MET.
 - \[2\] UNINETT Sigma2. "HPC and storage hardware." (Accessed 2021-04-25.) https://www.sigma2.no/systems
 - \[3\] NTNU HPC Group. "About Vilje." (Accessed 2021-04-25.) https://www.hpc.ntnu.no/ntnu-hpc-group/vilje/about-vilje
 - \[4\] TOP500. "SGI ICE X." (Accessed 2021-04-25.) https://top500.org/system/177817/
+- \[5\] UNINETT Sigma2. "Migrating from Stallo and Vilje." (Accessed 2021-04-25.) https://www.sigma2.no/migrating-stallo-and-vilje
 
 {% include footer.md %}
