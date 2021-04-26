@@ -83,9 +83,12 @@ breadcrumbs:
 
 ### Unified Virtual Addressing (UVA)
 
-- Causes CUDA to use a single address space for allocations for both the host and devices (if the host supports it).
-- Allows using `cudaMemcpy` without having to spacify in which device (or host) and memory the pointer exists in.
-- Allows _zero-copy_ memory where the GPU can access pinned/managed host memory over the PCIe interconnect (including the high latency for accessing off-device memory).
+- Causes CUDA to use a single address space for allocations for both the host and all devices (as long as the host supports it).
+- Requires a 64-bit application, Fermi-class or newer GPU and CUDA 4.0 or newer.
+- Allows using `cudaMemcpy` without having to spacify in which device (or host) and memory the pointer exists in. `cudaMemcpyDefault` replaces `cudaMemcpyHostToHost`, `cudaMemcpyHostToDevice`, `cudaMemcpyDeviceToHost`, and `cudaMemcpyDeviceToDevice`. Eliminates the need for e.g. `cudaHostGetDevicePointer`.
+- Allows _zero-copy_ memory for managed/pinned memory. For unpinned host pages, CUDA must first copy the data to a temporary pinned set of pages before copying the data to the device. For pinned data, no such temporary buffer is needed (i.e. zero copies on the host side). The programmer must explicitly allocate data (or mark allocated data) as managed using `cudaMallocHost`/`cudaHostAlloc` and `cudaFreeHost`. `cudaMemcpy` works the same and automatically becomes zero-copy if using managed memory.
+- The GPU can access pinned/managed host memory over the PCIe interconnect, but including the high latency and low bandwidth due to accessing off-device memory.
+- While pinning memory results in improved transfers, pinning too much memory reduces overall system performance as the in-memory space for pageable memory becomes smaller. Finding a good balance may in some cases require some tuning.
 
 ### Unified Memory
 
@@ -101,10 +104,23 @@ breadcrumbs:
 - While the Kepler and Maxwell architectures support a limited version of Unified Memory, the Pascal architecture is the first with hardware support for page faulting and migration via its Page Migration Engine. For the pre-Pascal architectures, _all_ managed data is automatically copied to the GPU right before lanuching a kernel on it, since they don't support page faulting for managed data currently present on the host or another device. This also means that Pascal and later includes memory copy delays in the kernel run time while pre-Pascal does not as everything is migrated before it begins executing (increasing the overall application runtime). This also prevents pre-Pascal GPUs from accessing managed data from both CPU and GPU concurrently (without causing segfaults) as it can't assure data coherence (although care must still be taken to avoid race conditions and data in invalid states for Pascal and later GPUs).
 - Explicit prefetching may be used to assist the data migration through the `cudaMemPrefetchAsync` call.
 
+### Peer-to-Peer (P2P) Communication
+
+- Based on UVA.
+- Allows devices to directly access and transfer data to/from neighboring devices/peers, without any unnecessary copies.
+- Significantly reduces latency since the host/CPU doesn't need to be involved and typically saturates PCIe bandwidth.
+- Optionally, using NVLink or NVSwitch allows for significantly higher throughput for accesses/transfers than for PCIe.
+- To check if peers can access eachother, use `cudaDeviceCanAccessPeer` (for each direction).
+- To enable access between peers, use `cudaDeviceEnablePerAccess` (for the other device, within the context of the first device).
+
 ### Streams
 
 - **TODO**
 - If no stream is specified, it defaults to stream 0, aka the "null stream".
+
+### Miscellanea
+
+- When transferring lots of small data arrays, try to combine them. For strided data, try to use `cudaMemcpy2D` or `cudaMemcpy3D`. Otherwise, try to copy the small arrays into a single, temporary, pinned array.
 
 ## Tools
 
