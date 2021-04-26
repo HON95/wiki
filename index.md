@@ -39,9 +39,9 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### HPC
 
+- [Slurm Workload Manager](/config/hpc/slurm/)
 - [CUDA](/config/hpc/cuda/)
 - [Open MPI](/config/hpc/openmpi/)
-- [Slurm Workload Manager](/config/hpc/slurm/)
 
 ### IoT & Home Automation
 

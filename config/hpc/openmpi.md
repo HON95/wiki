@@ -34,7 +34,6 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
 ## Run
 
 - Run: `mpirun [opts] <app> [app_opts]`
-    - On certain Slurm clusters it's advised to use `srun` or `srun --mpi=pmix` instead.
 - Set number of processes to use: `-n <n>`
 - Allow more processes than physical cores: `--oversubscribe`
 - Allow running as root (discouraged): `--allow-run-as-root`
@@ -43,5 +42,17 @@ A Message Passing Interface (MPI) implementation for C, Fortran, Java, etc.
     - Disable TCP: `--mca btl ^tcp`
     - Specify BTLs exactly: `--mca btl self,vader,tcp`
     - *Something* (**TODO**): `--mca pml ob1`
+
+### Slurm
+
+This applies to cluster using the Slurm workload manager.
+
+- `srun` may be used instead of `mpirun` to let Slurm run the tasks directly through the PMI2/PMIx APIs.
+    - Unlike `mpirun`, this defaults to 1 process per node.
+    - Specify `--mpi={pmi2|pmix}` to explicitly use PMI2 or PMIx.
+
+## Miscellanea
+
+- `PMI_SIZE` and `PMI_RANK` for PMI2, or `PMIX_RANK` for PMIx (no `PMIX_SIZE`), may be used to get the MPI works size and rank.
 
 {% include footer.md %}

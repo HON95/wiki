@@ -1,8 +1,8 @@
 ---
-title: Slurm Workload Manager
+title: HPC Cluster
 breadcrumbs:
 - title: Configuration
-- title: IoT
+- title: High-Performance Computing (HPC)
 ---
 {% include header.md %}
 
@@ -14,6 +14,7 @@ breadcrumbs:
     - Show partitions: `scontrol show partition [-a]`
     - Show partition/node usage: `sinfo [-a]`
     - Show node capabilities: `sinfo -o "%20N    %8c    %10m    %25f    %10G"` (example)
+    - Show GUI (requires X11 session/forwarding): `sview`
 - Accounting:
     - Show accounts for user: `sacctmgr show assoc where user=<username> format=account`
     - Show default account for user: `sacctmgr show user <username> format=defaultaccount`
@@ -28,7 +29,7 @@ breadcrumbs:
     - Cancel specific job: `scancel <jobid>`
     - Cancel set of jobs: `scancel [-t <state>] [-u <user>]`
 
-## Example Slurm-File
+### Example Slurm Job File
 
 ```sh
 #!/bin/sh
@@ -46,7 +47,7 @@ breadcrumbs:
 ## SBATCH --mail-user=user@example.net
 # #SBATCH --mail-type=ALL
 
-# Run some program on all processors (or use mpirun)
+# Run some program on one processor on all nodes
 srun uname -a
 ```
 
