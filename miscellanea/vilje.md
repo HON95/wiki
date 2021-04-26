@@ -5,7 +5,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Norway's most powerful supercomputer as of its procurement finished in 2012.
+Norway's most powerful supercomputer as of when its procurement finished in 2012.
 Managed by UNINETT Sigma2 and NTNU Trondheim.
 In addition to research, it was used for numerical weather prediction for MET.
 
