@@ -26,7 +26,7 @@ In addition to research, it was used for numerical weather prediction for MET.
 ## Specifications
 
 - System: SGI Altix 8600 \[2\], SGI Altix ICE X \[3\] or SGI ICE X \[4\].
-- Machines \[2\]\[3\]:
+- Overview \[2\]\[3\]:
     - Racks: 19.5
     - Nodes total: 1404
     - Cores total: 22 464
