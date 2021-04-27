@@ -67,4 +67,17 @@ See [CUDA (software engineering)](/config/se/general/cuda.md).
     - Monitor device stats: `nvidia-smi dmon`
 - To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
 
+## Troubleshooting
+
+**"Driver/library version mismatch" and similar**:
+
+Other related error messages from various tools:
+
+- "Failed to initialize NVML: Driver/library version mismatch"
+- "forward compatibility was attempted on non supported HW"
+
+Caused by the NVIDIA driver being updated without the kernel module being reloaded.
+
+Solution: Reboot.
+
 {% include footer.md %}

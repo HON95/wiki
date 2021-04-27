@@ -115,13 +115,21 @@ breadcrumbs:
 
 ### Streams
 
-- **TODO**
-- If no stream is specified, it defaults to stream 0, aka the "null stream".
+- All device operations (kernels and memory operations) run sequentially in a single stream, which defaults to the "null stream" (stream 0) if none is specified.
+- The null stream is synchronous with all other streams. The `cudaStreamNonBlocking` flag may be specified to other streams to avoid synchronizing with the null stream. CUDA 7 allows setting an option ("per-thread default stream") for changing the default behavior to (1) each host thread having a separate default stream and (2) default streams acting like regular streams (no longer synchronized with every other stream). To enable this, set `--default-stream per-thread` for `nvcc`. When enable, `cudaStreamLegacy` may be used if you need the old null stream for some reason.
+- If using streams and the application is running less asynchronously than it should, make sure you're not (accidentally) using the null stream for anything.
+- While streams are useful for decoupling and overlapping independent execution streams, the operations are still _somewhat_ performed in order (but potentially overlapping) on the device (on the different engines). Keep this in mind, e.g. when issuing multiple memory transfers for multiple streams.
+- Streams allow for running asynchronous memory transfers and kernel execution at the same time, by running them in _different_, _non-default_ streams. For memory transfers, the memory must be managed/pinned. Take care _not_ to use the default stream as this will synchronize with everything.
+- Streams are created with `cudaStreamCreate` and destroyed with `cudaStreamDestroy`.
+- Memory transfers using streams requires using `cudaMemcpyAsync` (with the stream specified) instead of `cudaMemcpy`. The variants `cudaMemcpyAsync2D` and `cudaMemcpyAsync3D` may also be used for strided access.
+- Kernels are issued within a stream by specifying teh stream as the fourth parameter (the third parameter may be set to `0` to ignore it).
+- To wait for all operations for a stream and device to finish, use `cudaStreamSynchronize`. `cudaStreamQuery` may be used to query pending/unfinished operations without blocking. Events may also be used for synchronization. To wait for _all_ streams on a device, use the normal `cudaDeviceSynchronize` instead.
 
 ### Miscellanea
 
 - When transferring lots of small data arrays, try to combine them. For strided data, try to use `cudaMemcpy2D` or `cudaMemcpy3D`. Otherwise, try to copy the small arrays into a single, temporary, pinned array.
 - For getting device attributes/properties, `cudaDeviceGetAttribute` is significantly faster than `cudaGetDeviceProperties`.
+- Use `cudaDeviceReset` to reset all state for the device by destroying the CUDA context.
 
 ## Tools
 
@@ -141,6 +149,10 @@ breadcrumbs:
 - Example usage to show which CUDA calls and kernels tak the longest to run: `sudo nvprof <application>`
 - Example usage to show interesting metrics: `sudo nvprof --metrics "eligible_warps_per_cycle,achieved_occupancy,sm_efficiency,alu_fu_utilization,dram_utilization,inst_replay_overhead,gst_transactions_per_request,l2_utilization,gst_requested_throughput,flop_count_dp,gld_transactions_per_request,global_cache_replay_overhead,flop_dp_efficiency,gld_efficiency,gld_throughput,l2_write_throughput,l2_read_throughput,branch_efficiency,local_memory_overhead" <application>`
 
+### NVIDIA Visual Profiler (nvvp)
+
+- **TODO** Seems like an older version of Nsight.
+
 ### Nsight
 
 - For debugging and profiling applications.
@@ -150,6 +162,15 @@ breadcrumbs:
     - Nsight Graphics: For graphical applications.
     - IDE integration.
 - Replaces nvprof.
+
+#### Installation
+
+1. Download the run-files from the website for each variant (System, Compute, Graphics) you want.
+1. Run the run-files with sudo.
+1. **TODO** Fix path or something.
+
+#### Usage
+
 - When it reruns kernels for different tests, it restores the GPU state but not the host state. If this causes incorrect behavior, set `--replay-mode=application` to rerun the entire application instead.
 
 {% include footer.md %}
