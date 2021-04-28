@@ -890,7 +890,7 @@ See [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/).
 1. Install: `apt install wireguard`
 1. (Debian) Fix broken DNS (using systemd resolved):
     1. Enable systemd resolved: See [systemd-resolved (Debian server setup)](/config/linux-server/debian/#using-systemd-resolved-alternative-2).
-    1. Fix missing link: `ln -s /usr/bin/resolvectl /usr/local/bin/resolvconf`
+    1. Fix missing `resolvconf`: `ln -s /usr/bin/resolvectl /usr/local/bin/resolvconf`
 
 ### Usage
 
