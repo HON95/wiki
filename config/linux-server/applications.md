@@ -828,6 +828,34 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 - Run test: `smartctl -t <short|long|conveyance|select> [-C] <dev>`
     - `-C`: Foreground mode.
 
+## SSHD
+
+### Security Recommendations
+
+- Disable root login (strongly recommended).
+    - Use users with sudo access (or with su and knowing the root password) instead.
+    - Principle of least privilege.
+    - Avoid using shared accounts. Simple accounting/auditing is basically impossible (who are logged in, who did that, etc.) and passwords are easily leaked (when sending it to persons that should have access) and hard to change (having to redistribute the one password to everyone again).
+- For public-facing entry points, use pubkey authentication and disable password authentication (recommended).
+    - Pubkey authn is secure against MITM attacks since it uses a Diffie Hellman key exchange where the middle man can't affect the input from the client since it's signed by the clients private key (which is never sent to the server). Password authn sends the actual password over the wire, meaning a middle man can easily disguise itself as the client. (See [SSH Man-in-the-Middle Attack and Public-Key Authentication Method (Gremwell)](https://www.gremwell.com/ssh-mitm-public-key-authentication).)
+    - Pubkeys are often more convenient to use since the user won't have to type the full password. In public, not having to type the password (when people are watching) may be considered more secure.
+    - For _internal_ systems, where authn is typically centrally handled and users often have to SSH between systems (where their SSH key isn't and shouldn't be present), passwords generally are a better option.
+- Consider using MFA with OTP in addition to the pubkey (sometimes recommended).
+    - Note that this also makes logins signficantly more annoying for users, so don't use this needlessly.
+    - See the [Google Authenticator section](#google-authenticator)).
+- Use Fail2Ban or similar (recommended):
+    - Blocks IP addresses after a number of unsuccessful attempts.
+    - Highly effective against brute force attacks.
+    - May cause accidental of malicious lockouts of legitimate users.
+- Change the server port (not recommended).
+    - Security by obscurity.
+    - Almost eliminates "random" attacks, but useless if being targeted as a simple port scan will generally reveal the port.
+    - Reduces the chance of successful authentications if the server uses _easily guessable users_ (e.g. root, admin, pi) with _weak passwords_ (if password authn is even enabled).
+    - Reduces server load from not having to deal with the connections, but the load is typically negligible anyways.
+- Disable IPv6 (not recommended).
+    - Fix the network instead.
+    - For legacy IPv4-only networks or servers, firewall IPv6 instead (all of it).
+
 ## TFTP-HPA
 
 ### Setup
