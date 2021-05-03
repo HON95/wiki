@@ -62,19 +62,22 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 1. Install: `apt install -t buster-backports zfsutils-linux`
 1. Fix automatic unlocking of encrypted pools/datasets:
     1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
-    1. Change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a`, so that it loads encryption keys.
+    1. In `zfs-mount.service`, change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a`, so that it loads encryption keys.
     1. Reboot and test. It may fail due to dependency/boot order stuff.
 1. (Optional) Fix pool cache causing pool loading problems at boot:
-    1. Note: Do this if `systemctl status zfs-import-cache.service` shows that no pools were found.
+    1. Note: Do this if `systemctl status zfs-import-cache.service` shows that no pools were found. I had significant problems with this multiple times with Proxmox VE on an older server.
     1. Make sure the pools are not set to use a cache file: `zpool get cachefile` and `zpool set cachefile=none <pool>`
+    1. Copy `/lib/systemd/system/zfs-import-scan.service` to `/etc/systemd/system/`.
+    1. In `zfs-mount.service`, comment the `ConditionFileNotEmpty=!/etc/zfs/zpool.cache` line (the file tends to find a way back to existance).
+    1. Update systemd files: `systemctl daemon-reload`
     1. Disable the caching import service: `systemctl disable zfs-import-cache.service`
     1. Enable the scanning import service: `systemctl enable zfs-import-scan.service`
+    1. Delete the existing cache file: `rm /etc/zfs/zpool.cache`
     1. In `/etc/default/zfs`, set:
         - `ZPOOL_CACHE=''` (no cache file)
         - `ZFS_INITRD_PRE_MOUNTROOT_SLEEP='5'` (or higher)
         - `ZFS_INITRD_POST_MODPROBE_SLEEP='5'` (or higher)
     1. Update initramfs: `update-initramfs -u -k all`
-    1. Delete the existing cache file: `rm /etc/zfs/zpool.cache`
     1. Reboot.
     1. Check if the pools are loaded correctly _at boot_ (see `systemctl status zfs-import-cache.service`).
 
@@ -105,8 +108,9 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 ### Pools
 
 - Recommended pool options:
-    - Set thr right physical block/sector size: `ashift=<9|12>` (for 2^9 and 2^12, use 12 if unsure)
-    - Enabel compression: `compression=zstd`
+    - Set physical block/sector size: `ashift=<9|12>`
+        - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
+    - Enable compression: `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
     - Store extended attributes in the inodes: `xattr=sa` (`on` is default and stores them in a hidden file)
     - Don't enable dedup.
@@ -124,6 +128,7 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 - Recommended dataset options:
     - Set quota: `quota=<size>`
     - Set reservation: `reservation=<size>`
+    - (See the recommended pool options since most are inherited.)
 - Create dataset:
     - Format: `zfs create [options] <pool>/<name>`
     - Use `-p` to create parent datasets if they maybe don't exist.
@@ -133,6 +138,7 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - Get: `zfs get {all|<property>} [-r] [dataset]` (`-r` for recursive)
     - Set: `zfs set <property>=<value> <dataset>`
     - Reset to default/inherit: `zfs inherit -S [-r] <property> <dataset>` (`-r` for recursive, `-S` to use the received value if one exists)
+- Don't store anything in the root dataset itself, since it can't be replicated.
 
 ### Snapshots
 
@@ -157,7 +163,7 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 - Send encrypted snapshot over SSH (full example): `sudo zfs send -Rw tank1@1 | pv | ssh node2 sudo zfs recv tank2/tank1`
     - Make sure you don't need to enter a sudo password on the other node, that would break the piped transfer.
 - Consider running it in a screen session or something to avoid interruption.
-- To show transfer info (duration, size, throughput), pipe it through `pv`.
+- To show transfer info (duration, size, throughput), pipe it through `pv`. To rate limit, specify e.g. `-L 8M` (8MiB/s).
 
 ### Encryption
 

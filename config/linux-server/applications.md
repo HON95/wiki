@@ -834,6 +834,7 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 
 - Disable root login (strongly recommended).
     - Use users with sudo access (or with su and knowing the root password) instead.
+    - Only allow with `PermitRootLogin without-password` in case you need root access to the server with tools that don't play nice with sudo.
     - Principle of least privilege.
     - Avoid using shared accounts. Simple accounting/auditing is basically impossible (who are logged in, who did that, etc.) and passwords are easily leaked (when sending it to persons that should have access) and hard to change (having to redistribute the one password to everyone again).
 - For public-facing entry points, use pubkey authentication and disable password authentication (recommended).
