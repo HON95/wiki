@@ -101,9 +101,6 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - The kernel module and userland tools should match.
 - Be super careful when destroying stuff! ZFS never asks for confirmation.
     - When entering dangerous commands, considering adding a `#` to the start to prevent running it half-way by accident.
-- Upgrade pool to support new features: `zpool upgrade <pool>`
-    - `zpool status` shows if any pool required upgrades.
-    - This is needed/recommended after upgrading ZFS.
 
 ### Pools
 
@@ -112,7 +109,9 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
     - Enable compression: `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
-    - Store extended attributes in the inodes: `xattr=sa` (`on` is default and stores them in a hidden file)
+    - Store extended attributes in the inodes: `xattr=sa`
+        - `on` is default and stores them in a hidden file.
+    - Relax access times: `atime=off` and `relatime=on`
     - Don't enable dedup.
 - Create pool:
     - Format: `zpool create [options] <name> <levels-and-drives>`
@@ -125,6 +124,7 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 
 ### Datasets
 
+- List datasets: `zfs list [-t {filesystem|volume|snapshot|bookmark}] [-r] [dataset]`
 - Recommended dataset options:
     - Set quota: `quota=<size>`
     - Set reservation: `reservation=<size>`
@@ -207,6 +207,9 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 - Add bind mount targeting ZFS mount:
     - fstab entry (example): `/bravo/abc /export/abc none bind,defaults,nofail,x-systemd.requires=zfs-mount.service 0 0`
     - The `x-systemd.requires=zfs-mount.service` is required to wait until ZFS has mounted the dataset.
+- Upgrade pool to support new features: `zpool upgrade <pool>`
+    - `zpool status` shows if any pool required upgrades.
+    - This is needed/recommended after upgrading ZFS.
 - For automatic creation and rotation of periodic snapshots, see the zfs-auto-snapshot subsection.
 
 ## Best Practices and Suggestions
@@ -233,11 +236,8 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - Run it e.g. every 2 weeks or monthly.
 - Snapshots are great for incremental backups. They're easy to send places.
 - Use quotas, reservations and compression.
-- Very frequent reads:
-    - E.g. for a static web root.
-    - Set `atime=off` to disable updating the access time for files.
 - Database:
-    - Disable `atime`.
+    - Set `atime=off` and `relatime=on` instead (avoid updating access time way too often due to frequent reads).
     - Use an appropriate recordsize with `recordsize=<size>`.
         - InnoDB should use 16k for data files and 128k on log files (two datasets).
         - PostgreSQL should use 8k (or 16k) for both data and WAL.
