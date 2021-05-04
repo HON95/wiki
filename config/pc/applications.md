@@ -72,6 +72,16 @@ GUI for configuring gaming mice.
 - In `Window > Appearance`, change font to Consolas, regular, size 10.
 - In `Window > Colours`, set all ANSI non-bold colors to the same as the bold ones.
 
+## Screen
+
+### Usage
+
+#### Serial
+
+- Open serial session: `screen /dev/ttyUSB0 38400,-crtscts` (38400 baud, no flow control)
+- End session: `Ctrl+A, \`
+- Note: For some devices, you may need to use `Ctrl+H` instead of backspace.
+
 ## SMB
 
 ### Troubleshooting
@@ -100,6 +110,41 @@ GUI for configuring gaming mice.
 ## Steam (Linux)
 
 - Windows appdata dir: `steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/AppData/`
+
+## tmux
+
+### Setup
+
+- Config files:
+    - User: `~/.tmux.conf`
+    - Global: `/etc/tmux.conf`
+- Set/fix default shell and colors (using ZSH as example):
+    - In `~/.tmux.conf`, set `set-option -g default-shell /bin/zsh` (for ZSH).
+    - In `~/.zshrc`, set `echo  "export TERM=xterm-256color" >> ~/.zshrc`.
+
+### Usage
+
+- Sessions:
+    - Start new session: `tmux new [-s <name>] [-d]`
+        - `-d` to start detached.
+    - Detach from session: `Ctrl+B D`
+    - List sessions: `tmux ls`
+    - Attach to session: `tmux attach [-d] [-t <session>]`
+        - `-d` to detach any other attached clients.
+- Enter command: `Ctrl+B :<command> Enter`
+- Windows:
+    - Switch to window: **TODO**
+- Panes:
+    - Split horizontally: `Ctrl+B "`
+    - Split vertically: `Ctrl+B %`
+    - Switch active pane: `Ctrl+B <arrow>`
+    - Show pane numbers: `Ctrl+B Q`
+    - Kill pane: `Ctrl+B X` (or exit normally)
+- Killing:
+    - Kill session: `tmux kill-session -t <session>`
+    - Kill server with all sessions: `tmux kill-server`
+- Miscellanea:
+    - Type into all panes (command): `:setw synchronize-panes`
 
 ## Vim
 

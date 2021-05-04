@@ -124,7 +124,10 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 
 ### Datasets
 
-- List datasets: `zfs list [-t {filesystem|volume|snapshot|bookmark}] [-r] [dataset]`
+- Basics:
+    - List datasets: `zfs list [-t {filesystem|volume|snapshot|bookmark}] [-r] [dataset]`
+    - Check if mounted: `zfs get mounted -t filesystem`
+    - Check if unlocked (if encrypted): `zfs get keystatus`
 - Recommended dataset options:
     - Set quota: `quota=<size>`
     - Set reservation: `reservation=<size>`
@@ -137,6 +140,8 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - Properties may have the following sources, as seen in the "source" column: Local, default, inherited, temporary, received and none.
     - Get: `zfs get {all|<property>} [-r] [dataset]` (`-r` for recursive)
     - Set: `zfs set <property>=<value> <dataset>`
+    - Inherit: `zfs inherit [-r] [dataset]` (`-r` for recursive)
+        - See the encryption section for inheritance of certain encryption properties.
     - Reset to default/inherit: `zfs inherit -S [-r] <property> <dataset>` (`-r` for recursive, `-S` to use the received value if one exists)
 - Don't store anything in the root dataset itself, since it can't be replicated.
 

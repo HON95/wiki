@@ -50,7 +50,8 @@ In addition to research, it was used for numerical weather prediction for MET.
 
 ## References
 
-- \[1\] First-hand inspection of a node.
+- \[0\] Unofficial sources.
+- \[1\] First-hand inspection.
 - \[2\] UNINETT Sigma2. "HPC and storage hardware." (Accessed 2021-04-25.) https://www.sigma2.no/systems
 - \[3\] NTNU HPC Group. "About Vilje." (Accessed 2021-04-25.) https://www.hpc.ntnu.no/ntnu-hpc-group/vilje/about-vilje
 - \[4\] TOP500. "SGI ICE X." (Accessed 2021-04-25.) https://top500.org/system/177817/

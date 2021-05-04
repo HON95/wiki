@@ -30,20 +30,24 @@ A mix of general XH2000 specifications and specific Betzy specifications.
     - Compute nodes: 1’344x X2410 (AMD) + 4x X2415 (A100)
     - CPUs total (excluding A100 nodes): 2’688 sockets, 86’016 cores, 172’032 threads
     - Memory: 336TiB total (excluding A100 nodes)
-    - Storage: 7.8PB (2.5PB before 2021 upgrade), DNN powered, Lustre, 51GB/s bandwidth, 500k+ metadata OPS
+    - Storage: 7.8PB (2.5PB before 2021 upgrade), DNN powered, Lustre, 51GB/s bandwidth, 500k+ metadata OPS (before 2021 upgrade)
     - Interconnect topology: DragonFly+ topology
     - Queueing system: Slurm
     - Footprint: 14.78m2 (before 2021 upgrade)
     - Power: 952kW, 95% of heat captured to water (before 2021 upgrade)
     - Cooling: Liquid cooled
-- CPU specifications (excluding A100 nodes) \[1\]\[2\]\[3\]:
-    - AMD Epyc 7742
+- CPU specifications (CPU nodes) \[1\]\[4\]:
+    - AMD EPYC Rome 7742
     - 64 cores, 128 threads
     - Clock: 2.25GHz base, 3.4GHz max boost
     - PCIe: 4.0, x128
-    - Memory: DDR4, 8 channels, 3200MHz, 204.8GB/s per socket BW
-    - Supports AVX and AVX2.
-- Compute node specifications (excluding A100 nodes) \[1\]\[2\]:
+    - Memory: DDR4, 8 channels, 3200MHz, 204.8GB/s per-socket BW
+- CPU specifications (GPU nodes) \[0\]\[14\]:
+    - AMD EPYC Rome 7452
+    - 32 cores, 64 threads
+    - Clock: 2.35GHz base, 3.35GHz max boost
+    - Memory: DDR4, 8 channels, 3200MHz, 204.8GB/s per-socket BW
+- Compute node specifications (CPU nodes) \[1\]\[2\]:
     - CPUs per node: 2 sockets, 128 kjerner, 256 threads
     - Memory: 256GiB, split into 8 NUMA nodes
     - Storage: 3x SATA or NVMe M.2 drives
@@ -57,7 +61,7 @@ A mix of general XH2000 specifications and specific Betzy specifications.
         - X2415: 2x AMD EPYC Rome/Milan CPUs and 4x Nvidia A100 SXM4 GPUs (single node).
         - X1120: 3x Intel Xeon nodes (side-by-side) (6 CPUs total).
         - X1125: 2x Intel CPUs and 4x Nvidia V100 SXM2 GPUs (single node).
-- Cabinet specifications \[8\]\[9\]:
+- Cabinet specifications (general, not Betzy specific) \[8\]\[9\]:
     - Number of blades: 4-20 in front, 4-12 in back
     - Management switches:
         - Up to 2.
@@ -68,8 +72,8 @@ A mix of general XH2000 specifications and specific Betzy specifications.
     - Alternative technologies:
         - Bull eXascale Interconnect (BXI): 48 ports, 100Gb/s
         - High-speed Ethernet: Up to 48 ports, up to 100Gb/s
-    - Topology: DragonFly+ (Betzy)
-    - Alternative topologies:
+    - Supported interconnect topologies:
+        - DragonFly+
         - Full Fat Tree
     - PSU: 6x 15kW shelves
     - Power input: 3x 63A 3-phase 400V (for EU)
@@ -81,6 +85,7 @@ A mix of general XH2000 specifications and specific Betzy specifications.
 
 ## References
 
+- \[0\] Unofficial sources.
 - \[1\] UNINETT Sigma2. "Betzy." (Accessed 2020-09-03.) https://documentation.sigma2.no/hpc_machines/betzy.html
 - \[2\] UNINETT Sigma2. "Betzy Pilot Projects." (Accessed 2020-09-03.) https://documentation.sigma2.no/hpc_machines/betzy/betzy_pilot.html
 - \[3\] SPEC CPU 2017 Integer Rate Result for Atos BullSequana XH2000 (1 socket)
@@ -93,5 +98,6 @@ A mix of general XH2000 specifications and specific Betzy specifications.
 - \[11\] UNINETT Sigma2. "Betzy Inauguration." (Accessed 2021-04-21.) https://www.sigma2.no/betzy-inauguration
 - \[12\] TOP500. "Betzy." (Accessed 2021-04-25.) https://top500.org/system/179861/
 - \[13\] UNINETT Sigma2. "Procurement Project HPC B1 (Betzy)." (Accessed 2021-04-25.) https://www.sigma2.no/procurement-project-hpc-b1
+- \[14\] AMD EPYC 7452. (Accessed 2021-05-03.) https://www.amd.com/en/products/cpu/amd-epyc-7452
 
 {% include footer.md %}
