@@ -24,14 +24,15 @@ breadcrumbs:
 - Each kernel launch (or rather its grid) is executed by a single GPU. To use multiple GPUs, multiple kernel launches are required by the CUDA application.
 - Each thread block is executed by a single SM and is bound to it for the entire execution. Each SM may execute multiple thread blocks.
 - Each CUDA core within an SM executes a thread from a block assigned to the SM.
-- **TODO** Warps and switches.
+- **TODO** Warps and switches. 32 threads per warp for all current GPUs.
 
 ## Programming
 
 ### General
 
-- Branching:
-    - **TODO** How branching works and why it's bad.
+- Branch divergence: Each SM has only a single control unit for all cores within it, so for all branches any thread takes (in total), the SM and all of its cores will need to go through all of the branches but mask the output for all threads which did not locally take the branch. If no threads take a specific branch, it will not be executed by the SM.
+- Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
+- Kernels are specified as functions with the `__global__` keyword.
 
 ### Thread Hierarchy
 
@@ -41,7 +42,9 @@ breadcrumbs:
 - The number of threads per block is typically limited to 1024.
 - See the section about mapping it to the execution model for a better understanding of why it's organized this way.
 
-### Memory Hierarchy
+### Memory
+
+#### Memory Hierarchy
 
 - **TODO**
 - Memories (local to global):
@@ -52,10 +55,54 @@ breadcrumbs:
     1. SM cache.
     1. Global memory.
 
+#### Global Memory
+
+- The largest and slowest memory on the device.
+- Resides in the GPU DRAM.
+- Variables may persist for the lifetime of the application.
+- The only memory the host can copy data into or out of.
+- The only memory threads from different blocks can share data in.
+- Statically declared in global scope using the `__device__` declaration or dynamically allocated using `cudaMalloc`.
+- Global memory coalescing: When multiple threads in a warp access global memory, the device will try to _coalesce_ the access into as few transactions as possible in order to mimimize memory load.
+
+#### Local Memory
+
+- Memory local to each thread.
+- Resides in (or next to) the global memory.
+- Used when using more local data than what can fit in registers such that is spills over into local memory.
+- Consecutive 4-byte words are accessed by consecutive thread IDs such that accesses are fully coalesced if all threads in the warp access the same relative address.
+
+#### Shared Memory
+
+- Resides in fast, high-bandwidth on-chip memory.
+- Organized into banks which can be accessed concurrently. Each bank is accessed serially and multiple concurrent accesses to the same bank will result in a bank conflict.
+- Declared using the `__shared__` variable qualifier. The size may be specified during kernel invocation.
+- The scope is the lifetime of the block.
+- **TODO** Shared between?
+
+#### Constant Memory
+
+- Read-only memory. **TODO** And?
+- Resides in the special constant memory.
+- Declared using the `__constant__` variable qualifier.
+
+#### Managed Memory
+
+- Data that may be accessed from both the host and the device (related to UVA).
+- Shared by all GPUs.
+- Declared using the `__managed__` variable qualifier.
+
+#### Data Alignment
+
+- Memory is accessed in 4, 8 or 16 byte transactions.
+- Accessing data with unaligned pointers incurs a performance hit.
+- Allocated date is always aligned to a 32-byte boundary, but elements within the array are generally not.
+- To make sure array elements are aligned, use structs/classes with the `__align__(n)` qualifier and `n` as some multiple of the transaction sizes.
+
 ### Synchronization
 
 - **TODO**
-- `__syncthreads` (device) provides block level barrier synchronization.
+- `__syncthreads` provides block level barrier synchronization.
 - Grid level barrier synchronization is currently not possible through any native API call.
 - `cudaDeviceSynchronize`/`cudaStreamSynchronize` (host) blocks until the device or stream has finished all tasks (kernels/copies/etc.).
 
@@ -85,24 +132,23 @@ breadcrumbs:
 
 - Causes CUDA to use a single address space for allocations for both the host and all devices (as long as the host supports it).
 - Requires a 64-bit application, Fermi-class or newer GPU and CUDA 4.0 or newer.
-- Allows using `cudaMemcpy` without having to spacify in which device (or host) and memory the pointer exists in. `cudaMemcpyDefault` replaces `cudaMemcpyHostToHost`, `cudaMemcpyHostToDevice`, `cudaMemcpyDeviceToHost`, and `cudaMemcpyDeviceToDevice`. Eliminates the need for e.g. `cudaHostGetDevicePointer`.
+- Allows using `cudaMemcpy` without having to specify in which device (or host) and memory the pointer exists in. `cudaMemcpyDefault` replaces `cudaMemcpyHostToHost`, `cudaMemcpyHostToDevice`, `cudaMemcpyDeviceToHost`, and `cudaMemcpyDeviceToDevice`. Eliminates the need for e.g. `cudaHostGetDevicePointer`.
 - Allows _zero-copy_ memory for managed/pinned memory. For unpinned host pages, CUDA must first copy the data to a temporary pinned set of pages before copying the data to the device. For pinned data, no such temporary buffer is needed (i.e. zero copies on the host side). The programmer must explicitly allocate data (or mark allocated data) as managed using `cudaMallocHost`/`cudaHostAlloc` and `cudaFreeHost`. `cudaMemcpy` works the same and automatically becomes zero-copy if using managed memory.
 - The GPU can access pinned/managed host memory over the PCIe interconnect, but including the high latency and low bandwidth due to accessing off-device memory.
 - While pinning memory results in improved transfers, pinning too much memory reduces overall system performance as the in-memory space for pageable memory becomes smaller. Finding a good balance may in some cases require some tuning.
 
 ### Unified Memory
 
-- Depends on the older UVA, which provides a single address space for both the host and devices, as well as zero-copy memory.
+- Depends on UVA, which provides a single address space for both the host and devices, as well as zero-copy memory.
 - Virtually combines the pinned CPU/host memory and the GPU/device memory such that explicit memory copying between the two is no longer needed. Both the host and device may access the memory through a single pointer and data is automatically migrated (prefetched) between the two instead of demand-fetching it each time it's used (as for UVA).
 - Data migration happens automatically at page-level granularuity and follows pointers in order to support deep copies. As it automatically migrates data to/from the devices instead of accessing it over the PCIe interconnect on demand, it yields much better performance than UVA.
 - As Unified Memory uses paging, it implicitly allows oversubscribing GPU memory.
 - Keep in mind that GPU page faulting will affect kernel performance.
 - Unified Memory also provides support for system-wide atomic memory operations, for multi-GPU cooperative programs.
-- Explicit memory management may still be used for optimization purposes, although use of streams and async copying is typically needed to actually increase the performance.
+- Explicit memory management may still be used for optimization purposes, although use of streams and async copying is typically needed to actually increase the performance. `cudaMemPrefetchAsync` may be used to trigger a prefetch.
 - `cudaMallocManaged` and `cudaFree` are used to allocate and deallocate managed memory.
-- Since unified memory removes the need for `cudaMemcpy` when copying data back to the host after the kernel is finished, you may use e.g. `cudaDeviceSynchronize` to wait for the kernel to finish before accessing the managed data.
+- Since unified memory removes the need for `cudaMemcpy` when copying data back to the host after the kernel is finished, you may have to use e.g. `cudaDeviceSynchronize` to wait for the kernel to finish before accessing the managed data (instead of waiting for a `cudaMemcpy` to finish).
 - While the Kepler and Maxwell architectures support a limited version of Unified Memory, the Pascal architecture is the first with hardware support for page faulting and migration via its Page Migration Engine. For the pre-Pascal architectures, _all_ managed data is automatically copied to the GPU right before lanuching a kernel on it, since they don't support page faulting for managed data currently present on the host or another device. This also means that Pascal and later includes memory copy delays in the kernel run time while pre-Pascal does not as everything is migrated before it begins executing (increasing the overall application runtime). This also prevents pre-Pascal GPUs from accessing managed data from both CPU and GPU concurrently (without causing segfaults) as it can't assure data coherence (although care must still be taken to avoid race conditions and data in invalid states for Pascal and later GPUs).
-- Explicit prefetching may be used to assist the data migration through the `cudaMemPrefetchAsync` call.
 
 ### Peer-to-Peer (P2P) Communication
 
