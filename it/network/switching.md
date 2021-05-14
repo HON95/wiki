@@ -6,6 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+**TODO** Organize stuff better. See the config page for STP.
+
 ## Ethernet Switching Modes
 
 - Store and forward switching:

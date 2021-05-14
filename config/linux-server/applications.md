@@ -861,19 +861,17 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 
 ### Setup
 
-1. Install `tftpd-hpa`.
-1. Update `/etc/default/tftpd-hpa` based on the config below.
-1. Create the folder `/var/tftp` with permissions `777` and user-group pair `tftp:tftp`.
-1. Restart it.
-1. If it shouldn't automatically start, disble it.
-
-File `/etc/default/tftpd-hpa`:
-```
-TFTP_USERNAME="tftp"
-TFTP_DIRECTORY="/var/tftp"
-TFTP_ADDRESS=":69"
-TFTP_OPTIONS="--create --secure"
-```
+1. Install: `apt install tftpd-hpa` (note the `d`)
+1. (Optional) Configure it:
+    - Config file: `/etc/default/tftpd-hpa`
+    - Change dir: `TFTP_DIRECTORY="<dir>"` (e.g. `/var/tftp`)
+    - Change options: `TFTP_OPTIONS="[opt]*"` (see the most relevant options below)
+    - Option `--secure`: Change the root directory to the specified `TFTP_DIRECTORY` directory.
+    - Option `--create`: Allow clients to upload new files. Existing files may be changed regardless.
+1. Fix folder permissions:
+    - Make sure `tftp:tftp` has read access.
+    - If it needs to be TFTP writable, make sure `tftp:tftp` has write access to it.
+1. Restart it: `systemctl restart tftpd-hpa`
 
 ## Unbound
 

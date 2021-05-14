@@ -88,7 +88,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [TP-Link JetStream Switches](/config/network/tplink-jetstream-switches/)
 - [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/)
 - [Uniquiti UniFi Access Points](/config/network/ubiquiti-unifi-aps/)
-- [VyOS](//config/network/vyos/)
+- [VyOS](/config/network/vyos/)
 
 ### PC
 

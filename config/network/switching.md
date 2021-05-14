@@ -45,7 +45,7 @@ Reserved:
 
 (\*) Very incomplete list.
 
-### Notes
+### General
 
 - Use extended system ID for multi-VLAN switches.
 - Make sure all switches are using compatible variants and default priorities.
@@ -54,20 +54,50 @@ Reserved:
 - The bridge priority should generally be a multiple of 4096.
 - PVST and 802.1Q regions cannot interoperate directly, but can through PVST+ regions.
 
+### STP
+
+- The original.
+- Generally uses around 30 seconds after a new device is connected until it starts forwarding data (unless using Cisco's "portfast" or similar).
+- Path cost depends on link speed.
+- Uses BPDUs (bridge protocol data units) to exchange information.
+- Generates and imposes a rooted spanning tree onto the non-acyclic network, where a single switch is designated as the root.
+- Uses a single tree for all physical ports (no per-VLAN support).
+- The BPDU from the root starts with root path cost 0 and accumulates all link costs along the distribution downstream.
+- States:
+    - Listening: The initial state when a device is connected. No data is forwarded and no MAC addresses are learned. Enters the listening state afterwards.
+    - Learning: Like the listening state but with MAC address learning (no data forwarding yet). Enters the forwarding state afterwards.
+    - Forwarding: Data is forwarded.
+    - Blocking: If during the listening, learning or forwarding state a port is determined to be neither a root port (uplink) or a designated port (downlink), it's blocked.
+
+### RSTP (802.1w)
+
+- Generally backwards-compatible with STP.
+- Has much better convergence time for new connections and topology changes than STP.
+- Port roles:
+    - Root port: The uplink port toward the root switch. Every non-root switch has exactly one.
+    - Alternate port: A port which may quickly take over as the root port if the current root port becomes unavailable. (STP doesn't have this type, but e.g. Cisco's "uplinkfast" provides a similar mechanism.)
+    - Designated port: Any downlink ports toward switches downstream from the current one wrt. the tree.
+    - Backup port: Like the alternate port to the root port, it provides a backup for a designated port.
+- Port states:
+    - Discarding (aggregates the blocking, listening and disabled states from STP).
+    - Learning.
+    - Forwarding.
+
+### Special Features
+
+Note: These features are mostly vendor-defined and the specifics of each mechanism depend on the implementations.
+
+- Loop guard: Enabled on root and alternate ports (typically) to move them to the blocking state instead of the forwarding state if they were to stop receiving BPDUs (e.g. due to a unidirectional or congestion), to avoid causing a forwarding loop.
+- Root guard: Enabled on designated and backup ports (downlinks) to prevent downstream switches from taking over as the root bridge (e.g. due to misconfiguration).
+- BPDU guard: Enabled on edge ports to block it if it receives any BPDUs (e.g. due to malicious purposes).
+- BPDU filter: Enabled on edge ports to ignore all received BPDUs.
+- Portfast: Enabled on edge ports to immediately move it to the forwarding state instead of going through the discarding and learning phases first, in order to get clients online as fast as possible.
+
+### Miscellanea
+
 #### Cisco IOS
 
 - VTP can be very dangerous if not used properly and is enabled by default. It also doesn't carry MST configuration.
 - Rapid-PVST+ ignores UplinkFast and BackboneFast and supports UDLD.
-
-### Inter-Model Compatibility Examples
-
-#### Example 1
-
-**TODO** I have not actually tested this properly.
-
-- Cisco IOS (Cat 3750G): `rapid-pvst`
-- Brocade (ICX 6610): `802.1w`
-- Linksys (LGS326): `stp` (slow but works)
-- Use the same default priority, e.g. 32768.
 
 {% include footer.md %}

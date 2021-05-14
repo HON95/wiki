@@ -72,15 +72,18 @@ breadcrumbs:
     1. Enable server: `ip ssh server`
     1. Disable Telnet: `telnet disable`
 1. Change Switch Database Management (SDM) template:
+    1. Note: Show SDM template info: `show sdm prefer {used|default|...}`
+    1. Note: Show actual usage: `ipv6 source binding`
+    1. Note: `enterpriseV6` is required for enabling IPv6 ND inspection.
     1. Allocate more resources to IPv6: `sdm prefer enterpriseV6`
     1. **TODO** Check how many entries are actually used. The max count seems low.
 1. Setup physical interfaces (basics):
     1. Enter one or multiple interfaces: `int g 1/0/1` or `int range g 1/0/25-28`
     1. Set description: `desc <desc>`
     1. Disable (if unused): `shutdown`
-1. Setup LAGs:
+1. Setup LAGs (LACP):
     1. Set load balancing method (global): `port-channel load-balance src-dst-ip`
-    1. Enter the interface range of member interfaces.
+    1. Enter the member interfaces: `int range g 1/0/23-24` (example)
     1. Make them members of the LAG and use LACP: `channel-group <n> mode active`
     1. Enter port channel interface: `interface port-channel <n>`
     1. Configure it as an interface (applies when the LACP interface is up).
@@ -178,12 +181,20 @@ breadcrumbs:
 1. Setup MLD (IPv6) snooping: **TODO**
 1. (Optional) Setup TACACS+: **TODO**
 1. Enable SNMP: **TODO**
-1. Setup STP (802.1W/RSTP): **TODO**
+1. Setup RSTP:
+    - Set variant: `spanning-tree mode rstp`
+    - Enable globally: `spanning-tree`
+    - Enable on all ports (interface config): `spanning-tree`
+    - Enable portfast for edge ports (interface config): `spanning-tree common-config portfast enable`
+    - Enable BPDU guard for edge ports (interface config): `spanning-tree bpduguard`
+    - Enable loop guard for uplink ports (interface config): `spanning-tree guard loop`
 1. (Optional) Setup sFlow: **TODO**
 1. Set terminal idle timer: **TODO**
 1. Save the config (exec mode): `copy run start`
 
 ## Commands
+
+#### Basics
 
 - System info:
     - Systrem info: `show system-info`
@@ -203,11 +214,35 @@ breadcrumbs:
 
 - Enter interface range: `int range <type> <full-start>-<end>` (e.g. `int range g 1/0/1-24`)
 
+### Miscellanea
+
+- Reset config and restart: `reset`
+- Restart: `reboot`
+
 ## Tasks
 
 ### Setup Netboot
 
-**TODO**
+- See: [How to configure DHCP Auto Install to let Switch get configuration file and image file from TFTP server? (TP-Link)](https://www.tp-link.com/us/support/faq/2065/)
+- Show status (enable mode): `show boot autoinstall`
+    - When autoinstall is enabled, mode should show `Start` (not `Stop`) and state should show something like `Waiting for boot options` (not `Stopped`).
+- Configuration:
+    - Set autoinstall to begin on boot (as well as now): `boot autoinstall persistent-mode`
+    - Save the autoinstall config as the startup config: `boot autoinstall auto-save`
+    - Reboot after autoinstalling (used with `auto-save`): `boot autoinstall auto-reboot`
+    - Set the retry count: `boot autoinstall retry-count <count>` (e.g. 3)
+    - Enable autoinstall (now!): `boot autoinstall start`
+    - Note that only certain autoboot options are saved in the config.
+- Enabling autoinstall will _immediately_ change to DHCP client mode for whichever interface/VLAN has an IP address (which exactly?).
+- The config does not need to be saved before rebooting the device, since persistent mode and enablement isn't stored in it.
+- When persistent mode is enabled, it's only enabled for the next boot (not permanently, disables itself on reboot).
+- Since autoinstall can't be enabled permanently, it may be required to SSH/telnet into the device and run `boot autoinstall start` in config mode to kickstart it? (**TODO** Needs more testing.)
+- The loaded configuration file is just like any saved/exported configuration file from the switch.
+- Some things need to be set at boot time, like setting the SDM template (required for enabling IPv6 ND inspection). Since the autoinstall config is loaded _after_ boot, either the autoinstall config must be saved and the switch rebooted, or the startup config must have it already set.
+
+**TODO** IPv6?
+**TODO** NTP broken (`show system-time ntp`).
+**TODO** It seems to get merged with the existing config. Add explicit "no" statements to override startup?
 
 ### Upgrade Firmware
 
