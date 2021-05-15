@@ -63,7 +63,7 @@ breadcrumbs:
 - The only memory the host can copy data into or out of.
 - The only memory threads from different blocks can share data in.
 - Statically declared in global scope using the `__device__` declaration or dynamically allocated using `cudaMalloc`.
-- Global memory coalescing: When multiple threads in a warp access global memory, the device will try to _coalesce_ the access into as few transactions as possible in order to mimimize memory load.
+- Global memory coalescing: When multiple threads in a warp access global memory in strided fashion (e.g. when all threads in the warp access sequential parts of an array), the device will try to _coalesce_ the access into as few transactions as possible in order to mimimize memory load.
 
 #### Local Memory
 

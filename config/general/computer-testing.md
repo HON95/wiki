@@ -6,12 +6,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Information Gathering
-
-### Linux
-
-- Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`
-
 ## CPU
 
 ### Prime95
@@ -73,5 +67,24 @@ fio --name=random-write --ioengine=posixaio --rw=randwrite --bs=1m --size=16G --
 
 - For health testing.
 - See [smartmontools](/config/linux-general/applications/#smartmontools).
+
+## Miscellanea
+
+### Linux
+
+- Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`
+- PCIe link speed for device:
+    - Make sure the device is doing something intensive so that the PCIe speed isn't degraded.
+    - Run `sudo lspci -vv`, find the device (e.g. `NVIDIA Corporation TU102 [GeForce RTX 2080 Ti Rev. A]`) and look for the `LnkCap` and `LnkSta` lines under "Capabilities".
+    - `LnkCap` is the device capability and `LnkSta` is the current status. Both show the (max and current) PCIe speed/version (speed for _around_ 8 lanes wrt. the specific version) and the number of lanes.
+    - Example `LnkSta` (1): `Speed 16GT/s (ok), Width x16 (ok)`, meaning PCIe 4.0, using 16 lanes.
+    - Example `LnkSta` (2): `Speed 8GT/s (ok), Width x4 (downgraded)`, meaning PCIe 3.0, downgraded to 4 lanes, e.g. if the motherboard doesn't support that many PCIe devices running at full widths.
+    - PCIe speed cheat sheet:
+        - PCIe 1 (2.5GT/s, 250MB/s per lane)
+        - PCIe 2 (5GT/s, 500MB/s per lane)
+        - PCIe 3 (8GT/s, 985MB/s per lane)
+        - PCIe 4 (16GT/s, 1.97GB/s per lane)
+        - PCIe 5 (32GT/s, 3.94GB/s per lane)
+        - PCIe 6 (64GT/s, 7.88GB/s per lane)
 
 {% include footer.md %}
