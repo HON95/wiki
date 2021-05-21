@@ -64,23 +64,10 @@ breadcrumbs:
     - The global and local memories are cached in L1 and L2 on newer devices.
     - The register and shared memories are on-chip and fast, so they don't need to be cached.
 
-#### Global Memory
+#### Register Memory
 
-- The largest and slowest memory on the device.
-- Resides in the GPU DRAM.
-- Variables may persist for the lifetime of the application.
-- One of the memories the host can access (outside of kernels).
-- The only memory threads from different blocks can share data in.
-- Statically declared in global scope using the `__device__` declaration or dynamically allocated using `cudaMalloc`.
-- Global memory coalescing:
-    - When multiple threads in a warp access global memory in an aligned and sequential fashion (e.g. when all threads in the warp access sequential parts of an array), the device will try to _coalesce_ the access into as few 32-byte transactions as possible in order to reduce the number of transaction and  increase the ratio of useful to fetched data.
-    - This description overlaps a bit with data alignment, which is described elsewhere on this page.
-    - Since the global memory will be accessed using 32-byte transactions, the data should be aligned to 32 bytes and preferably not too fragmented, to request as few 32-byte segments as possible. Note that memory allocated through the CUDA API is guaranteed to be aligned to 256 bytes.
-    - Special care should be taken to ensure that this is always done right.
-    - Caching will typically mitigate the impact of unaligned memory accesses.
-    - Thread block sizes that are multiple of the warp size (32) will give the most optimal alignments.
-    - Older hardware coalesce accesses within half warps instead of the whole warp.
-    - **TODO** More info.
+- The fastest thread-scope memory.
+- Spills over into local memory.
 
 #### Local Memory
 
@@ -97,11 +84,26 @@ breadcrumbs:
 - The scope is the lifetime of the block.
 - **TODO** Shared between?
 
+#### Global Memory
+
+- The largest and slowest memory on the device.
+- Resides in the GPU DRAM.
+- Variables may persist for the lifetime of the application.
+- One of the memories the host can access (outside of kernels).
+- The only memory threads from different blocks can share data in.
+- Statically declared in global scope using the `__device__` declaration or dynamically allocated using `cudaMalloc`.
+- Global memory coalescing: See the section about data alignment.
+
 #### Constant Memory
 
 - Read-only memory. **TODO** And?
 - Resides in the special constant memory.
 - Declared using the `__constant__` variable qualifier.
+- Multiple/all threads in a warps can access the same memory address simultaneously, but accesses to different addresses are serialized.
+
+#### Texture Memory
+
+**TODO**
 
 #### Managed Memory
 
@@ -109,15 +111,19 @@ breadcrumbs:
 - Shared by all GPUs.
 - Declared using the `__managed__` variable qualifier.
 
-#### Data Alignment
+#### Data Alignment and Coalescing
 
-- Memory is accessed in 4, 8 or 16 byte transactions. (**TODO** 32 byte?)
 - Accessing data with unaligned pointers generally incurs a performance hit, since it may fetch more segments than for aligned data or since it may prevent coalesced access.
-- Related to e.g. global memory coalescing (described somewhere else on this page).
 - Caching will typically mitigate somewhat the impact of unaligned memory accesses.
 - Memory allocated through the CUDA API is guaranteed to be aligned to 256 bytes.
 - Elements _within_ allocated arrays are generally not aligned unless special care is taken.
 - To make sure array elements are aligned, use structs/classes with the `__align__(n)` qualifier and `n` as some multiple of the transaction sizes.
+- When multiple threads in a warp access global memory in an _aligned_ and _sequential_ fashion (e.g. when all threads in the warp access sequential parts of an array), the device will try to _coalesce_ the access into as few 32-byte transactions as possible in order to reduce the number of transaction and  increase the ratio of useful to fetched data.
+- Global memory is accessed by the device using 32-, 64-, or 128-byte transactions, that are aligned to their size.
+- Caching will typically mitigate the impact of unaligned memory accesses.
+- Thread block sizes that are multiple of the warp size (32) will give the most optimal alignments.
+- Older hardware coalesce accesses within half warps instead of the whole warp.
+- To access strided data (like multidimensional arrays) in global memory, it may be better to first copy the data into shared memory (which is fast for all access patterns).
 
 ### Synchronization
 
