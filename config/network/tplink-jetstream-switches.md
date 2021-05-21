@@ -51,6 +51,8 @@ breadcrumbs:
 
 ## Initial Setup
 
+**Warning**: These steps are incomplete as we decided not to use these switches when we found out they can't run IPv4 and IPv6 source guard simultaneously.
+
 1. Connect to the switch using serial (see info about for details).
     - Note that you may need to use `Ctrl+H` for backspace.
 1. Login with username `admin` and password `admin` and set a new admin password when asked.
@@ -87,7 +89,7 @@ breadcrumbs:
     1. Make them members of the LAG and use LACP: `channel-group <n> mode active`
     1. Enter port channel interface: `interface port-channel <n>`
     1. Configure it as an interface (applies when the LACP interface is up).
-    1. Show the status: `show lacp internal` and `show lacp neighbor`
+    1. Show the status: `show etherchannel detail`
 1. Define VLANs (L2):
     1. Enter the VLAN config: `vlan <VID>`
     1. Name it: `name <name>`
@@ -121,8 +123,8 @@ breadcrumbs:
 1. Set DNS servers: **TODO** Not possible?
 1. Set time and NTP servers:
     1. Set recurring DST: `system-time dst recurring last Sun Mar 2:00 last Sun Oct 3:00` (Norway)
-    1. Set time and NTP servers: `system-time ntp UTC+01:00 <ip-1> <ip-2> <update-hours>`
-    1. Note: Both servers must be IP addresses and using the same IP version, but they may be the same address.
+    1. (Optional) Set time and NTP servers: `system-time ntp UTC+01:00 <ip-1> <ip-2> <update-hours>`
+    1. Note: Both NTP servers must be IP addresses and using the same IP version, but they may be the same address.
 1. (Optional) Enable LLDP globally: `lldp`
 1. Enable LLDP:
     1. Enable globally: `lldp`
@@ -147,32 +149,38 @@ breadcrumbs:
     1. Enable for broadcast: `storm-control broadcast <threshold>` (e.g. 1%)
     1. Enable for multicast: `storm-control multicast <threshold>` (e.g. 1%)
     1. Enable for unknown unicast: `storm-control unicast <threshold>` (e.g. 1%)
-1. Enable DHCPv4/v6 snooping:
-    1. Enable globally: `{ip|ipv6} dhcp snooping`
-    1. Set max number of bindings on port (interface) (1-2 per interface should be enough): `{ip|ipv6} dhcp snooping max-entries <n>`
-    1. **TODO** Trusted ports. DHCP filter?
-    1. **TODO** Detection.
-    1. **TODO** Per VLAN?
-    1. **TODO** Test.
-1. Enable ARP (IPv4) snooping and detection:
-    1. Enable snooping and detection globally: `ip arp inspection`
-    1. Validate source: `ip arp inspection validate src-mac`
-    1. Validate destination: `ip arp inspection validate dst-mac`
-    1. Validate IP address: `ip arp inspection validate ip`
+1. Enable DHCPv4/DHCPv6/ND snooping:
+    1. Note: Snooping by itself doesn't do anything but is used by other protection mechanisms.
+    1. Enable globally (global): `{ip|ipv6} {dhcp|nd} snooping`
+    1. Enable for VLAN (global): `{ip|ipv6} {dhcp|nd} snooping vlan <vid-range>`
+    1. Set max number of bindings per port (interface): `{ip|ipv6} {dhcp|nd} snooping max-entries <n>` (e.g. 2)
+    1. Show bindings: `show {ip|ipv6} source binding`
+1. Enable ARP (IPv4) inspection/detection:
+    1. Note: ARP detection prevents ARP spoofing and flooding.
+    1. Enable globally: `ip arp inspection`
+    1. Enable for VLAN (global): `ip arp inspection vlan <vid-range>`
+    1. (Debug) Enable logging (global): `ip arp inspection vlan <vid-range> logging`
+    1. Validate source MAC address (global): `ip arp inspection validate src-mac`
+    1. Validate destination MAC address (global): `ip arp inspection validate dst-mac`
+    1. Validate sender/target IP address (global): `ip arp inspection validate ip`
     1. Set trusted interface (interface): `ip arp inspection trust`
-    1. **TODO** Per VLAN?
-    1. **TODO** Test.
-1. Enable ND (IPv6) snooping and detection:
-    1. Enable snooping globally: `ipv6 nd snooping`
-    1. Enable detection globally: `ipv6 nd detection`
-    1. Set max number of bindings on port (interface) (avoid setting this too low as IPv6 may use a lot of addresses per interfaces): `ipv6 nd snooping max-entries <n>`
+    1. **TODO** Rate limiting interfaces.
+    1. Note: To restore an interface that has exceeded the rate limit, run `ip arp inspection recover` on it.
+1. Enable ND (IPv6) detection:
+    1. Note: ND detection will validate the source IPv6 and MAC addresses for ND packets and will discard router adversisements and router redirects on untrusted ports.
+    1. Enable globally (global): `ipv6 nd detection`
+    1. Enable for VLAN (global): `ipv6 nd detection vlan <vid-range>`
+    1. (Debug) Enable logging (global): `ipv6 nd detection vlan <vid-range> logging`
     1. Set trusted interface (interface): `ipv6 nd detection trust`
-    1. **TODO** Per VLAN?
-    1. **TODO** Test.
-1. Enable IP source guard:
-    1. Note: IPSG uses the DHCP/ND/ARP snooping database. For IPv6, the SDM template must be set correctly to allocate hardware resources.
-    1. Enable for IP and MAC (interface): `{ip|ipv6} verify source sip-mac`
-    1. **TODO** Test.
+    1. **TODO** Fix, seems to fail to learn link local addresses from newly connected devices and then drops RSes and NAs from them due to IMPB mismatch.
+1. Enable IPv4/IPv6 source guard:
+    1. Note: IP source guard validates the source IP and MAC addresses for normal traffic.
+    1. Enable DHCPv4/DHCPv6/ND snooping (see above).
+    1. **TODO** Enable globally?
+    1. Enable for IP and MAC (interface): `{ip|ipv6} verify source sip[v6]-mac`
+    1. (Debug) Enable logging (global): `ip verify source logging` **TODO** IPv4 only?
+    1. **TODO** Fix, enabling for IPv6 drops all traffic for both IPv4 and IPv6.
+    1. **WARNING**: These switches don't have enough resources to run _both_ IPv4 and IPv6 source guard. On one switch I tested, it caused it to drop all traffic for both protocols. On another switch, it simply denied me from activating IPv4 source guard when using the "enterpriseV6" SDM template.
 1. Enable DoS prevention:
     1. Enable globally: `ip dos-prevent`
     1. Prevent scan-synfin: `ip dos-prevent type scan-synfin`
@@ -184,10 +192,10 @@ breadcrumbs:
 1. Setup RSTP:
     - Set variant: `spanning-tree mode rstp`
     - Enable globally: `spanning-tree`
-    - Enable on all ports (interface config): `spanning-tree`
-    - Enable portfast for edge ports (interface config): `spanning-tree common-config portfast enable`
-    - Enable BPDU guard for edge ports (interface config): `spanning-tree bpduguard`
-    - Enable loop guard for uplink ports (interface config): `spanning-tree guard loop`
+    - Enable on all ports (interface): `spanning-tree`
+    - Enable portfast for edge ports (interface): `spanning-tree common-config portfast enable`
+    - Enable BPDU guard for edge ports (interface): `spanning-tree bpduguard`
+    - Enable loop guard for uplink ports (interface): `spanning-tree guard loop`
 1. (Optional) Setup sFlow: **TODO**
 1. Set terminal idle timer: **TODO**
 1. Save the config (exec mode): `copy run start`

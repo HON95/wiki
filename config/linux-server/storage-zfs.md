@@ -10,42 +10,19 @@ Using ZFS on Linux (ZoL) running on Debian.
 
 ## Info
 
-Note: ZFS's history (Oracle) and license (CDDL, which is incompatible with the Linux mainline kernel) are pretty good reasons to avoid ZFS.
-
-### Features
-
-- Filesystem and physical storage decoupled
-- Always consistent
-- Intent log
-- Synchronous or asynchronous
-- Everything checksummed
-- Compression
-- Deduplication
-- Encryption
-- Snapshots
-- Copy-on-write (CoW)
-- Clones
-- Caching
-- Log-strucrured filesystem
-- Tunable
-
-### Terminology
-
-- Vdev
-- Pool
-- Dataset
-- Zvol
-- ZFS POSIX Layer (ZPL)
-- ZFS Intent Log (ZIL)
-- Adaptive Replacement Cache (ARC) and L2ARC
-- ZFS Event Daemon (ZED)
-
-### Encryption
-
-- ZoL v0.8.0 and newer supports native encryption of pools and datasets. This encrypts all data except some metadata like pool/dataset structure, dataset names and file sizes.
-- Datasets can be scrubbed, resilvered, renamed and deleted without unlocking them first.
-- Datasets will by default inherit encryption and the encryption key (the "encryption root") from the parent pool/dataset.
-- The encryption suite can't be changed after creation, but the keyformat can.
+- ZFS's history (Oracle) and license (CDDL, which is incompatible with the Linux mainline kernel) are acceptable reasons to avoid ZFS.
+- Reasons ZFS is great:
+    - Everything checksummed (RIP bit rot).
+    - Copy-on-write (CoW).
+    - Always consistent.
+    - Integrated physical volume manager.
+    - RAID.
+    - Encryption.
+    - Compression.
+    - Deduplication.
+    - Cloning.
+    - Snapshots.
+    - Extensible caching (ARC, L2ARC, SLOG, special devices).
 
 ## Setup
 
@@ -122,6 +99,37 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     - Includes metadata operations.
     - If no interval is specified, the operations and bandwidths are averaged from the system boot. If an interval is specified, the very first interval will still show this.
 
+#### L2ARC
+
+- Info:
+    - The L2ARC works as a second tier cache and is kept on a separate disk instead of in memory.
+    - Dirty content is never stored in the L2ARC and all data in it is also kept on disk, so it doesn't _need_ any kind of redundancy and can die without causing significant trouble.
+    - It works only as a read cache since it can't contain dirty data.
+    - It's most useful running itself on a fast SSD with the rest of the pool on a slow HDD array.
+    - Using an L2ARC requires more memory as well as some metadata about it must be stored in the ARC, so it's not meant as a direct replacement for getting more memory.
+    - For encrypted pools, data in the L2ARC is always encrypted.
+- Adding L2ARC device: `zpool add [-f] <pool> cache <drive>`
+
+#### SLOG
+
+- Info:
+    - The separate intent log (SLOG) is a drive used to contain the ZFS intent log (ZIL) for a pool, effectively becoming a write cache.
+    - It only has effect for synchronized writes (which generally aren't used for many use cases for pools), since unsynchronized writes are cached in memory.
+    - It's most useful running itself on a fast SSD with the rest of the pool on a slow HDD array.
+    - The drive must have high write durability.
+    - Since data can get lost if it dies, it should have an appropriate level of redundancy, on par with the rest of the pool.
+- Adding SLOG device: `zpool add [-f] <pool> log <drive-config>` (e.g. `mirror drive-1 drive-2`)
+
+#### Special Device
+
+- Info:
+    - A _special_ drive may be added to a pool to store metadata (in order to speed up e.g. directory traversal) and optionally very small files.
+    - It's most useful running itself on a fast SSD with the rest of the pool on a slow HDD array.
+    - The special device generally needs the same kind of redundancy as the rest of the pool as it's not recoverable and will take the whole pool with it if it dies.
+    - If it gets full, it simply overflows back into the data array of the pool.
+    - More practical info: [ZFS Metadata Special Device: Z (Level1Techs Forums)](https://forum.level1techs.com/t/zfs-metadata-special-device-z/159954)
+- **TODO**
+
 ### Datasets
 
 - Basics:
@@ -172,6 +180,11 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 
 ### Encryption
 
+- Info:
+    - ZoL v0.8.0 and newer supports native encryption of pools and datasets. This encrypts all data except some metadata like pool/dataset structure, dataset names and file sizes.
+    - Datasets can be scrubbed, resilvered, renamed and deleted without unlocking them first.
+    - Datasets will by default inherit encryption and the encryption key (the "encryption root") from the parent pool/dataset.
+    - The encryption suite can't be changed after creation, but the keyformat can.
 - Show stuff:
     - Encryption root: `zfs get encryptionroot`
     - Key status: `zfs get keystatus`. `unavailable` means locked and `-` means not encrypted.
@@ -201,11 +214,11 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 
 ### Error Handling and Replacement
 
-- Clear transient device errors: `zpool clear <pool> [device]`
+- Clear transient drive error counters: `zpool clear <pool> [drive]`
 - If a pool is "UNAVAIL", it means it can't be recovered without corrupted data.
-- Replace a device and automatically copy data from the old device or from redundant devices: `zpool replace <pool> <old-device> <new-device>`
-- Bring a device online or offline: `zpool (online|offline) <pool> <device>`
-- Re-add device that got wiped: Take it offline and then online again.
+- Replace a drive and begin resilvering: `zpool replace [-f] <pool> <old-drive> <new-drive>`
+- Bring a drive online or offline: `zpool (online|offline) <pool> <drive>`
+- Re-add drive that got wiped: Take it offline and then online again.
 
 ### Miscellanea
 
@@ -222,7 +235,7 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 - As far as possible, use raw disks and HBA disk controllers (or RAID controllers in IT mode).
 - Always use `/etc/disk/by-id/X`, not `/dev/sdX`.
 - Always manually set the correct ashift for pools.
-    - Should be the log-2 of the physical block/sector size of the device.
+    - Should be the log-2 of the physical block/sector size of the drive.
     - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).
     - Check the physical block size with `smartctl -i <dev>`.
     - Keep in mind that some 4kB disks emulate/report 512B. They should be used as 4kB disks.
@@ -263,8 +276,6 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 - ECC memory is recommended but not required. It does not affect data corruption on disk.
 - It does not require large amounts of memory, but more memory allows it to cache more data. A minimum of around 1GB is suggested. Memory caching is termed ARC. By default it's limited to 1/2 of all available RAM. Under memory pressure, it releases some of it to other applications.
 - Compressed ARC is a feature which compresses and checksums the ARC. It's enabled by default.
-- A dedicated disk (e.g. an NVMe SSD) can be used as a secondary read cache. This is termed L2ARC (level 2 ARC). Only frequently accessed blocks are cached. The memory requirement will increase based on the size of the L2ARC. It should only be considered for pools with high read traffic, slow disks and lots of memory available.
-- A dedicated disk (e.g. an NVMe SSD) can be used for the ZFS intent log (ZIL), which is used for synchronized writes. This is termed SLOG (separate intent log). The disk must have low latency, high durability and should preferrably be mirrored for redundancy. It should only be considered for pools with high synchronous write traffic on relatively slow disks.
 - Intel Optane is a perfect choice as both L2ARCs and SLOGs due to its high throughput, low latency and high durability.
 - Some SSD models come with a build-in cache. Make sure it actually flushes it on power loss.
 - ZFS is always consistent, even in case of data loss.

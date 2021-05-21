@@ -63,4 +63,10 @@ breadcrumbs:
 
 Reboot the system.
 
+**Connecting an Xbox One controller over Bluetooth fails for some unknown reason:**
+
+1. `sudo apt install sysfsutils`
+1. `echo "/module/bluetooth/parameters/disable_ertm=1" | sudo tee -a /etc/sysfs.conf`
+1. `reboot`
+
 {% include footer.md %}

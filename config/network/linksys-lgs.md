@@ -11,7 +11,13 @@ breadcrumbs:
 
 - LGS326
 
-## Setup
+## Information
+
+- Default IP address: DHCPv4 with fallback to `192.168.1.251/24`.
+- Default credentials: Username `admin` with password `admin`.
+- MCLI password: `mcli`
+
+## Basic Setup (HTTP GUI)
 
 1. Wait for it to boot (a few minutes).
 1. (Optional) Reset the configuration:
@@ -30,5 +36,9 @@ breadcrumbs:
         - Uploading to running config: The config will take effect immediately, which may include changing the IP address. Remember to copy it to startup config afterwards. Do this when testing new config changes.
         - Uploading to startup config: Wait for the upload to finish, then reboot the device for it to take effect. Only do this for functioning configs.
     1. Wait for it to come back up to whatever IP address it's configured to use (should take under a minute). If it doesn't come back up within a few minutes, fix the config and restart/reset the switch.
+
+## Basic Setup (Telnet CLI)
+
+**TODO**
 
 {% include footer.md %}
