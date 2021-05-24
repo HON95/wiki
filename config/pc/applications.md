@@ -109,7 +109,7 @@ GUI for configuring gaming mice.
 
 ## Steam (Linux)
 
-- Windows appdata dir: `steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/AppData/`
+- Windows home dir (typical save location): `~/.local/share/Steam/steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/`
 
 ## tmux
 
