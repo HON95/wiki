@@ -122,7 +122,7 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 
 ### Miscellanea
 
-- Windows appdata dir: `steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/AppData/`
+- Windows home dir (typical save location): `~/.local/share/Steam/steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/`
 
 ## tmux
 
