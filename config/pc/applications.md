@@ -109,6 +109,19 @@ GUI for configuring gaming mice.
 
 ## Steam (Linux)
 
+### Installation (Kubuntu)
+
+#### Using Kubuntu Repos or Downloading the Officlal DEB File
+
+Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, and NVIDIA not releasing i386 variants any more as of driver version 465 ish, any normal installation is impossible. The Ubuntu dudes have a PPA containing unofficial i386 variants for the relevant NVIDIA driver packages, but it conflicts with official CUDA packages, which is not nice if you need CUDA.
+
+#### Using Flatpak
+
+- See [Steam (Flatpak)](https://flathub.org/apps/details/com.valvesoftware.Steam).
+- This doesn't require the dumb i386 NVIDIA driver packages.
+
+### Miscellanea
+
 - Windows appdata dir: `steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/AppData/`
 
 ## tmux
