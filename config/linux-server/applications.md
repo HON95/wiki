@@ -424,9 +424,42 @@ echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
 
 ### Usage
 
-- Many OpenSSL default options are insecure and must be specified.
-- Specifying `-noout -text` prints the data as formatted text instead of raw Base64.
-- Create self-signed cert: `openssl req -new -x509 -sha256 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 3650 -subj "/C=ZZ/ST=Local/L=Local/O=Local/OU=Local/CN=localhost"`
+- General info:
+    - Many OpenSSL default options are insecure and must be specified.
+    - Specifying `-noout -text` prints the data as formatted text instead of raw Base64.
+- Inspect certificate file: `openssl x509 -in <cert-file> [-inform der] -noout -text`
+- Inspect online certificate: `openssl s_client -connect <site>:443 </dev/null | openssl x509 -noout -text`
+- Create self-signed cert for localhost/localdomain:
+    ```sh
+    openssl req -new -x509 -newkey rsa:2048 -sha256 -nodes -out localhost.crt -keyout localhost.key -config <(
+    cat <<-EOF
+    [req]
+    default_bits = 2048
+    prompt = no
+    default_md = sha256
+    x509_extensions = ext
+    distinguished_name = dn
+
+    [ext]
+    subjectAltName = @alt_names
+    basicConstraints = CA:FALSE
+    #keyUsage = digitalSignature, keyEncipherment
+    #extendedKeyUsage = serverAuth
+
+    [dn]
+    C = ZZ
+    ST = Localhost
+    L = Localhost
+    O = Localhost
+    OU = Localhost
+    emailAddress = webmaster@localhost
+    CN = localhost
+
+    [alt_names]
+    DNS.1 = *.localdomain.
+    EOF
+    )
+    ```
 
 ## Pi-hole (Docker)
 

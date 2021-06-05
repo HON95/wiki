@@ -39,10 +39,10 @@ Using **Debian**.
 - Docker run options:
     - Set name: `--name=<name>`
     - Run in detatched mode: `-d`
-    - Run using interactive terminal: `-it`
+    - Run using interactive TTY: `-it`
     - Automatically remove when stopped: `--rm`
     - Automatically restart: `--restart=unless-stopped`
-    - Use "tini" as entrypoint and use PID 1: `--init`
+    - Use "tini" as entrypoint with PID 1: `--init`
     - Set env var: `-e <var>=<val>`
     - Publish network port on host: `-p <host-port>:<cont-port>[/udp]`
     - Mount volume: `-v <host-path>:<container-path>`
@@ -55,7 +55,7 @@ Using **Debian**.
 
 ### Networking
 
-- See the miscellaneous note about IPv6 support in Docker.
+- See the miscellaneous note about the lacking IPv6 support in Docker.
 - Network types:
     - Bridge: A plain virtual bridge where all containers and the host are connected and can communicate. It can optionally be directly connected to a host bridge, but that doesn't always work as expected.
     - Overlay: Overlay network for swarm stuff.
