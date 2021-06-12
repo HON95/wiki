@@ -182,18 +182,13 @@ Prevent enabled (and potentially untrusted) interfaces from accepting router adv
 
 #### DNS
 
-##### Using resolv.conf (Alternative 1)
-
-The simplest alternative, without any local system caching.
-
-1. Manually configure `/etc/resolv.conf`.
-
-##### Using systemd-resolved (Alternative 2)
+##### Using systemd-resolved (Alternative 1)
 
 1. (Optional) Make sure no other local DNS servers (like dnsmasq) is running.
 1. Configure `/etc/systemd/resolved.conf`
     - `DNS`: A space-separated list of DNS servers.
-    - `Domains`: A space-separated list of search domains.
+    - (Optional) `Domains`: A space-separated list of search domains.
+    - (Optional) `DNSSEC`: Set to `no` to disable (only if you have a good reason to, like avoiding the chicken-and-egg problem with DNSSEC and NTP).
 1. (Optional) If you're hosting a DNS server on this machine, set `DNSStubListener=no` to avoid binding to port 53.
 1. Enable the service: `systemctl enable --now systemd-resolved.service`
 1. Fix `/etc/resolv.conf`:
@@ -203,6 +198,14 @@ The simplest alternative, without any local system caching.
     - After configuring and starting resolved, copy (not link) `resolv.conf`: `cp /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
     - Make it immutable so dhclient can't update it: `chattr +i /etc/resolv.conf`
 1. Check status: `resolvectl`
+
+##### Using resolv.conf (Alternative 2)
+
+The simplest alternative, without any local system caching.
+
+1. Make sure `/etc/resolv.conf` is a regular file and not a symlink.
+1. Manually configure `/etc/resolv.conf`.
+1. (Optional) Make it immutable to prevent services (like dhclient) from changing it: `chattr +i /etc/resolv.conf`
 
 #### NTP
 
