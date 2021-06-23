@@ -119,6 +119,7 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 
 - See [Steam (Flatpak)](https://flathub.org/apps/details/com.valvesoftware.Steam).
 - This doesn't require the dumb i386 NVIDIA driver packages.
+- As long as [ValveSoftware/steam-for-linux #7847](https://github.com/ValveSoftware/steam-for-linux/issues/7847) isn't fixed, make sure to _not_ enable "remember my password". If you do and it crashes on the next start, run `flatpak run com.valvesoftware.Steam --reset` (if using Flatpak) to reset the user config and then lanuch it normally afterward.
 
 ### Miscellanea
 

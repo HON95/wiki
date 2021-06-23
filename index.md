@@ -59,8 +59,9 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Media
 
-- [Media Ripping](/config/media/ripping/)
-- [Video Streaming](/config/media/streaming/)
+- [Video Processing](/config/media/video-processing/)
+- [Video Ripping](/config/media/video-ripping/)
+- [Video Streaming](/config/media/video-streaming/)
 
 ### Network
 

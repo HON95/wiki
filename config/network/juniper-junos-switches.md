@@ -131,17 +131,22 @@ breadcrumbs:
 
 ## Virtual Chassis
 
+(Although other series also support some form of virtual chassis, this section is targetet at EX switches.)
+
+### Info
+
 - Virtual Chassis (VC) is a simple way of connecting multiple close or distant switches into a ring topology and managing them as a single logical device. It simplifies loop prevention (otherwise using STP) and improves fault tolerance.
 - Roles: A VC has one switch as master routing engine, one switch as backup routing engine and the remaining switches as linecards.
-- Mastership election: The master is elected based on (in order) highest mastership priority, which member was master last time, which switch has been a member the longest, and which member has the lowest MAC address. When using a preprovisioned config, the mastership priority is automatically assigned based on the selected role.
+- Primary-role election: The master is elected based on (in order) highest mastership priority, which member was master last time, which switch has been a member the longest, and which member has the lowest MAC address. When using a preprovisioned config, the mastership priority is automatically assigned based on the selected role.
 - LEDs: The "MST" LED will be solid green on the master, blinking green on the backup and off on the linecards.
 - Alarms: Alarms for a specific device will only show on the master and the actual device.
 - FPCs: Each switch will show as separate FPCs (Flexible PIC (Physical Interface Cards) Concentrators).
+- Split-and-merge: In case the VC gets partitioned, having all partitions elect a new master while running the same configuration would cause logical resource conflicts and inconsistencies in the network. The split and merge is a quorum-like mechanism where only the "largest" (according to certain specific rules) partition continues to function and the other partitions become inactive (all their switches aquire the line-card role). A VC partition becomes active if it contains both the stable (pre-split) primary and backup; if it contains the stable backup and at least half the VC size; or if it contains the stable primary and more than half the VC size. This "merge" part of the feature allows the partitions to merge back together when the partitioning is resolved (if the configurations adhere to certain specific rules). For VCs of size two where both switches would become inactive if a partition were to happen (since none of the rules are satisfied), use `no-split-detection` to disable split-and-merge such that both switches may become primaries (although, one would likely be dead and avoid causing inconsistencies).
 
 ### Best Practices
 
 - Always zeroize before merging.
-- Use no-split-detection if using exactly two devices.
+- Use `no-split-detection` if using exactly two devices.
 - When removing a device, recycle its old ID in the VC.
 - If not preprovisioning the VC, explicitly set the mastership priority to 255 for the devices which should be routing engines.
 - Enable synchronized commit to ensure commits are always applied to all members.
@@ -158,6 +163,7 @@ breadcrumbs:
     - Show: `show virtual-chassis vc-port`
     - Remove: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
 - Change assigned member ID: `request virtual-chassis renumber`
+- Recycle an old member ID: `request virtual-chassis recycle`
 
 ### Setup
 

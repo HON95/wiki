@@ -1,5 +1,5 @@
 ---
-title: Media Ripping
+title: Video Ripping
 breadcrumbs:
 - title: Configuration
 - title: Media

@@ -122,7 +122,7 @@ breadcrumbs:
 - [steven2358's FFmpeg cheat sheet](https://gist.github.com/steven2358/ba153c642fe2bb1e47485962df07c730)
 - **TODO** Find my other FFmpeg notes.
 - Record stream to file, automatically split every X seconds, restart if the stream is unavailable:
-    - Script: `while true; do ffmpeg -hide_banner -loglevel error -i http://localhost:5555/ -c copy -map 0 -f segment -segment_time $((5*60)) -segment_format mp4 -strftime 1 "%Y-%m-%d_%H-%M-%S.mp4"; sleep 5; done`
+    - Script: `while true; do ffmpeg -hide_banner -loglevel error -i http://localhost:5555/ -c copy -map 0 -f segment -segment_time $((5*60)) -segment_format mp4 -strftime 1 "%Y-%m-%d_%H-%M-%S.mp4"; sleep 1; done`
 - Record time lapse at 10x speed without audio:
     - Command: `ffmpeg -i http://localhost:5555/ -filter:v "setpts=0.1*PTS" -an out.mkv`
 
