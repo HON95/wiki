@@ -15,7 +15,7 @@ breadcrumbs:
 
 - Introduced by NVIDIA in 2006. While GPU compute was possible before through hackish methods, CUDA provided a programming model for compute which included e.g. thread blocks, shared memory and synchronization barriers.
 - Modern NVIDIA GPUs contain _CUDA cores_, _tensor cores_ and _RT cores_ (ray tracing cores). Tensor cores may be accessed in CUDA through special CUDA calls, but RT cores are (as of writing) only accessible from Optix and not CUDA.
-- The _compute capability_ describes the generation and supported features of a GPU.
+- The _compute capability_ describes the generation and supported features of a GPU. **TODO** More info about `-code`, `-arch` etc.
 
 ### Mapping the Programming Model to the Execution Model
 
@@ -217,7 +217,7 @@ breadcrumbs:
 ### nvprof
 
 - For profiling CUDA applications.
-- No longer supported for devices with compute capability 7.5 and higher. Use Nsight Compute instead.
+- Not supported for Ampere GPUs or later. Use Nsight Compute instead.
 - Example usage to show which CUDA calls and kernels tak the longest to run: `sudo nvprof <application>`
 - Example usage to show interesting metrics: `sudo nvprof --metrics "eligible_warps_per_cycle,achieved_occupancy,sm_efficiency,alu_fu_utilization,dram_utilization,inst_replay_overhead,gst_transactions_per_request,l2_utilization,gst_requested_throughput,flop_count_dp,gld_transactions_per_request,global_cache_replay_overhead,flop_dp_efficiency,gld_efficiency,gld_throughput,l2_write_throughput,l2_read_throughput,branch_efficiency,local_memory_overhead" <application>`
 
@@ -225,24 +225,25 @@ breadcrumbs:
 
 - **TODO** Seems like an older version of Nsight.
 
-### Nsight
+### Nsight (Suite)
 
 - For debugging and profiling applications.
+- Requires a Turing/Volta or newer GPU.
 - Comes as multiple variants:
-    - Nsight Systems: For general applications. Should also be used for CUDA and graphics applications.
-    - Nsight Compute: For CUDA applications.
-    - Nsight Graphics: For graphical applications.
-    - IDE integration.
+    - Nsight Systems: For general profiling.
+    - Nsight Compute: For compute-specific profiling (CUDA).
+    - Nsight Graphics: For graphics-specific profiling (OpenGL etc.).
+    - IDE integrations.
 - Replaces nvprof.
 
 #### Installation
 
 1. Download the run-files from the website for each variant (System, Compute, Graphics) you want.
 1. Run the run-files with sudo.
-1. **TODO** Fix path or something.
 
-#### Usage
+### Nsight Compute
 
-- When it reruns kernels for different tests, it restores the GPU state but not the host state. If this causes incorrect behavior, set `--replay-mode=application` to rerun the entire application instead.
+- May be run from command line (`ncu`) or using the graphical application.
+- Kernel replays: In order to run all profiling methods for a kernel execution, Nsight might have to run the kernel multiple times by storing the state before the first kernel execution and restoring it for every replay. It does not restore any host state, so in case of host-device communication during the execution, this is likely to put the application in an inconsistent state and cause it to crash or give incorrect results. To rerun the whole application (aka "application mode") instead of transparently replaying individual kernels (aka "kernel mode"), specify `--replay-mode=application` (or the equivalent option in the GUI).
 
 {% include footer.md %}
