@@ -28,7 +28,7 @@ breadcrumbs:
     - Solutions:
         - Use balanced signals.
         - Connect all equipment to a single grounding point, i.e. a single power outlet.
-        - Break the shielding on one cable to break the loop. Different boxes, like DI units, may have this as a feature known as a ground lift. However, make sure all shields are connected at one end. Don't break the shielding/earthing on devices that needs it for safety reasons!
+        - Break the shielding on one cable to break the loop. Different boxes, like DI units, may have this as a feature known as a ground lift. However, make sure all shields are connected at one end (don't lift everything). Don't break the shielding/earthing on devices that needs it for safety reasons!
         - Use a ground loop isolation transformer.
         - Group the ground cables together so no currents get induced into the cables.
         - Use a resistor and/or a ferrite bead to limit AC current.
