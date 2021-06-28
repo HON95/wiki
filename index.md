@@ -130,6 +130,10 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 - [Audio Basics](/media/audio/basics/)
 
+### Lighting
+
+- [DMX512](/media/lighting/dmx/)
+
 ## Software Engineering
 
 ### General
