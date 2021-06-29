@@ -10,35 +10,75 @@ Using **Debian 10 (Buster)**.
 
 ## Basic Setup
 
-If using automation to provision the system, only the "installation" part is necessary.
-If using a hypervisor, the VM may be turned into a template after the "installation" part, so that you only need to do the manual installation once and then clone the template when you need more VMs.
-
 ### Installation
 
 - Always verify the downloaded installation image after downloading it.
-- Use UEFI if possible.
+- If installing in a Proxmox VE VM, see [Proxmox VE: VMs: Initial Setup](/config/virt-cont/proxmox-ve/#initial-setup).
+- Prefer UEFI if possible.
 - Use the non-graphical installer. It's basically the same as the graphical one.
 - Localization:
+    - For automation-managed systems: It doesn't matter.
     - Language: United States English.
     - Location: Your location.
     - Locale: United States UTF-8 (`en_US.UTF-8`).
     - Keymap: Your keyboard's keymap.
-- Use an FQDN as the hostname. It'll set both the shortname and the FQDN.
+- Network settings:
+    - For automation-managed systems: Both DHCP and static IP addresses are fine, do whatever is more practical.
+    - For static servers: Just configure the static IP addresses.
+- Use an FQDN as the hostname.
+    - For automation-managed systems: It doesn't matter, just leave it as `debian` or something.
+    - It'll automatically split it into the shortname and the FQDN.
     - If using automation to manage the system, this doen't matter.
 - Use separate password for root and your personal admin user.
-    - If using automation to manage the system, the passwords may be something temporary and the non-root user may be called e.g. `ansible` and used for automation.
+    - For automation-managed systems: The passwords may be something temporary and the non-root user may be called e.g. `ansible` (for the initial automation).
 - System disk partitioning:
-    - "Simple" system: Guided, single partition, use all available space.
-    - "Complex" system: Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
+    - Simple system: Guided, single partition, use all available space.
+    - Advanced system: Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
     - Swap can be set up later as a file or LVM volume.
     - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
-- At the software selection menu, select only "SSH server" and "standard system utilities".
+- Package manager:
+    - Just pick whatever it suggests.
+- Software selection:
+    - Select only "SSH server" and "standard system utilities".
 - If it asks to install non-free firmware, take note of the packages so they can be installed later.
-- Install GRUB to the used disk (not partition).
+- GRUB bootloader:
+    - Install to the suggested root disk (e.g. `/dev/sda`).
 
-### Reconfigure Clones
+### Prepare for Ansible Configuration
 
-If you didn't already configure this during the installation, e.g. if cloning a template VMs or something.
+Do this if you're going to use Ansible to manage the system.
+This is mainly to make the system accessible by Ansible, which can then take over the configuration.
+If creating a template VM, run the first instructions before saving the template and then run the last instructions on cloned VMs.
+
+1. Upgrade all packages: `apt update && apt full-upgrade`
+1. If running in a QEMU VM (e.g. in Proxmox), install the agent: `apt install qemu-guest-agent`
+1. Setup sudo for the automation user: `apt install sudo && usermod -aG sudo ansible`
+1. (Optional) Convert the VM into a template and clone it into a new VM to be used hereafter.
+1. Update the IP addresses in `/etc/network/interfaces` (see the example below).
+1. Update the DNS server(s) in `/etc/resolv.conf`: `nameserver 1.1.1.1`
+1. Reboot.
+
+Example `/etc/network/interfaces`:
+
+```
+source /etc/network/interfaces.d/*
+
+auto lo
+ïface lo inet loopback
+
+allow-hotplug ens18
+iface ens18 inet static
+    address 10.0.0.100/22
+    gateway 10.0.0.1
+iface ens18 inet6 static
+    address fdaa:aaaa:aaaa:0::100/64
+    gateway fdaa:aaaa:aaaa:0::1
+    accept_ra 0
+```
+
+### Manual Configuration
+
+The first steps may be skipped if already configured during installation (i.e. not cloning a template VM).
 
 1. Check the system status:
     - Check for failed services: `systemctl --failed`
@@ -56,9 +96,6 @@ If you didn't already configure this during the installation, e.g. if cloning a 
     - Set both the shortname and FQDN in `/etc/hosts` using the following format: `127.0.0.1 <fqdn> <shortname>`
         - If the server has a static IP address, use that instead of 127.0.0.1.
     - Check the hostnames with `hostname` (shortname) and `hostname --fqdn` (FQDN).
-
-### Basic Configuration
-
 1. Packages:
     - (Optional) Enable the `contrib` and `non-free` repo areas: `add-apt-repository <area>`
         - Or by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
@@ -181,6 +218,8 @@ Prevent enabled (and potentially untrusted) interfaces from accepting router adv
 1. Note: If you flush the firewall and reconfigure it, remember to restart services modifying it (like libvirt, Docker, Fail2Ban).
 
 #### DNS
+
+**TODO** Setup `resolvconf` to prevent automatic `resolv.conf` changes.
 
 ##### Using systemd-resolved (Alternative 1)
 
