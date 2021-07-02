@@ -108,10 +108,9 @@ The first steps may be skipped if already configured during installation (i.e. n
     - Fix YAML formatting globally: In `/etc/vim/vimrc.local`, add `autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab`.
 1. Add mount options:
     - Setup hidepid:
-        - **TODO** Use existing `adm` group instead of creating a new one?
-        - Add PID monitor group: `groupadd -g 500 hidepid` (example GID)
-        - Add your personal user to the PID monitor group: `usermod -aG hidepid <user>`
-        - Enable hidepid in `/etc/fstab`: `proc /proc proc defaults,hidepid=2,gid=500 0 0`
+        - Note: The `adm` group will be granted access.
+        - Add your personal user to the PID monitor group: `usermod -aG adm <user>`
+        - Enable hidepid in `/etc/fstab`: `proc /proc proc defaults,hidepid=2,gid=<adm-gid> 0 0` (using the numerical GID of `adm`)
     - (Optional) Disable the tiny swap partition added by the guided installer by commenting it in the fstab.
     - (Optional) Setup extra mount options: See [Storage](system.md).
     - Run `mount -a` to validate fstab.
@@ -121,7 +120,7 @@ The first steps may be skipped if already configured during installation (i.e. n
     - Add the relevant groups (using `usermod -aG <group> <user>`):
         - `sudo` for sudo access.
         - `systemd-journal` for system log access.
-        - `hidepid` (whatever it's called) if using hidepid, to see all processes.
+        - `adm` for hidepid, to see all processes (if using hidepid).
     - Add your personal SSH pubkey to `~/.ssh/authorized_keys` and fix the owner and permissions (700 for dir, 600 for file).
         - Hint: Get `https://github.com/<user>.keys` and filter the results.
     - Try logging in remotely and gain root access through sudo.
@@ -230,12 +229,7 @@ Prevent enabled (and potentially untrusted) interfaces from accepting router adv
     - (Optional) `DNSSEC`: Set to `no` to disable (only if you have a good reason to, like avoiding the chicken-and-egg problem with DNSSEC and NTP).
 1. (Optional) If you're hosting a DNS server on this machine, set `DNSStubListener=no` to avoid binding to port 53.
 1. Enable the service: `systemctl enable --now systemd-resolved.service`
-1. Fix `/etc/resolv.conf`:
-    - Note: The systemd-generated one is `/run/systemd/resolve/stub-resolv.conf`.
-    - Note: Simply symlinking `/etc/resolv.conf` to the systemd one will cause dhclient to overwrite it if using DHCP for any interfaces, so don't do that.
-    - Note: This method may cause `/etc/resolv.conf` to become outdated if the systemd one changes for some reason (e.g. if the search domains change).
-    - After configuring and starting resolved, copy (not link) `resolv.conf`: `cp /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
-    - Make it immutable so dhclient can't update it: `chattr +i /etc/resolv.conf`
+1. Link `/etc/resolv.conf`: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
 1. Check status: `resolvectl`
 
 ##### Using resolv.conf (Alternative 2)
@@ -308,12 +302,11 @@ Everything here is optional.
     - Install: `apt install lynis`
     - Run: `lynis audit system`
 - MOTD:
-    - Clear `/etc/motd` and `/etc/issue`.
-    - Download [dmotd.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/dmotd.sh) to `/etc/profile.d/`.
+    - Clear `/etc/motd`, `/etc/issue` and `/etc/issue.net`.
+    - Download [dmotd.sh](https://github.com/HON95/scripts/blob/master/linux/login/dmotd.sh) to `/etc/profile.d/`.
     - Install the dependencies: `neofetch lolcat`
     - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
     - (Optional) Add a MOTD to `/etc/motd`.
-    - (Optional) Clear or change the pre-login message in `/etc/issue`.
     - Test it: `su - <some-normal-user>`
 - Setup monitoring:
     - Use Prometheus with node exporter or something and set up alerts.

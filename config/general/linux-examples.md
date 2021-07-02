@@ -106,6 +106,16 @@ breadcrumbs:
     - Power save: `echo powersave | ...`
 - Show current core frequencies: `grep "cpu MHz" /proc/cpuinfo | cut -d' ' -f3`
 
+### Profiling
+
+- Command timer (`time`):
+    - Provided both as a shell built-in `time` and as `/usr/bin/time`, use the latter.
+    - Syntax: `/usr/bin/time -vp <command>`
+    - Options:
+        - `-p` for POSIX output (one line per time)
+        - `-v` for interesting system info about the process.
+    - It give the wall time, time spent in usermode and time spent in kernel mode.
+
 ### Security
 
 - Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`

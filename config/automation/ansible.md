@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Modules-ish
+## Resources
 
 ### General Networking
 
@@ -17,5 +17,16 @@ breadcrumbs:
 
 - [Ansible IOS platform options](https://docs.ansible.com/ansible/latest/network/user_guide/platform_ios.html)
 - [Ansible ios_config module](https://docs.ansible.com/ansible/latest/modules/ios_config_module.html)
+
+## Configuration
+
+Example `/etc/ansible/ansible.cfg`:
+
+```
+[defaults]
+# Change to "auto" if this path causes problems
+interpreter_python = /usr/bin/python3
+host_key_checking = false
+```
 
 {% include footer.md %}
