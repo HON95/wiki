@@ -32,9 +32,17 @@ breadcrumbs:
 Example usage:
 
 ```sh
-# 1 stressor, 75% of memory, with verification, for 10 minutes
+# 1 stressor, 75% of memory (TODO this also works fine with 100% for some reason, find out what it actually means), with verification, for 10 minutes
 stress-ng --vm 1 --vm-bytes 75% --vm-method all --verify -t 10m -v
 ```
+
+### Error Detection and Correction (EDAC) (Linux)
+
+- Only available on systems with ECC RAM, AFAIK.
+- Check the syslog: `journalctl | grep 'EDAC' | grep -i 'error'`
+- Show corrected (CE) and uncorrected (UE) errors per memory controller and DIMM slot: `grep '.*' /sys/devices/system/edac/mc/mc*/dimm*/dimm_*_count`
+- Show DIMM slot names to help locate the faulty DIMM: `dmidecode -t memory | grep 'Locator:.*DIMM.*'`
+- When changing the DIMM, make sure to run Memtest86 or similar both before and after to validate that the errors go away.
 
 ## Storage
 
