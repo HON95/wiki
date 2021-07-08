@@ -81,7 +81,7 @@ breadcrumbs:
 - Show sockets:
     - `netstat -tulpn`
         - `tu` for TCP and UDP, `l` for listening, `p` for protocol, `n` for numerical post numbers.
-    - `ss <options>`
+    - `ss -tulpn` (replaces netstat version)
 - Show interface stats:
     - `ip -s link`
     - `netstat -i`
@@ -98,6 +98,11 @@ breadcrumbs:
 - Show misc. stats:
     - `nstat`
     - `netstat -s` (statistics)
+
+### Memory
+
+- NUMA stats:
+    - `numastat` (from package `numactl`)
 
 ### Performance and Power Efficiency
 
