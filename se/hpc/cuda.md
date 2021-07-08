@@ -245,7 +245,19 @@ breadcrumbs:
 
 ### Nsight Compute
 
-- May be run from command line (`ncu`) or using the graphical application.
+- May be run from command line (`ncu`) or using the graphical application (`ncu-ui`).
 - Kernel replays: In order to run all profiling methods for a kernel execution, Nsight might have to run the kernel multiple times by storing the state before the first kernel execution and restoring it for every replay. It does not restore any host state, so in case of host-device communication during the execution, this is likely to put the application in an inconsistent state and cause it to crash or give incorrect results. To rerun the whole application (aka "application mode") instead of transparently replaying individual kernels (aka "kernel mode"), specify `--replay-mode=application` (or the equivalent option in the GUI).
+
+## Hardware
+
+### NVLink & NVSwitch
+
+- Interconnect for connecting NVIDIA GPUs and NICs/HCAs as a mesh within a node, because PCIe was too limited.
+- NVLink alone is limited to only eight GPUs, but NVSwitches allows connecting more.
+- A bidirectional "link" consists of two unidirectional "sub-links", which each contain eight differential pairs (i.e. lanes). Each device may support multiple links.
+- NVLink transfer rate per differential pair:
+    - NVLink 1.0 (Pascal): 20Gb/s
+    - NVLink 2.0 (Volta): 25Gb/s
+    - NVLink 3.0 (Ampere): 50Gb/s
 
 {% include footer.md %}

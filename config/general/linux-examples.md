@@ -81,7 +81,7 @@ breadcrumbs:
 - Show sockets:
     - `netstat -tulpn`
         - `tu` for TCP and UDP, `l` for listening, `p` for protocol, `n` for numerical post numbers.
-    - `ss <options>`
+    - `ss -tulpn` (replaces netstat version)
 - Show interface stats:
     - `ip -s link`
     - `netstat -i`
@@ -99,12 +99,27 @@ breadcrumbs:
     - `nstat`
     - `netstat -s` (statistics)
 
+### Memory
+
+- NUMA stats:
+    - `numastat` (from package `numactl`)
+
 ### Performance and Power Efficiency
 
 - Set the CPU frequency scaling governor mode:
     - High performance: `echo performance | sudo tee /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor`
     - Power save: `echo powersave | ...`
 - Show current core frequencies: `grep "cpu MHz" /proc/cpuinfo | cut -d' ' -f3`
+
+### Profiling
+
+- Command timer (`time`):
+    - Provided both as a shell built-in `time` and as `/usr/bin/time`, use the latter.
+    - Syntax: `/usr/bin/time -vp <command>`
+    - Options:
+        - `-p` for POSIX output (one line per time)
+        - `-v` for interesting system info about the process.
+    - It give the wall time, time spent in usermode and time spent in kernel mode.
 
 ### Security
 

@@ -40,8 +40,11 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ### HPC
 
 - [Slurm Workload Manager](/config/hpc/slurm/)
+- [Containers](/config/hpc/containers/)
+- [Singularity](/config/hpc/singularity/)
 - [CUDA](/config/hpc/cuda/)
 - [Open MPI](/config/hpc/openmpi/)
+- [Interconnects](/config/hpc/interconnects/)
 
 ### IoT & Home Automation
 
@@ -55,7 +58,6 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Storage](/config/linux-server/storage/)
 - [Storage: ZFS](/config/linux-server/storage-zfs/)
 - [Storage: Ceph](/config/linux-server/storage-ceph/)
-- [Networking](/config/linux-server/networking/)
 
 ### Media
 

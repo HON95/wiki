@@ -414,11 +414,14 @@ echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
 
 ### Usage
 
+- Show UPSes: `upsc -l`
+- Show UPS vars: `upsc <ups>`
+
 #### Query the Server
 
 1. Telnet into it: `telnet localhost 3493`
-1. List UPSes: `LIST UPS` (the second field is the UPS ID)
-1. List variables: `LIST VAR <ups>`
+1. Show UPSes: `LIST UPS`
+1. Show UPS vars: `LIST VAR <ups>`
 
 ## OpenSSL
 
