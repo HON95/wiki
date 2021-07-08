@@ -88,16 +88,18 @@ breadcrumbs:
 
 - The largest and slowest memory on the device.
 - Resides in the GPU DRAM.
-- Variables may persist for the lifetime of the application.
-- One of the memories the host can access (outside of kernels).
-- The only memory threads from different blocks can share data in.
+- Per-grid, accessible outside of kernels.
+- Accessible by the host.
+- The only memory threads from different blocks can share stored data in.
 - Statically declared in global scope using the `__device__` declaration or dynamically allocated using `cudaMalloc`.
 - Global memory coalescing: See the section about data alignment.
 
 #### Constant Memory
 
-- Read-only memory. **TODO** And?
+- Read-only memory.
 - Resides in the special constant memory.
+- Per-grid, accessible outside of kernels.
+- Accessible by the host.
 - Declared using the `__constant__` variable qualifier.
 - Multiple/all threads in a warps can access the same memory address simultaneously, but accesses to different addresses are serialized.
 
