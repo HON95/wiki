@@ -238,12 +238,21 @@ breadcrumbs:
     - IDE integrations.
 - Replaces nvprof.
 
-#### Installation
-
-1. Download the run-files from the website for each variant (System, Compute, Graphics) you want.
-1. Run the run-files with sudo.
-
 ### Nsight Compute
+
+#### Info
+
+- Replaces nvprof.
+
+#### Installation (Ubuntu)
+
+- Nsight Systems and Compute comes with CUDA if installed through NVIDIA's repos.
+- If it complains about something Qt, install `libqt5xdg3`.
+- Access to performance counters:
+    - Since access to GPU performance counters are limited to protect against side channel attacks (see [Security Notice: NVIDIA Response to “Rendered Insecure: GPU Side Channel Attacks are Practical” - November 2018 (NVIDIA)](https://nvidia.custhelp.com/app/answers/detail/a_id/4738)), it must be run either with sudo (or a user with `CAP_SYS_ADMIN`), or by setting a module option which disables the protection. For non-sensitive applications (e.g. for teaching), this protection is not required. See [NVIDIA Development Tools Solutions - ERR_NVGPUCTRPERM: Permission issue with Performance Counters (NVIDIA)](https://developer.nvidia.com/nvidia-development-tools-solutions-err_nvgpuctrperm-permission-issue-performance-counters) for more info.
+    - Enable access for all users: Add `options nvidia "NVreg_RestrictProfilingToAdminUsers=0"` to e.g. `/etc/modprobe.d/nvidia.conf` and reboot.
+
+#### Usage
 
 - May be run from command line (`ncu`) or using the graphical application (`ncu-ui`).
 - Kernel replays: In order to run all profiling methods for a kernel execution, Nsight might have to run the kernel multiple times by storing the state before the first kernel execution and restoring it for every replay. It does not restore any host state, so in case of host-device communication during the execution, this is likely to put the application in an inconsistent state and cause it to crash or give incorrect results. To rerun the whole application (aka "application mode") instead of transparently replaying individual kernels (aka "kernel mode"), specify `--replay-mode=application` (or the equivalent option in the GUI).

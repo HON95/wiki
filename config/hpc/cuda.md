@@ -11,7 +11,8 @@ NVIDIA CUDA (Compute Unified Device Architecture) Toolkit, for programming CUDA-
 ### Related Pages
 {:.no_toc}
 
-- [CUDA (software engineering)](/config/se/general/cuda.md)
+- [HIP](/config/hpc/hip/)
+- [CUDA (software engineering)](/se/general/cuda/)
 
 ## Resources
 
@@ -22,7 +23,7 @@ NVIDIA CUDA (Compute Unified Device Architecture) Toolkit, for programming CUDA-
 
 ## Setup
 
-### Linux
+### Linux Installation
 
 The toolkit on Linux can be installed in different ways:
 
@@ -34,19 +35,20 @@ If an NVIDIA driver is already installed, it must match the CUDA version.
 
 Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
 
-#### Ubuntu (NVIDIA CUDA Repo)
+#### Ubuntu w/ NVIDIA's CUDA Repo
 
 1. Follow the steps to add the NVIDIA CUDA repo: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
     - But don't install `cuda` yet.
-1. Remove anything NVIDIA or CUDA from the system to avoid conflicts: `apt purge --autoremove cuda nvidia-* libnvidia-*`
+1. Remove anything NVIDIA or CUDA from the system to avoid conflicts: `apt purge --autoremove 'cuda' 'cuda-' 'nvidia-*' 'libnvidia-*'`
     - Warning: May break your PC. There may be better ways to do this.
 1. Install CUDA from the new repo (includes the NVIDIA driver): `apt install cuda`
-1. Setup path: In `/etc/environment`, append `:/usr/local/cuda/bin` to the end of the PATH list.
+1. Setup PATH: `echo 'export PATH=$PATH:/usr/local/cuda/bin' | sudo tee -a /etc/profile.d/cuda.sh`
 
 ### Docker Containers
 
-- Docker containers may run NVIDIA applications using the NVIDIA runtime for Docker.
-- **TODO**
+Docker containers may run NVIDIA applications using the NVIDIA runtime for Docker.
+
+See [Docker](/config/virt-cont/docker/).
 
 ### DCGM
 

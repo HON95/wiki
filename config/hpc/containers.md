@@ -55,12 +55,11 @@ breadcrumbs:
 - Supports using Docker images (and Docker Hub).
 - No daemon.
 - Slurm integration using NVIDIA's [Pyxis](https://github.com/NVIDIA/pyxis) SPANK plugin.
-- Support NVIDIA GPUs through NVIDIA's [libnvidia-container](https://github.com/nvidia/libnvidia-container) library and CLI utility.
-    - **TODO** AMD ROCm support?
+- Support NVIDIA GPUs through NVIDIA's [libnvidia-container](https://github.com/nvidia/libnvidia-container) library and CLI utility (_official_ support from NVIDIA unlike certain other solutions).
 
 ### Shifter
 
-I've never used it. It's very similar to Singularity.
+I've never used it. It's apparently very similar to Singularity.
 
 ## Best Practices
 
