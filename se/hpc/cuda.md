@@ -6,16 +6,57 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CUDA through the fixed graphics pipeline, CUDA and CUDA-capable GPUs provided more somewhat more generalized GPU architecture and a programming model for GPU compute.
+
 ### Related Pages
 {:.no_toc}
 
 - [CUDA (configuration)](/config/config/hpc/cuda.md)
 
-## General
+## Hardware Architecture
 
-- Introduced by NVIDIA in 2006. While GPU compute was possible before through hackish methods, CUDA provided a programming model for compute which included e.g. thread blocks, shared memory and synchronization barriers.
-- Modern NVIDIA GPUs contain _CUDA cores_, _tensor cores_ and _RT cores_ (ray tracing cores). Tensor cores may be accessed in CUDA through special CUDA calls, but RT cores are (as of writing) only accessible from Optix and not CUDA.
+- Modern CUDA-capable GPUs contain multiple types of cores:
+    - CUDA cores: Aka programmable shading cores.
+    - Tensor cores: Mostly for AI. **TODO** and _RT cores_ (for ray tracing). Tensor cores may be accessed in CUDA through special CUDA calls, but RT cores are (as of writing) only accessible from Optix.
+- **TODO** SMs, GPCs, TPCs, warp schedulers, etc.
+
+**TODO** Move "Mapping the Programming Model to the Execution Model" and "Thread Hierarchy" here?
+
+### SMs and Blocks
+
+- During kernel execution, each block gets assigned to a single SM. Multiple blocks may be assigned to the same SM.
+- The maximum number of active blocks per SM is limited by one of the following:
+    - Blocks and warps per SM: Both numbers are defined by the SM. For maximum theoretical occupancy, the blocks must together contain enough threads to fill the maximum number of warps per SM, without exceeding the maximum number of blocks per SM.
+    - Registers per SM: The set of registers in an SM are shared by all active threads (from all active blocks on the SM), meaning that the amount of registers used by a threads may limit the occupancy. Since less registers per thread may considerably degrade performance, this is the main reason why too high occupancy is generally bad. The register count per thread is by default determined heuristically by the compiler to minimize register spilling to local memory, but `__launch_bounds__` may be used to assist the compiler with the allocation.
+    - Shared memory per SM: Shared memory is shared between all threads of a single block (running on a single SM). Allocating a large amount of shared memory per block will limit the number of active blocks on the SM and therefore may implicitly limit occupancy if the blocks have few threads each. Allocating more memory away from shared memory and towards the L1 cache may also contribute to reduced occupancy.
+- Blocks are considered _active_ from the time its warps have started executing until all warps have finished executing.
+
+### Warp Schedulers and Warps
+
+- Each SM consists of one or more warp schedulers.
+- Warps consist of up to 32 threads from a block (for all current compute capabilities), i.e. the threads of a block are grouped into warps in order to get executed.
+- A warp is considered active from the point its threads start executing until all threads have finished. SMs have a limit on the number of active warps, meaning the remaining inactive warps will need to wait until the current active ones are finished execuring. The ratio of active warps on an SM to the maximum number of active warps on the SM is called _occupancy_.
+- Each warp scheduler has multiple warp slots which may be active (containing an _active_ warp) or _unused_.
+- At most one warp is _selected_ (see states below) per clock per warp scheduler, which then executes a single instruction.
+- Active warp states:
+    - Stalled: It's waiting for instructions or data to load, or some other dependency.
+    - Eligible: It's ready to get scheduled for execution.
+    - Selected: It's eligible and has been selected for execution during the current clock.
+- **TODO** scheduling policy?
+
+## Programming
+
+#### TODO
+
 - The _compute capability_ describes the generation and supported features of a GPU. **TODO** More info about `-code`, `-arch` etc.
+- SM processing blocks/partitions same as warp schedulers?
+- SM processing block datapaths.
+
+### General
+
+- Branch divergence: Each SM has only a single control unit for all cores within it, so for all branches any thread takes (in total), the SM and all of its cores will need to go through all of the branches but mask the output for all threads which did not locally take the branch. If no threads take a specific branch, it will not be executed by the SM.
+- Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
+- Kernels are specified as functions with the `__global__` keyword.
 
 ### Mapping the Programming Model to the Execution Model
 
@@ -26,15 +67,9 @@ breadcrumbs:
 - Each CUDA core within an SM executes a thread from a block assigned to the SM.
 - **TODO** Warps and switches. 32 threads per warp for all current GPUs.
 
-## Programming
+##### Thread Hierarchy
 
-### General
-
-- Branch divergence: Each SM has only a single control unit for all cores within it, so for all branches any thread takes (in total), the SM and all of its cores will need to go through all of the branches but mask the output for all threads which did not locally take the branch. If no threads take a specific branch, it will not be executed by the SM.
-- Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
-- Kernels are specified as functions with the `__global__` keyword.
-
-### Thread Hierarchy
+**TODO** Move into section below.
 
 - Grids consist of a number of blocks and blocks concist of a number of threads.
 - Threads and blocks are indexed in 1D, 2D or 3D space (separately), which threads may access through the 3-compoent vectors `blockDim`, `blockIdx` and `threadIdx`.
@@ -63,6 +98,8 @@ breadcrumbs:
     - The constant and texture memories are cached.
     - The global and local memories are cached in L1 and L2 on newer devices.
     - The register and shared memories are on-chip and fast, so they don't need to be cached.
+- Resource contention:
+    - The pool of registers and shared memory are shared by all active threads in an SM.
 
 #### Register Memory
 
@@ -78,11 +115,13 @@ breadcrumbs:
 
 #### Shared Memory
 
+- Shared between all threads of a block (block-local).
+- The scope is the lifetime of the block.
 - Resides in fast, high-bandwidth on-chip memory.
 - Organized into banks which can be accessed concurrently. Each bank is accessed serially and multiple concurrent accesses to the same bank will result in a bank conflict.
 - Declared using the `__shared__` variable qualifier. The size may be specified during kernel invocation.
-- The scope is the lifetime of the block.
-- **TODO** Shared between?
+- On modern devices, shared memory and the L1 cache resides on the same chip and the amount of memory allocated to each may be specified in the program.
+- **TODO** Static (`__shared__`) and dynamic (specified during kernel invocation).
 
 #### Global Memory
 
@@ -205,6 +244,22 @@ breadcrumbs:
 - For getting device attributes/properties, `cudaDeviceGetAttribute` is significantly faster than `cudaGetDeviceProperties`.
 - Use `cudaDeviceReset` to reset all state for the device by destroying the CUDA context.
 
+## Metrics
+
+- Occupancy: The ratio of active warps on an SM to the maximum number of active warps on the SM. Low occupancy generally leads to poor instruction issue efficiency since there may not be enough eligible warps per clock to saturate the warp schedulers. Too high occupancy may also degrade performance as resources may be contend by threads. The occupancy should be high enough to hide memory latencies without causing considerable resource contention, which depends on both the device and application.
+- Theoretical occupancy: Maximum possible occupancy, limited by factors such as warps per SM, blocks per SM, registers per SM and shared memory per SM. This is computed statically without running the kernel.
+- Achieved occupancy (i.e. actual occupancy): Average occupancy of an SM for the whole duration it's active. Measured as the sum of active warps all warp schedulers for an SM for each clock cycle the SM is active, divided by number of clock cycles and then again divided by the maximum active warps for the SM. In addition to the reasons mentioned for theoretical occupancy, it may be limited due to unbalanced workload within blocks, unbalanced workload across blocks, too few blocks launched, and partial last wave (meaning that the last "wave" of blocks aren't enough to activate all warp schedulers of all SMs).
+
+## NVLink & NVSwitch
+
+- Interconnect for connecting NVIDIA GPUs and NICs/HCAs as a mesh within a node, because PCIe was too limited.
+- NVLink alone is limited to only eight GPUs, but NVSwitches allows connecting more.
+- A bidirectional "link" consists of two unidirectional "sub-links", which each contain eight differential pairs (i.e. lanes). Each device may support multiple links.
+- NVLink transfer rate per differential pair:
+    - NVLink 1.0 (Pascal): 20Gb/s
+    - NVLink 2.0 (Volta): 25Gb/s
+    - NVLink 3.0 (Ampere): 50Gb/s
+
 ## Tools
 
 ### CUDA-GDB
@@ -232,17 +287,19 @@ breadcrumbs:
 - For debugging and profiling applications.
 - Requires a Turing/Volta or newer GPU.
 - Comes as multiple variants:
-    - Nsight Systems: For general profiling.
-    - Nsight Compute: For compute-specific profiling (CUDA).
+    - Nsight Systems: For general profiling. Provides profiling information along a single timeline. Has less overhead, making it more appropriate for long-running instances with large datasets. May provide clues as to what to look into with Nsight Compute or Graphics.
+    - Nsight Compute: For compute-specific profiling (CUDA). Isolates and profiles individual kernels (**TODO** for a single or all invocations?).
     - Nsight Graphics: For graphics-specific profiling (OpenGL etc.).
     - IDE integrations.
-- Replaces nvprof.
+- The tools may be run either interactively/graphically through the GUIs, or through the command line versions to generate a report which can be loaded into the GUIs.
 
 ### Nsight Compute
 
 #### Info
 
-- Replaces nvprof.
+- Requires Turing/Volta or later.
+- Replaces the much simpler nvprof tool.
+- Supports stepping through CUDA calls.
 
 #### Installation (Ubuntu)
 
@@ -255,18 +312,10 @@ breadcrumbs:
 #### Usage
 
 - May be run from command line (`ncu`) or using the graphical application (`ncu-ui`).
+- Running it may require sudo, `CAP_SYS_ADMIN` or disabling performance counter protection for the driver module. See the installation note above. If interactive Nsight ends without results or non-interactive or CLI Nsight shows some `ERR_NVGPUCTRPERM` error, this is typically the cause.
+- May be run either in (non-interactive) profile mode or in interactive profile mode (with stepping for CUDA API calls).
+- For each mode, the "sections" (profiling types) to run must be specified. More sections means it takes longer to profile as it may require running the kernel invocations multiple times (aka kernel replaying).
 - Kernel replays: In order to run all profiling methods for a kernel execution, Nsight might have to run the kernel multiple times by storing the state before the first kernel execution and restoring it for every replay. It does not restore any host state, so in case of host-device communication during the execution, this is likely to put the application in an inconsistent state and cause it to crash or give incorrect results. To rerun the whole application (aka "application mode") instead of transparently replaying individual kernels (aka "kernel mode"), specify `--replay-mode=application` (or the equivalent option in the GUI).
-
-## Hardware
-
-### NVLink & NVSwitch
-
-- Interconnect for connecting NVIDIA GPUs and NICs/HCAs as a mesh within a node, because PCIe was too limited.
-- NVLink alone is limited to only eight GPUs, but NVSwitches allows connecting more.
-- A bidirectional "link" consists of two unidirectional "sub-links", which each contain eight differential pairs (i.e. lanes). Each device may support multiple links.
-- NVLink transfer rate per differential pair:
-    - NVLink 1.0 (Pascal): 20Gb/s
-    - NVLink 2.0 (Volta): 25Gb/s
-    - NVLink 3.0 (Ampere): 50Gb/s
+- Supports NVTX (NVIDIA Tools Extension) for instrumenting the application in order to provide context/information around events and certain code.
 
 {% include footer.md %}
