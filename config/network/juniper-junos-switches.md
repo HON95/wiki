@@ -23,6 +23,13 @@ breadcrumbs:
 
 - [Juniper EX3300 Fan Mod](/guides/network/juniper-ex3300-fanmod/)
 
+## Basics
+
+- Default credentials: Username `root` without a password (drops you into the shell instead of the CLI).
+- Default mgmt. IP address: Using DHCPv4.
+- Serial config: RS-232 w/ RJ45, baud 115200, 8 data bits, no parity bits, 1 stop bit, no flow control.
+- Native VLAN: 0, aka `default`
+
 ## Initial Setup
 
 1. Connect to the switch using serial:
@@ -30,7 +37,7 @@ breadcrumbs:
 1. Login:
     - Username `root` and no password.
     - Logging in as root will always start the shell. Run `cli` to enter the operational CLI.
-1. (Optional) Disable default virtual chassis ports (VCPs) if not used:
+1. (Optional) Free virtual chassis ports (VCPs) for normal use:
     1. Enter op mode.
     1. Show VCPs: `show virtual-chassis vc-port`
     1. Remove VCPs: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
@@ -112,8 +119,16 @@ breadcrumbs:
     - **TODO**
 1. Enable EEE:
     - **TODO**
-1. Configure RSTP:
-    - RSTP is the default STP variant for Junos.
+1. (Optional) Configure RSTP:
+    - Note: RSTP is the default STP variant for Junos.
+    - Enter config section: `edit protocols rstp`
+    - Set priority: `set bridge-priority <priority>` (default 32768, should be a multiple of 4096, use e.g. 32768 for access, 16384 for distro and 8192 for core)
+    - Set hello time: `set hello-time <seconds>` (default 2s)
+    - Set maximum age: `set max-age <seconds>` (default 20s)
+    - Set forward delay: `set forward-delay <seconds>` (default 15s)
+    - **TODO** Portfast for access ports?
+    - **TODO** Guards.
+    - **TODO** Enabled on all interfaces and VLANs by default?
 1. Configure SNMP:
     - Note: SNMP is extremely slow on the Juniper switches I've tested it on.
     - Enable public RO access: `set snmp community public authorization read-only`
@@ -127,7 +142,13 @@ breadcrumbs:
 ### Interfaces
 
 - Disable interface or unit: `set disable`
-- Perform operation on multiple interfaces: `wildcard range set int ge-0/0/[0-47] unit 0 family ethernet-switching` (example)
+- Show transceiver info:
+    - `show interfaces diagnostics optics [if]`
+    - `show interfaces media [if]` (less info, only works if interface is up)
+
+### STP
+
+- Show interface status: `show spanning-tree interface`
 
 ## Virtual Chassis
 
@@ -180,12 +201,5 @@ breadcrumbs:
 ### Virtual Chassis Fabric
 
 Virtual Chassis Fabric (VCF) evolves VC into a spine-and-leaf architecture. While VC focuses on simplified management, VCF focuses on improved data center connectivity. Only certain switches (like the QFX5100) support this feature.
-
-## Miscellanea
-
-- Serial:
-    - RS-232 w/ RJ45 (Cisco-like).
-    - Baud 9600 (default).
-    - 8 data bits, no parity, 1 stop bits, no flow control.
 
 {% include footer.md %}
