@@ -75,9 +75,24 @@ Sends an emails when APT updates are available.
 
 ## BIND
 
+### Info
+
 - Aka "named".
 
-**TODO**
+### Config
+
+- Should typically be installed directly on the system, but the Docker image is pretty good too.
+    - Docker image: [internetsystemsconsortium/bind9 (Docker Hub)](https://hub.docker.com/internetsystemsconsortium/bind9)
+- Guides:
+    - [Tutorial: How To Configure Bind as a Caching or Forwarding DNS Server on Ubuntu 16.04 (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-caching-or-forwarding-dns-server-on-ubuntu-16-04)
+    - [Tutorial: How To Setup DNSSEC on an Authoritative BIND DNS Server (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-setup-dnssec-on-an-authoritative-bind-dns-server-2)
+
+### Usage
+
+- Valdiate config: `named-checkconf`
+- Validate DNSSEC:
+    - `dig sigfail.verteiltesysteme.net @<server> +dnssec` should give an rcode of `SERVFAIL`.
+    - `dig sigok.verteiltesysteme.net @<server> +dnssec` should give an rcode of `NOERROR`.
 
 ## bitwarden_rs
 

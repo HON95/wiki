@@ -6,6 +6,10 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## Resources
+
+- [[RFC 1912] Common DNS Operational and Configuration Errors](https://datatracker.ietf.org/doc/html/rfc1912)
+
 ## Basics
 
 Everyone knows this, no point reiterating.
