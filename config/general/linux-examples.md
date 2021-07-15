@@ -27,7 +27,7 @@ breadcrumbs:
         - Default interval is 1s, default count is unlimited.
         - The values shown are the average since the last interval ended.
         - For intervals over 1s, the last row will update itself each second until the delay has been reached and a new line is created. The values shown are averages since the last final value (when the last line was finalized), so e.g. a 10s interval gives a final line showing a 10s average.
-        - The first line is always a snapshot, i.e. all rate-based metrics are 0.
+        - The first line is always a snapshot, i.e. all rate-based metrics are 0 or some absolute value.
         - If any column options are provided, they will replace the default ones and are displayed in the order specified.
     - Special options:
         - `-C <>`: Comma-separated list of CPUs/cores to show for, including `total`.
@@ -36,13 +36,13 @@ breadcrumbs:
         - `-f`: Show stats for all devices (not aggregated).
     - Useful metrics:
         - `-t`: Current time.
-        - `-p`: Process stats (by runnable, uninterruptible, new) (number of processes).
-        - `-i`: Specific interrupt stats (by interrupt IDs) (interrupts per second).
+        - `-p`: Process stats (by runnable, uninterruptible, new) (changes per second).
         - `-y`: Total interrupt and context switching stats (by interrupts, context switches) (events per second).
         - `-l`: Load average stats (1 min, 5 mins, 15 mins) (total system load multiplied by number of cores).
-        - `-c`: CPU stats (by system, user, idle, wait, hardware interrupt, software interrupt) (percentage of total).
+        - `-c`: CPU stats (by system, user, idle, wait) (percentage of total).
+        - `--cpu-use`: Per-CPU usage (by CPU) (percentage).
         - `-m`: Memory stats (by used, buffers, cache, free) (bytes).
-        - `-p`: Paging stats (by in, out) (count per second).
+        - `-g`: Paging stats (by in, out) (count per second).
         - `-s`: Swap stats (by used, free) (total).
         - `-r`: Storage request stats (by read, write) (requests per second).
         - `-d`: Storage throughput stats (by read, write) (bytes per second).
@@ -50,6 +50,10 @@ breadcrumbs:
         - `--socket`: Network socket stats (by total, tcp, udp, raw, ip-fragments)
     - Useful plugins (metrics):
         - `--net-packets`: Network request stats (by recv, send) (packets per second).
+    - Examples:
+        - General overview (CPU, RAM, ints/csws, disk, net): `dstat -tcmyrdn --net-packets 60`
+        - Network overview (CPU, ints/csws, net): `dstat -tcyn --net-packets 60`
+        - Process overview (CPU, RAM, ints/csws, paging, process, sockets): `dstat -tcmygp --socket 60`
 
 ### File Systems and Logical Volume Managers
 
