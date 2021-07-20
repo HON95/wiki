@@ -160,13 +160,20 @@ breadcrumbs:
 
 ### Profiling
 
-- Command timer (`time`):
+- `time` (timing commands):
     - Provided both as a shell built-in `time` and as `/usr/bin/time`, use the latter.
-    - Syntax: `/usr/bin/time -vp <command>`
+    - Typical usage: `/usr/bin/time -p <command>`
     - Options:
         - `-p` for POSIX output (one line per time)
         - `-v` for interesting system info about the process.
     - It give the wall time, time spent in usermode and time spent in kernel mode.
+- `strace` (trace system calls and signals):
+    - In standard mode, it runs the full command and traces/prints all syscalls (including arguments and return value).
+    - Syntax: `strace [options] <command>`
+    - Useful options:
+        - `-c`: Show summary/overview only. (Hints at which syscalls are worth looking more into.)
+        - `-f`: Trace forked child processes too.
+        - `-e trace=<syscalls>`: Only trace the specified comma-separated list of syscalls.
 
 ### Security
 

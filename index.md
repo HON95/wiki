@@ -108,6 +108,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ### Virtualization & Containerization
 
 - [Docker](/config/virt-cont/docker/)
+- [Kubernetes](/config/virt-cont/k8s/)
 - [libvirt & KVM](/config/virt-cont/libvirt-kvm/)
 - [Proxmox VE](/config/virt-cont/proxmox-ve/)
 
