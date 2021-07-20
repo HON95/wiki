@@ -93,7 +93,7 @@ Sends an emails when APT updates are available.
 
 - Valdiate config: `named-checkconf`
 - Validate DNSSEC validation:
-    - `dig google.com @<server>` should give status `NOERROR` and contain the `ad` flag (for "authentic data", i.e. it passed DNSSEC validation).
+    - `dig cloudflare.com @<server>` should give status `NOERROR` and contain the `ad` flag (for "authentic data", i.e. it passed DNSSEC validation).
     - `dig www.dnssec-failed.org @<server>` should give status `SERVFAIL`.
     - `dig www.dnssec-failed.org @<server> +cd` (for "checking disabled", useful for DNSSEC debugging) should give status `NOERROR` but no `ad` flag.
 - Validate DNSSEC signing:
