@@ -316,18 +316,20 @@ Check the host system logs. It may for instance be due to hardware changes or st
 - UDP 111: rpcbind (optional).
 - UDP 5404-5405: Corosync (internal).
 
-## Ceph
+## Storage
+
+### Ceph
 
 See [Storage: Ceph](/config/linux-server/storage/#ceph) for general notes.
 The notes below are PVE-specific.
 
-### Notes
+#### Notes
 
 - It's recommended to use a high-bandwidth SAN/management network within the cluster for Ceph traffic.
   It may be the same as used for out-of-band PVE cluster management traffic.
 - When used with PVE, the configuration is stored in the cluster-synchronized PVE config dir.
 
-### Setup
+#### Setup
 
 1. Setup a shared network.
     - It should be high-bandwidth and isolated.
@@ -346,5 +348,13 @@ The notes below are PVE-specific.
     - "Minimum size" is the number of replicas that must be written before the write should be considered done.
     - Use at least size 3 and min. size 2 in production.
     - "Add storage" adds the pool to PVE for disk image and container content.
+
+### Troubleshooting
+
+**"Cannot remove image, a guest with VMID '100' exists!" when trying to remove unused VM disk**:
+
+- Make sure it's not mounted to the VM.
+- Make sure it's not listed as an "unused disk" for the VM.
+- Run `qm rescan --vmid <vmid>` and check the steps above.
 
 {% include footer.md %}
