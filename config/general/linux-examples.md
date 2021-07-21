@@ -146,6 +146,26 @@ breadcrumbs:
     - `nstat`
     - `netstat -s` (statistics)
 
+#### Tcpdump
+
+- Typical usage: `tcpdump -i <interface> -nn -v [filter]`
+- Options:
+    - `-w <>.pcap`: Write to capture file instead of formatted to STDOUT.
+    - `-i <if>`: Interface to listen on. Defaults to a random-ish interface.
+    - `-nn`: Don't resolve hostnames or ports.
+    - `-s<n>`: How much of the packets to capture. Use 0 for unlimited (full packet).
+    - `-v`/`-vv`: Details to show about packets. More V's for more details.
+    - `-l`: Line buffered more, for better stability when piping to e.g. grep.
+- Filters:
+    - Can consist of complex logical statements using parenthesis, `not`/`!`, `and`/`&&` and `or`/`||`. Make sure to quote the filter to avoid interference from the shell.
+    - Protocol: `ip`, `ip6`, `icmp`, `icmp6`, `tcp`, `udp`, ``
+    - Ports: `port <n>`
+    - IP address: `host <addr>`, `dst <addr>`, `src <addr>`
+    - IPv6 router solicitations and advertisements: `icmp6 and (ip6[40] = 133 or ip6[40] = 134)` (133 for RS and 134 for RA)
+    - IPv6 neighbor solicitations and advertisements: `icmp6 and (ip6[40] = 135 or ip6[40] = 136)` (135 for NS and 136 for NA)
+    - DHCPv4: `ip and udp and (port 67 and port 68)`
+    - DHCPv6: `ip6 and udp and (port 547 and port 546)`
+
 ### Memory
 
 - NUMA stats:
