@@ -125,6 +125,22 @@ See [Storage: Ceph](/config/linux-server/storage/#ceph).
 - Dry-run renew: `certbot renew --dry-run [--staging]`
 - Revoke certificate: `certbot revoke --cert-path <cert>`
 
+## Chrony
+
+### Setup (Server)
+
+1. Install: `apt install chrony`
+1. Modify config (`/etc/chrony/chrony.conf`):
+    - (Optional) Add individual servers: `server <address> iburst`
+    - (Optional) Add pool of servers (a name resolving to multiple servers): `pool <address> iburst`
+    - (Optional) Allow clients: `allow {all|<network>}`
+1. Restart: `systemctl restart chrony`
+
+### Usage
+
+- Check tracking: `chronyc tracking`
+- Check sources: `chronyc sources`
+
 ## DDNS
 
 ### Cloudflare
@@ -353,7 +369,7 @@ Example `/etc/exports`:
 
 1. Disable systemd-timesyncd NTP client by disabling and stopping `systemd-timesyncd`.
 1. Install `ntp`.
-1. In `/etc/ntp.conf`, replace existing servers/pools with `ntp.justervesenet.no` with the `iburst` option.
+1. Configure servers/pool in `/etc/ntp.conf`, with the `iburst` option.
 1. Test with `ntpq -pn` (it may take a minute to synchronize).
 
 ## NUT
