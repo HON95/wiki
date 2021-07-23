@@ -82,17 +82,25 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 ### Pools
 
 - Recommended pool options:
-    - Set physical block/sector size: `ashift=<9|12>`
+    - Typical example: `-o ashift=<9|12> -O compression=zstd -O xattr=sa -O atime=off -O relatime=on`
+    - Specifying options during creation: For `zpool`/pools, use `-o` for pool options and `-O` for dataset options. For `zfs`/datasets, use `-o` for dataset options.
+    - Set physical block/sector size (pool option): `ashift=<9|12>`
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
-    - Enable compression: `compression=zstd`
+    - Enable compression (dataset option): `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
-    - Store extended attributes in the inodes: `xattr=sa`
-        - `on` is default and stores them in a hidden file.
-    - Relax access times: `atime=off` and `relatime=on`
+    - Store extended attributes in the inodes (dataset option): `xattr=sa`
+        - The default is `on`, which stores them in a hidden file.
+    - Relax access times (dataset option): `atime=off` and `relatime=on`
     - Don't enable dedup.
 - Create pool:
     - Format: `zpool create [options] <name> <levels-and-drives>`
-    - Basic example: `zpool create -o ashift=<9|12> -O compression=zstd -O xattr=sa <name> [mirror|raidz|raidz2|...] <drives>`
+    - Basic example: `zpool create [-f] [options] <name> [mirror|raidz|raidz2|...] <drives>`
+        - Use `-f` (force) if the disks aren't clean.
+        - See example above for recommended options.
+    - The pool definition is hierarchical, where top-level elements are striped.
+        - RAID 0 (striped): `<drives>`
+        - RAID 1 (mirrored): `mirror <drives>`
+        - RAID 10 (stripe of mirrors): `mirror <drives> mirror <drives>`
     - Create encrypted pool: See encryption section.
     - Use absolute drive paths (`/dev/disk/by-id/` or similar).
 - View pool activity: `zpool iostat [-v] [interval]`
