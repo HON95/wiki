@@ -82,17 +82,25 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 ### Pools
 
 - Recommended pool options:
-    - Set physical block/sector size: `ashift=<9|12>`
+    - Typical example: `-o ashift=<9|12> -O compression=zstd -O xattr=sa -O atime=off -O relatime=on`
+    - Specifying options during creation: For `zpool`/pools, use `-o` for pool options and `-O` for dataset options. For `zfs`/datasets, use `-o` for dataset options.
+    - Set physical block/sector size (pool option): `ashift=<9|12>`
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
-    - Enable compression: `compression=zstd`
+    - Enable compression (dataset option): `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
-    - Store extended attributes in the inodes: `xattr=sa`
-        - `on` is default and stores them in a hidden file.
-    - Relax access times: `atime=off` and `relatime=on`
+    - Store extended attributes in the inodes (dataset option): `xattr=sa`
+        - The default is `on`, which stores them in a hidden file.
+    - Relax access times (dataset option): `atime=off` and `relatime=on`
     - Don't enable dedup.
 - Create pool:
     - Format: `zpool create [options] <name> <levels-and-drives>`
-    - Basic example: `zpool create -o ashift=<9|12> -O compression=zstd -O xattr=sa <name> [mirror|raidz|raidz2|...] <drives>`
+    - Basic example: `zpool create [-f] [options] <name> [mirror|raidz|raidz2|...] <drives>`
+        - Use `-f` (force) if the disks aren't clean.
+        - See example above for recommended options.
+    - The pool definition is hierarchical, where top-level elements are striped.
+        - RAID 0 (striped): `<drives>`
+        - RAID 1 (mirrored): `mirror <drives>`
+        - RAID 10 (stripe of mirrors): `mirror <drives> mirror <drives>`
     - Create encrypted pool: See encryption section.
     - Use absolute drive paths (`/dev/disk/by-id/` or similar).
 - View pool activity: `zpool iostat [-v] [interval]`
@@ -183,12 +191,20 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
 - Info:
     - ZoL v0.8.0 and newer supports native encryption of pools and datasets. This encrypts all data except some metadata like pool/dataset structure, dataset names and file sizes.
     - Datasets can be scrubbed, resilvered, renamed and deleted without unlocking them first.
-    - Datasets will by default inherit encryption and the encryption key (the "encryption root") from the parent pool/dataset.
+    - Datasets will by default inherit encryption and the encryption key from the parent pool/dataset (or the nearest "encryption root").
     - The encryption suite can't be changed after creation, but the keyformat can.
+    - Snapshots and clones always inherit from the original dataset.
 - Show stuff:
+    - Encryption: `zfs get encryption` (`off` means unencrypted, otherwise it shows the alg.)
     - Encryption root: `zfs get encryptionroot`
-    - Key status: `zfs get keystatus`. `unavailable` means locked and `-` means not encrypted.
+    - Key format: `zfs get keyformat`
+    - Key location: `zfs get keylocation` (only shows for the encryption root and `none` for encrypted children)
+    - Key status: `zfs get keystatus` (`available` means unlocked, `unavailable` means locked and `-` means not encrypted or snapshot)
     - Mount status: `zfs get mountpoint` and `zfs get mounted`.
+- Locking and unlocking:
+    - Manually unlock: `zfs load-key <dataset>`
+    - Manually lock: `zfs unload-key <dataset>`
+    - Automatically unlock and mount everything: `zfs mount -la` (`-l` to load key, `-a` for all)
 - Create a password encrypted pool:
     - Create: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
 - Create a raw key encrypted pool:
@@ -204,13 +220,17 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     1. Note: The new dataset will become its own encryption root instead of inheriting from any parent dataset/pool.
 - Change encryption property:
     - The key must generally already be loaded.
-    - Change `keyformat`, `keylocation` or `pbkdf2iters`: `zfs change-key -o <property>=<value> <dataset>`
-    - Inherit key from parent: `zfs change-key -i <dataset>`
+    - The encryption properties `keyformat`, `keylocation` and `pbkdf2iters` are inherited from the encryptionroot instead, unlike normal properties.
+    - Show encryptionroot: `zfs get encryptionroot`
+    - Change encryption properties: `zfs change-key -o <property>=<value> <dataset>`
+    - Change key location for locked dataset: `zfs set keylocation=file://<file> <dataset>` (**TODO** difference between `zfs set keylocation= ...` and `zfs change-key -o keylocation= ...`?)
+    - Inherit key from parent (join parent encryption root): `zfs change-key -i <dataset>`
 - Send raw encrypted snapshot:
     - Example: `zfs send -Rw <dataset>@<snapshot> | <...> | zfs recv <dataset>`
     - As with normal sends, `-R` is useful for including snapshots and metadata.
     - Sending encrypted datasets requires using raw (`-w`).
     - Encrypted snapshots sent as raw may be sent incrementally.
+    - Make sure to check the encryption root, key format, key location etc. to make sure they're what they should be.
 
 ### Error Handling and Replacement
 

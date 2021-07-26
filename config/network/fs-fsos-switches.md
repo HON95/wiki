@@ -9,16 +9,42 @@ breadcrumbs:
 ### Using
 {:.no_toc}
 
-- FS S3700-24T4F
+- FS S5860-20SQ (core switch)
+- FS S3700-24T4F (access switch)
 
-## Info
+## Basics
 
 - Default credentials: Username `admin` and password `admin`.
 - Default mgmt. IP address: `192.168.1.1/24`
 - By default, SSH, Telnet and HTTP servers are accessible using the default mgmt. address and credentials.
+- Serial config: RS-232 w/ RJ45, baud 115200, 8 data bits, no parity bits, 1 stop bit, no flow control.
 - The default VLAN is VLAN1.
 
 ## Initial Setup
+
+### Core Switch
+
+Using an FS S5860-20SQ.
+
+**TODO**
+
+Random notes (**TODO**):
+
+1. (Optional) Split 40G-interface (QSFP+) into 4x 10G (SFP+): `split interface <if>`
+1. Configure RSTP:
+    - Set protocol: `spanning-tree mode rstp` (default MSTP)
+    - Set priority: `spanning-tree priority <priority>` (default 32768, should be a multiple of 4096, use e.g. 32768 for access, 16384 for distro and 8192 for core)
+    - Set hello time: `spanning-tree hello-time <seconds>` (default 2s)
+    - Set maximum age: `spanning-tree max-age <seconds>` (default 20s)
+    - Set forward delay: `spanning-tree forward-time <seconds>` (default 15s)
+    - Enable: `spanning-tree`
+    - **TODO** Enabled on all interfaces and VLANs by default?
+    - **TODO** Portfast for access ports? `spanning-treelink-type ...`
+    - **TODO** Guards.
+
+### Access Switch
+
+Using an FS S3700-24T4F.
 
 1. Connect to the switch using serial.
     - Using RS-232 w/ RJ45, baud 115200, 8 data bits, no parity bits, 1 stop bit, no flow control.
@@ -125,6 +151,9 @@ breadcrumbs:
 - Interfaces:
     - Show L2 brief: `show int brief`
     - Show L3 brief: `show ip int brief`
+- STP:
+    - Show details: `show spanning-tree`
+    - Show overview and interfaces: `show spanning-tree summary`
 - LACP:
     - Show semi-detailed overview: `show aggregator-group [n] brief`
     - Show member ports: `show aggregator-group [n] summary`

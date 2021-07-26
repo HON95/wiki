@@ -48,6 +48,7 @@ breadcrumbs:
     - Change context to container statement: `edit <path>`
     - Go up in context: `up` or `top`
     - Show configuration for current level: `show`
+- Perform operation on multiple interfaces or similar: `wildcard range set int ge-0/0/[0-47] unit 0 family ethernet-switching` (example)
 - Commit config changes: `commit [comment <comment>] [confirmed] [and-quit]`
     - `confirmed` automatically rolls back the commit if it is not confirmed within a time limit.
     - `and-quit` will quit configuration mode after a successful commit.

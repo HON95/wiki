@@ -123,7 +123,8 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 
 ### Miscellanea
 
-- Windows home dir (typical save location): `~/.local/share/Steam/steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/`
+- Proton Windows home dir: `~/.local/share/Steam/steamapps/compatdata/<some_id>/pfx/drive_c/users/steamuser/`
+- Proton Windows home dir (Flatpak): `~/.var/app/com.valvesoftware.Steam/.steamlib/steamapps/compatdata/374320/pfx/drive_c/users/steamuser/`
 
 ## tmux
 
