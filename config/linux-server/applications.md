@@ -75,9 +75,31 @@ Sends an emails when APT updates are available.
 
 ## BIND
 
+### Info
+
 - Aka "named".
 
-**TODO**
+### Config
+
+- Should typically be installed directly on the system, but the Docker image is pretty good too.
+    - Docker image: [internetsystemsconsortium/bind9 (Docker Hub)](https://hub.docker.com/internetsystemsconsortium/bind9)
+- Docs and guides:
+    - [The BIND 9 Administrator Reference Manual (ARM)](https://bind9.readthedocs.io/)
+    - [DNSSEC Guide (BIND 9 docs)](https://bind9.readthedocs.io/en/latest/dnssec-guide.html)
+    - [Tutorial: How To Configure Bind as a Caching or Forwarding DNS Server on Ubuntu 16.04 (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-caching-or-forwarding-dns-server-on-ubuntu-16-04)
+    - [Tutorial: How To Setup DNSSEC on an Authoritative BIND DNS Server (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-setup-dnssec-on-an-authoritative-bind-dns-server-2)
+
+### Usage
+
+- Valdiate config: `named-checkconf`
+- Validate DNSSEC validation:
+    - `dig cloudflare.com @<server>` should give status `NOERROR` and contain the `ad` flag (for "authentic data", i.e. it passed DNSSEC validation).
+    - `dig www.dnssec-failed.org @<server>` should give status `SERVFAIL`.
+    - `dig www.dnssec-failed.org @<server> +cd` (for "checking disabled", useful for DNSSEC debugging) should give status `NOERROR` but no `ad` flag.
+- Validate DNSSEC signing:
+    - Resolve with dig and a validating server.
+    - [Verisign DNSSEC Debugger](https://dnssec-debugger.verisignlabs.com/)
+    - [DNSViz](https://dnsviz.net/)
 
 ## bitwarden_rs
 
@@ -102,6 +124,22 @@ See [Storage: Ceph](/config/linux-server/storage/#ceph).
 - Create using DNS channelge (not auto-renewable): `certbot -d <domain> --preferred-challenges=dns --manual certonly`
 - Dry-run renew: `certbot renew --dry-run [--staging]`
 - Revoke certificate: `certbot revoke --cert-path <cert>`
+
+## Chrony
+
+### Setup (Server)
+
+1. Install: `apt install chrony`
+1. Modify config (`/etc/chrony/chrony.conf`):
+    - (Optional) Add individual servers: `server <address> iburst`
+    - (Optional) Add pool of servers (a name resolving to multiple servers): `pool <address> iburst`
+    - (Optional) Allow clients: `allow {all|<network>}`
+1. Restart: `systemctl restart chrony`
+
+### Usage
+
+- Check tracking: `chronyc tracking`
+- Check sources: `chronyc sources`
 
 ## DDNS
 
@@ -331,7 +369,7 @@ Example `/etc/exports`:
 
 1. Disable systemd-timesyncd NTP client by disabling and stopping `systemd-timesyncd`.
 1. Install `ntp`.
-1. In `/etc/ntp.conf`, replace existing servers/pools with `ntp.justervesenet.no` with the `iburst` option.
+1. Configure servers/pool in `/etc/ntp.conf`, with the `iburst` option.
 1. Test with `ntpq -pn` (it may take a minute to synchronize).
 
 ## NUT

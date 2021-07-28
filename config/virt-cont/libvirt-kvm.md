@@ -21,7 +21,7 @@ Using **Debian**.
 
 1. Install without extra stuff (like GUIs): `apt-get install --no-install-recommends iptables bridge-utils qemu-system qemu-utils libvirt-clients libvirt-daemon-system virtinst libosinfo-bin`
 1. (Optional) Install `dnsmasq-base` for accessing guests using their hostnames.
-1. (Optional) Add users to the `libvirt` group to allow them to manage libvirt without sudo.
+1. (Optional) Add users to the `libvirt` group to allow them to manage libvirt without sudo. Otherwise, remember to always specify use sudo to use the correct context/system URI/whatever.
 1. Set up the default network:
     1. It's already created, using NAT, DNS and DHCP.
     1. If not using dnsmasq, disable DNS and DHCP:

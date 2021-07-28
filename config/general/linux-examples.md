@@ -8,6 +8,53 @@ breadcrumbs:
 
 ## Commands
 
+### General Monitoring
+
+- For more specific monitoring, see the other sections.
+- `htop`:
+    - ncurses-based process viewer like `top`, but prettier and more interactive.
+    - Install (APT): `apt install htop`
+    - Usage: `htop` (interactive)
+- `glances`:
+    - Homepage: [Glances](https://nicolargo.github.io/glances/)
+    - Install (PyPI for latest version): `pip3 install glances`
+    - ncurses-based viewer for e.g. basic system info, top-like process info, network traffic and disk traffic.
+    - Usage: `glances` (interactive)
+- `dstat`:
+    - A versatile replacement for vmstat, iostat and ifstat (according to itself).
+    - Prints scrolling output for showing a lot of types of general metrics, one line of columns for each time step.
+    - Usage: `dstat <options> [interval] [count]`
+        - Default interval is 1s, default count is unlimited.
+        - The values shown are the average since the last interval ended.
+        - For intervals over 1s, the last row will update itself each second until the delay has been reached and a new line is created. The values shown are averages since the last final value (when the last line was finalized), so e.g. a 10s interval gives a final line showing a 10s average.
+        - The first line is always a snapshot, i.e. all rate-based metrics are 0 or some absolute value.
+        - If any column options are provided, they will replace the default ones and are displayed in the order specified.
+    - Special options:
+        - `-C <>`: Comma-separated list of CPUs/cores to show for, including `total`.
+        - `-D <>`: Same but for disks.
+        - `-N <>`: Same but for NICs.
+        - `-f`: Show stats for all devices (not aggregated).
+    - Useful metrics:
+        - `-t`: Current time.
+        - `-p`: Process stats (by runnable, uninterruptible, new) (changes per second).
+        - `-y`: Total interrupt and context switching stats (by interrupts, context switches) (events per second).
+        - `-l`: Load average stats (1 min, 5 mins, 15 mins) (total system load multiplied by number of cores).
+        - `-c`: CPU stats (by system, user, idle, wait) (percentage of total).
+        - `--cpu-use`: Per-CPU usage (by CPU) (percentage).
+        - `-m`: Memory stats (by used, buffers, cache, free) (bytes).
+        - `-g`: Paging stats (by in, out) (count per second).
+        - `-s`: Swap stats (by used, free) (total).
+        - `-r`: Storage request stats (by read, write) (requests per second).
+        - `-d`: Storage throughput stats (by read, write) (bytes per second).
+        - `-n`: Network throughput stats (by recv, send) (bytes per second).
+        - `--socket`: Network socket stats (by total, tcp, udp, raw, ip-fragments)
+    - Useful plugins (metrics):
+        - `--net-packets`: Network request stats (by recv, send) (packets per second).
+    - Examples:
+        - General overview (CPU, RAM, ints/csws, disk, net): `dstat -tcmyrdn --net-packets 60`
+        - Network overview (CPU, ints/csws, net): `dstat -tcyn --net-packets 60`
+        - Process overview (CPU, RAM, ints/csws, paging, process, sockets): `dstat -tcmygp --socket 60`
+
 ### File Systems and Logical Volume Managers
 
 - Partition disk: `gdisk <dev>` or `fdisk <dev>`
@@ -99,6 +146,26 @@ breadcrumbs:
     - `nstat`
     - `netstat -s` (statistics)
 
+#### Tcpdump
+
+- Typical usage: `tcpdump -i <interface> -nn -v [filter]`
+- Options:
+    - `-w <>.pcap`: Write to capture file instead of formatted to STDOUT.
+    - `-i <if>`: Interface to listen on. Defaults to a random-ish interface.
+    - `-nn`: Don't resolve hostnames or ports.
+    - `-s<n>`: How much of the packets to capture. Use 0 for unlimited (full packet).
+    - `-v`/`-vv`: Details to show about packets. More V's for more details.
+    - `-l`: Line buffered more, for better stability when piping to e.g. grep.
+- Filters:
+    - Can consist of complex logical statements using parenthesis, `not`/`!`, `and`/`&&` and `or`/`||`. Make sure to quote the filter to avoid interference from the shell.
+    - Protocol: `ip`, `ip6`, `icmp`, `icmp6`, `tcp`, `udp`, ``
+    - Ports: `port <n>`
+    - IP address: `host <addr>`, `dst <addr>`, `src <addr>`
+    - IPv6 router solicitations and advertisements: `icmp6 and (ip6[40] = 133 or ip6[40] = 134)` (133 for RS and 134 for RA)
+    - IPv6 neighbor solicitations and advertisements: `icmp6 and (ip6[40] = 135 or ip6[40] = 136)` (135 for NS and 136 for NA)
+    - DHCPv4: `ip and udp and (port 67 and port 68)`
+    - DHCPv6: `ip6 and udp and (port 547 and port 546)`
+
 ### Memory
 
 - NUMA stats:
@@ -113,13 +180,20 @@ breadcrumbs:
 
 ### Profiling
 
-- Command timer (`time`):
+- `time` (timing commands):
     - Provided both as a shell built-in `time` and as `/usr/bin/time`, use the latter.
-    - Syntax: `/usr/bin/time -vp <command>`
+    - Typical usage: `/usr/bin/time -p <command>`
     - Options:
         - `-p` for POSIX output (one line per time)
         - `-v` for interesting system info about the process.
     - It give the wall time, time spent in usermode and time spent in kernel mode.
+- `strace` (trace system calls and signals):
+    - In standard mode, it runs the full command and traces/prints all syscalls (including arguments and return value).
+    - Syntax: `strace [options] <command>`
+    - Useful options:
+        - `-c`: Show summary/overview only. (Hints at which syscalls are worth looking more into.)
+        - `-f`: Trace forked child processes too.
+        - `-e trace=<syscalls>`: Only trace the specified comma-separated list of syscalls.
 
 ### Security
 
@@ -148,14 +222,11 @@ breadcrumbs:
     - `iostat [-c] [-t] [interval]`
 - Monitor processes:
     - `ps` (e.g. `ps aux` or `ps ax o uid,user:12,pid,comm`)
-- Monitor a mix of things:
-    - `htop`
-    - `glances`
-    - `ytop`
+- Monitor a mix of things: See the "general monitoring" section.
 - Monitor interrupts:
     - `irqtop`
     - `watch -n0.1 /proc/interrupts`
-- Stress test with stress-mg:
+- Stress test with stress-ng:
     - Install (Debian): `apt install stress-ng`
     - Stress CPU: `stress-ng -c $(nproc) -t 600`
 

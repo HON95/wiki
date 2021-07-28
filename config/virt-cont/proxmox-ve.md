@@ -15,7 +15,7 @@ Using **Proxmox VE 6**.
 1. Find a mouse.
     - Just a keyboard is not enough.
     - You don't need the mouse too often, though, so you can hot-swap between the keyboard and mouse during the install.
-1. Download PVE and boot from the installation medium in UEFI mode (if supported).
+1. Download PVE and boot from the installation medium (in UEFI mode if supported, otherwise BIOS is fine).
 1. Storage:
     - Use 1-2 mirrored SSDs with ZFS.
     - (ZFS) enable compression and checksums and set the correct ashift for the SSD(s). If in doubt, use ashift=12.
@@ -56,8 +56,11 @@ Follow the instructions for [Debian](/config/linux-server/debian/), but with the
     1. Enable TCP flags filter to block illegal TCP flag combinations.
     1. Make sure ping, SSH and the web GUI is working both for IPv4 and IPv6.
 1. Set up storage:
-    1. Create a ZFS pool or something.
-    1. Add it to `/etc/pve/storage.cfg`: See [Proxmox VE: Storage](https://pve.proxmox.com/wiki/Storage)
+    1. Docs: [Storage (Proxmox VE)](https://pve.proxmox.com/wiki/Storage)
+    1. Create a ZFS pool or something and add it to `/etc/pve/storage.cfg`.
+    1. Setup backup pruning:
+        - [Backup and Restore (Proxmox VE)](https://pve.proxmox.com/wiki/Backup_and_Restore)
+        - [Prune Simulator (Proxmox BS)](https://pbs.proxmox.com/docs/prune-simulator/)
 
 ### Configure PCI(e) Passthrough
 
@@ -158,7 +161,9 @@ If you lost quorum because if connection problems and need to modify something (
 
 - List: `qm list`
 
-### Initial Setup
+### General Setup
+
+The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the separate section below first if you are.
 
 - Generally:
     - Use VirtIO if the guest OS supports it, since it provices a paravirtualized interface instead of an emulated physical interface.
@@ -166,26 +171,33 @@ If you lost quorum because if connection problems and need to modify something (
     - Use start/shutdown order if som VMs depend on other VMs (like virtualized routers).
       0 is first, unspecified is last. Shutdown follows reverse order.
       For equal order, the VMID in is used in ascending order.
-- OS tab: No notes.
+- OS tab:
+    - If installing from an ISO, specify it here.
+    - (Cloud-Init) Don't use any media (no ISO).
 - System tab:
-    - Graphics card: Use the default. **TODO** SPICE graphics card?
+    - Graphics card: Use the default. If you want SPICE, you can change to that later.
     - Qemu Agent: It provides more information about the guest and allows PVE to perform some actions more intelligently,
       but requires the guest to run the agent.
-    - BIOS: SeaBIOS (generally). Use OVMF (UEFI) if you need PCIe pass-through.
-    - Machine: Intel 440FX (generally). Use Q35 if you need PCIe pass-through.
+    - BIOS/UEFI: BIOS w/ SeaBIOS is generally fine, but I prefer UEFI w/ OVMF (for PCIe pass-through support and stuff), assuming your OS/setup doesn't require one or the other.
+        - (Cloud-Init) Prepared Cloud-Init images may typically be using UEFI (and containing an EFI partition), so you probably need to use UEFI.
+        - About the EFI disk: Using UEFI in PVE typically requires a "EFI disk" (in the hardware tab). This is not the EFI system partition (ESP) and is not visible to the VM, but is used by PVE/OVMF to store the EFIVARS, which contains the boot order. (If a UEFI VM fails to boot, you may need to enter the UEFI/OVMF menu through the remote console to fix the boot entries.)
+    - Machine: Intel 440FX is generally fine, but I prefer Q35 (for PCIe pass-through support and stuff).
     - SCSI controller: VirtIO SCSI.
 - Hard disk tab:
-    - Bus/device: Use SCSI with the VirtIO SCSI controller selected in the system tab (it supersedes the VirtIO Block controller).
+    - (Cloud-Init) This doesn't matter, you're going to replace it afterwards with the imported Cloud-Init-ready qcow2 image. Just add something temporary since it can't be skipped.
+    - Bus/device: Use the SCSI bus with the VirtIO SCSI controller selected in the system tab (it supersedes the VirtIO Block controller).
     - Cache:
-        - Use write-back for max performance with slightly reduced safety.
+        - Use write-back for max performance with reduced safety in case of power loss (recommended).
         - Use none for balanced performance and safety with better *write* performance.
         - Use write-through for balanced performance and safety with better *read* performance.
         - Direct-sync and write-through can be fast for SAN/HW-RAID, but slow if using qcow2.
     - Discard: When using thin-provisioning storage for the disk and a TRIM-enabled guest OS,
       this option will relay guest TRIM commands to the storage so it may shrink the disk image.
       The guest OS may require SSD emulation to be enabled.
+    - SSD emulation: This just presents the drive as an SSD instead of as an HDD. It's typically not needed.
     - IO thread: If the VirtIO SCSI single controller is used (which uses one controller per disk),
       this will create one I/O thread for each controller for maximum performance.
+      This is generally not needed if not doing IO-heavy stuff with multiple disks in the VM.
 - CPU tab:
     - CPU type: Generally, use "kvm64".
       For HA, use "kvm64" or similar (since the new host must support the same CPU flags).
@@ -201,18 +213,73 @@ If you lost quorum because if connection problems and need to modify something (
       For Windows, it must be added manually and may incur a slowdown of the guest.
 - Network tab:
     - Model: Use VirtIO.
-    - Firewall: Enable if the guest does not provide one itself.
+    - Firewall: Enable if the guest does not provide one itself, or if you don't want it to immediately become accessible from the network during/after installation (i.e. before you've provisioned it properly).
     - Multiqueue: When using VirtUO, it can be set to the total CPU cores of the VM for increased performance.
       It will increase the CPU load, so only use it for VMs that need to handle a high amount of connections.
+- Start the VM:
+    - (Cloud-Init) Don't start it yet, go back to the Cloud-Init section.
+    - Open a graphical console to show what's going on.
+    - See the separate sections below for more specific stuff.
+
+### Linux Setup (Manual)
+
+1. Setup the VM (see the general setup section).
+1. (Recommended) Setup the QEMU guest agent: See the section about it.
+1. (Optional) Setup SPICE (for better graphics): See the section about it.
+1. More detailed Debian setup: [Debian](/config/linux-server/debian/)
+
+### Linux Setup (Cloud-Init)
+
+*Using Debian 10.*
+
+1. Download a cloud-init-ready Linux image to the hypervisor:
+    - Debian: [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/) (the `genericcloud` variant and `qcow2` format)
+    - Copy the download link and download it to the host (`wget <url>`).
+1. Note: It is an UEFI installation (so the BIOS/UEFI mode must be set accordingly) and the image contains an EFI partition (so you don't need a separate EFI disk).
+1. Setup a VM as in the general setup section (take note of the specified Cloud-Init notes).
+    1. Set the VM up as UEFI with an "EFI disk" added.
+    1. Add a serial interface since the GUI console may be broken (it is for me).
+1. Setup the prepared disk:
+    1. (GUI) Completely remove the disk from the VM ("detach" then "remove").
+    1. Import the downloaded cloud-init-ready image as the system disk: `qm importdisk <vmid> <image-file> <storage>`
+    1. (GUI) Find the unused disk for the VM, edit it (see the general notes), and add it.
+    1. (GUI) Resize the disk to the desired size. Note that it can be expanded further at a later time, but not shrunk. 10GB is typically file.
+    1. (GUI) Make sure the disk (e.g. `scsi0`) is added in "boot order" in the options tab. Others may be removed.
+1. Setup initial Cloud-Init disk:
+    1. (GUI) Add a "CloudInit drive".
+    1. (GUI) In the Cloud-Init tab, set a temporary user and password and set the IP config to DHCPv4 and DHCPv6/SLAAC, such that you can boot the template and install stuff. (You can wipe these settings later to prepare it for templating.)
+1. Start the VM and open its console.
+    1. The NoVNC console is broken for me for these VMs for some reason, so use the serial interface you added instead if NoVNC isn't working (`qm terminal <vmid>`).
+1. Fix boot order:
+    1. It may fail to boot into Linux and instead drop you into a UEFI shell (`Shell>`). Skip this if it actually boots.
+    1. Run `reset` and prepare to press/spam `Esc` when it resets so that it drops you into the UEFI menu.
+    1. Enter "Boot Maintenance Manager" and "Boot Options", then delete all options except the harddisk one (no PXE or DVD-ROM). Commit.
+    1. Press "continue" so that is attempts to boot using the new boot order. It should boot into Linux.
+    1. (Optional) Try logging in (using Cloud-Init credentials), power it off (so the QEMU VM completely stops), and power it on again to check that the boot order is still working.
+1. Log in and configure basic stuff:
+    1. Log in using the Cloud-Init credentials. The hostname should automatically have been set to the VM name, as an indication that the initial Cloud-Init setup succeeded.
+    1. Setup basics like installing `qemu-guest-agent`.
+1. Wipe temporary Cloud-Init setup:
+    1. (VM) Run `cloud-init clean`, so that it reruns the initial setup on the next boot.
+    1. (GUI) Remove all settings in the Cloud-Init tab (or set appropriate defaults).
+1. (Optional) Create a template of the VM:
+    - Rename it as e.g. `<something>-template` and treat is as a template, but don't bother converting it to an actual template (which prevents you from changing it later).
+    - If you made it a template then clone it and use the clone for the steps below.
+1. Prepare the new VM:
+    - Manually: Setup Cloud-Init in the Cloud-Init tab and start it. Start it, log in using the Cloud-Init credentials and configure it.
+    - Ansible: See the `proxmox` and `proxmox_kvm` modules.
+    - Consider purging the cloud-init package to avoid accidental reconfiguration later.
+    - Consider running `cloud-init status --wait` before configuring it to make sure the Cloud-Init setup has completed.
 
 ### Windows Setup
 
-*For Windows 10.*
+*Using Windows 10.*
 
 [Proxmox VE Wiki: Windows 10 guest best practices](https://pve.proxmox.com/wiki/Windows_10_guest_best_practices)
 
 #### Before Installation
 
+1. Setup the VM (see the general setup section).
 1. Add the VirtIO drivers ISO: [Fedora Docs: Creating Windows virtual machines using virtIO drivers](https://docs.fedoraproject.org/en-US/quick-docs/creating-windows-virtual-machines-using-virtio-drivers/index.html#virtio-win-direct-downloads)
 1. Add it as a CDROM using IDE device 3.
 
@@ -316,18 +383,20 @@ Check the host system logs. It may for instance be due to hardware changes or st
 - UDP 111: rpcbind (optional).
 - UDP 5404-5405: Corosync (internal).
 
-## Ceph
+## Storage
+
+### Ceph
 
 See [Storage: Ceph](/config/linux-server/storage/#ceph) for general notes.
 The notes below are PVE-specific.
 
-### Notes
+#### Notes
 
 - It's recommended to use a high-bandwidth SAN/management network within the cluster for Ceph traffic.
   It may be the same as used for out-of-band PVE cluster management traffic.
 - When used with PVE, the configuration is stored in the cluster-synchronized PVE config dir.
 
-### Setup
+#### Setup
 
 1. Setup a shared network.
     - It should be high-bandwidth and isolated.
@@ -346,5 +415,13 @@ The notes below are PVE-specific.
     - "Minimum size" is the number of replicas that must be written before the write should be considered done.
     - Use at least size 3 and min. size 2 in production.
     - "Add storage" adds the pool to PVE for disk image and container content.
+
+### Troubleshooting
+
+**"Cannot remove image, a guest with VMID '100' exists!" when trying to remove unused VM disk**:
+
+- Make sure it's not mounted to the VM.
+- Make sure it's not listed as an "unused disk" for the VM.
+- Run `qm rescan --vmid <vmid>` and check the steps above.
 
 {% include footer.md %}

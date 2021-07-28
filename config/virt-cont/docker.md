@@ -22,11 +22,27 @@ Using **Debian**.
     - Set `"ipv6": true` to enable IPv6 support at all.
     - Set `"fixed-cidr-v6": "<prefix/64>"` to some [random](https://simpledns.plus/private-ipv6) (ULA) (if using NAT masq.) or routable (GUA or ULA) (if not using NAT masq.) /64 prefix, to be used by the default bridge.
     - Set `"ip6tables": true` to enable automatic filter and NAT rules through IP6Tables (required for both security and NAT).
-1. (Optional) Change IPv4 network pool:
-    - - In `/etc/docker/daemon.json`, set `"default-address-pools": [{"base": "10.0.0.0/16", "size": "24"}]`.
-1. (Optional) Change default DNS servers for containers:
+1. (Recommended) Change the cgroup manager to systemd:
+    - In `/etc/docker/daemon.json`, set `"exec-opts": ["native.cgroupdriver=systemd"]`.
+    - It defaults to Docker's own cgroup manager/driver called cgroupfs.
+    - systemd (as the init system for most modern Linux systems) also functions as a cgroup manager, and using multiple cgroup managers may cause the system to become unstable under resource pressure.
+    - If the system already has existing containers, they should be completely recreated after changing the cgroup manager.
+1. (Optional) Change the storage driver:
+    - By default it uses the `overlay2` driver, which is recommended for most setups. (`aufs` was the default before that.)
+    - The only other alternatives worth consideration are `btrfs` and `zfs`, if the system is configured for those file systems.
+1. (Recommended) Change IPv4 network pool:
+    - In `/etc/docker/daemon.json`, set `"default-address-pools": [{"base": "172.17.0.0/12", "size": 24}]`.
+    - For local networks (not Swarm overlays), it defaults to pool `172.17.0.0/12` with `/16` allocations, resulting in a maximum of `2^(16-12)=16` allocations.
+1. (Recommended) Change default DNS servers for containers:
     - In `/etc/docker/daemon.json`, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
     - It defaults to `8.8.8.8` and `8.8.4.4` (Google).
+1. (Optional) Change the logging options (JSON file driver):
+    - It defaults to the JSON file driver with a single file of unlimited size.
+    - Configured globally in `/etc/docker/daemon.json`.
+    - Set the driver (explicitly): `"log-driver": "json-file"`
+    - Set the max file size: `"log-opts": { "max-size": "10m" }`
+    - Set the max number of files (for log rotation): `"log-opts": { "max-file": "5" }`
+    - Set the compression for rotated files: `"log-opts": { "compress": "enabled" }`
 1. (Optional) Enable Prometheus metrics endpoint:
     - This only exports internal Docker metrics, not anything about the containers (use cAdvisor for that).
     - In `/etc/docker/daemon.json`, set `"experimental": true` and `"metrics-addr": "[::]:9323"`.
@@ -88,7 +104,7 @@ Using **Debian**.
 
 #### Fix Docker Compose No-Exec Tmp-Dir
 
-Docker Compose will fail to work if `/tmp` has `noexec`.
+Docker Compose will fail to work if `/tmp` is mounted with `noexec`.
 
 1. Move `/usr/local/bin/docker-compose` to `/usr/local/bin/docker-compose-normal`.
 1. Create `/usr/local/bin/docker-compose` with the contents below and make it executable.
@@ -110,6 +126,37 @@ The toolkit is used for running CUDA applications within containers.
 ### Setup
 
 See the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
+
+## Best Practices
+
+- Building:
+    - Use simple base images without stuff you don't need (especially for the final image if using multi-stage builds). `alpine` is nice, but uses musl libc instead of glibc, which may cause problems for certain apps.
+    - Use official base images you can trust.
+    - Completely build inside the container to avoid relying on external tools and libraries (for better reproducability and portability).
+    - Use multi-stage builds to separate the heavier build environment/image containing all the build tools and many layers from the final image with the build app copied into it from the previous stage.
+    - To exploit cacheability when building an image multiple times (e.g. during development), put everything that doesn't change (e.g. installing packages) at the top of the Dockerfile and stuff that changes frequently (e.g. copying source files and compilation) as close to the bottom as possible.
+    - Use `COPY` instead of `ADD`, unless you actually need some of the fancy and sometimes unexpected features of `ADD`.
+    - Use `ARG`s and `ENV`s (with defaults) for vars you may want to change before building.
+    - `EXPOSE` is pointless and purely informational.
+    - Use `ENTRYPOINT` (in array form) to specify the entrypoint script or application and `CMD` (in array form) to specify default additional arguments to the `ENDTYPOINT`.
+    - Create a `.dockerignore` file, similar to `.gitignore` files, to avoid copying useless or sensitive files into the container.
+- Signal handling:
+    - Make sure your application is handling signals correctly (e.g. such that it stops properly). The initial process in the container runs with PID 1, which is typically reserved for the init process and is handled specially by certain things.
+    - If your application does not handle signals properly internally, build the image with [tini](https://github.com/krallin/tini) as the entrypoint or run the container with `--init` to make Docker inject tini as the entrypoint.
+- Don't run as root:
+    - Either set a static user in the Dockerfile, change to a specific user (static or dynamic) in the entrypoint script or app itself, or specify a user through Docker run (or equivalent). The latter approach (specified in Docker run) is assumed hereafter.
+    - The app may still be build by root and may be owned by root since the user running it generally shouldn't need to modify the app itself.
+    - If the app needs to modify files, put them in `/tmp`. Maybe make it easy to override the paths for more flexibility wrt. volumes and bind mounts.
+- Credentials and sensitive files:
+    - Don't hard code them anywhere.
+    - Don't ever put them on the image file system during building as it may get caught by one of the image layers.
+    - Specify them as mounted files (with proper permissions), env vars (slightly controversial), Docker secrets or similar.
+- Implement health checks.
+- Docker Compose:
+    - Drop the `version` property (it's deprecated).
+    - Use YAML aliases and anchors to avoid repeating yourself too much. To create an anchor, add `&<anchor>` behind a property (e.g. a service definition). To copy all content from below the property the anchor references, specify `<<: *<anchor>` inside the new property (i.e. one layer lower than the anchor on the other property). Copied properties can be overridden by explicitly specifying them.
+    - Consider implementing health checks within the DC file if the image does not already implement them (Google it).
+    - Consider putting envvars in a separate env file (specified using `--env-file` on the CLI or `env_file: []` in the DC file).
 
 ## Miscellanea
 
