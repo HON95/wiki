@@ -13,6 +13,13 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 
 - [CUDA (configuration)](/config/config/hpc/cuda.md)
 
+## TODO
+
+- The _compute capability_ describes the generation and supported features of a GPU. **TODO** More info about `-code`, `-arch` etc.
+- SM processing blocks/partitions same as warp schedulers?
+- SM processing block datapaths.
+- PTX.
+
 ## Hardware Architecture
 
 - Modern CUDA-capable GPUs contain multiple types of cores:
@@ -42,21 +49,16 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
     - Stalled: It's waiting for instructions or data to load, or some other dependency.
     - Eligible: It's ready to get scheduled for execution.
     - Selected: It's eligible and has been selected for execution during the current clock.
+- Branch divergence: Each warp scheduler (which an SM has one or more of) has only a single control unit for all cores within it, so for each branches any of the threads in the warp takes (added together), the warp scheduler and all of its cores will need to go through all of the branches but mask the output for all threads which were not meant to follow the branch. If no threads take a specific branch, it will not be executed by the warp scheduler.
 - **TODO** scheduling policy?
 
 ## Programming
 
-#### TODO
-
-- The _compute capability_ describes the generation and supported features of a GPU. **TODO** More info about `-code`, `-arch` etc.
-- SM processing blocks/partitions same as warp schedulers?
-- SM processing block datapaths.
-
 ### General
 
-- Branch divergence: Each SM has only a single control unit for all cores within it, so for all branches any thread takes (in total), the SM and all of its cores will need to go through all of the branches but mask the output for all threads which did not locally take the branch. If no threads take a specific branch, it will not be executed by the SM.
 - Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
 - Kernels are specified as functions with the `__global__` keyword.
+- Always check API call error codes and stop if not `cudaSuccess`. A macro may be defined and used to wrap the API call in to keep the code clean.
 
 ### Mapping the Programming Model to the Execution Model
 
@@ -95,11 +97,10 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - Read-write access:
     - The constant and texture memories are read-only (wrt. the device).
 - Caching:
-    - The constant and texture memories are cached.
-    - The global and local memories are cached in L1 and L2 on newer devices.
+    - **TODO** Which memories have dedicated caches, which caches are write-through/read-only, which caches are shared by which units?
     - The register and shared memories are on-chip and fast, so they don't need to be cached.
 - Resource contention:
-    - The pool of registers and shared memory are shared by all active threads in an SM.
+    - The pool of registers and shared memory are shared by all active threads in an SM, such that the number of registers required per thread affects the number of active threads and the shared memory size allocated to a block affects the number of active blocks.
 
 #### Register Memory
 
@@ -120,7 +121,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - Resides in fast, high-bandwidth on-chip memory.
 - Organized into banks which can be accessed concurrently. Each bank is accessed serially and multiple concurrent accesses to the same bank will result in a bank conflict.
 - Declared using the `__shared__` variable qualifier. The size may be specified during kernel invocation.
-- On modern devices, shared memory and the L1 cache resides on the same chip and the amount of memory allocated to each may be specified in the program.
+- On modern devices, shared memory and the L1 cache resides on the same physical memory and the amount of memory allocated to each may be specified by the program.
 - **TODO** Static (`__shared__`) and dynamic (specified during kernel invocation).
 
 #### Global Memory
@@ -159,12 +160,13 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - Memory allocated through the CUDA API is guaranteed to be aligned to 256 bytes.
 - Elements _within_ allocated arrays are generally not aligned unless special care is taken.
 - To make sure array elements are aligned, use structs/classes with the `__align__(n)` qualifier and `n` as some multiple of the transaction sizes.
+- Memory access granularity is 32 bytes, called a sector. Global memory is accessed by the device using 32-, 64-, or 128-byte transactions, that are aligned to their size.
 - When multiple threads in a warp access global memory in an _aligned_ and _sequential_ fashion (e.g. when all threads in the warp access sequential parts of an array), the device will try to _coalesce_ the access into as few 32-byte transactions as possible in order to reduce the number of transaction and  increase the ratio of useful to fetched data.
-- Global memory is accessed by the device using 32-, 64-, or 128-byte transactions, that are aligned to their size.
 - Caching will typically mitigate the impact of unaligned memory accesses.
 - Thread block sizes that are multiple of the warp size (32) will give the most optimal alignments.
 - Older hardware coalesce accesses within half warps instead of the whole warp.
 - To access strided data (like multidimensional arrays) in global memory, it may be better to first copy the data into shared memory (which is fast for all access patterns).
+- Cache lines are 128 bytes, i.e. 4 sectors.
 
 ### Synchronization
 
@@ -246,9 +248,10 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 
 ## Metrics
 
-- Occupancy: The ratio of active warps on an SM to the maximum number of active warps on the SM. Low occupancy generally leads to poor instruction issue efficiency since there may not be enough eligible warps per clock to saturate the warp schedulers. Too high occupancy may also degrade performance as resources may be contend by threads. The occupancy should be high enough to hide memory latencies without causing considerable resource contention, which depends on both the device and application.
-- Theoretical occupancy: Maximum possible occupancy, limited by factors such as warps per SM, blocks per SM, registers per SM and shared memory per SM. This is computed statically without running the kernel.
-- Achieved occupancy (i.e. actual occupancy): Average occupancy of an SM for the whole duration it's active. Measured as the sum of active warps all warp schedulers for an SM for each clock cycle the SM is active, divided by number of clock cycles and then again divided by the maximum active warps for the SM. In addition to the reasons mentioned for theoretical occupancy, it may be limited due to unbalanced workload within blocks, unbalanced workload across blocks, too few blocks launched, and partial last wave (meaning that the last "wave" of blocks aren't enough to activate all warp schedulers of all SMs).
+- **Occupancy** (group of metrics): The ratio of active warps on an SM to the maximum number of active warps on the SM. Low occupancy generally leads to poor instruction issue efficiency since there may not be enough eligible warps per clock to saturate the warp schedulers. Too high occupancy may also degrade performance as resources may be contend by threads. The occupancy should be high enough to hide memory latencies without causing considerable resource contention, which depends on both the device and application.
+- **Theoretical occupancy** (theoretical metric): Maximum possible occupancy, limited by factors such as warps per SM, blocks per SM, registers per SM and shared memory per SM. This is computed statically without running the kernel.
+- **Achieved occupancy** (`achieved_occupancy`): I.e. actual occupancy. Average occupancy of an SM for the whole duration it's active. Measured as the sum of active warps all warp schedulers for an SM for each clock cycle the SM is active, divided by number of clock cycles and then again divided by the maximum active warps for the SM. In addition to the reasons mentioned for theoretical occupancy, it may be limited due to unbalanced workload within blocks, unbalanced workload across blocks, too few blocks launched, and partial last wave (meaning that the last "wave" of blocks aren't enough to activate all warp schedulers of all SMs).
+- **Issue slot utilization** (`issue_slot_utilization` or `issue_active`): The fraction of issued warps divided by the total number of cycles (e.g. 100% if one warp was issued per each clock for each warp scheduler).
 
 ## NVLink & NVSwitch
 
@@ -268,6 +271,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 
 ### CUDA-MEMCHECK
 
+- Part of the CUDA-MEMCHECK suite (consisting of Memcheck, Racecheck, Initcheck and Synccheck), now called the Compute Sanitizer suite.
 - For checking correctness and discovering memory bugs.
 - Example usage: `cuda-memcheck --leak-check full <application>`
 
@@ -275,8 +279,8 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 
 - For profiling CUDA applications.
 - Not supported for Ampere GPUs or later. Use Nsight Compute instead.
-- Example usage to show which CUDA calls and kernels tak the longest to run: `sudo nvprof <application>`
-- Example usage to show interesting metrics: `sudo nvprof --metrics "eligible_warps_per_cycle,achieved_occupancy,sm_efficiency,alu_fu_utilization,dram_utilization,inst_replay_overhead,gst_transactions_per_request,l2_utilization,gst_requested_throughput,flop_count_dp,gld_transactions_per_request,global_cache_replay_overhead,flop_dp_efficiency,gld_efficiency,gld_throughput,l2_write_throughput,l2_read_throughput,branch_efficiency,local_memory_overhead" <application>`
+- Basic usage: `sudo nvprof [--metrics <comma-list>] <application>`
+- Show available metrics for the available devices: `nvprof --query-metrics`
 
 ### NVIDIA Visual Profiler (nvvp)
 
@@ -297,6 +301,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 
 #### Info
 
+- [Nsight Compute: Kernel Profiling Guide (NVIDIA)](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html).
 - Requires Turing/Volta or later.
 - Replaces the much simpler nvprof tool.
 - Supports stepping through CUDA calls.
