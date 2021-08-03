@@ -88,8 +88,23 @@ Sends an emails when APT updates are available.
     - [DNSSEC Guide (BIND 9 docs)](https://bind9.readthedocs.io/en/latest/dnssec-guide.html)
     - [Tutorial: How To Configure Bind as a Caching or Forwarding DNS Server on Ubuntu 16.04 (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-configure-bind-as-a-caching-or-forwarding-dns-server-on-ubuntu-16-04)
     - [Tutorial: How To Setup DNSSEC on an Authoritative BIND DNS Server (DigitalOcean)](https://www.digitalocean.com/community/tutorials/how-to-setup-dnssec-on-an-authoritative-bind-dns-server-2)
+- Docker image notes:
+    - The `-g` CLI arg forces all output to stderr, which breaks logging. Use `-f` instead.
+- Example config: See my private configs.
 
 ### Usage
+
+#### Config
+
+- Show full user config: `named-checkconf -p`
+
+#### Zones
+
+- Most tools are from the `bind9utils` package.
+- Convert signed zone in raw format to text format: `named-compilezone -f raw -F text -o zone.tmp <zone> <zone-file>.signed`
+- Convert the DNSKEY records to DS records: `dnssec-dsfromkey <dnskey-file>` (use the one with digest type 2 (SHA-256))
+
+#### Validation
 
 - Valdiate config: `named-checkconf`
 - Validate DNSSEC validation:
@@ -100,6 +115,11 @@ Sends an emails when APT updates are available.
     - Resolve with dig and a validating server.
     - [Verisign DNSSEC Debugger](https://dnssec-debugger.verisignlabs.com/)
     - [DNSViz](https://dnsviz.net/)
+
+#### Miscellanea
+
+- Show BIND host version: `dig chaos txt version.bind @<server>`
+- Show BIND host hostname: `dig chaos txt hostname.bind @<server>`
 
 ## bitwarden_rs
 
