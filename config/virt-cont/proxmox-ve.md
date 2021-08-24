@@ -232,8 +232,11 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
 
 *Using Debian 10.*
 
+**TODO** Script this and use snippets. The UEFI boot order fix, though ...
+
 1. Download a cloud-init-ready Linux image to the hypervisor:
-    - Debian: [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/) (the `genericcloud` variant and `qcow2` format)
+    - Debian cloud-init downloads: [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/) (the `genericcloud` or `generic` variant and `qcow2` format)
+    - **TODO**: `genericcloud` or `generic`? Does the latter fix the missing console?
     - Copy the download link and download it to the host (`wget <url>`).
 1. Note: It is an UEFI installation (so the BIOS/UEFI mode must be set accordingly) and the image contains an EFI partition (so you don't need a separate EFI disk).
 1. Setup a VM as in the general setup section (take note of the specified Cloud-Init notes).

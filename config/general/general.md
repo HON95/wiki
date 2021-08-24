@@ -8,10 +8,6 @@ breadcrumbs:
 
 ## Resources
 
-### Security
-
-- [Cipherli.st](https://cipherli.st/)
-
 ### Miscellaneous
 
 - [Text to ASCII Art Generator (TAAG)](http://patorjk.com/software/taag/#p=display&f=Slant&t=)
@@ -48,6 +44,6 @@ breadcrumbs:
         - `2606:4700:4700::6400`
 - Justervesenet NTP (JV-UTC):
     - Info: [Justervesenet: NTP-tenester frå Justervesenet](https://www.justervesenet.no/maleteknikk/tid-og-frekvens/ntp-tjenester-fra-justervesenet/)
-    - Address: `ntp.justervesenet.no`
+    - Address: `ntp.justervesenet.no` (Warning: IPv4-only)
 
 {% include footer.md %}

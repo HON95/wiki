@@ -120,31 +120,50 @@ breadcrumbs:
     - `nload <if>`
     - `iftop -i <if>`
     - `speedometer -t <if> -r <if> [...]`
+    - `dstat -tcyn --net-packets 60`
 - Monitor per-process usage:
     - `nethog`
 - Test throughput:
-    - Internet: `speedtest` (the official one, not `speedtest-cli`)
+    - Internet: `speedtest` (from [speedtest.net](https://www.speedtest.net/apps/cli))
     - Internal: `iperf3`
-- Show sockets:
-    - `netstat -tulpn`
-        - `tu` for TCP and UDP, `l` for listening, `p` for protocol, `n` for numerical post numbers.
-    - `ss -tulpn` (replaces netstat version)
-- Show interface stats:
-    - `ip -s link`
-    - `netstat -i`
-- Show interfaces and addresses:
-    - IPv4 and/or IPv6 plus MAC: `ip [-46] a`
-    - Only global IPv4/IPv6: `ip <-46> a show scope global`
-- Show neighbors:
-    - `ip n`
-- Show routes:
-    - `ip r` & `ip -6 r`
-    - `netstat -r`
-- Show multicast groups:
-    - `netstat -g`
+- Show interfaces and addresses (with `ip`):
+    - General: `ip [-c] [-46] [-s] {l[ink]|a[ddress]} [-br] [sh [if]]`
+    - Option `-c`: Color.
+    - Option `{-4|-6}`: IPv4 or IPv6 only.
+    - Option `-s`: Show stats (bytes, packets, errors, dropped, etc. for RX and TX).
+    - Option `-br`: One line per interface (MAC address and status for `link`, addresses for `address`).
+    - Argument `scope global`: Only global addresses (excludes localhost/`host`, link-local/`link`, etc.).
+- Show neighbors (with `ip`):
+    - General: `ip [-c] [-46] n[eighbor]`
+    - Option `-c`: Color.
+    - Option `{-4|-6}`: IPv4 or IPv6 only.
+- Show routes (with `ip`):
+    - General: `ip [-c] [-46] r[oute]`
+    - Option `-c`: Color.
+    - Option `{-4|-6}`: IPv4 or IPv6 only.
+- Show multicast addresses (with `ip`):
+    - General: `ip [-c] [-46] ma[ddress]`
+    - Option `-c`: Color.
+    - Option `{-4|-6}`: IPv4 or IPv6 only.
+- Show multicast routes (with `ip`):
+    - General: `ip [-c] [-46] mr[oute]`
+    - Option `-c`: Color.
+    - Option `{-4|-6}`: IPv4 or IPv6 only.
+- Show sockets (with `ss`):
+    - Example: `ss -tulpn`
+    - Note: `ss` replaces `netstat` and is mostly option compatible.
+    - Option `tu`: Include TCP and UDP sockets (no UNIX sockets).
+    - Option `l`: Include listening sockets (no client sockets).
+    - Option `p`: Show protocol (requires root).
+    - Option `n`: Don't translate port numbers to common service names.
 - Show misc. stats:
-    - `nstat`
-    - `netstat -s` (statistics)
+    - Show kernel SNMP counters: `nstat`
+    - Show per-protocol stats: `netstat -s`
+- Bring interface up or down:
+    - Note: Your network manager probably has a more appropriate way to do this.
+    - Directly up or down interface: `ip link set dev <if> {up|down}`
+- Traffic shaping and link simulation:
+    - See `tc` to simulate e.g. random packet drop, random latencies, limited bandwidth etc.
 
 #### Tcpdump
 

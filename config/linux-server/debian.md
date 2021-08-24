@@ -139,7 +139,8 @@ The first steps may be skipped if already configured during installation (i.e. n
 1. Update MOTD:
     - Clear `/etc/motd`, `/etc/issue` and `/etc/issue.net`.
     - (Optional) Add a MOTD script (see below).
-1. (Optional) Enable persistent logging:
+1. (Optional) (Buster) Enable persistent logging:
+    - Note: Persistent logging is the default for Debian 11/Bullseye, but not Debian 10/Buster.
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
     - Note: `auto` (the default) is like `persistent`, but does not automatically create the log directory.
     - Note: The default journal directory is `/var/log/journal`.

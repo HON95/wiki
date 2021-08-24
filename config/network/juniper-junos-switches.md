@@ -114,11 +114,18 @@ breadcrumbs:
     1. Set IPv6 address: `set family inet6 address <address>/<prefix-length>`
 1. Setup static IP routes:
     1. IPv4 default gateway: `set routing-options rib inet.0 static route 0.0.0.0/0 next-hop <next-hop>`
-    1. IPv6 default gateway: ``set routing-options rib inet6.0 static route ::0/0 next-hop <next-hop>``
-1. Enable Ethernet flow control:
-    - **TODO**
-1. Enable EEE:
-    - **TODO**
+    1. IPv6 default gateway: `set routing-options rib inet6.0 static route ::0/0 next-hop <next-hop>`
+1. Disable/enable Ethernet flow control:
+    - Note: Junos uses the symmetric/bidirectional PAUSE variant of flow control.
+    - Note: This simple PAUSE variant does not take traffic classes (for QoS) into account and will pause _all_ traffic for a short period (no random early detection (RED)) if the receiver detects that it's running out of buffer space, but it will prevent dropping packets _within_ the flow control-enabled section of the L2 network. Enabling it or disabling it boils down to if you prefer to pause (all) traffic or drop (some) traffic during congestion. As a guideline, keep it disabled generally (and use QoS or more sophisticated variants instead), but use it e.g. for dedicated iSCSI networks (which handle delays better than drops). Note that Ethernet and IP don't require guaranteed packet delivery.
+    - Note: It _may_ be enabled by default, so you should probably enable/disable it explicitly (the docs aren't consistent with my observations).
+    - Note: Simple/PAUSE flow control (`flow-control`) is mutually exclusive with priority-based flow control (PFC) and asymmetric flow control (`configured-flow-control`).
+    - Disable on Ethernet interface (explicit): `set interface <if> [aggregated-]ether-options no-flow-control`
+    - Enable (explicit): `... flow-control`
+1. Enable EEE (Energy-Efficient Ethernet, IEEE 802.3az):
+    - Note: For reducing power consumption during idle periods. Supported on RJ45 copper ports.
+    - Note: There generally is no reason to not enable this on all ports, however, there may be certain devices or protocols which don't play nice with EEE (due to poor implementations).
+    - Enable on RJ45 Ethernet interface: `set interface <if> ether-options ieee-802-3az-eee`
 1. (Optional) Configure RSTP:
     - Note: RSTP is the default STP variant for Junos.
     - Enter config section: `edit protocols rstp`
