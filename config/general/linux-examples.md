@@ -217,6 +217,7 @@ breadcrumbs:
 ### Security
 
 - Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`
+- Generate XKCD-style (multi-word) passwords (using package `xkcdpass`): `xkcdpass`
 
 ### Storage
 
