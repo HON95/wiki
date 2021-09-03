@@ -16,6 +16,7 @@ Using **Debian 10 (Buster)**.
 - If installing in a Proxmox VE VM, see [Proxmox VE: VMs: Initial Setup](/config/virt-cont/proxmox-ve/#initial-setup).
 - Prefer UEFI if possible.
 - Use the non-graphical installer. It's basically the same as the graphical one.
+- If it asks to install non-free firmware, take note of the packages so they can be installed later.
 - Localization:
     - For automation-managed systems: It doesn't matter.
     - Language: United States English.
@@ -23,8 +24,8 @@ Using **Debian 10 (Buster)**.
     - Locale: United States UTF-8 (`en_US.UTF-8`).
     - Keymap: Your keyboard's keymap.
 - Network settings:
-    - For automation-managed systems: Both DHCP and static IP addresses are fine, do whatever is more practical.
-    - For static servers: Just configure the static IP addresses.
+    - Whatever is more practical, typically static addresses for static servers and DHCP/autoconfiguration for everything else.
+    - Certain NICs require non-free drivers (which are not included in the public ISOs) (e.g. `bnx2`). The installer will typically show a warning about the missing firmware, but sometimes it won't and the NIC will be listed but won't be able to access the network properly (e.g. DHCP failing). To get around this you may load the driver from removable media, or connect a temporary NIC for Internet access to finish the install and to download/install the non-free driver for the other NIC(s).
 - Use an FQDN as the hostname.
     - For automation-managed systems: It doesn't matter, just leave it as `debian` or something.
     - It'll automatically split it into the shortname and the FQDN.
@@ -40,7 +41,6 @@ Using **Debian 10 (Buster)**.
     - Just pick whatever it suggests.
 - Software selection:
     - Select only "SSH server" and "standard system utilities".
-- If it asks to install non-free firmware, take note of the packages so they can be installed later.
 - GRUB bootloader:
     - Install to the suggested root disk (e.g. `/dev/sda`).
 
