@@ -26,9 +26,13 @@ Using ZFS on Linux (ZoL) running on Debian.
 
 ## Setup
 
-### Installation
+### Installation (Debian 11)
 
-The installation part is highly specific to Debian 10 (Buster). The backports repo is used to get the newest version of ZoL.
+1. Install: `apt install zfsutils-linux`
+
+### Installation (Debian 10)
+
+The backports repo is used to get the newest version of ZoL.
 
 1. Enable the Buster backports repo: See [Backports (Debian Wiki)](https://wiki.debian.org/Backports)
     - Add the following lines to `/etc/apt/sources.list`
@@ -37,10 +41,22 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
         deb-src http://deb.debian.org/debian buster-backports main contrib non-free
         ```
 1. Install: `apt install -t buster-backports zfsutils-linux`
+
+### Configuration
+
 1. Fix automatic unlocking of encrypted pools/datasets:
     1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
     1. In `zfs-mount.service`, change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a`, so that it loads encryption keys.
     1. Reboot and test. It may fail due to dependency/boot order stuff.
+1. Check that the cron scrub script exists:
+    - Typical location: `/etc/cron.d/zfsutils-linux`
+    - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
+1. Check that ZED is set up to send emails:
+    - In `/etc/zfs/zed.d/zed.rc`, make sure `ZED_EMAIL_ADDR="root"` is uncommented.
+1. (Optional) Set the max ARC size:
+    - Command: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
+    - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
+    - This is generally not required, ZFS should happily yield RAM to other processes that need it.
 1. (Optional) Fix pool cache causing pool loading problems at boot:
     1. Note: Do this if `systemctl status zfs-import-cache.service` shows that no pools were found. I had significant problems with this multiple times with Proxmox VE on an older server.
     1. Make sure the pools are not set to use a cache file: `zpool get cachefile` and `zpool set cachefile=none <pool>`
@@ -57,18 +73,6 @@ The installation part is highly specific to Debian 10 (Buster). The backports re
     1. Update initramfs: `update-initramfs -u -k all`
     1. Reboot.
     1. Check if the pools are loaded correctly _at boot_ (see `systemctl status zfs-import-cache.service`).
-
-### Configuration
-
-1. (Optional) Set the max ARC size:
-    - Command: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
-    - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
-    - This is generally not required, ZFS should happily yield RAM to other processes that need it.
-1. Check that the cron scrub script exists:
-    - Typical location: `/etc/cron.d/zfsutils-linux`
-    - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
-1. Check that ZED is set up to send emails:
-    - In `/etc/zfs/zed.d/zed.rc`, make sure `ZED_EMAIL_ADDR="root"` is uncommented.
 
 ## Usage
 
