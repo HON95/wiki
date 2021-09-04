@@ -98,15 +98,18 @@ The backports repo is used to get the newest version of ZoL.
     - Don't enable dedup.
 - Create pool:
     - Format: `zpool create [options] <name> <levels-and-drives>`
-    - Basic example: `zpool create [-f] [options] <name> [mirror|raidz|raidz2|...] <drives>`
+    - Basic example: `zpool create [-f] [options] <name> {[mirror|raidz|raidz2|spare|...] <drives>}+`
         - Use `-f` (force) if the disks aren't clean.
         - See example above for recommended options.
-    - The pool definition is hierarchical, where top-level elements are striped.
+    - The pool definition is two-level hierarchical, where top-level elements are striped.
         - RAID 0 (striped): `<drives>`
         - RAID 1 (mirrored): `mirror <drives>`
         - RAID 10 (stripe of mirrors): `mirror <drives> mirror <drives>`
+        - Etc.
     - Create encrypted pool: See encryption section.
-    - Use absolute drive paths (`/dev/disk/by-id/` or similar).
+    - Add special device: See special device section.
+    - Add hot spare (if after creation): `zpool add <pool> spare <disks>`
+    - Use absolute drive paths (`/dev/disk/by-id/` or similar), not `/dev/sdX`.
 - View pool activity: `zpool iostat [-v] [interval]`
     - Includes metadata operations.
     - If no interval is specified, the operations and bandwidths are averaged from the system boot. If an interval is specified, the very first interval will still show this.
