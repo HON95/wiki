@@ -9,23 +9,24 @@ breadcrumbs:
 ### Using
 {:.no_toc}
 
-**OS:** Raspbian Buster
+**OS:** ~~Raspbian~~ Raspberry Pi OS (latest)
 
-**Hardware models:** B, 3B
+**Hardware models:** 1B, 3B
 
 ## Setup
 
-### Installation
+### Preparing the SD Card
 
 1. Download ~~Raspbian~~ Raspberry Pi OS: [Operating system images (Raspberry Pi)](https://www.raspberrypi.org/software/operating-systems/)
     - If you don't need a desktop, use "Raspberry Pi OS Lite".
 1. Burn it to the SD card.
-    - Make sure the SD card is compatible: [SD Cards (Raspberry Pi)](https://www.raspberrypi.org/documentation/installation/sd-cards.md)
+    - Make sure the SD card is RPi-compatible: [SD Cards (Raspberry Pi)](https://www.raspberrypi.org/documentation/installation/sd-cards.md)
     - Linux: `dd if=<img-file> of=<sd-dev> bs=4M conv=fdatasync status=progress`
     - Windows: Use Win32DiskImager.
-1. Mount the SD card in the Raspi and power it on.
+    - Or use the official Raspberry Pi Imager.
+1. Mount the SD card in the RPi and power it on.
 
-### Basic Setup with Desktop Environment
+### Basic Setup (with Desktop Environment)
 
 1. Follow the configuration wizard.
     - Set a password for the "pi" user.
@@ -35,7 +36,7 @@ breadcrumbs:
     1. Disable all unused interfaces.
     1. Fix the keyboard layout.
 
-### Basic Setup without Desktop Environment
+### Basic Setup (without Desktop Environment)
 
 1. Default credentials: Username `pi`, password `raspberry`.
 1. Configure through the menu: `sudo raspi-config`
