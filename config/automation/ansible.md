@@ -6,17 +6,20 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Resources
+## Usage
 
-### General Networking
+### Ad Hoc
 
-- [Ansible network platform options](https://docs.ansible.com/ansible/latest/network/user_guide/platform_index.html)
-- [Ansible cli_config module](https://docs.ansible.com/ansible/latest/modules/cli_config_module.html)
+- Run module for host: `ansible all -i <host>, -m <module> [-a <module-arg>]`
+    - The comma after the host is required to treat it as a host list literal instead of an inventory file name.
+- Get facts (with optional filter): `ansible all -i <host>, -m setup -a 'filter=ansible_os_*'` (example fact filter)
 
-### Cisco
+### Playbooks
 
-- [Ansible IOS platform options](https://docs.ansible.com/ansible/latest/network/user_guide/platform_ios.html)
-- [Ansible ios_config module](https://docs.ansible.com/ansible/latest/modules/ios_config_module.html)
+- Basic: `ansible-playbook <playbook>`
+- Specify inventory file: `ansible-playbook -i <hosts> <playbook>`
+- Limit which groups/hosts to use (comma-separated): `ansible-playbook -l <group|host> <playbook>`
+- Limit which tasks to run using tags (comma-separated): `ansible-playbook -t <tag> <playbook>`
 
 ## Configuration
 

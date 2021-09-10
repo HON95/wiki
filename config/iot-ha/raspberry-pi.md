@@ -20,11 +20,11 @@ breadcrumbs:
 1. Download ~~Raspbian~~ Raspberry Pi OS: [Operating system images (Raspberry Pi)](https://www.raspberrypi.org/software/operating-systems/)
     - If you don't need a desktop, use "Raspberry Pi OS Lite".
 1. Burn it to the SD card.
-    - Make sure the SD card is RPi-compatible: [SD Cards (Raspberry Pi)](https://www.raspberrypi.org/documentation/installation/sd-cards.md)
+    - Make sure the SD card is RasPi-compatible: [SD Cards (Raspberry Pi)](https://www.raspberrypi.org/documentation/installation/sd-cards.md)
     - Linux: `dd if=<img-file> of=<sd-dev> bs=4M conv=fdatasync status=progress`
     - Windows: Use Win32DiskImager.
     - Or use the official Raspberry Pi Imager.
-1. Mount the SD card in the RPi and power it on.
+1. Mount the SD card in the RasPi and power it on.
 
 ### Basic Setup (with Desktop Environment)
 

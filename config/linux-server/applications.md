@@ -147,13 +147,15 @@ See [Storage: Ceph](/config/linux-server/storage/#ceph).
 
 ## Chrony
 
+An NTP client and server. By design more accurate than e.g. ntpd and systemd-timesyncd.
+
 ### Setup (Server)
 
 1. Install: `apt install chrony`
 1. Modify config (`/etc/chrony/chrony.conf`):
     - (Optional) Add individual servers: `server <address> iburst`
     - (Optional) Add pool of servers (a name resolving to multiple servers): `pool <address> iburst`
-    - (Optional) Allow clients: `allow {all|<network>}`
+    - (Optional) Allow external clients: `allow {all|<network>}`
 1. Restart: `systemctl restart chrony`
 
 ### Usage
@@ -256,6 +258,7 @@ See [Home Assistant](/config/iot-ha/home-assistant/).
   If using range notation, try to align the start and end on a CIDR block to avoid excessive memory usage.
 - DHCPv6 uses lease pools of 9973 entries, so using range sizes below this number may be preferable as a very general reference.
   `/116` gives 8191 addresses.
+- Statements inside `pool[6]` are not applied to e.g. `host`s with addresses in the same defined subnet. Don't use `pool[6]`s if you don't need to.
 
 ## lm_sensors
 
@@ -384,6 +387,8 @@ Example `/etc/exports`:
 1. Restart it (takes a while).
 
 ## ntpd
+
+Note: I recommend [Chrony](#chrony) instead of ntpd. It's newer and by design more accurate.
 
 ### Setup
 
