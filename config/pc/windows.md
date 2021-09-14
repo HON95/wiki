@@ -94,7 +94,7 @@ breadcrumbs:
 - Show status: `wsl --status`
 - Show VMs: `wsl -l -v`
 - Change WSL version for VM: `wsl --set-version <vm> <version>`
-- Restart: `wsl --shutdown` and `wsl`
+- Restart: `wsl --shutdown` and ???
 - Update kernel: `wsl --update`
 
 ### Docker Desktop
