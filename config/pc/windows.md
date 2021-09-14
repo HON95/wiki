@@ -71,17 +71,46 @@ breadcrumbs:
 - Apps settings:
     - Uninstall useless apps and programs.
     - Change optional features and Windows features.
-- Setup WSL:
-    - Google it.
 - Accounts settings:
     - (Optional) Add login PIN to avoid typing the password from the lock screen.
 - Gaming settings:
     - Disable "Record \[...\] using Game bar".
     - Keep Game Mode enabled.
 
-## Troubleshooting
+## Windows Subsystem for Linux (WSL)
 
-### Docker
+### Setup
+
+1. See: [Windows Subsystem for Linux Installation Guide for Windows 10 (Microsoft Docs)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+    - The "manual install" method.
+    - You may need to reboot in-between certain steps.
+1. Enable automatic kernel upgrades:
+    - Go to "Sindows updates", "advanced options" and enable "Receive updates for other Microsoft products when you update Windows".
+1. Install a distro like Ubuntu from the Microsoft Store app.
+    - Make sure it's using WSL 2, see usage.
+
+### Usage
+
+- Show status: `wsl --status`
+- Show VMs: `wsl -l -v`
+- Change WSL version for VM: `wsl --set-version <vm> <version>`
+- Restart: `wsl --shutdown` and `wsl`
+- Update kernel: `wsl --update`
+
+### Docker Desktop
+
+- Recommends using the WSL 2 backend.
+- WSL backend notes: [Docker Desktop WSL 2 backend (Docker Docs)](https://docs.docker.com/desktop/windows/wsl/)
+- See the NVIDIA notes for NVIDIA Container Toolkit notes.
+
+### NVIDIA CUDA
+
+- User guide: [CUDA on WSL User Guide (NVIDIA Docs)](https://docs.nvidia.com/cuda/wsl-user-guide/index.html)
+- Announcement blog post: [Announcing CUDA on Windows Subsystem for Linux 2 (NVIDIA Developer Blog)](https://developer.nvidia.com/blog/announcing-cuda-on-windows-subsystem-for-linux-2/)
+- Using the Windows Insiders Program may be necessary.
+- CUDA on WSL drivers: [NVIDIA Drivers for CUDA on WSL, including DirectML Support(NVIDIA Developer)](https://developer.nvidia.com/cuda/wsl/download)
+
+### Troubleshooting
 
 **Time in containers is wrong when using WSL backend**:
 
