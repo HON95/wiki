@@ -102,6 +102,7 @@ breadcrumbs:
 - Recommends using the WSL 2 backend.
 - WSL backend notes: [Docker Desktop WSL 2 backend (Docker Docs)](https://docs.docker.com/desktop/windows/wsl/)
 - See the NVIDIA notes for NVIDIA Container Toolkit notes.
+    - Side note: I gave up on getting it working ... Why would I use Windows for CUDA stuff anyways.
 
 ### NVIDIA CUDA
 
