@@ -21,67 +21,70 @@ breadcrumbs:
 
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
-- Enable BitLocker drive encryption for all drives.
-  - Allow using it without a TPM module:
-    - Open `gpedit.msc`.
-    - Go to: `Local Computer Policy/Computer Configuration/Administrative Templates/Windows Components/Bitlocker Drive Encryption/Operating System Drives`
-    - Edit "Require additional authentication at startup".
-      - Enable it.
-      - Allow without compatible TPM module.
-      - Do not allow TPM.
-    - Enable "allow enhanced PINs for startup".
-- Disable the lock screen: [How to Disable the Lock Screen on Windows 10 (Lifewire)](https://www.lifewire.com/disable-lock-screen-windows-10-4173812)
-  - Because it's annoying.
-  - Open `regedit`.
-  - Go to `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows`.
-  - Create a new key named `Personalization`.
-  - Add a new DWORD named `NoLockScreen` with value `1`.
+- Enable BitLocker drive encryption (requires Pro edition):
+    - Note: Using passwords and not TPM because I don't want my PC to decrypt itself without me and because I need to move disks between PCs.
+    - Allow using it without a TPM module:
+        - Open `gpedit.msc`.
+        - Go to: `Local Computer Policy/Computer Configuration/Administrative Templates/Windows Components/Bitlocker Drive Encryption/Operating System Drives`
+        - Edit "Require additional authentication at startup".
+            - Enable it.
+            - Allow without compatible TPM module.
+            - Do not allow TPM.
+        - Enable "allow enhanced PINs for startup".
+    - Setup BitLocker for drives:
+        - Enter the BitLocker management settings.
+        - Enable for all disks.
+        - Save the recovery keys somewhere safe, it's required sometimes to unlock the disk.
+        - Enable auto-unlock for other encrypted disks.
+- Disable the lock screen:
+    - Because it's annoying.
+    - Open `regedit`.
+    - Go to `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows`.
+    - Create a new key (dir) named `Personalization`.
+    - Add a new DWORD named `NoLockScreen` with value `1`.
 - Change the computer name.
 - Check Windows Security.
 - Start menu:
-  - Remove useless tiles.
+    - Remove useless tiles.
 - Sound Control Panel:
-  - Disable unused playback and recording devices.
-  - Set "format" for used devices.
-  - Set to do nothing when Windows detects communications activity.
+    - Disable unused playback and recording devices.
+    - Set "format" for used devices.
+    - Set to do nothing when Windows detects communications activity.
 - Windows Explorer:
-  - Set File Explorer to open to "this PC".
-  - Hide recently used files and folders in Quick access.
-  - Show known file endings and hidden files.
-  - Show merge conflicts.
+    - Set File Explorer to open to "this PC".
+    - Hide recently used files and folders in Quick access.
+    - Show known file endings and hidden files.
+    - Show merge conflicts.
 - Power settings:
-  - Use balanced mode.
-  - Extend periods for turning off stuff.
-  - Disable the sleep timer.
-  - Allow the CPU to reduce its "utilization" (for Intel SpeedStep).
+    - Use balanced mode (high performance mode is a waste of energy with no benefits).
+    - Extend periods for turning off stuff.
+    - Disable the sleep timer.
+    - Set the minimum processor state to 0% (for power saving with DVFS).
 - Device settings:
-  - Disable AutoPlay.
+    - Disable AutoPlay.
 - Personalisation settings:
-  - Enable dark mode.
-  - Remove lock screen apps.
-  - In desktop icon settings, hide the recycle bin.
-  - Only show app list in start menu.
-  - Configure the taskbar.
+    - Enable dark mode.
+    - Remove lock screen apps.
+    - In desktop icon settings, hide the recycle bin.
+    - Only show app list in start menu.
+    - Configure the taskbar.
 - Apps settings:
-  - Uninstall useless apps and programs.
-  - Change optional features and Windows features.
-    - Install the Windows Subsystem for Linux, then Ubuntu from the Microsoft Store.
+    - Uninstall useless apps and programs.
+    - Change optional features and Windows features.
+- Setup WSL:
+    - Google it.
 - Accounts settings:
-  - Add login PIN to avoid typing the password from the lock screen.
+    - (Optional) Add login PIN to avoid typing the password from the lock screen.
 - Gaming settings:
-  - Disable "Record \[...\] using Game bar".
-  - Keep Game Mode enabled.
+    - Disable "Record \[...\] using Game bar".
+    - Keep Game Mode enabled.
 
 ## Troubleshooting
 
 ### Docker
 
-### Windows Subsystem for Linux (WSL)
+**Time in containers is wrong when using WSL backend**:
 
-#### Linux Kernel CMA Support was Requested ...
-
-```text
-echo 0 | sudo tee /proc/sys/kernel/yama/ptrace_scope
-```
+Restart WSL every time it happens. It's a known bug still not fixed.
 
 {% include footer.md %}
