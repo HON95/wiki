@@ -41,8 +41,8 @@ breadcrumbs:
     - Select "ignore selection" to avoid copying when selecting text.
     - Set the history size to 1 (effectively disabling the history).
 1. Setup firewall:
-    - Remove other firewalls: `sudo apt purge ufw firewalld`.
-    - Install IPTables stuff: `sudo apt install iptables iptables-persistent netfilter-persistent`.
+    - Remove other firewalls: `sudo apt purge ufw firewalld`
+    - Install IPTables stuff: `sudo apt install iptables iptables-persistent netfilter-persistent`
     - (Alternative 1) Create an IPTables script (e.g. [iptables.sh](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh)).
     - (Alternative 2) Run my preset (basics only, no SSH etc.): `curl https://raw.githubusercontent.com/HON95/scripts/master/linux/iptables/iptables.sh | sudo bash`
 1. Firefox:
