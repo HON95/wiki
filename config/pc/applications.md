@@ -135,7 +135,7 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
     - Global: `/etc/tmux.conf`
 - Set/fix default shell and colors (using ZSH as example):
     - In `~/.tmux.conf`, set `set-option -g default-shell /bin/zsh` (for ZSH).
-    - In `~/.zshrc`, set `echo  "export TERM=xterm-256color" >> ~/.zshrc`.
+    - In `~/.zshrc`, set `export TERM=xterm-256color`.
 
 ### Usage
 
