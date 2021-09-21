@@ -12,6 +12,7 @@ breadcrumbs:
 
 - Run module for host: `ansible all -i <host>, -m <module> [-a <module-arg>]`
     - The comma after the host is required to treat it as a host list literal instead of an inventory file name.
+    - Use `-i localhost, --connection=local` to run locally.
 - Get facts (with optional filter): `ansible all -i <host>, -m setup -a 'filter=ansible_os_*'` (example fact filter)
 
 ### Playbooks
