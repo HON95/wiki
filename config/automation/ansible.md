@@ -23,7 +23,7 @@ breadcrumbs:
 
 ## Configuration
 
-Example `/etc/ansible/ansible.cfg`:
+Example `/etc/ansible/ansible.cfg` or `~/.ansible.cfg`:
 
 ```
 [defaults]
