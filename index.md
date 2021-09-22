@@ -145,14 +145,12 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 - [Database Management Systems (DBMSes)](/se/general/dbmses/)
 - [Software Licensing](/se/general/licensing/)
+- [Web Security](/se/general/security/)
 
-### HPC
+### Languages & Frameworks
 
-- [CUDA](/se/general/cuda/)
-
-### Web
-
-- [Web Security](/se/web/security/)
+- [CUDA](/se/lang-frame/cuda/)
+- [Go](/se/lang-plat/go/)
 
 ## Guides
 
