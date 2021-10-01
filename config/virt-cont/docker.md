@@ -35,7 +35,7 @@ Using **Debian**.
     - For local networks (not Swarm overlays), it defaults to pool `172.17.0.0/12` with `/16` allocations, resulting in a maximum of `2^(16-12)=16` allocations.
 1. (Recommended) Change default DNS servers for containers:
     - In `/etc/docker/daemon.json`, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
-    - It defaults to `8.8.8.8` and `8.8.4.4` (Google)."userland-proxy": false
+    - It defaults to `8.8.8.8` and `8.8.4.4` (Google).
 1. (Optional) Change the logging options (JSON file driver):
     - It defaults to the JSON file driver with a single file of unlimited size.
     - Configured globally in `/etc/docker/daemon.json`.
@@ -43,7 +43,9 @@ Using **Debian**.
     - Set the max file size: `"log-opts": { "max-size": "10m" }`
     - Set the max number of files (for log rotation): `"log-opts": { "max-file": "5" }`
     - Set the compression for rotated files: `"log-opts": { "compress": "enabled" }`
-1. (Recommended) Disable the userland proxy (no longer recommended to use):
+1. (Recommended) Disable the userland proxy:
+    - It's no longer recommended to keep this enabled, future Docker versions will brobably disable it by default.
+    - Disabling it _may_ break your published IPv6 ports, so you may want to test that.
     - In `/etc/docker/daemon.json`, set `"userland-proxy": false`.
 1. (Optional) Enable Prometheus metrics endpoint:
     - This only exports internal Docker metrics, not anything about the containers (use cAdvisor for that).
