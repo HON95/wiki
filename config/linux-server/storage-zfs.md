@@ -44,15 +44,13 @@ The backports repo is used to get the newest version of ZoL.
 
 ### Configuration
 
-1. Fix automatic unlocking of encrypted pools/datasets:
-    1. Copy `/lib/systemd/system/zfs-mount.service` to `/etc/systemd/system/`.
-    1. In `zfs-mount.service`, change `ExecStart=/sbin/zfs mount -a` to `ExecStart=/sbin/zfs mount -l -a`, so that it loads encryption keys.
-    1. Reboot and test. It may fail due to dependency/boot order stuff.
 1. Check that the cron scrub script exists:
     - Typical location: `/etc/cron.d/zfsutils-linux`
     - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
-1. Check that ZED is set up to send emails:
-    - In `/etc/zfs/zed.d/zed.rc`, make sure `ZED_EMAIL_ADDR="root"` is uncommented.
+1. (Typically not needed) Check that ZED is working:
+    - ZEDLET: `/etc/zfs/zed.d/history_event-zfs-list-cacher.sh` should point to `/usr/lib/zfs-linux/zed.d/history_event-zfs-list-cacher.sh`.
+    - Email sending: In `/etc/zfs/zed.d/zed.rc`, make sure `ZED_EMAIL_ADDR="root"` is uncommented.,
+    - Service: `zfs-zed.service` should be enabled.
 1. (Optional) Set the max ARC size:
     - Command: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
     - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
@@ -113,6 +111,7 @@ The backports repo is used to get the newest version of ZoL.
 - View pool activity: `zpool iostat [-v] [interval]`
     - Includes metadata operations.
     - If no interval is specified, the operations and bandwidths are averaged from the system boot. If an interval is specified, the very first interval will still show this.
+- Automatically load key (if encrypted) and mount on boot: See dataset section.
 
 #### L2ARC
 
@@ -159,13 +158,21 @@ The backports repo is used to get the newest version of ZoL.
     - Format: `zfs create [options] <pool>/<name>`
     - Use `-p` to create parent datasets if they maybe don't exist.
     - Basic example: `zfs create -o quota=<size> -o reservation=<size> <pool>/<other-datasets>/<name>`
-- Properties:
+- Properties management:
     - Properties may have the following sources, as seen in the "source" column: Local, default, inherited, temporary, received and none.
     - Get: `zfs get {all|<property>} [-r] [dataset]` (`-r` for recursive)
     - Set: `zfs set <property>=<value> <dataset>`
     - Inherit: `zfs inherit [-r] [dataset]` (`-r` for recursive)
         - See the encryption section for inheritance of certain encryption properties.
     - Reset to default/inherit: `zfs inherit -S [-r] <property> <dataset>` (`-r` for recursive, `-S` to use the received value if one exists)
+- Other useful dataset properties:
+    - `canmount={on|off|noauto}`: If the dataset will be mounted by `zfs mount` or `zfs mount -a`. Set to no if it shouldn't be mounted automatically e.g. during boot.
+- Automatically load key (if encrypted) and mount on boot:
+    - Note: This will load all keys and mount everything (unless `canmount=off`) within the pool by generating mounting and key-load services at boot. Key-load services for encrypted roots will ge generated regardless of `canmount`, use `org.openzfs.systemd:ignore=on` to avoid creating any services for the dataset.
+    - Make sure ZED is set up correctly (see config section).
+    - Enable tracking for the pool: `touch /etc/zfs/zfs-list.cache/POOLNAME`
+    - Trigger an update of the stale cache file: `zfs set canmount=on <pool>`
+    - (Optional) Don't automatically decrypt and mount a dataset: Set `org.openzfs.systemd:ignore=on` on it.
 - Don't store anything in the root dataset itself, since it can't be replicated.
 
 ### Snapshots
