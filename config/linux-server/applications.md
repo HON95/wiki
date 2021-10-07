@@ -623,14 +623,14 @@ Must be run on a Docker host. For extra Docker hosts you want to control with an
     - If asked, choose to configure Postfix as a satellite system.
 1. Update the root alias:
     - In `/etc/aliases`, add `root: admin@example.net` (for forward everything to `admin@example.net`).
-    - Run `newaliases` to update the alias DB file.
+    - Run `newaliases` to update the alias DB file. (Optionally restart `postfix.service` to make it pick up the change instantly.)
 1. Update the `main.cf` config.
     - Example: [main.cf](https://github.com/HON95/configs/blob/master/postfix/main.cf)
-    - Update FQDN.
+    - If the system's FQDN is configured properly (run `hostname --fqdn`), you don't need to set it in `main.cf` or `/etc/mailname`.
     - Only listen to localhost: Set `inet_interfaces = loopback-only`
     - Disable relaying: Set `mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128`
     - Anonymize banner: `smtpd_banner = $myhostname ESMTP`
-    - Disable backward compatibility before a certain level: `compatibility_level = 2`
+    - Use modern defaults: `compatibility_level = 2`
 1. Configure the relay provider:
     - See the references above.
     - SendGrid uses `apikey` as the username for API key access.
