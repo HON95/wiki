@@ -622,7 +622,7 @@ Must be run on a Docker host. For extra Docker hosts you want to control with an
 1. Install: `postfix libsasl2-modules mailutils`
     - If asked, choose to configure Postfix as a satellite system.
 1. Update the root alias:
-    - In `/etc/aliases`, add `root: admin@example.net` (for forward everything to `admin@example.net`).
+    - In `/etc/aliases`, add `root: admin@example.net` (to forward everything to `admin@example.net`).
     - Run `newaliases` to update the alias DB file. (Optionally restart `postfix.service` to make it pick up the change instantly.)
 1. Update the `main.cf` config.
     - Example: [main.cf](https://github.com/HON95/configs/blob/master/postfix/main.cf)
