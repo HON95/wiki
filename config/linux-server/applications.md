@@ -626,7 +626,7 @@ Must be run on a Docker host. For extra Docker hosts you want to control with an
     - Run `newaliases` to update the alias DB file. (Optionally restart `postfix.service` to make it pick up the change instantly.)
 1. Update the `main.cf` config.
     - Example: [main.cf](https://github.com/HON95/configs/blob/master/postfix/main.cf)
-    - If the system's FQDN is configured properly (run `hostname --fqdn`), you don't need to set it in `main.cf` or `/etc/mailname`.
+    - Update the hostname.
     - Only listen to localhost: Set `inet_interfaces = loopback-only`
     - Disable relaying: Set `mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128`
     - Anonymize banner: `smtpd_banner = $myhostname ESMTP`
