@@ -19,11 +19,13 @@ breadcrumbs:
 - Specify inventory file: `ansible-playbook -i <hosts> <playbook>`
 - Limit which groups/hosts to use (comma-separated): `ansible-playbook -l <group|host> <playbook>`
 - Limit which tasks to run using tags (comma-separated): `ansible-playbook -t <tag> <playbook>`
+- Use Vault password file: `ansible-playbook --vault-password-file <file> <...>`
 
 ## Vault
 
 - Use file for password: Just add the password as the only line in a file.
 - Encrypt, prompt for secret, using password file: `ansible-vault encrypt_string --vault-password-file ~/.ansible_vault/stuff`
+- To avoid leaking secrets in logs and stuff, use `no_log` in tasks handling secrets.
 
 ## Configuration
 
