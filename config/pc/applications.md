@@ -105,7 +105,7 @@ GUI for configuring gaming mice.
 ### Config
 
 - Location: `~/.ssh/config`
-- [Example](https://github.com/HON95/configs/blob/master/pc/ssh/config).
+- [Example](https://github.com/HON95/configs/blob/master/ssh/config).
 
 ## Steam (Linux)
 
