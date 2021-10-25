@@ -10,7 +10,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### General
 
-- [General Notes](/config/general/general/)
+- [General](/config/general/general/)
 - [Linux General Notes](/config/general/linux-general/)
 - [Linux Examples](/config/general/linux-examples/)
 - [Computer Testing](/config/general/computer-testing/)
@@ -63,14 +63,20 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Media
 
+- [General](/config/media/general/)
 - [Video Processing](/config/media/video-processing/)
 - [Video Ripping](/config/media/video-ripping/)
 - [Video Streaming](/config/media/video-streaming/)
+- [FFmpeg](/config/media/ffmpeg/)
+- [Video4Linux 2 (V4L2)](/config/media/v4l2/)
+- [VLC](/config/media/vlc/)
+- [youtube-dl](/config/media/youtube-dl/)
 
 ### Network
 
 #### General
 
+- [General](/config/network/general/)
 - [Routing](/config/network/routing/)
 - [Switching](/config/network/switching/)
 - [WLAN](/config/network/wlan/)

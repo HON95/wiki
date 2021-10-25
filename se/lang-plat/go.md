@@ -15,6 +15,7 @@ breadcrumbs:
 - Cleanup dependencies: `go mod tidy`
     - Unused dependencies are removed from `go.mod`.
 - Lint (using `golint`): `golint ./...`
+- Vet: `go vet ./...`
 - Build: `go build -o <binary> <main-file>`
 
 {% include footer.md %}

@@ -65,10 +65,10 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. (Optional) Commit and log in through SSH instead of the console.
 1. Replace default user:
     1. Note: You may want to skip ahead to the SSHD step so you can paste stuff vis SSH instead of manually writing it into the console.
-    1. Enter new user: `system login user <username>`
+    1. Enter new user: `edit system login user <username>`
     1. Set password: `set authentication plaintext-password "<password>"`
         - Remember quotation marks if the password string spaces.
-        - To generate an `encrypted-password` instead of specifying it as plaintext, run `openssl passwd -6` on a "safe" machine.
+        - To generate an `encrypted-password` instead of specifying it as plaintext, run `openssl passwd -6` on a "safe" machine. (**TODO** Is this broken in 1.3? It only adds the last characters of the supplied text.)
     1. (Optional) Add your personal SSH pubkey:
         1. Set key type: `set authentication public-keys <name> type ssh-rsa`
         1. Set key (only the Base64-encoded part): `set authentication public-keys <name> key <key>`

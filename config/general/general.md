@@ -1,5 +1,5 @@
 ---
-title: General Notes
+title: General
 breadcrumbs:
 - title: Configuration
 - title: General

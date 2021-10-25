@@ -47,6 +47,9 @@ Using **Debian**.
     - It's no longer recommended to keep this enabled, future Docker versions will brobably disable it by default.
     - Disabling it _may_ break your published IPv6 ports, so you may want to test that.
     - In `/etc/docker/daemon.json`, set `"userland-proxy": false`.
+1. (Optional) Change the container network MTU:
+    - Path MTU discovery seems to be broken in Docker networks, causing connection problems when the upstream network is using an MTU lower than 1500.
+    - In `/etc/docker/daemon.json`, set `"mtu": 1280` (for the minimum for IPv6) or similar.
 1. (Optional) Enable Prometheus metrics endpoint:
     - This only exports internal Docker metrics, not anything about the containers (use cAdvisor for that).
     - In `/etc/docker/daemon.json`, set `"experimental": true` and `"metrics-addr": "[::]:9323"`.
@@ -176,6 +179,11 @@ See the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/con
 - IPv6-only networks (without IPv4) are not supported. (See [moby/moby #32675](https://github.com/moby/moby/issues/32675), [moby/libnetwork #826](https://github.com/moby/libnetwork/pull/826).)
 - IPv6 communication between containers (ICC) on IPv6-enabled _internal_ bridges with IP6Tables enabled is broken, due to IPv6 ND being blocked by the applied IP6Tables rules. On non-internal bridges it works fine. One workaround is to not use IPv6 on internal bridges or to not use internal bridges. (See [libnetwork/issues #2626](https://github.com/moby/libnetwork/issues/2626).)
 - The userland proxy (enabled by default, can be disabled) accepts both IPv4 and IPv6 incoming traffic but uses only IPv4 toward containers, which replaces the IPv6 source address with an internal IPv4 address (I'm not sure which), effectively hiding the real address and may bypass certain defences as it's apparently coming from within the local network. It also has other non-IPv6-related problems. (See [moby/moby #11185](https://github.com/moby/moby/issues/11185), [moby/moby #14856](https://github.com/moby/moby/issues/14856), [moby/moby #17666](https://github.com/moby/moby/issues/17666).)
+
+### Other Problems
+
+- Path MTU discovery seems to be broken in Docker networks, causing connection problems when the upstream network is using an MTU lower than 1500. Set the MTU to 1280 (the IPv6 minimum) to solve this.
+- Docker seems to forget static addresses of containers when changing network properties (**TODO** at least when using the Ansible module, maybe that's what's causing the problem). Re-up everything to fix it.
 
 ## Useful Software
 

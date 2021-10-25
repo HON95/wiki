@@ -6,38 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Download Videos from YouTube and Sites
-
-Using [youtube-dl](http://ytdl-org.github.io/youtube-dl/) ([repo](https://github.com/ytdl-org/youtube-dl)).
-
-- Examples:
-    - YouTube video/xyz in Docker: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s"`
-    - YouTube video/channel/playlist w/ cookie: `youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s" <url>`
-- Run in Docker:
-    - Using ([wernight's image](https://github.com/wernight/docker-youtube-dl)).
-    - Command prefix: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl <...>`
-- Run binary:
-    - Find the download instructions in the repo.
-    - Install "ffmpeg" to allow downloading best quality audio and video: `apt install ffmpeg`
-- Download single video: `youtube-dl -c <URL>`
-    - `-c`/`--continue` to re-run the command if it previously failed during download.
-- Download full channel or playlist: `youtube-dl -qiwc --no-warnings [-o <format>] <URL>`
-    - `-q`/`--quiet` and `--no-warnings` to only errors. Alternatively, redirect STDERR to a log file and keep STDOUT non-quiet to be able to check the status. There may be videos that fail to download for different reasons, so do watch for errors.
-    - `-i`/`--ignore-errors` to avoid stopping on errors.
-    - `-wc`/`--no-overwrites --continue` to download only new/missing videos.
-    - `-o <format>` to specify the output filename format. See below.
-- Video quality:
-    - Specify `-f bestvideo+bestaudio` to download the best video format and best audio format and (by default) merge them. This is the default, but only as long as "ffmpeg" is installed. If it's not installed and this option is not specified, it may instead download a lower quality format.
-- Download audio from video: `youtube-dl -c --extract-audio --audio-quality 0`
-    - `--audio-format <format>`: Audio format, like "mp3", "wav", etc. Defaults to "best".
-    - `--audio-quality <0-9>`: Audio quality, where 0 is best. Defaults to "5".
-- Modify the output file path and name:
-    - Supports a Python-style format string.
-    - See [output template (youtube-dl)](https://github.com/ytdl-org/youtube-dl#output-template) for a list of variables.
-    - Example: `-o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s"`
-- Common warnings and errors:
-    - "*WARNING: Requested formats are incompatible for merge and will be merged into mkv.*": The best quality video and audio are different formats and will therefore be merged into an MKV file. This is completely fine.
-    - "*ERROR: [...]: YouTube said: Unable to extract video data*": Try to open the video in an incognito browser to check what's up with it. If it requires you to log in, you may need to specify cookies and possibly your user agent. To specify cookies, log into a browser (Firefox or Chrome), export the cookies to file using the "cookie.txt" extension, and specify the cookie file for youtube-dl with the `--cookie <file>` option (see [How do I pass cookies to youtube-dl? (youtube-dl)](https://github.com/ytdl-org/youtube-dl/blob/master/README.md#how-do-i-pass-cookies-to-youtube-dl)).
+_See the other pages in this category._
 
 ## Rip DVDs (Linux)
 

@@ -79,8 +79,8 @@ breadcrumbs:
     1. Delete logical interface: `delete int me0.0`
     1. Disable link-down alarm: `set chassis alarm management-ethernet link-down ignore`
 1. Disable default VLAN:
-    1. Delete logical interface (before disabling): `delete vlan.0`
-    1. Disable logical interface: `set vlan.0 disable`
+    1. Delete logical interface (before disabling): `delete int vlan.0`
+    1. Disable logical interface: `set int vlan.0 disable`
 1. Create VLANs (not interfaces):
     - `set vlans <name> vlan-id <VID>`
 1. Setup port-ranges:
@@ -92,9 +92,9 @@ breadcrumbs:
     1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
     1. Add individual Ethernet interfaces (not using interface range):
         1. Delete logical units (or the whole interfaces): `wildcard range delete interfaces ge-0/0/[0-1] unit 0` (example)
-        1. Set as members: `wildcard range set ge-0/0/[0-1] ether-options 802.3ad ae<n>` (for LACP interface ae\<n\>)
+        1. Set as members: `wildcard range set ge-0/0/[0-1] ether-options 802.3ad ae<n>` (for LACP interface `ae<n>`)
     1. Enter LACP interface: `edit interface ae<n>`
-    1. Set description: `desc <desc>`
+    1. Set description: `set desc <desc>`
     1. Set LACP options: `set aggregated-ether-options lacp active`
     1. Setup default logical unit: `edit unit 0`
     1. Setup VLAN/address/etc.
@@ -102,7 +102,7 @@ breadcrumbs:
     1. Setup trunk ports:
         1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
         1. Set mode: `set port-mode trunk`
-        1. Set non-native VLANs: `set vlan members <vlan-name> [members <VLAN-name>]` (once per VLAN or repeated syntax)
+        1. Set non-native VLANs: `set vlan members [<VLAN-name-1> [VLAN-name-2] [...]]` (once per VLAN or repeated syntax)
         1. (Optional) Set native VLAN: `set native-vlan-id <VID>`
     1. Setup access ports:
         1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
@@ -114,7 +114,7 @@ breadcrumbs:
     1. Set IPv6 address: `set family inet6 address <address>/<prefix-length>`
 1. Setup static IP routes:
     1. IPv4 default gateway: `set routing-options rib inet.0 static route 0.0.0.0/0 next-hop <next-hop>`
-    1. IPv6 default gateway: `set routing-options rib inet6.0 static route ::0/0 next-hop <next-hop>`
+    1. IPv6 default gateway: `set routing-options rib inet6.0 static route ::/0 next-hop <next-hop>`
 1. Disable/enable Ethernet flow control:
     - Note: Junos uses the symmetric/bidirectional PAUSE variant of flow control.
     - Note: This simple PAUSE variant does not take traffic classes (for QoS) into account and will pause _all_ traffic for a short period (no random early detection (RED)) if the receiver detects that it's running out of buffer space, but it will prevent dropping packets _within_ the flow control-enabled section of the L2 network. Enabling it or disabling it boils down to if you prefer to pause (all) traffic or drop (some) traffic during congestion. As a guideline, keep it disabled generally (and use QoS or more sophisticated variants instead), but use it e.g. for dedicated iSCSI networks (which handle delays better than drops). Note that Ethernet and IP don't require guaranteed packet delivery.

@@ -125,7 +125,6 @@ breadcrumbs:
     1. Set recurring DST: `system-time dst recurring last Sun Mar 2:00 last Sun Oct 3:00` (Norway)
     1. (Optional) Set time and NTP servers: `system-time ntp UTC+01:00 <ip-1> <ip-2> <update-hours>`
     1. Note: Both NTP servers must be IP addresses and using the same IP version, but they may be the same address.
-1. (Optional) Enable LLDP globally: `lldp`
 1. Enable LLDP:
     1. Enable globally: `lldp`
     1. Enter physical interface configs.

@@ -329,7 +329,7 @@ Everything here is optional.
 
 - Test with `perl -e exit`. It will complain if there's an error.
 - Check the locale: `locale`
-- Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent clients bringing their own locale.
+- Comment `AcceptEnv LANG LC_*` in `/etc/ssh/sshd_config` to prevent remote clients bringing their own locale.
 
 **Boot volume is full**:
 
