@@ -13,9 +13,6 @@ breadcrumbs:
 
 ## Installation
 
-1. (Bugfix) Disconnect all network interfaces.
-    - This will prevent an APT bug crashing the installer at the very end.
-    - This seems to be fixed in the latest version.
 1. Use the guided partitioner.
     - The manual installer is broken and can't create encrypted volumes.
 

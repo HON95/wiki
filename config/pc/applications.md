@@ -189,9 +189,10 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 ### Config
 
 - Location:
-    - Linux: `~/.config/Code/User/settings.json`
+    - Linux (Ubuntu): `~/.config/Code/User/settings.json`
+    - Linux (Arch): `~/.config/Code - OSS/User/settings.json`
     - Windows: `%APPDATA%\Code\User\settings.json`
-- [Example](https://github.com/HON95/configs/blob/master/pc/vscode/settings.json).
+- [Example](https://github.com/HON95/configs/blob/master/vscode/settings.json).
 
 ## ZSH (personal) (Linux)
 

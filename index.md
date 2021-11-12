@@ -104,6 +104,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ### PC
 
 - [Kubuntu](/config/pc/kubuntu/)
+- [Manjaro (KDE)](/config/pc/manjaro-kde/)
 - [Windows](/config/pc/windows/)
 - [PC Applications](/config/pc/applications/)
 
