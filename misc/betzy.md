@@ -2,7 +2,7 @@
 title: Betzy (Supercomputer)
 breadcrumbs:
 - title: Miscellanea
-header_image: files/betzy.jpg
+header_image: ../files/betzy.jpg
 ---
 {% include header.md %}
 
