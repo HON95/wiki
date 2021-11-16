@@ -2,10 +2,12 @@
 title: Betzy (Supercomputer)
 breadcrumbs:
 - title: Miscellanea
+header_image: files/betzy.jpg
 ---
 {% include header.md %}
 
 Norway's most powerful supercomputer as of its inauguration in late 2020.
+Placed #55 on the 2020 June TOP500.
 Managed by UNINETT Sigma2 and partially NTNU Trondheim.
 
 ## Resources

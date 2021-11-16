@@ -171,7 +171,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ## Miscellanea
 
-- [Betzy (Supercomputer)](/miscellanea/betzy/)
-- [Vilje (Supercomputer)](/miscellanea/vilje/)
+- [Betzy (Supercomputer)](/misc/betzy/)
+- [Vilje (Supercomputer)](/misc/vilje/)
 
 {% include footer.md %}
