@@ -45,6 +45,16 @@ breadcrumbs:
 - Disable external media keys by setting `media.hardwaremediakeys.enabled` to false in `about:config`.
 - (Linux) Install missing language support: `apt install $(check-language-support)`
 
+## CUPS
+
+### Setup for SMB
+
+**For Manjaro. Assumes CUPS is already installed.
+
+1. Install required programs: `pacman -Sy smbclient cifs-utils`
+1. Enable SMB authentication: In `/etc/cups/printers.conf`, set `AuthInfoRequired username,password`.
+1. Add the printer using the `smb://` schema. It should prompt for authentication when printing stuff.
+
 ## Git
 
 ### Config
