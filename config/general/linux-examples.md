@@ -126,29 +126,6 @@ breadcrumbs:
 - Test throughput:
     - Internet: `speedtest` (from [speedtest.net](https://www.speedtest.net/apps/cli))
     - Internal: `iperf3`
-- Show interfaces and addresses (with `ip`):
-    - General: `ip [-c] [-46] [-s] {l[ink]|a[ddress]} [-br] [sh [if]]`
-    - Option `-c`: Color.
-    - Option `{-4|-6}`: IPv4 or IPv6 only.
-    - Option `-s`: Show stats (bytes, packets, errors, dropped, etc. for RX and TX).
-    - Option `-br`: One line per interface (MAC address and status for `link`, addresses for `address`).
-    - Argument `scope global`: Only global addresses (excludes localhost/`host`, link-local/`link`, etc.).
-- Show neighbors (with `ip`):
-    - General: `ip [-c] [-46] n[eighbor]`
-    - Option `-c`: Color.
-    - Option `{-4|-6}`: IPv4 or IPv6 only.
-- Show routes (with `ip`):
-    - General: `ip [-c] [-46] r[oute]`
-    - Option `-c`: Color.
-    - Option `{-4|-6}`: IPv4 or IPv6 only.
-- Show multicast addresses (with `ip`):
-    - General: `ip [-c] [-46] ma[ddress]`
-    - Option `-c`: Color.
-    - Option `{-4|-6}`: IPv4 or IPv6 only.
-- Show multicast routes (with `ip`):
-    - General: `ip [-c] [-46] mr[oute]`
-    - Option `-c`: Color.
-    - Option `{-4|-6}`: IPv4 or IPv6 only.
 - Show sockets (with `ss`):
     - Example: `ss -tulpn`
     - Note: `ss` replaces `netstat` and is mostly option compatible.
@@ -165,7 +142,34 @@ breadcrumbs:
 - Traffic shaping and link simulation:
     - See `tc` to simulate e.g. random packet drop, random latencies, limited bandwidth etc.
 
-#### Tcpdump
+#### ip
+
+- General notes:
+    - Subcommands may be shortened (e.g. as `ip a` instead of `ip address`)
+    - For subcommands like `address` and `link`, it will default to show all elements if no further option is specified.
+- General options:
+    - Specified before the subcommand (e.g. `ip -c a`).
+    - `-c`: Show colored output.
+    - `-4` or `-6`: Show IPv4 or IPv6 addresses only.
+    - `-s`: Show stats (bytes, packets, errors, dropped, etc. for RX and TX).
+    - `-br`: Show brief with one line per interface (MAC address and status for `link`, addresses for `address`).
+    - `-o`: Show one line per interface (but all info unlike `-br`).
+    - `-j [-p]`: Print as JSON. Add `-p` for pretty printing.
+- Show L2/MAC addresses:
+    - Command: `ip link [show [<interface>]]`
+- Show L3/IP addresses:
+    - Command: `ip address [show [<interface> [scope <scope>]]]`
+    - Argument `scope global`: Only show global addresses (excludes localhost/`host`, link-local/`link`, etc.).
+- Show neighbors:
+    - Command: `ip neighbor`
+- Show routes:
+    - Command: `ip route`
+- Show multicast addresses:
+    - Command: `ip maddress`
+- Show multicast routes:
+    - Command: `ip mroute`
+
+#### tcpdump
 
 - Typical usage: `tcpdump -i <interface> -nn -v [filter]`
 - Options:
