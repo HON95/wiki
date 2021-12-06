@@ -250,13 +250,17 @@ breadcrumbs:
 - Monitor interrupts:
     - `irqtop`
     - `watch -n0.1 /proc/interrupts`
+- Run command with high or low priority:
+    - Command: `nice -n<n> <cmd>` (`-20 <= n <= 19`)
+    - The nice value goes from -20 (highest priority) to 19 (lowest priority), with 0 as the default priority.
+    - The nice value is inherited by child processes (meaning forking processes maintains the nice value it started with).
 - Stress test with stress-ng:
     - Install (Debian): `apt install stress-ng`
-    - Stress CPU: `stress-ng -c $(nproc) -t 600`
+    - Stress CPU: `stress-ng -c $(nproc) -t $((10*60))` (use all CPU threads for 10 minutes)
 
 ## Tasks
 
-### Burn Windows ISO
+### Burn Windows ISO (Ubuntu)
 
 1. Install the graphical application `woeusb` from `ppa:nilarimogard/webupd8`.
 
