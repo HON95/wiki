@@ -16,7 +16,7 @@ breadcrumbs:
     - Install (APT): `apt install htop`
     - Usage: `htop` (interactive)
 - `glances`:
-    - Homepage: [Glances](https://nicolargo.github.io/glances/)
+    - Homepage: [nicolargo.github.io/glances/](https://nicolargo.github.io/glances/)
     - Install (PyPI for latest version): `pip3 install glances`
     - ncurses-based viewer for e.g. basic system info, top-like process info, network traffic and disk traffic.
     - Usage: `glances` (interactive)
