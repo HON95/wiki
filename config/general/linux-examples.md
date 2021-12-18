@@ -114,6 +114,17 @@ breadcrumbs:
     - Remvoe key: `apt-key del <key-id>`
         - The 8-digit hex key ID may either be found on `pub` line or as the last 8 hex digits on the continuation line.
 
+#### Pacman (Arch)
+
+- Full system upgrade: `pacman -Syu`
+- Search package: `pacman -Ss <package-name>`
+- Show package info: `pacman -Si <package>`
+- Install package: `pacman -S <packages>`
+    - Never use `-Sy` to avoid partial upgrades.
+- Remove package: `pacman -R <packages>`
+    - Remove orphans too: `-s`
+    - Purge configurations: `-n`
+
 ### Network
 
 - Monitor usage:

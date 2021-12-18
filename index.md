@@ -103,6 +103,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### PC
 
+- [Arch (i3)](/config/pc/arch-i3/)
 - [Kubuntu](/config/pc/kubuntu/)
 - [Manjaro (KDE)](/config/pc/manjaro-kde/)
 - [Windows](/config/pc/windows/)

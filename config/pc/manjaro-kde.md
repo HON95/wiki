@@ -48,10 +48,6 @@ Nothing special.
     - Make it executable: `chmod +x /etc/iptables/config.sh`
     - Modify it.
     - Run it: `/etc/iptables/config.sh`
-1. Firefox:
-    - Disable middle mouse paste by setting `middlemouse.paste` to false in `about:config`.
-    - Enable middle mouse "drag scrolling" by setting `general.autoScroll` to true in `about:config`.
-    - Disable external media keys by setting `media.hardwaremediakeys.enabled` to false in `about:config`.
 
 ### Extra
 
