@@ -194,7 +194,7 @@ This is used by default and is the simplest to use for simple setups.
 
 This is the systemd way of doing it and is recommended for more advanced setups as ifupdown is riddled with legacy/compatibility crap.
 
-1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/networkd/main.network).
+1. Add a simple network config: Create `/etc/systemd/network/lan.network` based on [main.network](https://github.com/HON95/configs/blob/master/systemd-network/main.network).
 1. Disable/remove the ifupdown config: `mv /etc/network/interfaces /etc/network/interfaces.old`
 1. Enable the service: `systemctl enable --now systemd-networkd`
 1. Purge `ifupdown` and `ifupdown2`.
@@ -213,7 +213,7 @@ Prevent enabled (and potentially untrusted) interfaces from accepting router adv
 
 1. Install `apt install iptables iptables-persistent netfilter-persistent`
     - Don't save the current rules when it asks.
-1. Manually add IPTables rules or make [a simple iptables script](https://github.com/HON95/scripts/blob/master/linux/iptables/iptables.sh) or something.
+1. Manually add IPTables rules or make [a simple iptables script](https://github.com/HON95/scripts/blob/master/iptables/iptables.sh) or something.
 1. Open a new SSH session and make sure you can still log in without closing the current one.
 1. Note: If you flush the firewall and reconfigure it, remember to restart services modifying it (like libvirt, Docker, Fail2Ban).
 
@@ -304,7 +304,7 @@ Everything here is optional.
     - Run: `lynis audit system`
 - MOTD:
     - Clear `/etc/motd`, `/etc/issue` and `/etc/issue.net`.
-    - Download [dmotd.sh](https://github.com/HON95/scripts/blob/master/linux/login/dmotd.sh) to `/etc/profile.d/`.
+    - Download [dmotd.sh](https://github.com/HON95/scripts/blob/master/login/dmotd.sh) to `/etc/profile.d/`.
     - Install the dependencies: `neofetch lolcat`
     - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
     - (Optional) Add a MOTD to `/etc/motd`.

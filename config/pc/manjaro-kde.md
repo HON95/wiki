@@ -44,7 +44,7 @@ Nothing special.
 1. Setup firewall:
     - Install IPTables: `sudo pacman -S iptables`
     - Enable the IPTables services: `sudo systemctl enable iptables.service ip6tables.service`
-    - Download my IPTables script: `wget https://raw.githubusercontent.com/HON95/scripts/master/linux/iptables/iptables.sh -O /etc/iptables/config.sh`
+    - Download my IPTables script: `wget https://raw.githubusercontent.com/HON95/scripts/master/iptables/iptables.sh -O /etc/iptables/config.sh`
     - Make it executable: `chmod +x /etc/iptables/config.sh`
     - Modify it.
     - Run it: `/etc/iptables/config.sh`

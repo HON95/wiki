@@ -208,7 +208,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 1. Setup firewall (IPTables):
     1. Install IPTables: `sudo pacman -S iptables`
     1. Enable the IPTables services: `sudo systemctl enable --now iptables.service ip6tables.service`
-    1. Download my IPTables script (or do it yourself): `curl https://raw.githubusercontent.com/HON95/scripts/master/linux/iptables/iptables.sh -o /etc/iptables/config.sh`
+    1. Download my IPTables script (or do it yourself): `curl https://raw.githubusercontent.com/HON95/scripts/master/iptables/iptables.sh -o /etc/iptables/config.sh`
     1. Make it executable: `chmod +x /etc/iptables/config.sh`
     1. Modify it.
     1. Run it: `/etc/iptables/config.sh`
