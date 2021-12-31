@@ -12,7 +12,6 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 - [General](/config/general/general/)
 - [Linux General Notes](/config/general/linux-general/)
-- [Linux Examples](/config/general/linux-examples/)
 - [Computer Testing](/config/general/computer-testing/)
 
 ### Authentication, Authorization and Accounting (AAA)

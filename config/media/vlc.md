@@ -82,8 +82,9 @@ breadcrumbs:
 ## View Stream
 
 - View stream: `vlc <proto>://<host>[:port][/path]`
-- Specify `--network-caching=100` (milliseconds) to reduce network buffering causing delay (default to 1 second).
-- Use `cvlc` (Linux) or specify `-I dummy --dummy-quiet` to not use the full GUI.
+    - RTSP (example): `vlc rtsp://<host>:554 --rtsp-user=$rtsp_username --rtsp-pwd=$rtsp_password`
+- Specify `--network-caching=100` (milliseconds) to reduce network buffering causing delay (defaults to 1000ms).
+- Use `cvlc` (Linux) or specify `-I dummy --dummy-quiet` (Windows) to not use the full GUI.
 - Specify `--fullscreen` to start in full screen.
 
 ## Examples

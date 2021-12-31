@@ -265,7 +265,7 @@ This is my ZSH setup preference, using Oh-My-ZSH with the Powerlevel10k theme an
 1. Make zprofile include profile (to avoid breaking certain things):
     1. In `~/.zprofile`, add: `emulate sh -c "source /etc/profile"`
 1. Setup plugins:
-    1. In `.zshrc`, set e.g. `plugins=(git docker docker-compose golang rust cargo rustup)`.
+    1. In `.zshrc`, set e.g. `plugins=(git docker docker-compose golang rust)`.
 1. Setup syntax highlighting plugin:
     1. Clone it: `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
     1. Add `zsh-syntax-highlighting` it to `plugins` in `.zshrc`.
