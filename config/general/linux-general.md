@@ -1,5 +1,5 @@
 ---
-title: Linux General Notes
+title: Linux General
 breadcrumbs:
 - title: Configuration
 - title: General
