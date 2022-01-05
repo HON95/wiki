@@ -36,6 +36,8 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 - https://wiki.archlinux.org/title/Power_management
 - https://wiki.archlinux.org/title/Display_Power_Management_Signaling
 - Screen snippet tool
+- User icon for display manager.
+- Ly display manager? LightDM seems useless.
 
 ## Installation
 
