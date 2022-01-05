@@ -281,6 +281,8 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Download a desktop image.
     1. Install the FEH image viewer: `pacman -S feh`
     1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/mc.jpg` (example image).
+1. (Optional) Disable mouse hover window focus (you can still click windows to focus):
+    1. In the i3 config, set `focus_follows_mouse no`.
 1. Setup i3 gaps:
     1. Disable window title bar (required): In the i3 config, add `for_window [class=".*"] border pixel 4` to only show the border and no title bar, or `0` to remove the border too.
     1. Add gaps around windows: In the i3 config, add `gaps inner 8`.

@@ -6,6 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+*Note: Unless specified, Debian/Ubuntu is assumed.*
+
 ## Fancontrol (Linux)
 
 **Warning:** Don't use this. The fan controller IDs may change on every reboot which breaks the config.
@@ -49,7 +51,7 @@ breadcrumbs:
 
 ### Setup for SMB
 
-**For Manjaro. Assumes CUPS is already installed.
+**For Manjaro. Assumes CUPS is already installed.**
 
 1. Install required programs: `pacman -Sy smbclient cifs-utils`
 1. Enable SMB authentication: In `/etc/cups/printers.conf`, set `AuthInfoRequired username,password`.
@@ -215,7 +217,8 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 
 ### Config
 - Location:
-    - Global: `/etc/vim/vimrc`
+    - Global (Debian): `/etc/vim/vimrc`
+    - Global (Arch): `/etc/vimrc`
     - User: `~/.vimrc`
 - [Example](https://github.com/HON95/configs/blob/master/vim/vimrc).
 
