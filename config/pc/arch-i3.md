@@ -36,8 +36,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 - https://wiki.archlinux.org/title/Power_management
 - https://wiki.archlinux.org/title/Display_Power_Management_Signaling
 - Screen snippet tool
-- User icon for display manager.
-- Ly display manager? LightDM seems useless.
+- xautolock?
 
 ## Installation
 
@@ -215,24 +214,34 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Modify it.
     1. Run it: `/etc/iptables/config.sh`
 
-### Setup Xorg, LightDM and i3
+### Setup Xorg, LightDM/Ly and i3
+
+Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
 
 1. Setup the Xorg display server (minimal):
     1. Install: `pacman -S xorg-server xorg-xinit xorg-xrandr`
     1. Fix the keyboard layout for X11: `sudo localectl set-x11-keymap <keymap>` (e.1. `no`)
-1. Setup the LightDM display manager (aka login manager):
+1. (LightDM) Setup the LightDM display manager (aka login screen):
     1. Note: User-local configuration/profile-stuff should be placed in `~/.xprofile`.
     1. Install: `pacman -S lightdm`
     1. Enable: `systemctl enable lightdm`
-1. Setup the LightDM GTK+ greeter (aka login screen) (one of many):
+1. (LightDM) Setup the LightDM GTK+ greeter (aka login screen) (one of many):
     1. Note: The GTK+ greeter may be configured in `/etc/lightdm/lightdm-gtk-greeter.conf` or using the `lightdm-gtk-greeter-settings` GUI.
     1. Install: `pacman -S lightdm-gtk-greeter`
     1. Set it as the default: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-session=lightdm-gtk-greeter`.
     1. (Optional) Set the background: In `/etc/lightdm/lightdm-gtk-greeter.conf`, under the `[greeter]` section, set `background=<image-path>`. The `/usr/share/pixmaps` dir is recommended for storing backgrounds.
-1. **TODO** Setup the Webkit2 greeter with the Litarvan theme.
-1. Enable numlock on by default for LightDM:
+1. (LightDM) **TODO** Setup the Webkit2 greeter with the Litarvan theme.
+1. (LightDM) Enable numlock on by default in X11:
     1. Install: `pacman -S numlockx`
     1. Configure: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-setup-script=/usr/bin/numlockx on`.
+1. (Ly) Setup the Ly display manager (aka login screen):
+    1. Note: The config file is `/etc/ly/config.ini`.
+    1. Install: `yay -S ly`
+    1. Enable: `systemctl enable ly`
+    1. Add fire background: In the config, set `animate = true` and `hide_borders = true`.
+1. (Ly) Enable numlock on by default in X11:
+    1. Install: `pacman -S numlockx`
+    1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
 1. Install the i3 window manager:
     1. Note: The "gaps" part will be set up later, i3-gaps will work just like plain i3 for now.
     1. Install: `pacman -S i3-gaps`
@@ -270,7 +279,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Setup i3 emoji shortcut: In the i3 config, set `bindsym $mod+mod1+d exec rofi -modi "emoji:rofimoji" -show emoji`.
 1. Setup fonts:
     1. `pacman -S noto-fonts notn-fonts-emoji`
-1. Test LightDM and i3:
+1. (**TODO** LightDM) Test LightDM and i3:
     1. Restart LightDM and get pulled into it: `systemctl restart lightdm`
     1. Select the i3 WM and log in.
     1. Follow the basic i3 setup wizard:
@@ -288,6 +297,14 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Add gaps around windows: In the i3 config, add `gaps inner 8`.
 1. Install clipboard manager:
     1. `pacman -S xsel`
+1. Setup media keys:
+    1. Note: Install e.g. Spotify (`aur/spotify`) to test with.
+    1. Install the playerctl utility for easy control: `pacman -S playerctl`
+    1. Add the following to the i3 config: See the i3 media keys config snippet below.
+1. Tweak audio volume keys:
+    1. Install `pamixer` (like ALSA's `amixer` but for PulseAudio): `pacman -S pamixer`
+    1. Open the i3 config and find the `bindsym XF86AudioRaiseVolume` and similar lines.
+    1. See the config i3 volume keys snippet below.
 1. Setup screen locking:
     1. **TODO** Multi-monitor support? Haven't tested yet.
     1. Install the `i3lock-fancy` screen locker: `yay -S i3lock-fancy-git`
@@ -327,7 +344,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. `pacman -S thunar`
 1. Setup the Ranger terminal file explorer:
     1. `pacman -S ranger`
-1. Setup the VS Code text editor (and much more):
+1. Setup the VS Code text editor/IDE:
     1. `pacman -S code`
 
 ### Extra steps (Optional)
@@ -349,9 +366,9 @@ Avoid creating an unencrypted swap partition. Just use a swap file in the (encry
 
 #### systemd-networkd Network Config
 
-This example sets up interface `eno1` (the main interface, see `ip a`) to use DHCPv4 and SLAAC/DHCPv6.
+File: `/etc/systemd/network/eno1.network` (example)
 
-`/etc/systemd/network/eno1.network` (example):
+This example sets up interface `eno1` (the main interface, see `ip a`) to use DHCPv4 and SLAAC/DHCPv6.
 
 ```
 [Match]
@@ -362,6 +379,8 @@ DHCP=yes
 ```
 
 #### Polybar Launch Script
+
+File: `~/.config/polybar/launch.sh`
 
 ```bash
 #!/bin/bash
@@ -375,11 +394,41 @@ echo "Polybar launched"
 
 #### Rofi Config
 
+file: `~/.config/rofi/config.rasi`
+
 ```
 configuration {
     font: "hack 12";
 }
 @theme "glue_pro_blue"
+```
+
+#### i3 Media Keys
+
+File: `~/.config/i3/config`
+
+Requires `community/playerctl`.
+
+```
+# Media keys
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+bindsym XF86AudioStop exec --no-startup-id playerctl stop
+bindsym XF86AudioPrev exec --no-startup-id playerctl previous
+bindsym XF86AudioNext exec --no-startup-id playerctl next
+```
+
+#### i3 Volume Keys
+
+File: `~/.config/i3/config`
+
+Requires `community/pamixer`.
+
+```
+# Volume keys
+bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer -i 5
+bindsym XF86AudioLowerVolume exec --no-startup-id pamixer -d 5
+bindsym XF86AudioMute exec --no-startup-id pamixer -t
+bindsym XF86AudioMicMute exec --no-startup-id pamixer --default-source -t
 ```
 
 {% include footer.md %}
