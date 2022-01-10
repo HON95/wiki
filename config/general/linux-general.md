@@ -10,20 +10,20 @@ breadcrumbs:
 
 ### Security
 
-- [Linux Hardening Checklist](https://github.com/trimstray/linux-hardening-checklist)
-- [The Practical Linux Hardening Guide](https://github.com/trimstray/the-practical-linux-hardening-guide)
+- [Linux Hardening Checklist (trimstray)](https://github.com/trimstray/linux-hardening-checklist)
+- [The Practical Linux Hardening Guide (trimstray)](https://github.com/trimstray/the-practical-linux-hardening-guide)
 
 ## Information
 
 ### Distros
 
-#### Debian/Ubuntu
+#### Debian
 
 - Nobody user and group: `nobody:nogroup`
 - List of default groups: (SystemGroups (Debian Wiki))[https://wiki.debian.org/SystemGroups#Other_System_Groups]
 - Release info file: `/etc/debian_version`
 
-#### RHEL/CentOS
+#### RHEL
 
 - Nobody user and group: `nobody:nobody`
 - Release info file: `/etc/redhat-release` or `/etc/centos-release`
@@ -34,7 +34,41 @@ breadcrumbs:
 
 ## Commands
 
-### General Monitoring
+### File Systems and Logical Volume Managers
+
+- Partition disk: `gdisk <dev>` or `fdisk <dev>`
+- Create filesystem: `mkfs.<fs> <dev>`
+- Modify fstab:
+    - Test it with `mount -a` to make sure it doesn't have errors that may cause boot to fail.
+    - Run `systemctl daemon-reload` to avoid having systemd remount stuff that was removed from fstab or other weird shit.
+- Benchmark with IOzone:
+    - Install (Debian): `apt install iozone3`
+    - It uses the current dir.
+    - Test with various record sizes and file sizes: `iozone -a`
+    - Benchmark: `iozone -t1` (1 thread)
+    - Plot results: **TODO** It should be doable with gnuplot somehow.
+
+### Files
+
+- Search:
+    - By UID: `find / -user <UID>`
+    - Without a user: `find / -nouser`
+    - With setuid permission bit: `find / -perm /4000`
+    - Recursive search and replace: `find <dir> \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/123/456/g'`
+        - `-type d -name .git -prune` skips `.git` directories and can be excluded outside of git repos.
+- Usage:
+    - `du -sh <dirs>`
+    - K4DirStat (GUI) (package `k4dirstat`)
+- Shred files:
+    - `shred --remove --zero <file>`
+
+### Fun
+
+- Color text from STDIN: `lolcat`
+- `cowsay`
+- `fortune`
+
+### Monitoring (General)
 
 - For more specific monitoring, see the other sections.
 - `htop`:
@@ -80,40 +114,6 @@ breadcrumbs:
         - General overview (CPU, RAM, ints/csws, disk, net): `dstat -tcmyrdn --net-packets 60`
         - Network overview (CPU, ints/csws, net): `dstat -tcyn --net-packets 60`
         - Process overview (CPU, RAM, ints/csws, paging, process, sockets): `dstat -tcmygp --socket 60`
-
-### File Systems and Logical Volume Managers
-
-- Partition disk: `gdisk <dev>` or `fdisk <dev>`
-- Create filesystem: `mkfs.<fs> <dev>`
-- Modify fstab:
-    - Test it with `mount -a` to make sure it doesn't have errors that may cause boot to fail.
-    - Run `systemctl daemon-reload` to avoid having systemd remount stuff that was removed from fstab or other weird shit.
-- Benchmark with IOzone:
-    - Install (Debian): `apt install iozone3`
-    - It uses the current dir.
-    - Test with various record sizes and file sizes: `iozone -a`
-    - Benchmark: `iozone -t1` (1 thread)
-    - Plot results: **TODO** It should be doable with gnuplot somehow.
-
-### Files
-
-- Search:
-    - By UID: `find / -user <UID>`
-    - Without a user: `find / -nouser`
-    - With setuid permission bit: `find / -perm /4000`
-    - Recursive search and replace: `find <dir> \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/123/456/g'`
-        - `-type d -name .git -prune` skips `.git` directories and can be excluded outside of git repos.
-- Usage:
-    - `du -sh <dirs>`
-    - K4DirStat (GUI) (package `k4dirstat`)
-- Shred files:
-    - `shred --remove --zero <file>`
-
-### Fun
-
-- Color text from STDIN: `lolcat`
-- `cowsay`
-- `fortune`
 
 ### Hardware
 
