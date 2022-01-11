@@ -43,7 +43,7 @@ breadcrumbs:
     - Warning: This might execute the program if not using glibc.
 - Show printable character strings in the executable: `strings -a <executable>`
 - Run application and show dynamic library calls: `ltrace <executable> [args]`
-    - ltrace will output the trace to STDERR, so consider adding `>/dev/null` to make the program itself more quiet.
+- Run application and show system calls: `strace <executable> [args]`
 - Strip the symbol table and debug info from an executable: `strip <executable>`
     - Without certain options, it will still keep some useful info in the file.
 - Rebuild the symbol table for a statically linked executable: See `gensymtab`.
