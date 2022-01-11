@@ -20,7 +20,7 @@ breadcrumbs:
 #### Debian
 
 - Nobody user and group: `nobody:nogroup`
-- List of default groups: (SystemGroups (Debian Wiki))[https://wiki.debian.org/SystemGroups#Other_System_Groups]
+- List of default groups: [SystemGroups (Debian Wiki)](https://wiki.debian.org/SystemGroups#Other_System_Groups)
 - Release info file: `/etc/debian_version`
 
 #### RHEL
@@ -33,6 +33,20 @@ breadcrumbs:
 - `urandom` VS `random`: `random` blocks when running out of entropy while `urandom` does not. For all practical purposes, `urandom` will almost never be *less random* than `random` and `random` may block at inappropriate times, so always use `urandom`.
 
 ## Commands
+
+### Executables:
+
+- Show type and info: `file <executable>`
+- Show library dependencies (for glibc): `ldd <executable>`
+    - It lists shared library file names and memory location to map it to, or "statically linked" if no dynamic dependencies.
+    - Alternatively, run the executable with envvar `LD_TRACE_LOADED_OBJECTS=1` set instruct glibc to print dependencies and exit. This is basically how `ldd` works internally, but with more options.
+    - Warning: This might execute the program if not using glibc.
+- Show printable character strings in the executable: `strings -a <executable>`
+- Run application and show dynamic library calls: `ltrace <executable> [args]`
+    - ltrace will output the trace to STDERR, so consider adding `>/dev/null` to make the program itself more quiet.
+- Strip the symbol table and debug info from an executable: `strip <executable>`
+    - Without certain options, it will still keep some useful info in the file.
+- Rebuild the symbol table for a statically linked executable: See `gensymtab`.
 
 ### File Systems and Logical Volume Managers
 
@@ -56,7 +70,7 @@ breadcrumbs:
     - With setuid permission bit: `find / -perm /4000`
     - Recursive search and replace: `find <dir> \( -type d -name .git -prune \) -o -type f -print0 | xargs -0 sed -i 's/123/456/g'`
         - `-type d -name .git -prune` skips `.git` directories and can be excluded outside of git repos.
-- Usage:
+- Space usage:
     - `du -sh <dirs>`
     - K4DirStat (GUI) (package `k4dirstat`)
 - Shred files:
@@ -127,7 +141,7 @@ breadcrumbs:
 - Show USB devices: `lsusb`
 - Show CPUs: `lscpu`
 
-### Installations and Packages
+### Software Installation
 
 #### APT (Debian)
 
