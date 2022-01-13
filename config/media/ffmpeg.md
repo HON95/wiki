@@ -8,7 +8,8 @@ breadcrumbs:
 
 ## Resources
 
-- [steven2358's FFmpeg cheat sheet](https://gist.github.com/steven2358/ba153c642fe2bb1e47485962df07c730)
+- [steven2358: FFmpeg cheat sheet](https://gist.github.com/steven2358/ba153c642fe2bb1e47485962df07c730)
+- [NVIDIA Developer Blog: NVIDIA FFmpeg Transcoding Guide](https://developer.nvidia.com/blog/nvidia-ffmpeg-transcoding-guide/)
 
 ## General
 
@@ -18,7 +19,7 @@ breadcrumbs:
     - Windows: Download the binary.
 - View video feed: `ffplay <dev>`
     - For some reason this typically uses a limited framerate and resolution.
-- Options:
+- Options (**TODO** move this):
     - `-crf 23`: Constant rate factor. Defaults to 23. Set to 0 for lossless video.
 
 ## Examples

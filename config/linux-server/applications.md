@@ -867,16 +867,39 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 1. (Optional) Disable NetBIOS: `systemctl disable --now nmbd` and `systemctl mask nmbd`
 1. Configure it (see usage).
 
+#### Configuration
+
+- Note: Unless otherwise states, all options should go in the `global` section.
+- General:
+    - Set description (shown some places): `server string`
+    - Set authentication method to standalone: `security = user`
+    - Set the minimum SMB version: `server min protocol = SMB3`
+- Guest user:
+    - (Optional) Disable guest user: `map to guest = never`
+    - Set guest UNIX username: `guest account = <username>` (typically defaults to `nobody`)
+    - Set logins with unknown UNIX users (e.g. `guest`) to use the guest user: `map to guest = bad user`
+    - Allow or disallow guest access on shares (share option): `guest ok = {yes|no}`
+    - Allow only guest access on shares (if `guest ok` is set) (share option): `only guest = yes`
+- NetBIOS:
+    - (Optional) Disable: `disable netbios = yes`
+    - (If enabled) Set name: `netbios name = <name>` (defaults to hostname)
+    - (If enabled) Set workgroup: `workgroup = <workgroup>`
+- Encryption:
+    - (Samba 1.13 and earlier) Enable for all clients and shares: `smb encrypt = required`
+    - (Samba 1.14 and later) **TODO** `server smb encrypt = required`
+- Multi channel:
+    - (Samba 1.3 and earlier) Enable support: `server multi channel support`
+    - **TODO** I haven't tested thid, you may need to do more. Set the `rss` interface option and stuff. Maybe multiple NICs/IP addresses are required.
+- Performance tuning:
+    - Socket options (overrides system defaults, only set if you know what you're doing):
+        - For LAN: `socket options = SO_KEEPALIVE TCP_NODELAY IPTOS_LOWDELAY`
+        - For WAN: `socket options = SO_KEEPALIVE IPTOS_THROUGHPUT`
+    - Async RW (better performance and required for multi-channel): `aio read size = 1` and `aio write size = 1`
+    - Sendfile (may use a more efficient syscall for reading): `use sendfile = yes`
+    - Zero-copy (doesn't work with encryption): `min receivefile size = 16384`
+
 #### Usage
 
-- Enforce encryption and signing (`server signing` and `smb encrypt`) on important volumes.
-- Performance tuning:
-    - Socket options: `socket options = TCP_NODELAY SO_KEEPALIVE IPTOS_LOWDELAY`
-    - If the stuff is not important and the network is secure and high throughput is desired: `smb encrypt = disabled`
-    - Raw IO: `read raw = yes` and `read raw = yes`
-    - Sendfile: `use sendfile = yes`
-    - Zero-copy from net to FS (doesn't work for signed connections): `min receivefile size = 16384`
-    - Async RW for large files: `aio read size = 16384` and `aio write size = 16384`
 - Making changes:
     - Change the configuration file: `/etc/samba/smb.conf`
     - Test the configuration: `testparm -t`
@@ -889,9 +912,8 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 - Manage users:
     - Samba users are somewhat using Linux users but with a different password.
     - To separate pure Samba users from *real* users, you can add a "smb-" prefix to its username and make it a system user.
-    - Create a new Linux (system) user without shell login: `useradd -r <name>`
-        - Or: `useradd `
-    - Add a user and set its password: `smbpasswd -a <user>`
+    - (Optional) Create a new Linux system user (no homedir or login): `useradd -r <name>`
+    - Add a Samba user (matching the UNIX user) and set its password: `smbpasswd -a <user>`
     - Show users: `sudo pdbedit -L -v`
 
 ### Client
@@ -901,7 +923,7 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 1. Install: `apt install cifs-utils`
 1. Add permanent shares (see usage).
 
-#### Usage
+#### Usage and Configuration
 
 - Add permanent share:
     1. Create the mountpoint.

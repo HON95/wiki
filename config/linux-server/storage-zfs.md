@@ -84,10 +84,12 @@ The backports repo is used to get the newest version of ZoL.
 ### Pools
 
 - Recommended pool options:
-    - Typical example: `-o ashift=<9|12> -O compression=zstd -O xattr=sa -O atime=off -O relatime=on`
+    - Typical example: `-o ashift=<9|12> -o autotrim=on -O compression=zstd -O xattr=sa -O atime=off -O relatime=on` (`autotrim` only for SSDs)
     - Specifying options during creation: For `zpool`/pools, use `-o` for pool options and `-O` for dataset options. For `zfs`/datasets, use `-o` for dataset options.
     - Set physical block/sector size (pool option): `ashift=<9|12>`
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
+    - Enable TRIM (for SSDs): `autotrim=on`
+        - It's also recommended to create a cron job to run `zpool trim` periodically for the SSD pool.
     - Enable compression (dataset option): `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
     - Store extended attributes in the inodes (dataset option): `xattr=sa`
@@ -153,6 +155,7 @@ The backports repo is used to get the newest version of ZoL.
 - Recommended dataset options:
     - Set quota: `quota=<size>`
     - Set reservation: `reservation=<size>`
+    - Disable data caching (in the ARC) if the upper layer already uses caching (databases, VMs, etc.): `primarycache=metadata`
     - (See the recommended pool options since most are inherited.)
 - Create dataset:
     - Format: `zfs create [options] <pool>/<name>`
@@ -293,7 +296,7 @@ The backports repo is used to get the newest version of ZoL.
     - Use an appropriate recordsize with `recordsize=<size>`.
         - InnoDB should use 16k for data files and 128k on log files (two datasets).
         - PostgreSQL should use 8k (or 16k) for both data and WAL.
-    - Disable caching with `primarycache=metadata`. DMBSes typically handle caching themselves.
+    - Disable data caching (in the ARC) with `primarycache=metadata`. DMBSes typically handle caching themselves.
         - For InnoDB.
         - For PostgreSQL if the working set fits in RAM.
     - Disable the ZIL with `logbias=throughput` to prevent writing twice.
@@ -301,7 +304,7 @@ The backports repo is used to get the newest version of ZoL.
         - Consider not using it for high-traffic applications.
     - PostgreSQL:
         - Use the same dataset for data and logs.
-        - Use one dataset per database instance. Requires you to specify it when creating the database.
+        - Use one dataset per database instance, if practically possible. Requires you to specify it when creating the database.
         - Don't use PostgreSQL checksums or compression.
         - Example: `su postgres -c 'initdb --no-locale -E=UTF8 -n -N -D /db/pgdb1'`
 
@@ -314,7 +317,7 @@ The backports repo is used to get the newest version of ZoL.
 - Some SSD models come with a build-in cache. Make sure it actually flushes it on power loss.
 - ZFS is always consistent, even in case of data loss.
 - Bitrot is real.
-    - 4.2% to 34% of SSDs have one UBER (uncorrectable bit error rate) per year.
+    - 4.2% to 34% of SSDs have a UBER (uncorrectable bit error rate) of at least 1 per year.
     - External factors:
         - Temperature.
         - Bus power consumption.

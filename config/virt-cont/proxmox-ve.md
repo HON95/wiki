@@ -67,30 +67,30 @@ Follow the instructions for [Debian](/config/linux-server/debian/), but with the
 **Possibly outdated**
 
 - Guide: [Proxmox VE: Pci passthrough](https://pve.proxmox.com/wiki/Pci_passthrough)
-- Requires support for  IOMMU, IOMMU interrupt remapping, and for dome PCI devices, UEFI support
-- Only 4 devices are are supported
-- For graphics cards, additional steps are required
+- Requires support for  IOMMU, IOMMU interrupt remapping, and for dome PCI devices, UEFI support.
+- Only 4 devices are are supported.
+- For graphics cards, additional steps are required.
 - Setup BIOS/UEFI features:
-    - Enable UEFI
-    - Enable VT-d and SR-IOV Global Enable
-    - Disable I/OAT
-- Enable SR-IOT for NICs in BIOS/ROM
-- Enable IOMMU: Add `intel_iommu=on` to GRUB command line (edit `/etc/default/grub` and add to line `GRUB_CMDLINE_LINUX_DEFAULT`) and run `update-grub`
-- Enable modules: Add `vfio vfio_iommu_type1 vfio_pci vfio_virqfd pci_stub` (newline-separated) to `/etc/modules` and run `update-initramfs -u -k all`
-- Reboot
+    - Enable UEFI.
+    - Enable VT-d and SR-IOV Global Enable.
+    - Disable I/OAT.
+- Enable SR-IOT for NICs in BIOS/ROM.
+- Enable IOMMU: Add `intel_iommu=on` to GRUB command line (edit `/etc/default/grub` and add to line `GRUB_CMDLINE_LINUX_DEFAULT`) and run `update-grub`.
+- Enable modules: Add `vfio vfio_iommu_type1 vfio_pci vfio_virqfd pci_stub` (newline-separated) to `/etc/modules` and run `update-initramfs -u -k all`.
+- Reboot.
 - Test for IOMMU interrupt remapping: Run `dmesg | grep ecap` and check if the last character of the `ecap` value is 8, 9, a, b, c, d, e, or an f. Also, run `dmesg | grep vfio` to check for - errors. If it is not supported, set `options vfio_iommu_type1 allow_unsafe_interrupts=1` in `/etc/modules`, which also makes the host vulnerable to interrupt injection attacks.
 - Test NIC SR-IOV support: `lspci -s <NIC_BDF> -vvv | grep -i "Single Root I/O Virtualization"`
 - List PCI devices: `lspci`
 - List PCI devices and their IOMMU groups: `find /sys/kernel/iommu_groups/ -type l`
-- A device with all of its functions can be added by removing the function suffix of the path
+- A device with all of its functions can be added by removing the function suffix of the path.
 - Add PCIe device to VM:
-    - Add `machine: q35` to the config
-- Add `hostpci<n>: <pci-path>,pcie=1,driver=vfio` to the config for every device
-- Test if the VM can see the PCI card: Run `qm monitor <vm-id>`, then `info pci` inside
+    - Add `machine: q35` to the config.
+- Add `hostpci<n>: <pci-path>,pcie=1,driver=vfio` to the config for every device.
+- Test if the VM can see the PCI card: Run `qm monitor <vm-id>`, then `info pci` inside.
 
 ### Troubleshooting
 
-**Failed login:**
+**Failed login**:
 
 Make sure `/etc/hosts` contains both the IPv4 and IPv6 addresses for the management networks.
 
@@ -168,21 +168,19 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
 - Generally:
     - Use VirtIO if the guest OS supports it, since it provices a paravirtualized interface instead of an emulated physical interface.
 - General tab:
-    - Use start/shutdown order if som VMs depend on other VMs (like virtualized routers).
-      0 is first, unspecified is last. Shutdown follows reverse order.
-      For equal order, the VMID in is used in ascending order.
+    - Use start/shutdown order if som VMs depend on other VMs (like virtualized routers). 0 is first, unspecified is last. Shutdown follows reverse order. For equal order, the VMID in is used in ascending order.
 - OS tab:
     - If installing from an ISO, specify it here.
     - (Cloud-Init) Don't use any media (no ISO).
 - System tab:
     - Graphics card: Use the default. If you want SPICE, you can change to that later.
-    - Qemu Agent: It provides more information about the guest and allows PVE to perform some actions more intelligently,
-      but requires the guest to run the agent.
+    - Qemu Agent: It provides more information about the guest and allows PVE to perform some actions more intelligently, but requires the guest to run the agent.
     - BIOS/UEFI: BIOS w/ SeaBIOS is generally fine, but I prefer UEFI w/ OVMF (for PCIe pass-through support and stuff), assuming your OS/setup doesn't require one or the other.
-        - (Cloud-Init) Prepared Cloud-Init images may typically be using UEFI (and containing an EFI partition), so you probably need to use UEFI.
+        - (Cloud-Init) Prepared Cloud-Init images may be using UEFI (and containing an EFI partition), so you probably need to use UEFI. With an added "EFI disk".
         - About the EFI disk: Using UEFI in PVE typically requires a "EFI disk" (in the hardware tab). This is not the EFI system partition (ESP) and is not visible to the VM, but is used by PVE/OVMF to store the EFIVARS, which contains the boot order. (If a UEFI VM fails to boot, you may need to enter the UEFI/OVMF menu through the remote console to fix the boot entries.)
-    - Machine: Intel 440FX is generally fine, but I prefer Q35 (for PCIe pass-through support and stuff).
+    - Machine: Intel 440FX is generally fine, but Q35 supports more advanced features like PCIe pass-through support and stuff.
     - SCSI controller: VirtIO SCSI.
+    - Pre-enroll keys and TPM: **TODO** The docs don't mention pre-enrolled keys yet, so just use the defaults, I guess.
 - Hard disk tab:
     - (Cloud-Init) This doesn't matter, you're going to replace it afterwards with the imported Cloud-Init-ready qcow2 image. Just add something temporary since it can't be skipped.
     - Bus/device: Use the SCSI bus with the VirtIO SCSI controller selected in the system tab (it supersedes the VirtIO Block controller).
@@ -199,23 +197,17 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
       this will create one I/O thread for each controller for maximum performance.
       This is generally not needed if not doing IO-heavy stuff with multiple disks in the VM.
 - CPU tab:
-    - CPU type: Generally, use "kvm64".
-      For HA, use "kvm64" or similar (since the new host must support the same CPU flags).
-      For maximum performance on one node or HA with same-CPU nodes, use "host".
-    - NUMA: Enable for NUMA systems. Set the socket count equal to the numbre of NUMA nodes.
+    - CPU type: Generally, use "kvm64". For HA, use "kvm64" or similar (since the new host must support the same CPU flags). For maximum performance on one node or HA with same-CPU nodes, use "host".
+    - NUMA: Enable for NUMA systems. Set the socket count equal to the number of NUMA nodes (if giving it more than one vCPU).
     - CPU limit: Aka CPU quota. Floating-point number where 1.0 is equivalent to 100% of *one* CPU core.
     - CPU units: Aka CPU shares/weight. Processing priority, higher is higher priority.
     - See the documentation for the various CPU flags (especially the ones related to Meltdown/Spectre).
 - Memory tab:
-    - Ballooning: Enable it.
-      It allows the guest OS to release memory back to the host when the host is running low on it.
-      For Linux, it uses the "balloon" kernel driver in the guest, which will swap out processes or start the OOM killer if needed.
-      For Windows, it must be added manually and may incur a slowdown of the guest.
+    - Ballooning: Enable it. It allows the guest OS to release memory back to the host when the host is running low on it. For Linux, it uses the "balloon" kernel driver in the guest, which will swap out processes or start the OOM killer if needed. For Windows, it must be added manually and may incur a slowdown of the guest.
 - Network tab:
     - Model: Use VirtIO.
     - Firewall: Enable if the guest does not provide one itself, or if you don't want it to immediately become accessible from the network during/after installation (i.e. before you've provisioned it properly).
-    - Multiqueue: When using VirtUO, it can be set to the total CPU cores of the VM for increased performance.
-      It will increase the CPU load, so only use it for VMs that need to handle a high amount of connections.
+    - Multiqueue: When using VirtUO, it can be set to the total CPU cores of the VM for increased performance. It will increase the CPU load, so only use it for VMs that need to handle a high amount of connections.
 - Start the VM:
     - (Cloud-Init) Don't start it yet, go back to the Cloud-Init section.
     - Open a graphical console to show what's going on.
@@ -300,7 +292,7 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
     1. Open the Device Manager and find "PCI Simple Communications Controller".
     1. Click "Update driver" and select drivers disc dir `vioserial\w10\amd64`
     1. Open drivers disc dir `guest-agent` and install `qemu-ga-x86_64.msi`.
-1. Install drivers and services: 
+1. Install drivers and services:
     1. Download `virtio-win-gt-x64.msi` (see the wiki for the link).
     1. (Optional) Deselect "Qxl" and "Spice" if you don't plan to use SPICE.
 1. Install SPICE guest agent:

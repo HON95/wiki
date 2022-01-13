@@ -87,6 +87,28 @@ breadcrumbs:
 
 ## Mechanisms
 
+### Headers
+
+- Note: These are response headers unless otherwise stated.
+- `X-Frame-Options`: Determines if the current page can be framed. Can prevent e.g. clickjacking. Unless the page is intended to be framed on other sites, set it to `SAMEORIGIN` or `DENY`.
+- `X-Content-Type-Options`: Can prevent e.g. MINE sniffing by denying browsers to ignore the sent `Content-Type` and try to determine the content type of a document by itself, which can lead to XSS. Always set to `nosniff`.
+- `X-XSS-Protection`: Determines if built-in XSS features in the browser (e.g. for detecting reflected XSS) should be enabled or disabled. The default (`1`) is to detect and sanitize unsafe parts (which could potentially be exploited). Set to `1; mode=block` to stop loading the page when detected instead.
+- `Strict-Transport-Security`: See the HSTS section below.
+- `Access-Control-*`: See the CORS section below.
+- `Content-Security-Policy`: See the CSP section below.
+
+### HTTP Strict Transport Security (HSTS)
+
+**TODO**
+
+### Cross-origin resource sharing (CORS)
+
+**TODO**
+
+### Content Security Policy (CSP)
+
+**TODO**
+
 ### Cookies
 
 - Sent with every request.
@@ -97,10 +119,6 @@ breadcrumbs:
 - HTTP-only flag: Cookies set with the `HttpOnly` flag are inaccessible to client scripts and only accessible to servers.
 - Scope: `Domain` specifies which domains the cookie will be sent to. If omitted, it will only be sent to the current host, excluding subdomains. If it is specified, it will include subdomains. `Path` specifies which paths the cookie will be sent to, including subdirectories. If omitted, all paths are allowed.
 - Same-site: `SameSite=None` allows the cookie to be sent for both same-site and cross-site requests. `SameSite=Strict` allows sending the cookie only when the origin is the same as for the cookie. `SameSite=Lax` allows sending the cookie when the browser navigates to the site as well (meaning the origin is different). Modern browsers are migrating to defaulting to `SameSite=Lax`.
-
-### Cross-origin resource sharing (CORS)
-
-**TODO**
 
 ### JSON Web Token (JWT)
 

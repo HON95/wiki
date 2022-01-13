@@ -12,10 +12,13 @@ breadcrumbs:
     - High midrange (ca. 1kHz-10kHz)
     - Highs (ca. 10kHz-20kHz)
 - Signal levels:
-    - +4dBu: Professional equipment.
-    - -10dBV: Consumer equipment. Lower than +4dBu. Not to be confused with dB**v**.
+    - Note: This is the voltage (and somewhat impedance) inside cables/equipment.
+    - Mic level: Output from a microphone. Very weak, requires a preamp.
+    - Instrument level: Output from e.g. a guitar. Like mic level but slightly stronger.
+    - Line level (+4dBu): Professional equipment.
+    - Line level (-10dBV): Consumer equipment. Lower than +4dBu. Not to be confused with dB**v**.
+    - Speaker level: High-power signal going from an amplifier to a (passive) speaker.
     - Phono: Old, for turntables etc. Much lower voltage than line level. Typically needs a phono preamp/stage with RIAA equalization.
-    - Not to be confused with SPL dB.
 - Balance mode:
     - Unbalanced: Ground and signal.
     - Balanced: Ground and hot and cold signal with equal impedance. The cold signal is 0V but not (directly) connected to ground.
