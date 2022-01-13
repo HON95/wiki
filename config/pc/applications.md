@@ -6,6 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+*Note: Unless specified, Debian/Ubuntu is assumed.*
+
 ## Fancontrol (Linux)
 
 **Warning:** Don't use this. The fan controller IDs may change on every reboot which breaks the config.
@@ -45,6 +47,16 @@ breadcrumbs:
 - Disable external media keys by setting `media.hardwaremediakeys.enabled` to false in `about:config`.
 - (Linux) Install missing language support: `apt install $(check-language-support)`
 
+## CUPS
+
+### Setup for SMB
+
+**For Manjaro. Assumes CUPS is already installed.**
+
+1. Install required programs: `pacman -Sy smbclient cifs-utils`
+1. Enable SMB authentication: In `/etc/cups/printers.conf`, set `AuthInfoRequired username,password`.
+1. Add the printer using the `smb://` schema. It should prompt for authentication when printing stuff.
+
 ## Git
 
 ### Config
@@ -55,6 +67,46 @@ breadcrumbs:
 ## Nvidia Settings (Linux)
 
 - To save, use the "save current configuration" button and save it to `/etc/X11/xorg.conf`.
+
+## i3
+
+### Installation
+
+See my [Arch setup with i3](../arch-i3/).
+
+### Configuration
+
+#### Keyboard Bindings
+
+- Specified using the `bindsym` statements for key symbols (`a` etc.) or `bindcode` statements for physical button numbers.
+- Use `exec <executable> [args]` to run an application. Use `exec --no-startup-id` to avoid startup notifications ("loading" cursor etc.), for programs that don't support that (the "loading" cursor doesn't go away).
+
+### Usage
+
+Assuming default keybinds.
+
+#### Files
+
+- User config: `~/.config/i3/config`
+
+#### Basics
+
+- Exit: `Mod+Shift+E`
+- Reload: `Mod+Shift+R`
+- Open terminal: `Mod+Enter`
+- Open application (using dmenu/rofi): `Mod+D`
+- Exit application: `Mod+Shift+Q`
+
+#### Navigation and Layout
+
+- Move between windows: `Mod+ArrowKey`
+- Change mode:
+    - Tiling mode (standard): `Mod+E`
+    - Stacking mode: `Mod+S`
+    - Tabbed mode: `Mod+W`
+- Workspaces:
+    - Change workspace: `Mod+<1-9>`
+    - Move window to another workspace: `Mod+Shift+<1-9>`
 
 ## Piper (Linux)
 
@@ -165,7 +217,8 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 
 ### Config
 - Location:
-    - Global: `/etc/vim/vimrc`
+    - Global (Debian): `/etc/vim/vimrc`
+    - Global (Arch): `/etc/vimrc`
     - User: `~/.vimrc`
 - [Example](https://github.com/HON95/configs/blob/master/vim/vimrc).
 
@@ -189,13 +242,14 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 ### Config
 
 - Location:
-    - Linux: `~/.config/Code/User/settings.json`
+    - Linux (Ubuntu): `~/.config/Code/User/settings.json`
+    - Linux (Arch): `~/.config/Code - OSS/User/settings.json`
     - Windows: `%APPDATA%\Code\User\settings.json`
-- [Example](https://github.com/HON95/configs/blob/master/pc/vscode/settings.json).
+- [Example](https://github.com/HON95/configs/blob/master/vscode/settings.json).
 
-## ZSH (personal) (Linux)
+## ZSH (Linux)
 
-This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Hack font.
+This is my ZSH setup preference, using Oh-My-ZSH with the Powerlevel10k theme and some recommended font.
 
 1. Install ZSH:
     1. `apt install zsh`
@@ -203,7 +257,9 @@ This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Ha
     1. See [ohmyz.sh](https://ohmyz.sh/).
     1. When it asks, set it as your default shell. This won't take effect until the next login.
 1. Setup Powerlevel10k theme:
-    1. Download and install the suggested fonts (manually is simplest): [Fonts (powerlevel10k)](https://github.com/romkatv/powerlevel10k#fonts)
+    1. Download and install the suggested fonts: [Fonts (powerlevel10k)](https://github.com/romkatv/powerlevel10k#fonts)
+        - For KDE Plasma, download and open with the font installer.
+        - For manual installation, move the `.ttf` files to `/usr/share/fonts/TTF/`.
     1. Open a new terminal window and set change the profile to use the new font.
     1. Clone the theme: `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k`
     1. In `~/.zshrc`, set `ZSH_THEME="powerlevel10k/powerlevel10k"`.
@@ -211,9 +267,11 @@ This is my personal ZSH setup using Oh-My-ZSH with the Powerlevel9k theme and Ha
     1. Configure the theme (if it didn't automatically start): `p10k configure`
 1. Make zprofile include profile (to avoid breaking certain things):
     1. In `~/.zprofile`, add: `emulate sh -c "source /etc/profile"`
+1. Setup plugins:
+    1. In `.zshrc`, set e.g. `plugins=(git docker docker-compose golang rust)`.
 1. Setup syntax highlighting plugin:
     1. Clone it: `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
-    1. Add it to `plugins` in `.zshrc` (e.g. `plugins=(git zsh-syntax-highlighting)`).
+    1. Add `zsh-syntax-highlighting` it to `plugins` in `.zshrc`.
 1. Configure `~/.zshrc`:
     1. Example [zshrc](https://github.com/HON95/configs/blob/master/zsh/zshrc).
 

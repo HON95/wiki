@@ -2,10 +2,12 @@
 title: Betzy (Supercomputer)
 breadcrumbs:
 - title: Miscellanea
+header_image: ../files/betzy.jpg
 ---
 {% include header.md %}
 
 Norway's most powerful supercomputer as of its inauguration in late 2020.
+Placed #55 on the 2020 June TOP500.
 Managed by UNINETT Sigma2 and partially NTNU Trondheim.
 
 ## Resources
@@ -25,10 +27,10 @@ Managed by UNINETT Sigma2 and partially NTNU Trondheim.
 A mix of general XH2000 specifications and specific Betzy specifications.
 
 - Betzy overall specifications \[1\]\[2\]\[5\]\[9\]\[10\]:
-    - System: Atos BullSequana XH2000 with X2410 (AMD) and X2415 (A100) blades.
+    - System: Atos BullSequana XH2000 with X2410 (AMD EPYC) and X2415 (NVIDIA A100) blades.
     - OS: RHEL
-    - Compute nodes: 1’344x X2410 (AMD) + 4x X2415 (A100)
-    - CPUs total (excluding A100 nodes): 2’688 sockets, 86’016 cores, 172’032 threads
+    - Compute nodes: 1344 X2410 (AMD EPYC) (448 blades) + 4 X2415 (NVIDIA A100)
+    - CPUs total (excluding A100 nodes): 2688 CPUs, 172032 cores
     - Memory: 336TiB total (excluding A100 nodes)
     - Storage: 7.8PB (2.5PB before 2021 upgrade), DNN powered, Lustre, 51GB/s bandwidth, 500k+ metadata OPS (before 2021 upgrade)
     - Interconnect topology: DragonFly+ topology
@@ -36,31 +38,30 @@ A mix of general XH2000 specifications and specific Betzy specifications.
     - Footprint: 14.78m2 (before 2021 upgrade)
     - Power: 952kW, 95% of heat captured to water (before 2021 upgrade)
     - Cooling: Liquid cooled
-- CPU specifications (CPU nodes) \[1\]\[4\]:
+- CPU node specifications (CPU nodes) \[1\]\[2\]\[4\]:
     - AMD EPYC Rome 7742
-    - 64 cores, 128 threads
-    - Clock: 2.25GHz base, 3.4GHz max boost
-    - PCIe: 4.0, x128
-    - Memory: DDR4, 8 channels, 3200MHz, 204.8GB/s per-socket BW
-- CPU specifications (GPU nodes) \[0\]\[14\]:
-    - AMD EPYC Rome 7452
-    - 32 cores, 64 threads
-    - Clock: 2.35GHz base, 3.35GHz max boost
-    - Memory: DDR4, 8 channels, 3200MHz, 204.8GB/s per-socket BW
-- Compute node specifications (CPU nodes) \[1\]\[2\]:
-    - CPUs per node: 2 sockets, 128 kjerner, 256 threads
+        - 64 cores, 128 threads (per CPU)
+        - Clock: 2.25GHz base, 3.4GHz max boost
+        - Memory: DDR4, 8 channels, 3200MHz, 204.8GB/s per-socket BW
+        - PCIe: 4.0, x128
     - Memory: 256GiB, split into 8 NUMA nodes
     - Storage: 3x SATA or NVMe M.2 drives
     - NIC: InfiniBand HDR 100
+- CPU node specifications (GPU nodes) \[0\]\[14\]:
+    - CPUs: 2x AMD EPYC Rome 7452
+        - 32 cores, 64 threads (per CPU)
+        - Clock: 2.35GHz base, 3.35GHz max boost
+        - Memory: DDR4, 8 channels, 3200MHz, 204.8GB/s per-socket BW
+        - PCIe: 4.0, x128
 - Blade specifications \[9\]:
     - Betzy uses mainly X2410 blades (AMD), but also 4x X2415 blades (A100) (after the 2021 upgrade) \[10\].
     - Size: 1U
     - Cooling: Fanless, active liquid cooling.
     - All blades types (both used and not used):
-        - X2410: 3x AMD EPYC Rome/Milan nodes (side-by-side) (6 CPUs total).
-        - X2415: 2x AMD EPYC Rome/Milan CPUs and 4x Nvidia A100 SXM4 GPUs (single node).
-        - X1120: 3x Intel Xeon nodes (side-by-side) (6 CPUs total).
-        - X1125: 2x Intel CPUs and 4x Nvidia V100 SXM2 GPUs (single node).
+        - X2410: 3x nodes (side-by-side) with 2x AMD EPYC Rome/Milan CPUs (6 CPUs total).
+        - X2415: 1x node with 2x AMD EPYC Rome/Milan CPUs and 4x Nvidia A100 SXM4 GPUs.
+        - X1120: 3x nodes (side-by-side) with 2x Intel Xeon CPUs (6 CPUs total).
+        - X1125: 1x node with 2x Intel CPUs and 4x Nvidia V100 SXM2 GPUs.
 - Cabinet specifications (general, not Betzy specific) \[8\]\[9\]:
     - Number of blades: 4-20 in front, 4-12 in back
     - Management switches:

@@ -11,8 +11,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 ### General
 
 - [General](/config/general/general/)
-- [Linux General Notes](/config/general/linux-general/)
-- [Linux Examples](/config/general/linux-examples/)
+- [Linux General](/config/general/linux-general/)
 - [Computer Testing](/config/general/computer-testing/)
 
 ### Authentication, Authorization and Accounting (AAA)
@@ -103,7 +102,9 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### PC
 
+- [Arch (i3)](/config/pc/arch-i3/)
 - [Kubuntu](/config/pc/kubuntu/)
+- [Manjaro (KDE)](/config/pc/manjaro-kde/)
 - [Windows](/config/pc/windows/)
 - [PC Applications](/config/pc/applications/)
 
@@ -170,7 +171,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ## Miscellanea
 
-- [Betzy (Supercomputer)](/miscellanea/betzy/)
-- [Vilje (Supercomputer)](/miscellanea/vilje/)
+- [Betzy (Supercomputer)](/misc/betzy/)
+- [Vilje (Supercomputer)](/misc/vilje/)
 
 {% include footer.md %}

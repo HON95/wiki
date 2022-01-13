@@ -168,7 +168,7 @@ An NTP client and server. By design more accurate than e.g. ntpd and systemd-tim
 ### Cloudflare
 
 - Cloudflare does not allow limiting the scope for API keys to specific subdomains, so the key will have access to the whole domain (based on how it's registered).
-- Use e.g. [cloudflare-ddns-updater.sh](https://github.com/HON95/scripts/tree/master/server/linux/cloudflare).
+- Use e.g. [cloudflare-ddns-updater.sh](https://github.com/HON95/scripts/tree/master/cloudflare).
 
 ## Fail2ban
 
@@ -196,7 +196,7 @@ This setup requires pubkey plus MFA (if configured) plus password.
     AuthenticationMethods publickey,keyboard-interactive
     ```
 - Restart `sshd` and check that you can login with pubkey and MFA now.
-- (Optional) Add my [google-auth-config-prompter.sh](https://github.com/HON95/scripts/blob/master/server/linux/general/google-auth-config-prompter.sh) profile script to `/etc/profile.d/` to ask user to configure Google Auth on login.
+- (Optional) Add my [google-auth-config-prompter.sh](https://github.com/HON95/scripts/blob/master/login/google-auth-config-prompter.sh) profile script to `/etc/profile.d/` to ask user to configure Google Auth on login.
 - To allow a group to use only pubkey (no password or OTP):
     - In `/etc/ssh/sshd_config`, add `Match Group no-mfa` containing `AuthenticationMethods publickey` (indented) at the bottom.
     - Add the system group `no-mfa` and add special users to it.

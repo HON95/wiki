@@ -13,14 +13,18 @@ A tool for downloading videos from a variety of site (not just YouTube).
 - [Homepage](http://ytdl-org.github.io/youtube-dl/)
 - [Repo](https://github.com/ytdl-org/youtube-dl)
 
-## Usage
+## Installation
 
-- Run in Docker:
+- Docker:
     - Using ([wernight's image](https://github.com/wernight/docker-youtube-dl)).
     - Command prefix: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl <...>`
-- Run binary:
+- Binary:
+    - The one in typical package repos is typically quite outdated (even for Arch/the AUR).
     - Find the download instructions in the repo.
-    - Install "ffmpeg" to allow downloading best quality audio and video: `apt install ffmpeg`
+    - Install `ffmpeg` to allow downloading best quality audio and video.
+
+## Usage
+
 - Download single video: `youtube-dl -c <URL>`
     - `-c`/`--continue` to re-run the command if it previously failed during download.
 - Download full channel or playlist: `youtube-dl -qiwc --no-warnings [-o <format>] <URL>`
@@ -40,7 +44,8 @@ A tool for downloading videos from a variety of site (not just YouTube).
 
 ## Examples
 
-- YouTube video/xyz in Docker: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s"`
+- Docker: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl <...>`
+- YouTube video: `youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s"`
 - YouTube video/channel/playlist w/ cookie: `youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s" <url>`
 
 ## Troubleshooting

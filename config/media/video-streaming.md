@@ -6,8 +6,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-_See the other pages in this category._
-
 ## General
 
 - Resources:

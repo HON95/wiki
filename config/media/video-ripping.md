@@ -6,8 +6,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-_See the other pages in this category._
-
 ## Rip DVDs (Linux)
 
 CDs and DVDs use 2048 byte sectors and may have both unintentional and intentional data errors.
