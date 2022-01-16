@@ -214,35 +214,44 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Modify it.
     1. Run it: `/etc/iptables/config.sh`
 
-### Setup Xorg, LightDM/Ly and i3
+### Setup the Xorg Display Server
+
+1. Install: `pacman -S xorg-server xorg-xinit xorg-xrandr`
+1. Fix the keyboard layout for X11: `sudo localectl set-x11-keymap <keymap>` (e.1. `no`)
+
+### Setup the LightDM or Ly Display Manager
 
 Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
 
-1. Setup the Xorg display server (minimal):
-    1. Install: `pacman -S xorg-server xorg-xinit xorg-xrandr`
-    1. Fix the keyboard layout for X11: `sudo localectl set-x11-keymap <keymap>` (e.1. `no`)
-1. (LightDM) Setup the LightDM display manager (aka login screen):
+#### LightDM
+
+1. Setup LightDM:
     1. Note: User-local configuration/profile-stuff should be placed in `~/.xprofile`.
     1. Install: `pacman -S lightdm`
     1. Enable: `systemctl enable lightdm`
-1. (LightDM) Setup the LightDM GTK+ greeter (aka login screen) (one of many):
+1. Setup the LightDM GTK+ greeter (aka login screen) (one of many):
     1. Note: The GTK+ greeter may be configured in `/etc/lightdm/lightdm-gtk-greeter.conf` or using the `lightdm-gtk-greeter-settings` GUI.
     1. Install: `pacman -S lightdm-gtk-greeter`
     1. Set it as the default: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-session=lightdm-gtk-greeter`.
     1. (Optional) Set the background: In `/etc/lightdm/lightdm-gtk-greeter.conf`, under the `[greeter]` section, set `background=<image-path>`. The `/usr/share/pixmaps` dir is recommended for storing backgrounds.
-1. (LightDM) **TODO** Setup the Webkit2 greeter with the Litarvan theme.
-1. (LightDM) Enable numlock on by default in X11:
+1. Enable numlock on by default in X11:
     1. Install: `pacman -S numlockx`
     1. Configure: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-setup-script=/usr/bin/numlockx on`.
-1. (Ly) Setup the Ly display manager (aka login screen):
+
+#### Ly
+
+1. Setup Ly:
     1. Note: The config file is `/etc/ly/config.ini`.
     1. Install: `yay -S ly`
     1. Enable: `systemctl enable ly`
     1. Add fire background: In the config, set `animate = true` and `hide_borders = true`.
-1. (Ly) Enable numlock on by default in X11:
+1. Enable numlock on by default in X11:
     1. Install: `pacman -S numlockx`
     1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
-1. Install the i3 window manager:
+
+### Setup the i3 Window Manager and Stuff
+
+1. Install i3:
     1. Note: The "gaps" part will be set up later, i3-gaps will work just like plain i3 for now.
     1. Install: `pacman -S i3-gaps`
 1. Setup the Polybar system bar:
@@ -255,8 +264,9 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
         - For the bar, set `bottom = true` to move it to the bottom.
         - For the bar, comment `radius` to disable rounded corners.
         - For the bar, comment `border-size` to disable the padding/border around the bar.
-        - For the date module, customize how time should appear. "Alt" variants are swapped to when the module is clicked ().
-        - For the network/"eth" module, use `%local_ip6%` for the IPv6 address (one of them).
+        - For the date module, customize how time should appear. "Alt" variants are swapped to when the module is clicked.
+        - For the network/"eth" module, use `%local_ip6%` for the IPv6 address (one of them). Maybe clone the module to have one for IPv4 and one for IPv6. Maybe change the color to purple (`#800080`), so it doesn't clash with the Spotify module (if added).
+        - Update the panel modules in the `modules-{left,center,right}` variables.
     1. Create a startup script: See the section below to use the new "main" bar.
     1. Add to i3: In the i3 config, add `exec_always --no-startup-id $HOME/.config/polybar/launch.sh`.
 1. Setup the some terminal emulator:
@@ -279,8 +289,8 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Setup i3 emoji shortcut: In the i3 config, set `bindsym $mod+mod1+d exec rofi -modi "emoji:rofimoji" -show emoji`.
 1. Setup fonts:
     1. `pacman -S noto-fonts notn-fonts-emoji`
-1. (**TODO** LightDM) Test LightDM and i3:
-    1. Restart LightDM and get pulled into it: `systemctl restart lightdm`
+1. (Optional) Test the display server, display manager and and window manager:
+    1. Restart LightDM/Ly and get pulled into it: `systemctl restart lightdm` or `[...] ly`
     1. Select the i3 WM and log in.
     1. Follow the basic i3 setup wizard:
         1. Generate a new config.
@@ -311,10 +321,18 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Install the `xss-lock` automatic locker trigger: `pacman -S xss-lock`
     1. Update i3 to use `i3lock-fancy`: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock-fancy --nofork`. i3 needs to be completely restarted for this to start.
     1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id i3lock-fancy --nofork`. This may conflict with some `focus` keybinds you probably don't need, so just remove those.
+1. Setup a Spotify module for Polybar:
+    1. Install: `yay -S polybar-spotify-git`
+    1. In the Polybar config (`~/.config/polybar/config`), add a module `spotify` (see config snipper below) and add it to some bar module section.
+
+### Setup Multiple Displays
+
+**TODO**
 
 ### Setup Audio
 
-1. Note: We're using the PipeWire sound server, a compatible replacement for both PulseAudio and JACK.
+Note: We're using the PipeWire sound server, a modern, security-focused and compatible replacement for both PulseAudio and JACK.
+
 1. Install ALSA stuff:
     1. Note: ALSA itself is already provided as built-in kernel modules and ALSA drivers will just work.
     1. Install ALSA utils and firmware: `pacman -S alsa-utils alsa-firmware`
@@ -336,7 +354,7 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Already done.
 1. Setup ZSH:
     1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
-1. Setup the VLC video and audio player:w
+1. Setup the VLC video and audio player:
     1. `pacman -S vlc`
 1. Setup the Mirage image viewer:
     1. `yay -S mirage`
@@ -346,6 +364,8 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. `pacman -S ranger`
 1. Setup the VS Code text editor/IDE:
     1. `pacman -S code`
+1. Setup the LibreOffice office document suite:
+    1. `pacman -S libreoffice-fresh`
 
 ### Extra steps (Optional)
 
@@ -390,6 +410,19 @@ killall -q polybar
 polybar main &>>/tmp/polybar.log
 
 echo "Polybar launched"
+```
+
+#### Polybar Spotify Module
+
+File: `~/.config/polybar/config`
+
+```
+[module/spotify]
+type = custom/script
+interval = 1
+format = <label>
+exec = python /usr/share/polybar/scripts/spotify_status.py -f '[{artist}] {song}'
+format-underline = #1db954
 ```
 
 #### Rofi Config
