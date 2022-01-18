@@ -50,6 +50,33 @@ breadcrumbs:
     - Install: `sudo apt install libdvd-pkg && sudo dpkg-reconfigure libdvd-pkg`
     - Warning: Don't change the region if not necessary. It's typically limited to five changes.
 
+### PipeWire
+
+Kubuntu comes with PulseAudio. PipeWire is a modern solution designed to replace PulseAudio, JACK and ALSA. This means it combines the simplicity of basic desktop usage from PulseAudio with the complexity of session managers from JACK, with extra focus on security, performance and compatibility. Plus it supports video.
+
+1. Install PipeWire:
+    1. Install: `sudo apt install pipewire pipewire-audio-client-libraries`
+    1. Enable: `systemctl --user enable --now pipewire-pulse`
+1. Disable PulseAudio:
+    1. (Note) The package is required by Kubuntu, so it can't be completely removed.
+    1. Disable PulseAudio: `systemctl --user disable --now pulseaudio.service pulseaudio.socket`
+    1. Mask PulseAudio: `systemctl --user mask pulseaudio.service pulseaudio.socket`
+1. Setup the PulseAudio adapter:
+    1. Install `pipewire-audio-client-libraries` (done in the last step).
+    1. Create this file for some reason: `touch /etc/pipewire/media-session.d/with-pulseaudio`
+    1. Add the `pipewire-pulse` service: `cp /usr/share/doc/pipewire/examples/systemd/user/pipewire-pulse.* /etc/systemd/user/`
+    1. Reload systemctl: `systemctl --user daemon-reload`
+    1. Enable: `systemctl --user enable pipewire`
+    1. Restart everything: `systemctl --user restart pipewire pipewire-pulse`
+1. (Note) PipeWire comes with a "Pro Audio" profile (selectable in pavucontrol), for sound cards with multiple inputs and/or outputs which shouldn't get tossed together into e.g. a 5.1 profile.
+1. (Optional) Install the WirePlumber session manager:
+    1. (Warning) This is broken and doesn't work properly when using the slightly outdated version of PipeWire available in the main repos.
+    1. See [Installing WirePlumber (WirePlumber wiki)](https://pipewire.pages.freedesktop.org/wireplumber/installing-wireplumber.html).
+    1. (Note) You may need to checkout an older version if the installed version of PipeWire is outdated. Search the dependency file [commit history](https://gitlab.freedesktop.org/pipewire/wireplumber/-/commits/master/meson.build) for pipewire bumps.
+    1. (Note) Required dependencies: `build-essential libglib2.0-dev libspa-0.2-dev libpipewire-0.3-dev lua5.3 meson cmake`
+1. (Optional) Install the Helvum patchbay:
+    1. See the [Helvum repo](https://gitlab.freedesktop.org/ryuukyu/helvum).
+
 ## Troubleshooting
 
 **The system settings and other apps crash after updating the graphics driver:**

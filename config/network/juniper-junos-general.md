@@ -24,17 +24,44 @@ breadcrumbs:
 
 ## General
 
+**TODO** Cleanup.
+
 ### Usage
 
 - Controlling the CLI:
-    - Tab: Auto-complete.
-    - Space: Like tab, generally.
-    - `?`: Prints the allowed keywords.
-    - `|`: Can be used to filter the output.
+    - Auto-complete: Tab or space.
+    - Show allowed tokens/help: `?`
+    - Pipe output: `<cmd> | <filter>`
+    - Regex match output: `<cmd> | match <regex>`
+    - Count lines (e.g. after matching): `<cmd> | count`
+    - Watch command: `<cmd> | refresh <seconds>` (e.g. `show x | match y | refresh 5`)
+    - Supports GNU readline (Emacs-like) keybinds (some examples below).
+    - Jump to start or end of line: `Ctrl+A` (start) and `Ctrl+E` (end)
+    - Cut or paste entire line: `Ctrl+U` (cut) and `Ctrl+Y` (paste)
+    - Search command history: `Ctrl+R` + search
+    - Copy last word from last command: `Meta+.` (typically `Alt+.`)
+- Long outputs (less/more):
+    - Long output is typically showed with less and supports less keybinds (use `h` for help).
+    - Show long output without more hold: `<cmd> | no-more`
+    - Jump to start or end: `g` (start) or `G` (end)
+    - Search: `/` (forwards) or `?` (backwards)
+    - Show only matching lines (supports regex): `m`
+    - Clear searching etc.: `c`
+- Help:
+    - Show topic: `help topic <topic>`
+    - Show reference: `help reference <reference>`
+    - Show syslog symbol description: `help syslog <symbol>`
+- Show general information:
+    - Show time and uptime: `show system uptime`
+    - Show version (and haiku): `show version [and haiku]`
+    - Show RE/system resource usage: `show system processes brief`
 - Open CLI in operational mode (from shell): `cli`
 - Open shell (from op mode):
     - Local: `start shell user root`
     - VC: `request session member <vc-member-id>`
+- CLI settings:
+    - Show: `show cli`
+    - Enable timestamp for commands: `set cli timestamp`
 - Enter configuration mode (from op mode): `configure`
 - Exit any mode: `exit`
 - Show configuration:
@@ -42,6 +69,15 @@ breadcrumbs:
     - From (conf mode): `show [statement]`
     - Show changes (conf mode): `show | compare`
     - Show as set-statements (op mode): `show configuration | display set`
+    - Hide secret data: `show configuration | except SECRET-DATA`
+    - Show commit log: `show system commit`
+    - Show older config: `show system rollback <n>` (1 is the last etc.)
+    - Compare active with older version: `show configuration | compare rollback <n>`
+    - Compare two older versions: `show system rollback <n> compare <m>`
+- Config files:
+    - Revisions: The most recent are stored in `/config/`, the rest (up to some count) are stored in `/var/db/config/`.
+    - Configs are gzip-compressed.
+    - The active configuration is `/config/juniper.conf.gz`.
 - Run op command in config mode: `run <command>`
 - Navigate config mode:
     - The config is structures as nested container statements and leaf statements.
@@ -53,6 +89,32 @@ breadcrumbs:
     - `confirmed` automatically rolls back the commit if it is not confirmed within a time limit.
     - `and-quit` will quit configuration mode after a successful commit.
 - Delete all existing configuration while in config mode: `load override terminal`, then Ctrl+D.
+- Typical show command granularities (suffix):
+    - `terse` (very brief)
+    - `brief`
+    - `detail`
+    - `extensive` (very verbose)
+- Send command output to remote (SCP or FTP, no TFTP): `<cmd> | save <destination>`
+- Log:
+    - Most stuff is logged in `/var/log/messages`
+    - Some hardware stuff is logged in `/var/log/chassisd`.
+    - Show other file: `show log <log>` (for file `/var/log/<log>`)
+    - Show entered commands: `show log interactive-commands`
+    - Show commit log: `show system commit`
+    - Print log to console (tail-like): `monitor start` (stop with `monitor stop`)
+- Show stats or monitor traffic:
+    - Show traffic stats (general): `minotir interface <...>` (use keyboard shortcuts for bits/bytes, rate/delta, etc.)
+    - Show stats for all interfaces: `minitor interface traffic`
+    - Show stats for specific interfaces: `minitor interface <interface>`
+    - Dump traffic: `monitor traffic interface <interface> <...>`
+        - Example: `monitor traffic interface ge-0/0/4 no-resolve size 1500 matching "ip proto ospf"`
+        - Only shows "local" traffic (to/from the system, not forwarded).
+        - Supports standard tcpdump-like PCAP filtering as the (quoted) `matching` argument.
+        - Write to PCAP file: `<...> write-file <file>`
+- Files:
+    - General file command: `file <...>`
+    - The working directory is `/var/home/`.
+    - Temporary stuff can be stores in `/var/tmp/` (not `/tmp/`, it's tiny).
 
 ### Booting
 
@@ -112,6 +174,14 @@ Wait for the "The operating system has halted." text before pulling the power, s
 
 - "Do not use the change-configuration statement to modify the configuration on dual Routing Engine devices that have nonstop active routing (NSR) enabled, because both Routing Engines might attempt to acquire a lock on the configuration database, which can cause the commit to fail." (From docs.)
 
+### Version Names
+
+- Example: `20.4R3-S1.3`
+- Format: `<year>.<quarter>[R1-3][-S...]`
+- There is one main release for each quarter of the year. They may be a bit delayed such that they don't perfectly match the quarter.
+- There are zero to three extra cumulative bug patches `R1` to `R3` (no suffix for the initial release).
+- Each release is supported for exactly three years.
+
 ## Tasks
 
 ### Reset Root Password
@@ -138,7 +208,31 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 1. Do stuff with it.
 1. Unmount it: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
 
-### Upgrade Junos Using a USB Drive
+### Upgrade Junos
+
+#### Normal Method
+
+1. Backup and clean system:
+    1. Remove old files: `request system storage cleanup [dry-run]` (`dry-run` to show only)
+    1. Create a system backup first (unless virtualized boxes like EX4600 and QFX5100): `request system snapshot` (maybe with `slice alternate`, depending on the box)
+    1. Show system backups: `show system snapshot [media internal]`
+1. Get the file: `file copy <remote-url> /var/tmp/`
+        - If it says it ran out of space, add `staging-directory /var/tmp`. By defaults it's buffered on the root partition, which may be tiny.
+        - Alternatively, copy the file _into_ the device from the remote device.
+1. Prepare upgrade: `request system software add <file>`
+    - Add `no-copy unlink` to remove the file afterwards, typically for systems with little free space.
+    - Add `reboot` to automatically reboot and begin upgrade.
+1. Reboot and start upgrade (may take around 5 minutes): `request system reboot`
+1. **TODO** See further instructions in USB drive method section for verification and copying to alternate partition.
+
+
+#### ISSU and NSSU
+
+- ISSU and NSSU may be used for upgrade without downtime, if the hardware supports it.
+- If using redundant hardware (multiple REs), ISSU may be use for upgrades without downtime. It may blow up. One RE is upgraded first, then state is transferred to it. Normal upgrade with reboot is more reliable if short downtime is acceptable.
+- If using virtual chassis, NSSU is similar to ISSU but doesn't require the same kind of state sync.
+
+#### Using a USB Drive
 
 1. Format the USB drive using FAT32.
 1. Copy the software file to the drive.
