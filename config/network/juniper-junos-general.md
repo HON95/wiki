@@ -62,7 +62,11 @@ breadcrumbs:
 - CLI settings:
     - Show: `show cli`
     - Enable timestamp for commands: `set cli timestamp`
-- Enter configuration mode (from op mode): `configure`
+- Enter configuration mode (from op mode): `configure {<omit>|exclusive|private}`
+    - By default, a shared config mode session is used where multiple users may edit the same candidate config. Be careful when committing in this mode to avoid accidentally applying changes from the other users.
+    - Specify `exclusive` to avoid having other users make changes in config mode at the same time.
+    - Specify `private` to start a separate/private config mode session, independent of other users. This is weird and rarely used.
+    - **TODO** Certain restrictions of committing for exclusive mode.
 - Exit any mode: `exit`
 - Show configuration:
     - From (op mode): `show configuration [statement]`
@@ -74,6 +78,8 @@ breadcrumbs:
     - Show older config: `show system rollback <n>` (1 is the last etc.)
     - Compare active with older version: `show configuration | compare rollback <n>`
     - Compare two older versions: `show system rollback <n> compare <m>`
+    - Show details and defaults: `show configuration | display detail` (add `| except "##$"` to omit empty comment lines)
+    - Show with inherited properties from apply groups: `show | display inheritance`
 - Config files:
     - Revisions: The most recent are stored in `/config/`, the rest (up to some count) are stored in `/var/db/config/`.
     - Configs are gzip-compressed.
@@ -85,10 +91,44 @@ breadcrumbs:
     - Go up in context: `up` or `top`
     - Show configuration for current level: `show`
 - Perform operation on multiple interfaces or similar: `wildcard range set int ge-0/0/[0-47] unit 0 family ethernet-switching` (example)
-- Commit config changes: `commit [comment <comment>] [confirmed] [and-quit]`
-    - `confirmed` automatically rolls back the commit if it is not confirmed within a time limit.
+- Rename a config element: `rename <a> to <b>`
+- Move config element to before another element: `insert <b> before <b>`
+- Copy config element: `copy <a> to <b>`
+- Delete config element: `delete <element>`
+- Search and replace (global): `replace pattern <a> with <b>`
+- Add comment to element: `annotate <element> "<comment>"`
+- Deactivate element (instead of deleting it): `deactivate <element>`
+    - Use `activate <...>` to undo.
+- Prevent changes to element: `protect <element>`
+    - Use `unprotect` to undo.
+    - User privileges may be set such that certain users are not allowed to unprotect, as a sort of access control to certain config sections.
+- Hide section for `show configuration`: Set `apply-flags omit` inside the section
+    - Use `show configuration | display omit` to override and show omitted sections too.
+- Commit config changes:
+    - Commit candidate to active: `commit [comment <comment>] [confirmed <minutes>] [synchronize]`
+    - `confirmed` automatically rolls back the commit if it is not confirmed within a time limit. Run `commit check` (or `commit` to also create a new commit) to confirm changes and prevent rollback.
     - `and-quit` will quit configuration mode after a successful commit.
-- Delete all existing configuration while in config mode: `load override terminal`, then Ctrl+D.
+    - `synchronize` will apply the change to all REs. It can be configured as the default.
+    - Check without committing: `commit check`
+    - Use `at <time>` to commit at a later time. Use `commit check` first to avoid config errors when it happens.
+    - Rollback changes: Go to top level, `rollback <n>` (use `?` to show log), then commit
+    - Discard changes in candidate config: `rollback 0`
+- Apply groups:
+    - Apply groups are a form of object-oriented templating.
+    - The template/group are set under `groups <name>`.
+    - They may use wildcards like `<ge-*>` instead of `ge-0/0/0` etc.
+    - Apply the group to some section: `apply-groups <name>`
+    - Avoid inheriting the group in some child section: `apply-groups-except <name>`
+    - Local elements override the template.
+    - Show config with inherited properties: `show | display inheritance`
+- Apply path:
+    - Used to reference a value from another element, e.g. to reference a singly defined IP address instead of specifying it every time.
+    - Example: `set policy-options prefix-list RADIUS_SERVERS apply-path "system radius-server <*>"`
+- Load changes (from terminal typically):
+    - Load config section from terminal: `load merge terminal [relative]`, paste, `Ctrl+D` (`relative` for relative path)
+    - Load set format (`set`'s and `delete`'s etc.): `load set terminal`, etc.
+    - Load diff format (with config section, `+`'es and `-`'es etc.): `load patch terminal`, etc.
+    - Delete all existing configuration while in config mode: `load override terminal`, then `Ctrl+D` without typing anything.
 - Typical show command granularities (suffix):
     - `terse` (very brief)
     - `brief`
@@ -99,7 +139,7 @@ breadcrumbs:
     - Most stuff is logged in `/var/log/messages`
     - Some hardware stuff is logged in `/var/log/chassisd`.
     - Show other file: `show log <log>` (for file `/var/log/<log>`)
-    - Show entered commands: `show log interactive-commands`
+    - Show entered commands (if configured for syslog): `show log interactive-commands`
     - Show commit log: `show system commit`
     - Print log to console (tail-like): `monitor start` (stop with `monitor stop`)
 - Show stats or monitor traffic:
@@ -181,6 +221,10 @@ Wait for the "The operating system has halted." text before pulling the power, s
 - There is one main release for each quarter of the year. They may be a bit delayed such that they don't perfectly match the quarter.
 - There are zero to three extra cumulative bug patches `R1` to `R3` (no suffix for the initial release).
 - Each release is supported for exactly three years.
+
+### Miscellanea
+
+- Set `system auto-snapshot` on single-flash devices to make them automatically rebuild the alternate partition in case of corruption.
 
 ## Tasks
 

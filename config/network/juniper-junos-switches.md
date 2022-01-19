@@ -32,6 +32,32 @@ breadcrumbs:
 
 ## Initial Setup
 
+**TODO** (some general info, some switch config info, move this to some appropriate place):
+
+- `request system storage cleanup` for cleanup of old files.
+- `system auto-snapshot` (already added here)
+- `system no-redirects`
+- `system arp aging-timer 5` (defaults to 20 minutes (on routers which run ARP), which is crazy) (MAC address timeout on switches however is 5 minutes) (may cause flooding when the router tries to forward traffic but the MAC address is timed out) (use 5 minutes to be compatible with MAC address timeout)
+- `system internet-options path-mtu-discovery` (allows BGP to use packets larger than the minimum)
+- Syslog:
+    - See nLogic slides.
+    - `user *` decides what to show in the terminal. `any emergency` shows very few messages.
+    - `host <hostname>` is used for remote logging. The DNS lookup is resolved only at commit time, so maybe use an IP address just for clarity.
+    - `file <file>` is used for log files (e.g. `messages` and `interactive-commands`).
+    - The `local[0-7]` facilities were conventionally used for different types of devices. Nowadays it doesn't normally provide any benefit.
+- User AAA:
+    - No "enable mode".
+    - `authentication-order [ radius ]` (example) (RADIUS timeouts still allow local passwords?)
+    - `login class <name> permissions <...>` for custom classes. `super-user` allows everything.
+    - Locally defined users are not required if RADIUS/TACACS is setup. Class etc. is fetched from RADIUS.
+- Config archival:
+    - See `system archival` with `transfer-on-commit` and nLogic slides.
+- LAG:
+    - `aggregated-ether-options minimum-links 1`
+    - `aggregated-ether-options lacp active`
+    - `aggregated-ether-options lacp periodic fast`
+- Loopback address for consistent address if multiple routed interfaces.
+
 1. Connect to the switch using serial:
     - RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow control.
 1. Login:
@@ -66,10 +92,11 @@ breadcrumbs:
     - `set system name-server <addr>` (once for each address)
 1. Set time:
     1. (Optional) Set time locally: `set date <YYYYMMDDhhmm.ss>`
-    1. Set server to use while booting: `set system ntp boot-server <address>`
-    1. Set server to use periodically: `set system ntp server <address>`
+    1. Set server to use while booting (forces initial time): `set system ntp boot-server <address>`
+    1. Set server to use periodically (for tiny, incremental changes): `set system ntp server <address>`
     1. Set time zone: `set system time-zone Europe/Oslo` (example)
     1. Note: After committing, use `show ntp associations` to verify NTP.
+    1. Note: After committing, use `set date ntp` to force it to update. This may be required if the delta is too large and the NTP client refuses to update.
 1. Delete default interfaces configs:
     - `wildcard range delete interface ge-0/0/[0-47]` (example, repeat for all FPCs/PICs)
 1. Disable unused interfaces:
@@ -89,7 +116,7 @@ breadcrumbs:
     - Configure it as a normal interface, which will be applied to all members.
 1. Setup LACP:
     1. Note: Make sure you allocate enough LACP interfaces and that the interface numbers are below 512 (empirically discovered on EX3300).
-    1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
+    1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>` (just set it to some standard large size)
     1. Add individual Ethernet interfaces (not using interface range):
         1. Delete logical units (or the whole interfaces): `wildcard range delete interfaces ge-0/0/[0-1] unit 0` (example)
         1. Set as members: `wildcard range set ge-0/0/[0-1] ether-options 802.3ad ae<n>` (for LACP interface `ae<n>`)
