@@ -57,6 +57,59 @@ breadcrumbs:
     - `aggregated-ether-options lacp active`
     - `aggregated-ether-options lacp periodic fast`
 - Loopback address for consistent address if multiple routed interfaces.
+- `default-address-selection` to use loopback address for the source address of e.g. pinging.
+- OSPF:
+    - Area, router ID, interfaces (with unit).
+    - Should fix cost. `metric <n>` on OSPF interface.
+    - `interface lo0.0 passive` (no neighbors)
+    - Use password (`authentication`) just to prevent accidents when plugging different things together. Doesn't need to be "secure".
+    - Always `interface-type p2p` on P2P onterfaces for fast recovery on short link breakages.
+    - TL: Missing use of `static-to-ospf`, only direct. Add as terms in same policy. See nLogic slides.
+- Enhanced layer 2 software (ELS):
+    - Switches from 2018 (e.g. EX2300, EX3400, all QFX, etc.) ELS. Older switches use "standard" (as some call it).
+    - Interface port mode: `port-mode` renamed to `interface-mode`.
+    - Supports VLAN ranges.
+    - Native VLAN: `native-vlan-id` is not outside of units. It must also be specified in the `vlan` list in unit 0.
+    - Spanning tree: Must now be specified for each interface to activete for, instead of enabling for all. Supports interface ranges. Now supports multiple spanning tree instances for different interfaces.
+    - IGMP snooping: Interfaces must be listed (or `all`).
+- Firewalling:
+    - TODO
+- First hop security:
+    - See screenshots fron nLogic course. Custom firewall filters may be required.
+    - Example:
+        ```
+        firewall {
+            family ethernet-switching {
+                filter RA-guard {
+                    term router-solicitation {
+                        from {
+                            destination-mac-address 33:33:00:00:00:02;
+                        }
+                        then {
+                            discard;
+                        }
+                    }
+
+                    term router-advertise {
+                        from {
+                            destination-mac-address 33:33:00:00:00:01;
+                        }
+                        then {
+                            discard;
+                        }
+                    }
+
+                    term permit-all {
+                        then {
+                            accept;
+                        }
+                    }
+                }
+            }
+        }
+        ```
+
+**TODO** Remaining stuff:
 
 1. Connect to the switch using serial:
     - RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow control.
@@ -156,12 +209,13 @@ breadcrumbs:
 1. (Optional) Configure RSTP:
     - Note: RSTP is the default STP variant for Junos.
     - Enter config section: `edit protocols rstp`
+    - (ELS) Set interfaces: `set interfaces all` (or specific)
     - Set priority: `set bridge-priority <priority>` (default 32768, should be a multiple of 4096, use e.g. 32768 for access, 16384 for distro and 8192 for core)
     - Set hello time: `set hello-time <seconds>` (default 2s)
     - Set maximum age: `set max-age <seconds>` (default 20s)
     - Set forward delay: `set forward-delay <seconds>` (default 15s)
-    - **TODO** Portfast for access ports?
-    - **TODO** Guards.
+    - **TODO** `edge` for access ports?
+    - **TODO** Guards, e.g. `bpdu-block-on-edge` or something.
     - **TODO** Enabled on all interfaces and VLANs by default?
 1. Configure SNMP:
     - Note: SNMP is extremely slow on the Juniper switches I've tested it on.
@@ -180,6 +234,11 @@ breadcrumbs:
     - `show interfaces diagnostics optics [if]`
     - `show interfaces media [if]` (less info, only works if interface is up)
 
+### VLAN
+
+- Show VLANs and member interfaces (`*` means active/up): `show vlans [vlan]`
+- Show useful info for specific interface: `show vlans interface <interface>`
+
 ### STP
 
 - Show interface status: `show spanning-tree interface`
@@ -191,12 +250,15 @@ breadcrumbs:
 ### Info
 
 - Virtual Chassis (VC) is a simple way of connecting multiple close or distant switches into a ring topology and managing them as a single logical device. It simplifies loop prevention (otherwise using STP) and improves fault tolerance.
+- Juniper don't like calling it a VC "stack" since it's more than just that.
+- The internal routing is based on IS-IS with MAC addresses.
+- Mode: Always use the preprovisioned mode with member IDs, roles and serial numbers specified, never automagic mode (if possible). It's also possible to start with automagic mode and then change to preprovisioned mode after it's up to avoid finding and writing in serial numbers and stuff.
 - Roles: A VC has one switch as master routing engine, one switch as backup routing engine and the remaining switches as linecards.
 - Primary-role election: The master is elected based on (in order) highest mastership priority, which member was master last time, which switch has been a member the longest, and which member has the lowest MAC address. When using a preprovisioned config, the mastership priority is automatically assigned based on the selected role.
 - LEDs: The "MST" LED will be solid green on the master, blinking green on the backup and off on the linecards.
 - Alarms: Alarms for a specific device will only show on the master and the actual device.
 - FPCs: Each switch will show as separate FPCs (Flexible PIC (Physical Interface Cards) Concentrators).
-- Split-and-merge: In case the VC gets partitioned, having all partitions elect a new master while running the same configuration would cause logical resource conflicts and inconsistencies in the network. The split and merge is a quorum-like mechanism where only the "largest" (according to certain specific rules) partition continues to function and the other partitions become inactive (all their switches aquire the line-card role). A VC partition becomes active if it contains both the stable (pre-split) primary and backup; if it contains the stable backup and at least half the VC size; or if it contains the stable primary and more than half the VC size. This "merge" part of the feature allows the partitions to merge back together when the partitioning is resolved (if the configurations adhere to certain specific rules). For VCs of size two where both switches would become inactive if a partition were to happen (since none of the rules are satisfied), use `no-split-detection` to disable split-and-merge such that both switches may become primaries (although, one would likely be dead and avoid causing inconsistencies).
+- Split-and-merge: In case the VC gets partitioned, having all partitions elect a new master while running the same configuration would cause logical resource conflicts and inconsistencies in the network. The split and merge is a quorum-like mechanism where only the "largest" (according to certain specific rules) partition continues to function and the other partitions become inactive (all their switches aquire the line-card role). A VC partition becomes active if it contains both the stable (pre-split) primary and backup; if it contains the stable backup and at least half the VC size; or if it contains the stable primary and more than half the VC size. This "merge" part of the feature allows the partitions to merge back together when the partitioning is resolved (if the configurations adhere to certain specific rules). For VCs of size two where both switches would become inactive (i.e. line cards) if a partition were to happen (since none of the rules are satisfied), use `no-split-detection` to disable split-and-merge such that both switches may become primaries (although, one would likely be dead and avoid causing inconsistencies). But make sure to use preprovisioned mode with member IDs and serial numbers to avoid duplicate IDs when merging again. Make sure that the link doesn't fail as that would leave two primaries.
 
 ### Best Practices
 

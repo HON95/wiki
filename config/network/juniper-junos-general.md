@@ -14,6 +14,12 @@ breadcrumbs:
 - [Juniper Hardware](/config/network/juniper-hardware/)
 - [Juniper Junos Switches](/config/network/juniper-junos-switches/)
 
+## Resources
+
+- [Day One Books (Juniper)](https://www.juniper.net/documentation/jnbooks/us/en/day-one-books)
+- [Introduction to Junos – Part 1 (Packet Pushers)](https://packetpushers.net/introduction-to-junos-part-1/)
+- [Introduction to Junos – Part 2 (Packet Pushers)](https://packetpushers.net/introduction-to-junos-part-2/)
+
 ## Info
 
 ### Junos OS
@@ -54,7 +60,8 @@ breadcrumbs:
 - Show general information:
     - Show time and uptime: `show system uptime`
     - Show version (and haiku): `show version [and haiku]`
-    - Show RE/system resource usage: `show system processes brief`
+    - Show system resource usage: `show system processes brief`
+    - Show RE info and usage: `show chassis routing-engine`
 - Open CLI in operational mode (from shell): `cli`
 - Open shell (from op mode):
     - Local: `start shell user root`
@@ -69,6 +76,7 @@ breadcrumbs:
     - **TODO** Certain restrictions of committing for exclusive mode.
 - Exit any mode: `exit`
 - Show configuration:
+    - Note: You can only see config elements and changes you have permissions to see. Chekc the `system login` section to check.
     - From (op mode): `show configuration [statement]`
     - From (conf mode): `show [statement]`
     - Show changes (conf mode): `show | compare`
@@ -142,12 +150,23 @@ breadcrumbs:
     - Show entered commands (if configured for syslog): `show log interactive-commands`
     - Show commit log: `show system commit`
     - Print log to console (tail-like): `monitor start` (stop with `monitor stop`)
-- Show stats or monitor traffic:
-    - Show traffic stats (general): `minotir interface <...>` (use keyboard shortcuts for bits/bytes, rate/delta, etc.)
+- Ping:
+    - Basic: `ping <target> [options]`
+    - Specify source: `... source <address>`
+    - Send rapidly: `... rapid`
+    - Set count: `... count <n>`
+    - Set payload size: `... size <n>` (might fragment, max ICMPv4 size is MTU minus 28)
+    - Avoid fragmentation: `... do-not-fragnent`
+    - Change hashing to debug LAG interfaces: `... pattern <something>`
+    - Etc.
+- Traceroute: `traceroute [monitor] <target>`
+- Show stats:
+    - Show traffic stats (general): `minitor interface <...>` (use keyboard shortcuts for bits/bytes, rate/delta, etc.)
     - Show stats for all interfaces: `minitor interface traffic`
     - Show stats for specific interfaces: `minitor interface <interface>`
-    - Dump traffic: `monitor traffic interface <interface> <...>`
-        - Example: `monitor traffic interface ge-0/0/4 no-resolve size 1500 matching "ip proto ospf"`
+- Dump traffic:
+        - Basic: `monitor traffic interface <interface> [...]`
+        - Example: `monitor traffic interface ge-0/0/4 no-resolve size 1500 count 20 matching "ip proto ospf"`
         - Only shows "local" traffic (to/from the system, not forwarded).
         - Supports standard tcpdump-like PCAP filtering as the (quoted) `matching` argument.
         - Write to PCAP file: `<...> write-file <file>`
@@ -155,6 +174,10 @@ breadcrumbs:
     - General file command: `file <...>`
     - The working directory is `/var/home/`.
     - Temporary stuff can be stores in `/var/tmp/` (not `/tmp/`, it's tiny).
+- Scripting:
+    - Supports events like scheduled actions.
+    - Supports XML scripting. And Python for newer devices.
+    - Supports commit scripts to e.g. require descriptions on interfaces.
 
 ### Booting
 

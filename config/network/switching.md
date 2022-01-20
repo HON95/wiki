@@ -53,6 +53,8 @@ Reserved:
 - STP (excluding per-VLAN STP and generally not MST) (including rapid versions) will consider multiple links between switches a loop, even when the links carry different VLANs.
 - The bridge priority should generally be a multiple of 4096.
 - PVST and 802.1Q regions cannot interoperate directly, but can through PVST+ regions.
+- The root bridge should never have ports in blocked state.
+- For e.g. two devices with two paths, one device will block one port, the other device won't block any of the ports.
 
 ### STP
 
