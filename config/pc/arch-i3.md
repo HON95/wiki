@@ -151,9 +151,9 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Upgrade: `pacman -Syu`
     1. Install useful tools: `pacman -S --needed most zsh vim man-db man-pages htop bash-completion p7zip git jq rsync openssh tmux screen reflector`
 1. Install display driver:
+    - Note: For AMD GPUs, Intel GPUs, older NVIDIA GPUs etc., check the Arch wiki.
     - For NVIDIA Maxwell and newer GPUs: `pacman -S nvidia nvidia-utils nvidia-settings`.
     - (Optional) For NVIDIA CUDA (in addition to driver): `pacman -S cuda`
-    - For AMD GPUs, older NVIDIA GPUs and other GPUs, check the wiki.
 1. Avoid having to enter the encryption password twice during boot:
     1. Note: To avoid entering the password once for GRUB and then for the initramfs, we can create a keyfile and embed it into the initramfs. If the keyfile fails, it will fall back to asking for a password again.
     1. Secure the boot dir: `chmod 700 /boot`
@@ -177,7 +177,6 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 1. Add a personal user:
     1. Create the user and add it to relevant groups: `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal <user>`
     1. Set its password: `passwd <user>`
-    1. **TODO** Required to run `xdg-user-dirs-update` manually, at least before a DE/WM is installed?
     1. Relog as the new user, both to make sure that it's working and because some next steps require a non-root user.
 1. Install yay to access the AUR:
     1. Note: This needs to be done as non-root.
@@ -196,7 +195,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Increase the failed login count threshold: In `/etc/security/faillock.conf`, set `deny = 5`.
 1. Setup the local DNS resolver (systemd):
     1. Note: The systemd-resolve config is `/etc/systemd/resolved.conf`.
-    1. Configure the upstream DNS servers: In the confug, set `DNS=1.1.1.1 2606:4700:4700::1111`.
+    1. (Optional) Configure static upstream DNS servers (don't use any provided by DHCP/SLAAC): In the confug, set `DNS=1.1.1.1 2606:4700:4700::1111`.
     1. (Optional) Set the domain/search string: In the config, set `Domains=<domain>`.
     1. Enable or disable DNSSEC validation (do if the upstream servers don't): In the config, set `DNSSEC=<yes|no>`.
     1. Enable and start it: `systemctl enable --now systemd-resolved`
@@ -388,7 +387,7 @@ Avoid creating an unencrypted swap partition. Just use a swap file in the (encry
 
 File: `/etc/systemd/network/eno1.network` (example)
 
-This example sets up interface `eno1` (the main interface, see `ip a`) to use DHCPv4 and SLAAC/DHCPv6.
+This example sets up interface `eno1` (the main interface, see `ip a`) to use DHCPv4 and SLAAC/DHCPv6. The `DHCP` and `IPV6ACCEPTRA` sections are optional, the default values are typically fine.
 
 ```
 [Match]
@@ -396,6 +395,16 @@ Name=eno1
 
 [Network]
 DHCP=yes
+
+[DHCP]
+UseDNS=yes
+UseNTP=no
+UseHostname=no
+UseDomains=yes
+
+[IPV6ACCEPTRA]
+UseDNS=yes
+UseDomains=yes
 ```
 
 #### Polybar Launch Script
