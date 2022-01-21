@@ -324,9 +324,15 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Install: `yay -S polybar-spotify-git`
     1. In the Polybar config (`~/.config/polybar/config`), add a module `spotify` (see config snipper below) and add it to some bar module section.
 
-### Setup Multiple Displays
+### Setup Multiple Displays and Stuff
 
-**TODO**
+1. (Example) Try `xrandr`:
+    1. (Note) Changes made using the command line are not persistent.
+    1. Show current config: `xrandr`
+    1. (Note) The resolution with `+` is the oreferred and the one with `*` is the active one.
+    1. Activate/update a display: `xrandr --output <display> [--primary] [--right-of <other-display>] [--rotate left] --auto` (auto selects the preferred resolution and frame rate)
+    1. Deactivate a display: `xrandr --output <display> --off`
+1. **TODO** Persistent config in Xorg.
 
 ### Setup Audio
 
