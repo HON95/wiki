@@ -268,14 +268,12 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
         - Update the panel modules in the `modules-{left,center,right}` variables.
     1. Create a startup script: See the section below to use the new "main" bar.
     1. Add to i3: In the i3 config, add `exec_always --no-startup-id $HOME/.config/polybar/launch.sh`.
-1. Setup the some terminal emulator:
-    1. (Alternative) Setup xfce4-terminal (GUI config, copy-paste, just works):
-        1. Install: `pacman -S xfce4-terminal`
-        1. Update font (example): Install `ttf-hack`, restart the terminal, and change to "Hack" size 10.
-    1. (Alternative) Install urxvt (ugly and useless by default but very customizable and extendable):
-        1. Install: `pacman -S rxvt-unicode`
-        1. Fix the ugliness and uselessness.
-    1. Setup i3: In the i3 config, replace the `bindsym $mod+Return` line with `bindsym $mod+Return exec <terminal>`
+1. Setup the Alacritty terminal emulator (or some other):
+    1. Install: `pacman -S alacritty`
+    1. Create the config dir: `mkdir ~/.config/alacritty/`
+    1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.yml -o ~/.config/alacritty/dracula.yml`
+    1. Configure: Setup `~/.config/alacritty/alacritty.yml`, see the example config below.
+    1. Setup i3: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
 1. Setup the Rofi application launcher:
     1. Install: `pacman -S rofi`
     1. Install rofimoji for emoji menu: `pacman -S rofimoji xdotool`
@@ -405,6 +403,22 @@ UseDomains=yes
 [IPV6ACCEPTRA]
 UseDNS=yes
 UseDomains=yes
+```
+
+#### Alacritty Config
+
+File: `~/.config/alacritty/alacritty.yml`
+
+```yaml
+font:
+  # normal:
+  #   family: MesloLGS NF
+  #   style: Regular
+  size: 10
+
+import:
+  # Theme
+  - ~/.config/alacritty/dracula.yml
 ```
 
 #### Polybar Launch Script
