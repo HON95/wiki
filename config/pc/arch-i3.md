@@ -56,7 +56,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 1. Verify the (UEFI) boot mode:
     1. Check `efivar --list` or `ls /sys/firmware/efi/efivars`. If either exists, it's in UEFI mode.
 1. Setup networking:
-    1. Note: For cabled Ethernet with DHCP, it should already be working. For WLAN or exotic setups, check the wiki.
+    1. (Note) For cabled Ethernet with DHCP, it should already be working. For WLAN or exotic setups, check the wiki.
     1. Test it somehow (e.g. with `ping` or `curl`).
 1. Setup time:
     1. Enable NTP: `timedatectl set-ntp true`
@@ -78,11 +78,11 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 1. Format the ESP:
     1. `mkfs.fat -F32 /dev/<partition-1>`
 1. Create encrypted root volume:
-    1. Note: GRUB has limited support for LUKS2, so use LUKS1.
+    1. (Note) GRUB has limited support for LUKS2, so use LUKS1.
     1. Check which cryptohash and encryption algorithms are fastest on the system: `cryptsetup benchmark`
     1. Create: `cryptsetup luksFormat --type=luks1 --use-random -h sha256 -i 5000 -c aes-xts-plain64 -s 256 /dev/<partition-2>` (example parameters)
     1. Enter the password to unlock the system during boot.
-    1. Note: See the step way down for avoiding entering the password twice during boot.
+    1. (Note) See the step way down for avoiding entering the password twice during boot.
 1. Unlock the encrypted root volume:
     1. `cryptsetup luksOpen /dev/<partition> crypt_root` (for example name `crypt_root`)
 1. Format the root volume:
@@ -151,11 +151,11 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Upgrade: `pacman -Syu`
     1. Install useful tools: `pacman -S --needed most zsh vim man-db man-pages htop bash-completion p7zip git jq rsync openssh tmux screen reflector`
 1. Install display driver:
-    - Note: For AMD GPUs, Intel GPUs, older NVIDIA GPUs etc., check the Arch wiki.
+    - (Note) For AMD GPUs, Intel GPUs, older NVIDIA GPUs etc., check the Arch wiki.
     - For NVIDIA Maxwell and newer GPUs: `pacman -S nvidia nvidia-utils nvidia-settings`.
     - (Optional) For NVIDIA CUDA (in addition to driver): `pacman -S cuda`
 1. Avoid having to enter the encryption password twice during boot:
-    1. Note: To avoid entering the password once for GRUB and then for the initramfs, we can create a keyfile and embed it into the initramfs. If the keyfile fails, it will fall back to asking for a password again.
+    1. (Note) To avoid entering the password once for GRUB and then for the initramfs, we can create a keyfile and embed it into the initramfs. If the keyfile fails, it will fall back to asking for a password again.
     1. Secure the boot dir: `chmod 700 /boot`
     1. Generate keyfile:
         1. `mkdir -p /root/.keys && chmod 700 /root/.keys`
@@ -168,7 +168,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Update GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
     1. Reboot to make sure it works. If not, it should fall back to the extra password prompt.
 1. Setup sudo:
-    1. Note: Both the `wheel` and `sudo` groups are commonly used for giving sudo access, but I personally prefer `sudo` since `wheel` _may_ also be used by polkit rules, su (`pam_wheel`), etc.
+    1. (Note) Both the `wheel` and `sudo` groups are commonly used for giving sudo access, but I personally prefer `sudo` since `wheel` _may_ also be used by polkit rules, su (`pam_wheel`), etc.
     1. Install: `pacman -S sudo`
     1. Add the sudo group: `groupadd -r sudo`
     1. Enter the config: `EDITOR=vim visudo`
@@ -179,8 +179,8 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Set its password: `passwd <user>`
     1. Relog as the new user, both to make sure that it's working and because some next steps require a non-root user.
 1. Install yay to access the AUR:
-    1. Note: This needs to be done as non-root.
-    1. Install requirements: `pacman -S --needed base-devel git`
+    1. (Note) This needs to be done as non-root.
+    1. Install requirements: `sudo pacman -S --needed base-devel git`
     1. Clone and enter: `git clone https://aur.archlinux.org/yay.git && cd yay`
     1. Install: `makepkg -si`
     1. Remove the tmp. repo: `cd .. && rm -rf yay`
@@ -190,11 +190,11 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Add `numlock` to the `HOOKS` list in `/etc/mkinitcpio.conf` before `encrypt` (assuming the system is encrypted) (e.g. before `modconf`).
     1. Regenerate the initramfs: `mkinitcpio -P`
 1. Tweak the PAM login faillock:
-    1. Note: It applies to password logins only, not SSH keys.
-    1. Note: To unlock a user, run `faillock --reset --user <user>`.
+    1. (Note) It applies to password logins only, not SSH keys.
+    1. (Note) To unlock a user, run `faillock --reset --user <user>`.
     1. Increase the failed login count threshold: In `/etc/security/faillock.conf`, set `deny = 5`.
 1. Setup the local DNS resolver (systemd):
-    1. Note: The systemd-resolve config is `/etc/systemd/resolved.conf`.
+    1. (Note) The systemd-resolve config is `/etc/systemd/resolved.conf`.
     1. (Optional) Configure static upstream DNS servers (don't use any provided by DHCP/SLAAC): In the confug, set `DNS=1.1.1.1 2606:4700:4700::1111`.
     1. (Optional) Set the domain/search string: In the config, set `Domains=<domain>`.
     1. Enable or disable DNSSEC validation (do if the upstream servers don't): In the config, set `DNSSEC=<yes|no>`.
@@ -202,7 +202,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Setup `resolv.conf`: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
     1. Check: `curl google.com`
 1. Setup the NTP client (systemd):
-    1. Note: The default server pool is fine.
+    1. (Note) The default server pool is fine.
     1. Enable: `timedatectl set-ntp true`
     1. Check: `timedatectl` (see the "synchronized" field)
 1. Setup firewall (IPTables):
@@ -215,7 +215,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 
 ### Setup the Xorg Display Server
 
-1. Install: `pacman -S xorg-server xorg-xinit xorg-xrandr`
+1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr`
 1. Fix the keyboard layout for X11: `sudo localectl set-x11-keymap <keymap>` (e.1. `no`)
 
 ### Setup the LightDM or Ly Display Manager
@@ -225,41 +225,42 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
 #### LightDM
 
 1. Setup LightDM:
-    1. Note: User-local configuration/profile-stuff should be placed in `~/.xprofile`.
-    1. Install: `pacman -S lightdm`
+    1. (Note) User-local configuration/profile-stuff should be placed in `~/.xprofile`.
+    1. Install: `sudo pacman -S lightdm`
     1. Enable: `systemctl enable lightdm`
 1. Setup the LightDM GTK+ greeter (aka login screen) (one of many):
-    1. Note: The GTK+ greeter may be configured in `/etc/lightdm/lightdm-gtk-greeter.conf` or using the `lightdm-gtk-greeter-settings` GUI.
-    1. Install: `pacman -S lightdm-gtk-greeter`
+    1. (Note) The GTK+ greeter may be configured in `/etc/lightdm/lightdm-gtk-greeter.conf` or using the `lightdm-gtk-greeter-settings` GUI.
+    1. Install: `sudo pacman -S lightdm-gtk-greeter`
     1. Set it as the default: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-session=lightdm-gtk-greeter`.
     1. (Optional) Set the background: In `/etc/lightdm/lightdm-gtk-greeter.conf`, under the `[greeter]` section, set `background=<image-path>`. The `/usr/share/pixmaps` dir is recommended for storing backgrounds.
 1. Enable numlock on by default in X11:
-    1. Install: `pacman -S numlockx`
+    1. Install: `sudo pacman -S numlockx`
     1. Configure: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-setup-script=/usr/bin/numlockx on`.
 
 #### Ly
 
 1. Setup Ly:
-    1. Note: The config file is `/etc/ly/config.ini`.
+    1. (Note) The config file is `/etc/ly/config.ini`.
     1. Install: `yay -S ly`
     1. Enable: `systemctl enable ly`
     1. Add fire background: In the config, set `animate = true` and `hide_borders = true`.
 1. Enable numlock on by default in X11:
-    1. Install: `pacman -S numlockx`
+    1. Install: `sudo pacman -S numlockx`
     1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
 
 ### Setup the i3 Window Manager and Stuff
 
 1. Install i3:
-    1. Note: The "gaps" part will be set up later, i3-gaps will work just like plain i3 for now.
-    1. Install: `pacman -S i3-gaps`
+    1. (Note) The "gaps" part will be set up later, i3-gaps will work just like plain i3 for now.
+    1. Install: `sudo pacman -S i3-gaps`
 1. Setup the Polybar system bar:
-    1. Note: i3bar, the default i3 system bar, shows workspaces and tray icons. It can include extra info like IP addresses and resource usage using i3status or i3blocks. Polybar is a replacement for i3bar.
+    1. (Note) i3bar, the default i3 system bar, shows workspaces and tray icons. It can include extra info like IP addresses and resource usage using i3status or i3blocks. Polybar is a replacement for i3bar.
     1. Disable i3bar: Comment the whole `bar` section of the i3 config.
     1. Install polybar: `yay -S polybar`
     1. Create the config: `mkdir ~/.config/polybar && cp /usr/share/doc/polybar/config ~/.config/polybar/config`
     1. Customize config:
         - Rename the "example" bar to e.g. "main" (or create one from scratch).
+        - Set the font: In the bar section, remove the existing `font-<n>` statements. Set `font0 = <family>:style=<s>:size=<n>;<vertical-offset>` (e.g. `font-0 = "MesloLGS NF:style=Regular:size=9;2"`). Use `fc-list | grep <font-name>` (the part after the first colon) to search for fonts. Make sure to use a Unicode-compatible font (which the default may not be.
         - For the bar, set `bottom = true` to move it to the bottom.
         - For the bar, comment `radius` to disable rounded corners.
         - For the bar, comment `border-size` to disable the padding/border around the bar.
@@ -269,14 +270,15 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Create a startup script: See the section below to use the new "main" bar.
     1. Add to i3: In the i3 config, add `exec_always --no-startup-id $HOME/.config/polybar/launch.sh`.
 1. Setup the Alacritty terminal emulator (or some other):
-    1. Install: `pacman -S alacritty`
+    1. Install: `sudo pacman -S alacritty`
     1. Create the config dir: `mkdir ~/.config/alacritty/`
     1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.yml -o ~/.config/alacritty/dracula.yml`
     1. Configure: Setup `~/.config/alacritty/alacritty.yml`, see the example config below.
     1. Setup i3: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
+    1. (Note) Press `Ctrl+Shift+Space` to enter vi mode, allowing you to e.g. move around (and scroll up) using arrow keys and select text using `V` or `Shift+V`. Press `Ctrl+Shift+Space` again to exit.
 1. Setup the Rofi application launcher:
-    1. Install: `pacman -S rofi`
-    1. Install rofimoji for emoji menu: `pacman -S rofimoji xdotool`
+    1. Install: `sudo pacman -S rofi`
+    1. Install rofimoji for emoji menu: `sudo pacman -S rofimoji xdotool`
     1. Find a theme interactively (without selecting any): `rofi-theme-selector` (e.g. `glue_pro_blue`)
     1. Configure Rofi: Create `~/.config/rofi/config.rasi`, see the example below.
     1. Configure Rofimoji: Create `~/.config/rofimoji.rc` and set `action = copy` (copy to clipboard by default).
@@ -285,7 +287,7 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Setup i3 window shortcut: In the i3 config, set `bindsym $mod+shift+d exec rofi -show window`.
     1. Setup i3 emoji shortcut: In the i3 config, set `bindsym $mod+mod1+d exec rofi -modi "emoji:rofimoji" -show emoji`.
 1. Setup fonts:
-    1. `pacman -S noto-fonts notn-fonts-emoji`
+    1. `sudo pacman -S noto-fonts notn-fonts-emoji`
 1. (Optional) Test the display server, display manager and and window manager:
     1. Restart LightDM/Ly and get pulled into it: `systemctl restart lightdm` or `[...] ly`
     1. Select the i3 WM and log in.
@@ -295,7 +297,7 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Test i3: `Mod+Return` to open terminal, `Mod+D` to open app launcher, etc.
 1. Setup background image:
     1. Download a desktop image.
-    1. Install the FEH image viewer: `pacman -S feh`
+    1. Install the FEH image viewer: `sudo pacman -S feh`
     1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/mc.jpg` (example image).
 1. (Optional) Disable mouse hover window focus (you can still click windows to focus):
     1. In the i3 config, set `focus_follows_mouse no`.
@@ -303,19 +305,19 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Disable window title bar (required): In the i3 config, add `for_window [class=".*"] border pixel 4` to only show the border and no title bar, or `0` to remove the border too.
     1. Add gaps around windows: In the i3 config, add `gaps inner 8`.
 1. Install clipboard manager:
-    1. `pacman -S xsel`
+    1. `sudo pacman -S xsel`
 1. Setup media keys:
-    1. Note: Install e.g. Spotify (`aur/spotify`) to test with.
-    1. Install the playerctl utility for easy control: `pacman -S playerctl`
+    1. (Note) Install e.g. Spotify (`aur/spotify`) to test with.
+    1. Install the playerctl utility for easy control: `sudo pacman -S playerctl`
     1. Add the following to the i3 config: See the i3 media keys config snippet below.
 1. Tweak audio volume keys:
-    1. Install `pamixer` (like ALSA's `amixer` but for PulseAudio): `pacman -S pamixer`
+    1. Install `pamixer` (like ALSA's `amixer` but for PulseAudio): `sudo pacman -S pamixer`
     1. Open the i3 config and find the `bindsym XF86AudioRaiseVolume` and similar lines.
     1. See the config i3 volume keys snippet below.
 1. Setup screen locking:
     1. **TODO** Multi-monitor support? Haven't tested yet.
     1. Install the `i3lock-fancy` screen locker: `yay -S i3lock-fancy-git`
-    1. Install the `xss-lock` automatic locker trigger: `pacman -S xss-lock`
+    1. Install the `xss-lock` automatic locker trigger: `sudo pacman -S xss-lock`
     1. Update i3 to use `i3lock-fancy`: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock-fancy --nofork`. i3 needs to be completely restarted for this to start.
     1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id i3lock-fancy --nofork`. This may conflict with some `focus` keybinds you probably don't need, so just remove those.
 1. Setup a Spotify module for Polybar:
@@ -331,10 +333,10 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
 Note: We're using the PipeWire sound server, a modern, security-focused and compatible replacement for both PulseAudio and JACK.
 
 1. Install ALSA stuff:
-    1. Note: ALSA itself is already provided as built-in kernel modules and ALSA drivers will just work.
-    1. Install ALSA utils and firmware: `pacman -S alsa-utils alsa-firmware`
+    1. (Note) ALSA itself is already provided as built-in kernel modules and ALSA drivers will just work.
+    1. Install ALSA utils and firmware: `sudo pacman -S alsa-utils alsa-firmware`
 1. Install PipeWire (including WirePlumber and adapters):
-    1. Install: `pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack pipewire-v4l2 wireplumber pavucontrol`
+    1. Install: `sudo pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack pipewire-v4l2 wireplumber pavucontrol`
     1. Start the PulseAudio adapter (to avoid relogging): `systemctl start --user pipewire-pulse`
 1. Configure inputs and outputs:
     1. Run `pavucontrol` to configure volumes, inputs, outputs and stuff.
@@ -342,7 +344,7 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
     1. Try playing something from the browser or whatever. It should work.
 1. **TODO** Bluetooth support. Check the PipeWire page.
 1. Install useful audio applications:
-    1. Install the Helvum patchbay to patch nodes and endpoints (inputs and outputs for all audio devices): `pacman -S helvum`
+    1. Install the Helvum patchbay to patch nodes and endpoints (inputs and outputs for all audio devices): `sudo pacman -S helvum`
     1. See the [PipeWire page (Arch Wiki)](https://wiki.archlinux.org/title/PipeWire).
 
 ### Setup Applications
@@ -352,19 +354,50 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
 1. Setup ZSH:
     1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
 1. Setup the VLC video and audio player:
-    1. `pacman -S vlc`
+    1. `sudo pacman -S vlc`
 1. Setup the Mirage image viewer:
     1. `yay -S mirage`
 1. Setup the Thunar graphical file manager:
-    1. `pacman -S thunar`
+    1. `sudo pacman -S thunar`
 1. Setup the Ranger terminal file explorer:
-    1. `pacman -S ranger`
+    1. `sudo pacman -S ranger`
 1. Setup the VS Code text editor/IDE:
-    1. `pacman -S code`
+    1. `sudo pacman -S code`
 1. Setup the LibreOffice office document suite:
-    1. `pacman -S libreoffice-fresh`
+    1. `sudo pacman -S libreoffice-fresh`
 
-### Extra steps (Optional)
+### Setup Bluetooth
+
+1. (Note) Make sure `rfkill` or some hardware switch isn't disabling/blocking the adapter.
+1. Setup the base stack:
+    1. (Note) The canonical Bluetooth implementation is BlueZ.
+    1. Install: `sudo pacman -S bluez bluez-utils`
+    1. Enable and start: `sudo systemctl enable --now bluetooth.service`
+    1. (Optional) Allow users to use Bluetooth networking or something: Add the users to the `lp` group.
+    1. (Optional) Enable auto power-on after boot and resume: In `/etc/bluetooth/main.conf`, in the `Policy` section, set `AutoEnable = true`.
+1. Setup audio:
+    1. (Note) Using PipeWire and its PulseAudio adapter (`pipewire-pulse`), which should already have been set up and includes support for Bluetooth.
+1. **TODO** See https://wiki.archlinux.org/title/bluetooth_headset
+1. Setup Blueman:
+    1. (Note) Blueman is a Bluetooth manager with a practical tray icon.
+    1. Install: `pacman -S blueman`
+    1. (Optional) Try to run it. It's the "Bluetooth Manager" entry in e.g. Rofi.
+1. (Example) Connect a device using `bluetoothctl`:
+    1. Note: To avoid entering the interactive TUI and run single commands instead, use `bluetoothctl -- <cmd>`.
+    1. Enter the TUI: `bluetoothctl`
+    1. (Optional) Select a controller: `select <mac>`
+    1. Enable the controller: `power on`
+    1. Enable scanning: `scan on`
+    1. List available devices: `devices`'
+    1. Enable the pairing agent: `agent on`
+    1. Set the agent as default: `default-agent`
+    1. Pair with device: `pair <mac>`
+    1. Trust it, maybe (**TODO** required?): `trust <mac>`
+    1. Connect to device: `connect <mac>`
+    1. Disable scanning (**TODO** required?): `scan off`
+    1. Exit: `Ctrl+D`
+
+### Extra (Optional)
 
 - Setup secure boot using your own keys.
 
@@ -414,7 +447,7 @@ font:
   # normal:
   #   family: MesloLGS NF
   #   style: Regular
-  size: 10
+  size: 9
 
 import:
   # Theme
@@ -454,7 +487,7 @@ file: `~/.config/rofi/config.rasi`
 
 ```
 configuration {
-    font: "hack 12";
+    font: "MesloLGS NF 10";
 }
 @theme "glue_pro_blue"
 ```
