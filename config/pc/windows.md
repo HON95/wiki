@@ -81,13 +81,17 @@ breadcrumbs:
 
 ### Setup
 
-1. See: [Windows Subsystem for Linux Installation Guide for Windows 10 (Microsoft Docs)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
-    - The "manual install" method.
-    - You may need to reboot in-between certain steps.
+1. (Note) See: [Windows Subsystem for Linux Installation Guide for Windows 10 (Microsoft Docs)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+1. Install (Ubuntu, the default):
+    1. Open the Windows command prompt or PowerShell in admin mode.
+    1. Start installer: `wsl --install`
+    1. Reboot (if and when requested).
+    1. Wait for the terminal window to open and the installation to finish.
+    1. Enter your new Linux username and password.
 1. Enable automatic kernel upgrades:
-    - Go to "Sindows updates", "advanced options" and enable "Receive updates for other Microsoft products when you update Windows".
+    1. Go to "Windows updates", "advanced options" and enable "Receive updates for other Microsoft products when you update Windows".
 1. Install a distro like Ubuntu from the Microsoft Store app.
-    - Make sure it's using WSL 2, see usage.
+    1. Make sure it's using WSL 2, see usage.
 
 ### Usage
 
