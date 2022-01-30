@@ -275,6 +275,7 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.yml -o ~/.config/alacritty/dracula.yml`
     1. Configure: Setup `~/.config/alacritty/alacritty.yml`, see the example config below.
     1. Setup i3: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
+    1. Fix `TERM` for SSH (since the remote probably don't have Alacritty terminal support): In `.zshrc` (or `.bashrc` if using BASH), set `alias ssh="TERM=xterm-256color ssh"`.
     1. (Note) Press `Ctrl+Shift+Space` to enter vi mode, allowing you to e.g. move around (and scroll up) using arrow keys and select text using `V` or `Shift+V`. Press `Ctrl+Shift+Space` again to exit.
 1. Setup the Rofi application launcher:
     1. Install: `sudo pacman -S rofi`
