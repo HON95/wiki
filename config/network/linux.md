@@ -6,8 +6,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian**, unless otherwise stated.
-
 ### Foreword
 {:.no_toc}
 
@@ -21,11 +19,12 @@ as a simple throughput test will not uncover bottlenecks related to large amount
 (which can be hard to test realistically in lab environments).
 Issues may also be related to stupid things like which ports you're using on the *same* NIC.
 
-## Related Pages
+### Related Pages
+{:.no_toc}
 
 - [Linux Server Networking](/config/linux-server/networking/)
 
-## Setup
+## Setup (Debian)
 
 (In semi-random order.)
 

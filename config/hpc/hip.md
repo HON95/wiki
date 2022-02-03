@@ -26,9 +26,7 @@ Compared to OpenCL (which is also supported by both NVIDIA and AMD), it's much m
 
 ## Setup
 
-### Linux Installation
-
-Using **Ubuntu 20.04 LTS**.
+### Linux Installation (Debian)
 
 #### Common Steps Before
 

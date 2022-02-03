@@ -6,11 +6,11 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian**, unless otherwise stated.
+Note: If not stated then it's for Debian. Some may be for CentOS (5?) and extremely outdated.
 
 ## Apache
 
-**Outdated and missing information**
+**Outdated**
 
 ### Setup
 

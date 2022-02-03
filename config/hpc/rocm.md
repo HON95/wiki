@@ -21,9 +21,7 @@ It uses the runtime API and kernel language HIP, which is compilable for both AM
 
 ## Setup
 
-### Linux Installation
-
-Using **Ubuntu 20.04 LTS**.
+### Installation (Debian)
 
 #### Notes
 

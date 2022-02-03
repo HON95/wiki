@@ -6,9 +6,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian**, unless otherwise stated.
-
-## Related Pages
+### Related Pages
+{:.no_toc}
 
 - [Linux Switching & Routing](/config/network/linux/)
 
@@ -59,7 +58,7 @@ Using **Debian**, unless otherwise stated.
 - Communication uses either channel semantics (the send/receive model, two-sided) or memory semantics (RDMA model, one-sided). It also supports a special type of memory semantics using atomic operations, which is a useful foundation for e.g. distributed locks.
 - Each subnet requires a subnet manager to be running on a switch or a host, which manages the subnet and is queryable by hosts (agents). For very large subnets, it may be appropriate to run it on a dedicated host. It assigns addresses to endpoints, manages routing tables and more.
 
-### Installation
+### Installation (Debian)
 
 1. Install RDMA: `apt install rdma-core`
 1. Install user-space RDMA stuff: `apt install ibverbs-providers rdmacm-utils infiniband-diags ibverbs-utils`

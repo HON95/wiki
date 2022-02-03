@@ -6,8 +6,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using Debian.
-
 ## Resources
 
 - (Ceph: Ceph PGs per Pool Calculator)[https://ceph.com/pgcalc/]

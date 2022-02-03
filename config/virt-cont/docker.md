@@ -6,9 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian**.
-
-## Setup
+## Setup (Debian)
 
 1. Install: [Install Docker Engine on Debian (Docker Documentation)](https://docs.docker.com/engine/install/debian/).
 1. (Optional) Setup swap limit:
@@ -101,7 +99,7 @@ Using **Debian**.
 
 ## Docker Compose
 
-### Setup
+### Setup (Debian)
 
 1. Install Docker: See above.
 1. Install: [Docker Documentation: Install Docker Compose](https://docs.docker.com/compose/install/).

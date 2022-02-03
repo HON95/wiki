@@ -9,15 +9,13 @@ breadcrumbs:
 libvirt is a tool for managing platform virtualization like KVM and QEMU (among others).
 I'll only focus on using it with KVM (and QEMU) here.
 
-Using **Debian**.
-
 ## General
 
 - Requires Intel VT or AMD-V to be enabled to function optimally.
 - Note that running commands as non-root or not in the libvirt group will generally work but will not show all VMs. etc.
 - KVM was merged into the Linux kernel mainline in kernel version 2.6.20.
 
-## Installation
+## Installation (Debian)
 
 1. Install without extra stuff (like GUIs): `apt-get install --no-install-recommends iptables bridge-utils qemu-system qemu-utils libvirt-clients libvirt-daemon-system virtinst libosinfo-bin`
 1. (Optional) Install `dnsmasq-base` for accessing guests using their hostnames.

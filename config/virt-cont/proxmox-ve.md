@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Proxmox VE 6**.
+Using **Proxmox VE 7**.
 
 ## Host
 

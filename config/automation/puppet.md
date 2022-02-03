@@ -6,8 +6,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian**.
-
 ## General
 
 - Can be run locally or as server-agent.
@@ -18,7 +16,7 @@ Using **Debian**.
 - The "catalog" contains all managed resources and the desired state, and is sent from the server to the agent on every run.
 - The server decides which classes apply to an agent either using a manifest file (`site.pp`) or using an "external node classifier" (ENC) like Foreman or Enterprise Console.
 
-## Setup
+## Setup (Debian)
 
 ### Server
 

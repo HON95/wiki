@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using ZFS on Linux (ZoL) running on Debian.
+Using ZFS on Linux (ZoL).
 
 ## Info
 
@@ -24,7 +24,7 @@ Using ZFS on Linux (ZoL) running on Debian.
     - Snapshots.
     - Extensible caching (ARC, L2ARC, SLOG, special devices).
 
-## Setup
+## Setup (Debian)
 
 ### Installation (Debian 11)
 
@@ -42,7 +42,7 @@ The backports repo is used to get the newest version of ZoL.
         ```
 1. Install: `apt install -t buster-backports zfsutils-linux`
 
-### Configuration
+### Configuration (Debian)
 
 1. Check that the cron scrub script exists:
     - Typical location: `/etc/cron.d/zfsutils-linux`
