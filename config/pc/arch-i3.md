@@ -327,13 +327,16 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
 
 ### Setup Multiple Displays and Stuff
 
-1. (Example) Try `xrandr`:
+1. (Optional) Try `xrandr` to get familiar with the displays:
     1. (Note) Changes made using the command line are not persistent.
     1. Show current config: `xrandr`
     1. (Note) The resolution with `+` is the oreferred and the one with `*` is the active one.
     1. Activate/update a display: `xrandr --output <display> [--primary] [--right-of <other-display>] [--rotate left] --auto` (auto selects the preferred resolution and frame rate)
     1. Deactivate a display: `xrandr --output <display> --off`
-1. **TODO** Persistent config in Xorg.
+1. Persistent config:
+    1. Get display output names and stuff: `xrandr`
+    1. Open `/etc/X11/xorg.conf.d/10-monitor.conf` for editing.
+    1. For each connected monitor, create a section. See below for an example.
 
 ### Setup Audio
 
@@ -497,6 +500,23 @@ configuration {
     font: "MesloLGS NF 10";
 }
 @theme "glue_pro_blue"
+```
+
+#### Xorg Displays
+
+File: `/etc/X11/xorg.conf.d/10-monitor.conf`
+
+```
+Section "Monitor"
+    Identifier "DP-4"
+    Option "Primary" "true"
+EndSection
+
+Section "Monitor"
+    Identifier "DVI-I-1"
+    Option "RightOf" "DP-4"
+    Option "Rotate" "left"
+EndSection
 ```
 
 #### i3 Media Keys
