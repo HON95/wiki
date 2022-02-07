@@ -32,6 +32,10 @@ breadcrumbs:
 
 - `urandom` VS `random`: `random` blocks when running out of entropy while `urandom` does not. For all practical purposes, `urandom` will almost never be *less random* than `random` and `random` may block at inappropriate times, so always use `urandom`.
 
+### Bugs
+
+- Environment variables from `*/environment.d/*.conf` aren't visible for login sessions when using systemd. `*/environment.conf` works, though. See [systemd#7641](https://github.com/systemd/systemd/issues/7641).
+
 ## Commands
 
 ### Executables:

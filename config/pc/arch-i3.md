@@ -92,7 +92,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt base linux linux-firmware vim sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs`
-    - **TODO** Maybe: `wpa_supplicant networkmanager`
+    - **TODO** Maybe for laptops: `wpa_supplicant networkmanager`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
     1. Check it for errors or duplicates.
@@ -212,6 +212,9 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Make it executable: `chmod +x /etc/iptables/config.sh`
     1. Modify it.
     1. Run it: `/etc/iptables/config.sh`
+1. Setup colored man pages:
+    1. Install the most pager: `sudo pacman -S most`
+    1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export pager=most`
 
 ### Setup the Xorg Display Server
 

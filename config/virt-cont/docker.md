@@ -55,6 +55,18 @@ breadcrumbs:
     - This is not recommended on servers as it effectively grants them root access without sudo.
     - Add them to the `docker` group.
 
+### Docker Compose
+
+1. Install Docker: See above.
+1. Install: [Docker Documentation: Install Docker Compose](https://docs.docker.com/compose/install/).
+1. Install command completion: [Docker Documentation: Command-line completion](https://docs.docker.com/compose/completion/).
+
+### NVIDIA Container Toolkit
+
+The toolkit is used for running CUDA applications within containers.
+
+See the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
+
 ## Usage
 
 - Docker run options:
@@ -96,41 +108,6 @@ breadcrumbs:
     - Run container with network: `docker run --network=<net-name> --ip=<ipv4-addr> --ip6=<ipv6-addr> --dns=<dns-server> [...] <image>`
 - Disable IPv4 and IPv6 NAT/masquerade for a bridge network: `docker network create <...> -o "com.docker.network.bridge.enable_ip_masquerade=false" <name>`
 - Set the Linux name of a bridge network: `docker network create <...> -o "com.docker.network.bridge.name=<name>" <name>`
-
-## Docker Compose
-
-### Setup (Debian)
-
-1. Install Docker: See above.
-1. Install: [Docker Documentation: Install Docker Compose](https://docs.docker.com/compose/install/).
-1. Install command completion: [Docker Documentation: Command-line completion](https://docs.docker.com/compose/completion/).
-
-### Troubleshooting
-
-#### Fix Docker Compose No-Exec Tmp-Dir
-
-Docker Compose will fail to work if `/tmp` is mounted with `noexec`.
-
-1. Move `/usr/local/bin/docker-compose` to `/usr/local/bin/docker-compose-normal`.
-1. Create `/usr/local/bin/docker-compose` with the contents below and make it executable.
-1. Create the new TMPDIR dir.
-
-New `docker-compose`:
-
-```sh
-#!/bin/bash
-# Some dir without noexec
-export TMPDIR=/var/lib/docker-compose-tmp
-/usr/local/bin/docker-compose-normal "$@"
-```
-
-## NVIDIA Container Toolkit
-
-The toolkit is used for running CUDA applications within containers.
-
-### Setup
-
-See the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
 
 ## Best Practices
 
@@ -182,6 +159,25 @@ See the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/con
 
 - Path MTU discovery seems to be broken in Docker networks, causing connection problems when the upstream network is using an MTU lower than 1500. Set the MTU to 1280 (the IPv6 minimum) to solve this.
 - Docker seems to forget static addresses of containers when changing network properties (**TODO** at least when using the Ansible module, maybe that's what's causing the problem). Re-up everything to fix it.
+
+## Troubleshooting
+
+### Fix Docker Compose No-Exec Tmp-Dir
+
+Docker Compose will fail to work if `/tmp` is mounted with `noexec`.
+
+1. Move `/usr/local/bin/docker-compose` to `/usr/local/bin/docker-compose-normal`.
+1. Create `/usr/local/bin/docker-compose` with the contents below and make it executable.
+1. Create the new TMPDIR dir.
+
+New `docker-compose`:
+
+```sh
+#!/bin/bash
+# Some dir without noexec
+export TMPDIR=/var/lib/docker-compose-tmp
+/usr/local/bin/docker-compose-normal "$@"
+```
 
 ## Useful Software
 
