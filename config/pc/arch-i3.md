@@ -149,7 +149,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Enable color: In `/etc/pacman.conf`, uncomment `Color`.
 1. Update the system and install useful stuff:
     1. Upgrade: `pacman -Syu`
-    1. Install useful tools: `pacman -S --needed most zsh vim man-db man-pages htop bash-completion p7zip git jq rsync openssh tmux screen reflector`
+    1. Install useful tools: `pacman -S --needed most zsh vim man-db man-pages htop bash-completion p7zip git jq rsync openssh tmux screen reflector usbutils`
 1. Install display driver:
     - (Note) For AMD GPUs, Intel GPUs, older NVIDIA GPUs etc., check the Arch wiki.
     - For NVIDIA Maxwell and newer GPUs: `pacman -S nvidia nvidia-utils nvidia-settings`.
@@ -214,7 +214,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Run it: `/etc/iptables/config.sh`
 1. Setup colored man pages:
     1. Install the most pager: `sudo pacman -S most`
-    1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export pager=most`
+    1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export PAGER=most`
 
 ### Setup the Xorg Display Server
 
@@ -362,22 +362,15 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
 
 ### Setup Applications
 
-1. Setup terminal emulator:
-    1. Already done.
-1. Setup ZSH:
-    1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
-1. Setup the VLC video and audio player:
-    1. `sudo pacman -S vlc`
-1. Setup the Mirage image viewer:
-    1. `yay -S mirage`
-1. Setup the Thunar graphical file manager:
-    1. `sudo pacman -S thunar`
-1. Setup the Ranger terminal file explorer:
-    1. `sudo pacman -S ranger`
-1. Setup the VS Code text editor/IDE:
-    1. `sudo pacman -S code`
-1. Setup the LibreOffice office document suite:
-    1. `sudo pacman -S libreoffice-fresh`
+1. Setup terminal emulator: Already done.
+1. Setup the ZSH shell: See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
+1. Setup the VLC video and audio player: `sudo pacman -S vlc`
+1. Setup the Mirage image viewer: `yay -S mirage`
+1. Setup the Thunar graphical file manager: `sudo pacman -S thunar`
+1. Setup the Ranger terminal file explorer: `sudo pacman -S ranger`
+1. Setup the VS Code text editor/IDE: `sudo pacman -S code`
+1. Setup the LibreOffice office document suite: `sudo pacman -S libreoffice-fresh`
+1. Setup the Okular PDF reader: `sudo pacman -S okular`
 
 ### Setup Bluetooth
 
@@ -392,12 +385,15 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
     1. (Note) Using PipeWire and its PulseAudio adapter (`pipewire-pulse`), which should already have been set up and includes support for Bluetooth.
 1. **TODO** See https://wiki.archlinux.org/title/bluetooth_headset
 1. Setup Blueman:
+    1. **TODO** This broke for some reason, the GUIs won't open and the tray icon won't show. I haven't bothered fixing it yet.
     1. (Note) Blueman is a Bluetooth manager with a practical tray icon.
     1. Install: `pacman -S blueman`
+    1. Enable tray icon on i3 start: In the i3 config, add `exec --no-startup-id blueman-applet`. (**TODO** Test.)
     1. (Optional) Try to run it. It's the "Bluetooth Manager" entry in e.g. Rofi.
 1. (Example) Connect a device using `bluetoothctl`:
     1. Note: To avoid entering the interactive TUI and run single commands instead, use `bluetoothctl -- <cmd>`.
     1. Enter the TUI: `bluetoothctl`
+    1. List controllers: `list`
     1. (Optional) Select a controller: `select <mac>`
     1. Enable the controller: `power on`
     1. Enable scanning: `scan on`
