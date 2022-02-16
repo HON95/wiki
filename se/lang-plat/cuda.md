@@ -312,7 +312,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - If it complains about something Qt, install `libqt5xdg3`.
 - Access to performance counters:
     - Since access to GPU performance counters are limited to protect against side channel attacks (see [Security Notice: NVIDIA Response to “Rendered Insecure: GPU Side Channel Attacks are Practical” - November 2018 (NVIDIA)](https://nvidia.custhelp.com/app/answers/detail/a_id/4738)), it must be run either with sudo (or a user with `CAP_SYS_ADMIN`), or by setting a module option which disables the protection. For non-sensitive applications (e.g. for teaching), this protection is not required. See [NVIDIA Development Tools Solutions - ERR_NVGPUCTRPERM: Permission issue with Performance Counters (NVIDIA)](https://developer.nvidia.com/nvidia-development-tools-solutions-err_nvgpuctrperm-permission-issue-performance-counters) for more info.
-    - Enable access for all users: Add `options nvidia "NVreg_RestrictProfilingToAdminUsers=0"` to e.g. `/etc/modprobe.d/nvidia.conf` and reboot.
+    - Enable access for all users: Add `options nvidia "NVreg_RestrictProfilingToAdminUsers=0"` to e.g. `/etc/modprobe.d/nvidia.conf` and reboot. You may need to run `update-initramfs -u` after editing the file and before rebooting (**TODO** verify).
 
 #### Usage
 

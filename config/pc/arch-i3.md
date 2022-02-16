@@ -369,6 +369,7 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
 1. Setup the Thunar graphical file manager: `sudo pacman -S thunar`
 1. Setup the Ranger terminal file explorer: `sudo pacman -S ranger`
 1. Setup the VS Code text editor/IDE: `sudo pacman -S code`
+    - Alternatively `visual-studio-code-bin` (AUR) for the Microsoft binary distribution with tracking and Microsoft extensions.
 1. Setup the LibreOffice office document suite: `sudo pacman -S libreoffice-fresh`
 1. Setup the Okular PDF reader: `sudo pacman -S okular`
 

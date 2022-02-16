@@ -38,6 +38,11 @@ breadcrumbs:
 
 ## Commands
 
+### AAA
+
+- Sudo:
+    - Show sudo permissions for current user: `sudo -l`
+
 ### Executables:
 
 - Show type and info: `file <executable>`

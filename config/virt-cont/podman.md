@@ -6,6 +6,13 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## TODO
+
+- CGroup driver? Similar to setting `native.cgroupdriver=systemd` for Docker to use the systemd driver instead of creating a new one.
+- Default network MTU. (Some of my networks require a lower MTU because Azure IPv6 networking sucks.)
+- Prometheus/OpenMetrics metrics.
+- Swap limit support. Similar to setting `cgroup_enable=memory swapaccount=1` for Docker.
+
 ## Setup
 
 ### Podman
@@ -61,6 +68,8 @@ breadcrumbs:
 
 ### Networking
 
+- DNS:
+    - By default, the host's DNS domainname and servers will be set in the container's `/etc/resolv.conf`.
 - IPv6:
     - Doesn't seem to be as broken/neglected as in Docker.
     - Add `--ipv6 --subnet=<subnet>/64` to enable on bridges (with NAT and firewalling, like IPv4).
