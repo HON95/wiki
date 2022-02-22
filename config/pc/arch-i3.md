@@ -310,6 +310,9 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Add gaps around windows: In the i3 config, add `gaps inner 8`.
 1. Install clipboard manager:
     1. `sudo pacman -S xsel`
+1. Setup desktop notifications:
+    1. Install the `dunst` server and the `libnotify` support library: `sudo pacman -S dunst libnotify`
+    1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
 1. Setup media keys:
     1. (Note) Install e.g. Spotify (`aur/spotify`) to test with.
     1. Install the playerctl utility for easy control: `sudo pacman -S playerctl`
