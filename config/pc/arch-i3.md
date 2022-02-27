@@ -6,7 +6,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager.
+For Arch with LUKS encrypted root (and boot), using the i3 window manager.
 
 ### Related Pages
 {:.no_toc}
@@ -149,7 +149,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Enable color: In `/etc/pacman.conf`, uncomment `Color`.
 1. Update the system and install useful stuff:
     1. Upgrade: `pacman -Syu`
-    1. Install useful tools: `pacman -S --needed most zsh vim man-db man-pages htop bash-completion p7zip git jq rsync openssh tmux screen reflector usbutils`
+    1. Install useful tools: `pacman -S --needed zsh vim man-db man-pages htop bash-completion p7zip git jq rsync openssh tmux screen reflector usbutils`
 1. Install display driver:
     - (Note) For AMD GPUs, Intel GPUs, older NVIDIA GPUs etc., check the Arch wiki.
     - For NVIDIA Maxwell and newer GPUs: `pacman -S nvidia nvidia-utils nvidia-settings`.
@@ -212,7 +212,8 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
     1. Make it executable: `chmod +x /etc/iptables/config.sh`
     1. Modify it.
     1. Run it: `/etc/iptables/config.sh`
-1. Setup colored man pages:
+1. (Optional) Setup colored man pages:
+    1. (Note) Most breaks on wide displays (e.g. UHD), so don't use it if that may be a problem.
     1. Install the most pager: `sudo pacman -S most`
     1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export PAGER=most`
 
@@ -223,9 +224,9 @@ For Arch with LUKS encrypted root (and boot), using the i3 (gaps) window manager
 
 ### Setup the LightDM or Ly Display Manager
 
-Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
+Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, not both. Ly is more minimalistic but doesn't work well with multiple monitors where you may want to specify the layout in Xorg.
 
-#### LightDM
+#### LightDM (Alternative 1)
 
 1. Setup LightDM:
     1. (Note) User-local configuration/profile-stuff should be placed in `~/.xprofile`.
@@ -240,7 +241,7 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Install: `sudo pacman -S numlockx`
     1. Configure: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-setup-script=/usr/bin/numlockx on`.
 
-#### Ly
+#### Ly (Alternative 2)
 
 1. Setup Ly:
     1. (Note) The config file is `/etc/ly/config.ini`.
@@ -253,9 +254,11 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
 
 ### Setup the i3 Window Manager and Stuff
 
+1. (Note) Some notes about i3:
+    1. Se [i3](../applications/#i3) for more personal notes about i3.
+    1. Use `Mod+Shift+R` to reload the i3 config. Note that `exec_always` statements will be run again during reload but `exec` will only run when starting i3.
 1. Install i3:
-    1. (Note) The "gaps" part will be set up later, i3-gaps will work just like plain i3 for now.
-    1. Install: `sudo pacman -S i3-gaps`
+    1. Install: `sudo pacman -S i3-wm`
 1. Setup the Polybar system bar:
     1. (Note) i3bar, the default i3 system bar, shows workspaces and tray icons. It can include extra info like IP addresses and resource usage using i3status or i3blocks. Polybar is a replacement for i3bar.
     1. Disable i3bar: Comment the whole `bar` section of the i3 config.
@@ -302,10 +305,12 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
 1. Setup background image:
     1. Download a desktop image.
     1. Install the FEH image viewer: `sudo pacman -S feh`
-    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/mc.jpg` (example image).
+    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/background.jpg` (example).
 1. (Optional) Disable mouse hover window focus (you can still click windows to focus):
     1. In the i3 config, set `focus_follows_mouse no`.
-1. Setup i3 gaps:
+1. (Optional) Setup i3 gaps:
+    1. (Note) Requires i3-gaps instead of normal i3, which should work as a drop-in replacement with more options.
+    1. Replace i3 with i3-gaps: `sudo pacman -S i3-gaps` (then replace i3-wm with i3-gaps)
     1. Disable window title bar (required): In the i3 config, add `for_window [class=".*"] border pixel 4` to only show the border and no title bar, or `0` to remove the border too.
     1. Add gaps around windows: In the i3 config, add `gaps inner 8`.
 1. Install clipboard manager:
@@ -322,27 +327,35 @@ Note: Install either the LightDM (GUI) or Ly (TUI) display manager, not both.
     1. Open the i3 config and find the `bindsym XF86AudioRaiseVolume` and similar lines.
     1. See the config i3 volume keys snippet below.
 1. Setup screen locking:
-    1. **TODO** Multi-monitor support? Haven't tested yet.
-    1. Install the `i3lock-fancy` screen locker: `yay -S i3lock-fancy-git`
-    1. Install the `xss-lock` automatic locker trigger: `sudo pacman -S xss-lock`
-    1. Update i3 to use `i3lock-fancy`: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- i3lock-fancy --nofork`. i3 needs to be completely restarted for this to start.
-    1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id i3lock-fancy --nofork`. This may conflict with some `focus` keybinds you probably don't need, so just remove those.
+    1. Install the `i3lock-color` screen locker: `yay -S i3lock-color`
+    1. Install the the `xss-lock` automatic locker: `sudo pacman -S xss-lock`
+    1. Set a variable to run i3lock in i3: In the i3 config, before anything i3lock related, set e.g. `set $i3lock i3lock --nofork --ignore-empty-password --pass-media-keys`, to avoid repetition.
+    1. (Optional) Specify an i3lock background image: To the above command, add e.g. `--image Pictures/background.png`.
+    1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id $i3lock`. This may conflict with some `focus` keybinds you probably don't need, so just remove those (i3 will tell you about it if you don't remove them).
+    1. Update i3 for automatic locking: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- $i3lock`. (Test with `loginctl lock-session` after restarting or relogging.)
 1. Setup a Spotify module for Polybar:
     1. Install: `yay -S polybar-spotify-git`
     1. In the Polybar config (`~/.config/polybar/config`), add a module `spotify` (see config snipper below) and add it to some bar module section.
 
-### Setup Multiple Displays and Stuff
+### Setup Xorg Multi-Display and Stuff
 
-1. (Optional) Try `xrandr` to get familiar with the displays:
+1. (Note) The Xorg configs are only read when the server is started, meaning you practically need to restart the system (or relog if using a non-X11 display manager) to apply new configuration.
+1. (Note) Query current Xorg settings: `xset q`
+1. (Optional) Try `xrandr` to get try display layouts and stuff:
     1. (Note) Changes made using the command line are not persistent.
     1. Show current config: `xrandr`
     1. (Note) The resolution with `+` is the oreferred and the one with `*` is the active one.
     1. Activate/update a display: `xrandr --output <display> [--primary] [--right-of <other-display>] [--rotate left] --auto` (auto selects the preferred resolution and frame rate)
     1. Deactivate a display: `xrandr --output <display> --off`
-1. Persistent config:
-    1. Get display output names and stuff: `xrandr`
-    1. Open `/etc/X11/xorg.conf.d/10-monitor.conf` for editing.
-    1. For each connected monitor, create a section. See below for an example.
+1. Setup persistent layout config:
+    1. See the example Xorg displays config below.
+        - For each connected monitor, create a separate section.
+        - Run `xrandr` to get display IDs.
+        - Make sure to have exactly one display with `Option "Primary" "true"`.
+1. Setup display power management signaling (DPMS):
+    1. See the example Xorg DPMS config below.
+        - For non-CRT displays, the standby, suspend and off modes typically mean the same thing.
+        - DPMS is enabled by default in recent Xorg, but it can be explicitly enabled by setting `Option "DPMS" "true"` in a monitor section.
 
 ### Setup Audio
 
@@ -369,6 +382,7 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
 1. Setup the ZSH shell: See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
 1. Setup the VLC video and audio player: `sudo pacman -S vlc`
 1. Setup the Mirage image viewer: `yay -S mirage`
+1. Setup the GIMP image editor: `sudo pacman -S gimp`
 1. Setup the Thunar graphical file manager: `sudo pacman -S thunar`
 1. Setup the Ranger terminal file explorer: `sudo pacman -S ranger`
 1. Setup the VS Code text editor/IDE: `sudo pacman -S code`
@@ -505,7 +519,7 @@ configuration {
 @theme "glue_pro_blue"
 ```
 
-#### Xorg Displays
+#### Xorg Monitors
 
 File: `/etc/X11/xorg.conf.d/10-monitor.conf`
 
@@ -522,6 +536,28 @@ Section "Monitor"
 EndSection
 ```
 
+#### Xorg DPMS
+
+File: `/etc/X11/xorg.conf.d/20-dpms.conf`
+
+```
+Section "ServerFlags"
+    # In minutes, 0 to disable
+    Option "StandbyTime" "0"
+    Option "SuspendTime" "0"
+    Option "OffTime" "30"
+    Option "BlankTime" "0"
+EndSection
+```
+
+Alternatively, to disable DPMS completely:
+
+```
+Section "Extensions"
+    Option "DPMS" "Disable"
+EndSection
+```
+
 #### i3 Media Keys
 
 File: `~/.config/i3/config`
@@ -531,6 +567,7 @@ Requires `community/playerctl`.
 ```
 # Media keys
 bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
+bindsym XF86AudioPause exec --no-startup-id playerctl play-pause
 bindsym XF86AudioStop exec --no-startup-id playerctl stop
 bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym XF86AudioNext exec --no-startup-id playerctl next
