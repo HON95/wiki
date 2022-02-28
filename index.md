@@ -124,13 +124,14 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Network
 
-- [IPv4](/it/network/ipv4/)
-- [IPv6](/it/network/ipv6/)
+- [IPv4 Theory](/it/network/ipv4/)
+- [IPv6 Theory](/it/network/ipv6/)
 - [Network Architecture](/it/network/architecture/)
-- [Switching](/it/network/switching/)
-- [Routing](/it/network/routing/)
+- [Routing Theory](/it/network/routing/)
+- [BGP](/it/network/bgp/)
+- [Switching Theory](/it/network/switching/)
 - [Wireless Basics](/it/network/wireless-basics/)
-- [WLAN](/it/network/wlan/)
+- [WLAN Theory](/it/network/wlan/)
 
 ### Services
 

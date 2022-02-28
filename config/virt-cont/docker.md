@@ -65,7 +65,10 @@ breadcrumbs:
 
 The toolkit is used for running CUDA applications within containers.
 
-See the [installation guide](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker).
+1. Add the repo: See the [installation guide](https://nvidia.github.io/nvidia-container-runtime).
+1. Install: `apt install nvidia-container-toolkit` (not `nvidia-docker2`)
+1. Fix [an ldconfig bug](https://github.com/NVIDIA/nvidia-docker/issues/1399) (Debian 11): In `/etc/nvidia-container-runtime/config.toml`, under the `nvidia-container-cli` section, set `ldconfig = "/sbin/ldconfig"` (remove the `@` prefix).
+1. Test: `docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi`
 
 ## Usage
 
