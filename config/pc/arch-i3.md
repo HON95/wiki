@@ -376,37 +376,6 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
     1. Install the Helvum patchbay to patch nodes and endpoints (inputs and outputs for all audio devices): `sudo pacman -S helvum`
     1. See the [PipeWire page (Arch Wiki)](https://wiki.archlinux.org/title/PipeWire).
 
-### Setup Applications
-
-1. Setup terminal emulator:
-    1. Already done.
-1. Setup the ZSH shell:
-    1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
-1. Setup the VLC video and audio player:
-    1. `sudo pacman -S vlc`
-1. Setup the Mirage image viewer:
-    1. `yay -S mirage`
-1. Setup the GIMP image editor:
-    1. `sudo pacman -S gimp`
-1. Setup the Thunar graphical file manager:
-    1. `sudo pacman -S thunar`
-1. Setup the Ranger terminal file explorer:
-    1. `sudo pacman -S ranger`
-1. Setup the VS Code text editor/IDE:
-    1. (Alternative 1) Install the Arch-built: `sudo pacman -S code`
-    1. (Alternative 2) Install the Microsoft binary distribution with tracking and Microsoft extensions: `yay -S visual-studio-code-bin`
-1. Setup the LibreOffice office document suite:
-    1. `sudo pacman -S libreoffice-fresh`
-1. Setup the Okular PDF reader:
-    1. `sudo pacman -S okular`
-1. Setup the screenshot tool Maim (for keybinds and easy CLI usage):
-    1. Install: `sudo pacman -S maim`
-    1. Setup i3 keybinds: See the i3 config snippet below.
-1. Setup the screenshot tool Flameshot (for GUI and on-screen editing):
-    1. Install: `sudo pacman -S flameshot`
-    1. (Usage) Start the tray icon: Run the "Fireshot" desktop application.
-    1. (Usage) Directly open the capture GUI from the terminal: `fireshot gui`
-
 ### Setup Bluetooth
 
 1. (Note) Make sure `rfkill` or some hardware switch isn't disabling/blocking the adapter.
@@ -440,6 +409,39 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
     1. Connect to device: `connect <mac>`
     1. Disable scanning (**TODO** required?): `scan off`
     1. Exit: `Ctrl+D`
+
+### Setup Applications
+
+1. Setup terminal emulator:
+    1. Already done.
+1. Setup the ZSH shell:
+    1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
+1. Setup the VLC video and audio player:
+    1. `sudo pacman -S vlc`
+1. Setup the Mirage image viewer:
+    1. `yay -S mirage`
+1. Setup the GIMP image editor:
+    1. `sudo pacman -S gimp`
+1. Setup the Thunar graphical file manager:
+    1. `sudo pacman -S thunar`
+1. Setup the Ranger terminal file explorer:
+    1. `sudo pacman -S ranger`
+1. Setup the VS Code text editor/IDE:
+    1. (Alternative 1) Install the Arch-built: `sudo pacman -S code`
+    1. (Alternative 2) Install the Microsoft binary distribution with tracking and Microsoft extensions: `yay -S visual-studio-code-bin`
+1. Setup the LibreOffice office document suite:
+    1. `sudo pacman -S libreoffice-fresh`
+1. Setup the Okular PDF reader:
+    1. `sudo pacman -S okular`
+1. Setup the screenshot tool Maim (for keybinds and easy CLI usage):
+    1. Install: `sudo pacman -S maim`
+    1. Setup i3 keybinds: See the i3 config snippet below.
+1. Setup the screenshot tool Flameshot (for GUI and on-screen editing):
+    1. Install: `sudo pacman -S flameshot`
+    1. (Usage) Start the tray icon: Run the "Fireshot" desktop application.
+    1. (Usage) Directly open the capture GUI from the terminal: `fireshot gui`
+1. Setup the 7-Zip graphical archiver:
+    1. `pacman -S p7zip`
 
 ### Extra (Optional)
 
