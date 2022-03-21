@@ -378,17 +378,34 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
 
 ### Setup Applications
 
-1. Setup terminal emulator: Already done.
-1. Setup the ZSH shell: See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
-1. Setup the VLC video and audio player: `sudo pacman -S vlc`
-1. Setup the Mirage image viewer: `yay -S mirage`
-1. Setup the GIMP image editor: `sudo pacman -S gimp`
-1. Setup the Thunar graphical file manager: `sudo pacman -S thunar`
-1. Setup the Ranger terminal file explorer: `sudo pacman -S ranger`
-1. Setup the VS Code text editor/IDE: `sudo pacman -S code`
-    - Alternatively `visual-studio-code-bin` (AUR) for the Microsoft binary distribution with tracking and Microsoft extensions.
-1. Setup the LibreOffice office document suite: `sudo pacman -S libreoffice-fresh`
-1. Setup the Okular PDF reader: `sudo pacman -S okular`
+1. Setup terminal emulator:
+    1. Already done.
+1. Setup the ZSH shell:
+    1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
+1. Setup the VLC video and audio player:
+    1. `sudo pacman -S vlc`
+1. Setup the Mirage image viewer:
+    1. `yay -S mirage`
+1. Setup the GIMP image editor:
+    1. `sudo pacman -S gimp`
+1. Setup the Thunar graphical file manager:
+    1. `sudo pacman -S thunar`
+1. Setup the Ranger terminal file explorer:
+    1. `sudo pacman -S ranger`
+1. Setup the VS Code text editor/IDE:
+    1. (Alternative 1) Install the Arch-built: `sudo pacman -S code`
+    1. (Alternative 2) Install the Microsoft binary distribution with tracking and Microsoft extensions: `yay -S visual-studio-code-bin`
+1. Setup the LibreOffice office document suite:
+    1. `sudo pacman -S libreoffice-fresh`
+1. Setup the Okular PDF reader:
+    1. `sudo pacman -S okular`
+1. Setup the screenshot tool Maim (for keybinds and easy CLI usage):
+    1. Install: `sudo pacman -S maim`
+    1. Setup i3 keybinds: See the i3 config snippet below.
+1. Setup the screenshot tool Flameshot (for GUI and on-screen editing):
+    1. Install: `sudo pacman -S flameshot`
+    1. (Usage) Start the tray icon: Run the "Fireshot" desktop application.
+    1. (Usage) Directly open the capture GUI from the terminal: `fireshot gui`
 
 ### Setup Bluetooth
 
@@ -562,7 +579,7 @@ EndSection
 
 File: `~/.config/i3/config`
 
-Requires `community/playerctl`.
+Requires `playerctl`.
 
 ```
 # Media keys
@@ -577,7 +594,7 @@ bindsym XF86AudioNext exec --no-startup-id playerctl next
 
 File: `~/.config/i3/config`
 
-Requires `community/pamixer`.
+Requires `pamixer`.
 
 ```
 # Volume keys
@@ -585,6 +602,18 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id pamixer -i 5
 bindsym XF86AudioLowerVolume exec --no-startup-id pamixer -d 5
 bindsym XF86AudioMute exec --no-startup-id pamixer -t
 bindsym XF86AudioMicMute exec --no-startup-id pamixer --default-source -t
+```
+
+#### i3 Maim Screenshot Keys
+
+File: `~/.config/i3/config`
+
+Requires `maim`.
+
+```
+# Capture screen (active window and full)
+bindsym $mod+Print exec maim -i $(xdotool getactivewindow) $HOME/Downloads/Screenshot_$(date -Iseconds).png
+bindsym $mod+Shift+Print exec maim $HOME/Downloads/Screenshot_$(date -Iseconds).png
 ```
 
 {% include footer.md %}
