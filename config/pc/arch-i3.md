@@ -317,6 +317,10 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. `sudo pacman -S xsel`
 1. Setup desktop notifications:
     1. Install the `dunst` server and the `libnotify` support library: `sudo pacman -S dunst libnotify`
+    1. (Optional) Create the local config: `mkdir -p ~/.config/dunst && cp /etc/dunst/dunstrc ~/.config/dunst/dunstrc`
+    1. (Optional) Modify the config:
+        - Fix scaling for high-res displays, if broken (doesn't affect text size): In the `global` section, set e.g. `scale = 2`.
+        - Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 15`.
     1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
 1. Setup media keys:
     1. (Note) Install e.g. Spotify (`aur/spotify`) to test with.
