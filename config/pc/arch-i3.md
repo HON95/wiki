@@ -417,22 +417,22 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
 1. Setup the ZSH shell:
     1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
 1. Setup the VLC video and audio player:
-    1. `sudo pacman -S vlc`
+    1. Install: `sudo pacman -S vlc`
 1. Setup the Mirage image viewer:
-    1. `yay -S mirage`
+    1. Install: `yay -S mirage`
 1. Setup the GIMP image editor:
-    1. `sudo pacman -S gimp`
+    1. Install: `sudo pacman -S gimp`
 1. Setup the Thunar graphical file manager:
-    1. `sudo pacman -S thunar`
+    1. Install: `sudo pacman -S thunar`
 1. Setup the Ranger terminal file explorer:
-    1. `sudo pacman -S ranger`
+    1. Install: `sudo pacman -S ranger`
 1. Setup the VS Code text editor/IDE:
     1. (Alternative 1) Install the Arch-built: `sudo pacman -S code`
     1. (Alternative 2) Install the Microsoft binary distribution with tracking and Microsoft extensions: `yay -S visual-studio-code-bin`
 1. Setup the LibreOffice office document suite:
-    1. `sudo pacman -S libreoffice-fresh`
+    1. Install: `sudo pacman -S libreoffice-fresh`
 1. Setup the Okular PDF reader:
-    1. `sudo pacman -S okular`
+    1. Install: `sudo pacman -S okular`
 1. Setup the screenshot tool Maim (for keybinds and easy CLI usage):
     1. Install: `sudo pacman -S maim`
     1. Setup i3 keybinds: See the i3 config snippet below.
@@ -440,8 +440,9 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
     1. Install: `sudo pacman -S flameshot`
     1. (Usage) Start the tray icon: Run the "Fireshot" desktop application.
     1. (Usage) Directly open the capture GUI from the terminal: `fireshot gui`
-1. Setup the 7-Zip graphical archiver:
-    1. `pacman -S p7zip`
+1. Setup the 7-Zip CLI/GUI archiver:
+    1. Install: `yay -S p7zip-gui`
+    1. (Note) Don't use the `.7z` file format, it doesn't preserve owner info.
 
 ### Extra (Optional)
 
@@ -523,7 +524,8 @@ File: `~/.config/polybar/config`
 type = custom/script
 interval = 1
 format = <label>
-exec = python /usr/share/polybar/scripts/spotify_status.py -f '[{artist}] {song}'
+#exec = python /usr/share/polybar/scripts/spotify_status.py -f '[{artist}] {song}' -t 50 -q
+exec = python /usr/share/polybar/scripts/spotify_status.py -f '{song}' -t 25 -q
 format-underline = #1db954
 ```
 
