@@ -281,22 +281,31 @@ breadcrumbs:
 ### Security
 
 - Show CPU vulnerabilities: `tail -n +1 /sys/devices/system/cpu/vulnerabilities/*`
-- Generate XKCD-style (multi-word) passwords (using package `xkcdpass`): `xkcdpass`
+- Generate xkcd-style (multi-word) passwords (using package `xkcdpass`): `xkcdpass`
 - Generate SHA cryptographical hashes: `sha{256,512} <files>`
-- Check PGP signature of file (using GPG):
-    1. Get the data file, a detached/separate signature file (`.sig`) for the data file, and the publisher's key (manually downloaded or through a key server). The Data file and sig may be from untrusted sources (like a download mirror).
-    1. (Alternative 1) Import a downloaded keyfile:
-        1. Note: Download the publisher's key file (`.asc`) and its fingerprint from a trusted source.
-        1. Show the details and fingerprint of the key: `gpg --show-keys <keyfile>`
-        1. (Recommended) Compare the fingerprint from the keyfile from the one on the publisher's website or whatever (some trusted source).
-        1. Make sure the `uid` of the key is recognizable wrt. the intended use.
-        1. Import the key: `gpg --import <keyfile>`
-    1. (Alternative 2) Import the keyfile from a key server:
-        1. Note: Import the publisher's key from a key server, given a server URL and fingerprint. The fingerprint must be from a trusted source.
-        1. Inspect the key before importing: **TODO**
-        1. Make sure the `uid` of the key is recognizable wrt. the intended use.
-        1. Download the key: `gpg [--keyserver <url>] --recv-keys <key-id>`
-    1. Finally, verify the data file using the detached signature and imported key: `gpg --verify <sigfile> <datafile>`
+
+#### PGP/GPG
+
+Using GPG (from package `gnupg2` on Debian).
+
+- Use a local or temporary keyring instead of default one:
+    - This is useful if you need to verify a downloaded file with the signing pubkey, but don't want to permanently import the key.
+    - Create the keyring and import the key: `gpg --no-default-keyring --keyring ./tmp.keyring --import <pubkey>` (example)
+    - Use it by specifying `-no-default-keyring --keyring ./tmp.keyring` in the commands where you need it.
+    - Delete it and the `~`-suffixed backup of it when you no longer need it.
+- Inspect pubkey:
+    - Imported: **TODO**
+    - File: `gpg --show-keys <keyfile>`
+    - Key server: **TODO**
+- Import pubkey:
+    - Unless using a keyfile you know is trusted, always verify the fingerprint of imported keys against some trusted source.
+    - Import to local/temporary keyring: See section about it.
+    - Import from file: `gpg --import <pubkey>`
+    - Import from key server: `gpg [--keyserver <url>] --recv-keys <key-id>`
+- Check signature of file using a detached signature field (typically `.asc`), the publisher's signing pubkey file, and temporary keyring (complete example):
+    1. Download the archive, archive signature and publisher pubkey.
+    1. Import the key to a local keyring: `gpg --no-default-keyring --keyring ./tmp.keyring --import <keyfile>`
+    1. Verify the archive: `gpg --no-default-keyring --keyring ./tmp.keyring --verify <sig-file> <data-file>`
 
 ### Storage
 

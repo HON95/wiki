@@ -8,14 +8,14 @@ breadcrumbs:
 
 ## TODO
 
-- CGroup driver? Similar to setting `native.cgroupdriver=systemd` for Docker to use the systemd driver instead of creating a new one.
-- Default network MTU. (Some of my networks require a lower MTU because Azure IPv6 networking sucks.)
-- Prometheus/OpenMetrics metrics.
-- Swap limit support. Similar to setting `cgroup_enable=memory swapaccount=1` for Docker.
+- Wait for Podman 4 to hit the appropriate repos and ip6tables support to be fixed for Netavark.
+- Auto updater? Like watchtower for Docker (broken for Podman).
 
 ## Setup
 
-### Podman
+### Podman 3
+
+Using the CNI network library (which is rather buggy wrt. the features used by Podman).
 
 #### Debian
 
@@ -42,6 +42,56 @@ breadcrumbs:
 1. (Optional) Add Docker compat stuff:
     1. Install: `pacman -S podman-docker`
     1. Quiet Docker emulation message: `touch /etc/containers/nodocker`
+
+#### Bugs & Caveats
+
+- **TODO** Move the networking notes from below to here.
+- It uses OCI, which is focusing on Kubernetes support while deprecating or not fixing features Podman uses.
+
+### Podman 4 (from Source)
+
+Using the crun container runtime, Netavark network library and Aardvark DNS (Netavark and Aardvark are new in Podman 4).
+
+Since Podman 4, Netavark and Aardvark is not yet available in appropriate repos, so it's build from source instead.
+
+Warning: If you have any existing CNI networks, forcing Netavark will break those.
+
+#### Debian
+
+1. Install Go and Rust.
+    - Go is required to build Podman and Rust is required to build Netavark and Aardvark.
+1. Install dependencies and tools:
+    - General: `apt install btrfs-progs git go-md2man iptables libassuan-dev libbtrfs-dev libc6-dev libdevmapper-dev libglib2.0-dev libgpgme-dev libgpg-error-dev libprotobuf-dev libprotobuf-c-dev libseccomp-dev libselinux1-dev libsystemd-dev pkg-config uidmap libapparmor-dev dh-autoreconf`
+    - Special: `apt install crun catatonit golang-github-containers-common golang-github-containers-image containers-storage buildah`
+1. Install Podman (as normal user):
+    1. Clone: `git clone --branch=v4.0.2 https://github.com/containers/podman/` (example version)
+    1. Enter: `cd podman`
+    1. Build: `make BUILDTAGS="apparmor exclude_graphdriver_devicemapper seccomp systemd"`
+    1. Install: `sudo env PATH=$PATH make install install.completions PREFIX=/usr/local`
+    1. Set the network library: In `/etc/containers/containers.conf`, in the `[network]` section, set `network_backend = "netavark"`.
+    1. Set the storage driver: In `/etc/containers/storage.conf`, in the `[storage]` section, set `driver = "overlay"`.
+    1. Create the Podman lib dir: `mkdir -p /usr/local/lib/podman`
+1. Install Netavark (as normal user):
+    1. Clone: `git clone --branch=v1.0.2 https://github.com/containers/netavark/` (example version)
+    1. Enter: `cd netavark`
+    1. Build: `make`
+    1. Install: `sudo mv bin/netavark /usr/local/lib/podman/`
+1. Install Aardvark (as normal user):
+    1. Clone: `git clone --branch=v1.0.2 https://github.com/containers/aardvark-dns/` (example version)
+    1. Enter: `cd aardvark-dns`
+    1. Build: `make`
+    1. Install: `sudo mv bin/aardvark-dns /usr/local/lib/podman/`
+1. (Optional) Test it: `podman version`
+    - If it can't find Netavark og Aardvark, it will complain about it.
+1. (Optional) Add Docker compat stuff:
+    1. Set Docker executable link: `ln -s /usr/bin/podman /usr/bin/docker`
+    1. Set Docket socket path: `echo "DOCKER_HOST=unix:///run/podman/podman.sock" >> /etc/environment`
+    1. Set sudo to accept the socket path env var: `echo "Defaults env_keep += \"DOCKER_HOST\"" >> /etc/sudoers.d/docker-compat`
+
+#### Bugs & Caveats
+
+- ip6tables support seems to be broken. Netavark has IPv6 support, but it seemingly doesn't modify ip6tables as it does with iptables. (Deal breaker for me.)
+- I couldn't connect to published ports from the host, even though conmon on the host was shown to listen on those ports. I didn't bother looking into this more once I realised ip6tables support was broken.
 
 ### Docker Compose
 
@@ -76,14 +126,11 @@ breadcrumbs:
 1. Auto-start:
     - The `podman-restart.service` provides auto-starting of containers.
     - Only containers with `restart=always` will be auto-started.
-1. Auto-updating:
-    - Auto-updating is provided by a systemd timer and service.
-    - Run `podman auto-update` to run manually.
-    - Set label `io.containers.autoupdate=registry` on containers to enable auto-updates.
-    - **TODO** Apparently this requires systemd-unit containers.
 
 ### Networking
 
+- Note: Podman 4.0 introduced a new network stack built from scratch and scrapped the CNI network stack (which targets Kubernetes more than Podman).
+- **TODO** Update the below notes for Podman 4.0.
 - Firewall:
     - Unlike Docker, you can't just restart some daemon to fix the firewall rules after reapplying your normal IPTables rules from a script or something.
     - (Bug) Doesn't open the ports when exposing ports from containers, for some reason. Works if changing the default forwarding actions to accept, but why would I do that. To work around it, you need to manually add forwarding accept rules to the container IP addresses.
