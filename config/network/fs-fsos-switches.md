@@ -311,6 +311,19 @@ Using an FS S3700-24T4F.
 1. Delete startup config: `delete config.text`
 1. Restart: `reload`
 
+### Mount a USB Drive
+
+1. Format the USB drive as FAT32.
+1. Physically mount it.
+    - Something like `USB-5-USB_DISK_FOUND` and `usb-5-usb_DISK_PARTITION_MOUNT` should appear in the console.
+1. Wait for it to automount.
+    - No explicit mounting and unmounting of the filesystem is required (as far as I know). Data is flushed after every write.
+1. (Optional) View file systems: `show file systems`
+1. Use it.
+    - Use `dir usb0:` to view files.
+    - Use `copy flash:config.txt usb0:` to copy the startup config to the drive.
+1. Physically unmount it.
+
 ### Provision with ZTP
 
 **TODO**
