@@ -30,12 +30,12 @@ It uses the runtime API and kernel language HIP, which is compilable for both AM
 
 #### Steps
 
-1. If the `amdgpu-pro` driver is installed then uninstall it to avoid conflicts.
+1. If the `amdgpu-pro` driver is installed then uninstall it to avoid conflicts. **TODO**
 1. If using Mellanox ConnectX NICs then Mellanox OFED must be installed before ROCm.
 1. Add the ROCm package repo:
-    1. Install requirements: `sudo apt install libnuma-dev wget gnupg2`
-    1. Add public key: `wget -q -O - https://repo.radeon.com/rocm/rocm.gpg.key | sudo apt-key add -`
-    1. Add repo: `echo 'deb [arch=amd64] https://repo.radeon.com/rocm/apt/debian/ ubuntu main' | sudo tee /etc/apt/sources.list.d/rocm.list`
+    1. Install requirements: `sudo apt install curl libnuma-dev wget gnupg2`
+    1. Add repo key: `curl -sSf https://repo.radeon.com/rocm/rocm.gpg.key | gpg --dearmor > /usr/share/keyrings/rocm.gpg`
+    1. Add repo: `echo 'deb [signed-by=/usr/share/keyrings/rocm.gpg arch=amd64] https://repo.radeon.com/rocm/apt/debian/ ubuntu main' | sudo tee /etc/apt/sources.list.d/rocm.list`
     1. Update cache: `apt update`
 1. Install: `sudo apt install rocm-dkms`
 1. Fix symlinks and PATH:

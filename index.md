@@ -158,8 +158,8 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Languages & Frameworks
 
-- [CUDA](/se/lang-frame/cuda/)
-- [Go](/se/lang-plat/go/)
+- [CUDA](/se/lang/cuda/)
+- [Go](/se/lang/go/)
 
 ## Guides
 

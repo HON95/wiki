@@ -2,7 +2,7 @@
 title: CUDA
 breadcrumbs:
 - title: Software Engineering
-- title: Languages & Platforms
+- title: Languages Etc.
 ---
 {% include header.md %}
 
@@ -27,8 +27,6 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
     - Tensor cores: Mostly for AI. **TODO** and _RT cores_ (for ray tracing). Tensor cores may be accessed in CUDA through special CUDA calls, but RT cores are (as of writing) only accessible from Optix.
 - **TODO** SMs, GPCs, TPCs, warp schedulers, etc.
 
-**TODO** Move "Mapping the Programming Model to the Execution Model" and "Thread Hierarchy" here?
-
 ### SMs and Blocks
 
 - During kernel execution, each block gets assigned to a single SM. Multiple blocks may be assigned to the same SM.
@@ -51,33 +49,6 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
     - Selected: It's eligible and has been selected for execution during the current clock.
 - Branch divergence: Each warp scheduler (which an SM has one or more of) has only a single control unit for all cores within it, so for each branches any of the threads in the warp takes (added together), the warp scheduler and all of its cores will need to go through all of the branches but mask the output for all threads which were not meant to follow the branch. If no threads take a specific branch, it will not be executed by the warp scheduler.
 - **TODO** scheduling policy?
-
-## Programming
-
-### General
-
-- Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
-- Kernels are specified as functions with the `__global__` keyword.
-- Always check API call error codes and stop if not `cudaSuccess`. A macro may be defined and used to wrap the API call in to keep the code clean.
-
-### Mapping the Programming Model to the Execution Model
-
-- The programmer decides the grid size (number of blocks and threads therein) when launching a kernel.
-- The device has a constant number of streaming multiprocessors (SMs) and CUDA cores (not to be confused with tensor cores or RT cores).
-- Each kernel launch (or rather its grid) is executed by a single GPU. To use multiple GPUs, multiple kernel launches are required by the CUDA application.
-- Each thread block is executed by a single SM and is bound to it for the entire execution. Each SM may execute multiple thread blocks.
-- Each CUDA core within an SM executes a thread from a block assigned to the SM.
-- **TODO** Warps and switches. 32 threads per warp for all current GPUs.
-
-##### Thread Hierarchy
-
-**TODO** Move into section below.
-
-- Grids consist of a number of blocks and blocks concist of a number of threads.
-- Threads and blocks are indexed in 1D, 2D or 3D space (separately), which threads may access through the 3-compoent vectors `blockDim`, `blockIdx` and `threadIdx`.
-- The programmer decides the number of grids, blocks and threads to use, as well as the number of dimensions to use, for each kernel invocation.
-- The number of threads per block is typically limited to 1024.
-- See the section about mapping it to the execution model for a better understanding of why it's organized this way.
 
 ### Memory
 
@@ -168,65 +139,49 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - To access strided data (like multidimensional arrays) in global memory, it may be better to first copy the data into shared memory (which is fast for all access patterns).
 - Cache lines are 128 bytes, i.e. 4 sectors.
 
+### NVLink & NVSwitch
+
+- Interconnect for connecting NVIDIA GPUs and NICs/HCAs as a mesh within a node, because PCIe was too limited.
+- NVLink alone is limited to only eight GPUs, but NVSwitches allows connecting more.
+- A bidirectional "link" consists of two unidirectional "sub-links", which each contain eight differential pairs (i.e. lanes). Each device may support multiple links.
+- NVLink transfer rate per differential pair:
+    - NVLink 1.0 (Pascal): 20Gb/s
+    - NVLink 2.0 (Volta): 25Gb/s
+    - NVLink 3.0 (Ampere): 50Gb/s
+- **TODO** Hopper updates.
+
+## Programming
+
+### General
+
+- Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
+- Kernels are specified as functions with the `__global__` keyword.
+- Always check API call error codes and stop if not `cudaSuccess`. A macro may be defined and used to wrap the API call in to keep the code clean.
+
+### Thread Hierarchy and Mapping to the Execution Model
+
+- Grids consist of a number of blocks and blocks concist of a number of threads.
+- Threads and blocks are indexed in 1D, 2D or 3D space (separately), which threads may access through the 3-compoent vectors `blockDim`, `blockIdx` and `threadIdx`.
+- The programmer decides the number of grids, blocks and threads to use, as well as the number of dimensions to use, for each kernel invocation.
+- The number of threads per block is typically limited to 1024.
+- The programmer decides the grid size (number of blocks and threads therein) when launching a kernel.
+- The device has a constant number of streaming multiprocessors (SMs) and CUDA cores (not to be confused with tensor cores or RT cores).
+- Each kernel launch (or rather its grid) is executed by a single GPU. To use multiple GPUs, multiple kernel launches are required by the CUDA application.
+- Each thread block is executed by a single SM and is bound to it for the entire execution. Each SM may execute multiple thread blocks.
+- Each CUDA core within an SM executes a thread from a block assigned to the SM.
+- **TODO** Warps and switches. 32 threads per warp for all current GPUs.
+
+### Memory
+
+See the hardware architecture section.
+
 ### Synchronization
 
 - **TODO**
 - `__syncthreads` provides block level barrier synchronization.
 - Grid level barrier synchronization is currently not possible through any native API call.
 - `cudaDeviceSynchronize`/`cudaStreamSynchronize` (host) blocks until the device or stream has finished all tasks (kernels/copies/etc.).
-
-### Measurements
-
-#### Time
-
-- To measure the total duration of a kernel invocation or memory copy on the CPU side, measure the duration from before the call to after it, including a `cudaDeviceSynchronize()` if the call is asynchronous.
-- To measure durations inside a kernel, use the CUDA event API (as used in this section hereafter).
-- Events are created and destroyed using `cudaEventCreate(cudaEvent_t *)` and `cudaEventDestroy(cudaEvent_t *)`.
-- Events are recorded (captured) using `cudaEventRecord`. This will capture the state of the stream it's applied to. The "time" of the event is when all previous tasks have completed and not the time it was called.
-- Elapsed time between two events is calculated using `cudaEventElapsedTime`.
-- Wait for an event to complete (or happen) using `cudaEventSynchronize`. For an event to "complete" means that the previous tasks (like a kernel) is finished executing. If the `cudaEventBlockingSync` flag is set for the event, the CPU will block while waiting (which yields the CPU), otherwise it will busy-wait.
-
-#### Bandwidth
-
-- To calculate the theoretical bandwidth, check the hardware specifications for the device, wrt. the memory clock rate and bus width and DDR.
-- To measure the effective bandwidth, divide the sum of the read and written data by the measured total duration of the transfers.
-
-#### Computational Throughput
-
-- Measured in FLOPS (or "FLOP/s" or "flops"), separately for the type of precision (half, single, double).
-- Measured by manually analyzing how many FLOPS a compoind operation is and then multiplied by how many times it was performed, divided by the total duration.
-- Make sure it's not memory bound (or label it as so).
-
-### Unified Virtual Addressing (UVA)
-
-- Causes CUDA to use a single address space for allocations for both the host and all devices (as long as the host supports it).
-- Requires a 64-bit application, Fermi-class or newer GPU and CUDA 4.0 or newer.
-- Allows using `cudaMemcpy` without having to specify in which device (or host) and memory the pointer exists in. `cudaMemcpyDefault` replaces `cudaMemcpyHostToHost`, `cudaMemcpyHostToDevice`, `cudaMemcpyDeviceToHost`, and `cudaMemcpyDeviceToDevice`. Eliminates the need for e.g. `cudaHostGetDevicePointer`.
-- Allows _zero-copy_ memory for managed/pinned memory. For unpinned host pages, CUDA must first copy the data to a temporary pinned set of pages before copying the data to the device. For pinned data, no such temporary buffer is needed (i.e. zero copies on the host side). The programmer must explicitly allocate data (or mark allocated data) as managed using `cudaMallocHost`/`cudaHostAlloc` and `cudaFreeHost`. `cudaMemcpy` works the same and automatically becomes zero-copy if using managed memory.
-- The GPU can access pinned/managed host memory over the PCIe interconnect, but including the high latency and low bandwidth due to accessing off-device memory.
-- While pinning memory results in improved transfers, pinning too much memory reduces overall system performance as the in-memory space for pageable memory becomes smaller. Finding a good balance may in some cases require some tuning.
-
-### Unified Memory
-
-- Depends on UVA, which provides a single address space for both the host and devices, as well as zero-copy memory.
-- Virtually combines the pinned CPU/host memory and the GPU/device memory such that explicit memory copying between the two is no longer needed. Both the host and device may access the memory through a single pointer and data is automatically migrated (prefetched) between the two instead of demand-fetching it each time it's used (as for UVA).
-- Data migration happens automatically at page-level granularuity and follows pointers in order to support deep copies. As it automatically migrates data to/from the devices instead of accessing it over the PCIe interconnect on demand, it yields much better performance than UVA.
-- As Unified Memory uses paging, it implicitly allows oversubscribing GPU memory.
-- Keep in mind that GPU page faulting will affect kernel performance.
-- Unified Memory also provides support for system-wide atomic memory operations, for multi-GPU cooperative programs.
-- Explicit memory management may still be used for optimization purposes, although use of streams and async copying is typically needed to actually increase the performance. `cudaMemPrefetchAsync` may be used to trigger a prefetch.
-- `cudaMallocManaged` and `cudaFree` are used to allocate and deallocate managed memory.
-- Since unified memory removes the need for `cudaMemcpy` when copying data back to the host after the kernel is finished, you may have to use e.g. `cudaDeviceSynchronize` to wait for the kernel to finish before accessing the managed data (instead of waiting for a `cudaMemcpy` to finish).
-- While the Kepler and Maxwell architectures support a limited version of Unified Memory, the Pascal architecture is the first with hardware support for page faulting and migration via its Page Migration Engine. For the pre-Pascal architectures, _all_ managed data is automatically copied to the GPU right before lanuching a kernel on it, since they don't support page faulting for managed data currently present on the host or another device. This also means that Pascal and later includes memory copy delays in the kernel run time while pre-Pascal does not as everything is migrated before it begins executing (increasing the overall application runtime). This also prevents pre-Pascal GPUs from accessing managed data from both CPU and GPU concurrently (without causing segfaults) as it can't assure data coherence (although care must still be taken to avoid race conditions and data in invalid states for Pascal and later GPUs).
-
-### Peer-to-Peer (P2P) Communication
-
-- Based on UVA.
-- Allows devices to directly access and transfer data to/from neighboring devices/peers, without any unnecessary copies.
-- Significantly reduces latency since the host/CPU doesn't need to be involved and typically saturates PCIe bandwidth.
-- Optionally, using NVLink or NVSwitch allows for significantly higher throughput for accesses/transfers than for PCIe.
-- To check if peers can access eachother, use `cudaDeviceCanAccessPeer` (for each direction).
-- To enable access between peers, use `cudaDeviceEnablePerAccess` (for the other device, within the context of the first device).
+- **TODO** Streams, cooperative groups, etc.
 
 ### Streams
 
@@ -240,28 +195,88 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - Kernels are issued within a stream by specifying teh stream as the fourth parameter (the third parameter may be set to `0` to ignore it).
 - To wait for all operations for a stream and device to finish, use `cudaStreamSynchronize`. `cudaStreamQuery` may be used to query pending/unfinished operations without blocking. Events may also be used for synchronization. To wait for _all_ streams on a device, use the normal `cudaDeviceSynchronize` instead.
 
+### Unified Virtual Addressing (UVA)
+
+- Causes CUDA to use a single address space for allocations for both the host and all devices.
+- Requires a 64-bit application, Fermi-class or newer GPU and CUDA 4.0 or newer. The host must also support it, but most do (I don't know the details).
+- Allows using `cudaMemcpy` without having to specify in which device (or host) the data is located in. `cudaMemcpyDefault` replaces `cudaMemcpyHostToHost`, `cudaMemcpyHostToDevice`, `cudaMemcpyDeviceToHost`, and `cudaMemcpyDeviceToDevice`. Eliminates the need for e.g. `cudaHostGetDevicePointer`.
+- Allows zero-copy memory when transferring from/to the host if using managed/pinned memory. For unpinned host pages, CUDA must first copy the data to a temporary pinned set of pages before copying the data to the device. For pinned data, no such temporary buffer is needed (i.e. zero copies on the host side). The programmer must explicitly allocate data (or mark allocated data) as managed using `cudaMallocHost`/`cudaHostAlloc` and `cudaFreeHost`. `cudaMemcpy` automatically becomes zero-copy if using managed memory.
+- The GPU can directly access pinned/managed host memory over the PCIe interconnect, but with a significant performance penalty as the data resides off-chip.
+- While pinning memory results in improved transfers, pinning too much memory might reduce overall system performance as it might fill up the physical memory and leave little room for pageable memory. Finding a good balance may in some cases require some tuning.
+
+### Unified Memory
+
+- Depends on UVA, which provides a single address space for both the host and devices, as well as zero-copy memory when using managed/pinned memory.
+- Virtually combines the pinned host and device memories by extending UVA with automatic, on-demand page migration.
+- The automatic page migration means that explicit memory copies aren't needed and that there's no off-chip memory access penalty as for the older UVA (in theory).
+- Data migration happens automatically at page-level granularuity and follows pointers in order to support deep copies. As it automatically migrates data to/from the devices instead of accessing it over the PCIe interconnect on demand, it yields much better performance than UVA.
+- As unified memory uses paging on the device, it implicitly allows oversubscribing GPU memory. But keep in mind that GPU page faulting will affect kernel performance.
+- Unified memory also provides support for system-wide atomic memory operations, for multi-GPU cooperative programs.
+- Explicit memory management may still be used for optimization purposes. Use of streams and async copying is typically needed to actually increase the performance. But keep in mind that explicit memory management is error-prone and tracking down bugs may significantly reduce productivity, despite the slightly better performance in the end.
+- To assist automatic migration, `cudaMemPrefetchAsync` may be used to trigger a prefetch and `cudaMemAdvise` may be used to provide hints for data locality wrt. a specific managed memory allocation. `cudaMemPrefetchAsync` may be run concurrently in a separate stream, although it may exhibit sequential or blocking behaviour sometimes (unlike e.g. the explicit `cudaMemcpyAsync`). The `cudaMemAdviseSetReadMostly` hint automatically duplicates data that is used by multiple devices.
+- `cudaMallocManaged` and `cudaFree` are used to allocate and deallocate managed memory (just as for UVA).
+- Since unified memory removes the need for `cudaMemcpy` when copying data back to the host after the kernel is finished, you may have to use e.g. `cudaDeviceSynchronize` to wait for the kernel to finish before accessing the managed data.
+- While the Kepler and Maxwell architectures support a limited version of Unified Memory, the Pascal architecture is the first with hardware support for page faulting and on-demand page migration via its page migration engine. Volta introduces better access counters to migrate less naively and reduce thrashing. For the pre-Pascal architectures, _all_ allocated space is allocated in physical GPU memory (no oversubscription). All data accesses by the CPU is page faulted and fetched from GPU memory to system memory and all managed data present in system memory is automatically migrated to the GPU right before lanuching a kernel on it (never during execution, since the GPUs don't have a page fualt engine). This also means that Pascal and later includes memory copy delays in the kernel run time while pre-Pascal does not as everything is migrated before it begins executing (increasing the overall application runtime). This also prevents pre-Pascal GPUs from accessing managed data from both host and device concurrently, as it can't assure data coherence (although care must still be taken to avoid race conditions and data in invalid states for Pascal and later GPUs).
+
+### Peer-to-Peer (P2P) Communication
+
+- Based on UVA.
+- Unified memory may be used to avoid explicit memory copies.
+- Allows devices to directly access and transfer data to/from neighboring devices/peers over PCIe or NVLink/NVSwitch, without any unnecessary copies. This significantly reduces latency since the host/CPU doesn't need to be involved and it typically saturates PCIe bandwidth.
+- To check if peers can access eachother, use `cudaDeviceCanAccessPeer` (for each direction).
+- To enable access between peers, use `cudaDeviceEnablePerAccess` (for the other device within the context of the first device). (**TODO** Is this required when using unified memory?)
+
+### GPUDirect
+
+**TODO**
+
+### GPUDirect P2P
+
+**TODO**
+
+### GPUDirect RDMA
+
+**TODO**
+
+### CUDA-Aware MPI
+
+**TODO**
+
 ### Miscellanea
 
 - When transferring lots of small data arrays, try to combine them. For strided data, try to use `cudaMemcpy2D` or `cudaMemcpy3D`. Otherwise, try to copy the small arrays into a single, temporary, pinned array.
 - For getting device attributes/properties, `cudaDeviceGetAttribute` is significantly faster than `cudaGetDeviceProperties`.
 - Use `cudaDeviceReset` to reset all state for the device by destroying the CUDA context.
 
-## Metrics
+## Performance
+
+### Time Measurements
+
+- To measure the total duration of a kernel invocation or memory copy on the CPU side, measure the duration from before the call to after it, including a `cudaDeviceSynchronize()` if the call is asynchronous.
+- To measure durations inside a kernel, use the CUDA event API (as used in this section hereafter).
+- Events are created and destroyed using `cudaEventCreate(cudaEvent_t *)` and `cudaEventDestroy(cudaEvent_t *)`.
+- Events are recorded (captured) using `cudaEventRecord`. This will capture the state of the stream it's applied to. The "time" of the event is when all previous tasks have completed and not the time it was called.
+- Elapsed time between two events is calculated using `cudaEventElapsedTime`.
+- Wait for an event to complete (or happen) using `cudaEventSynchronize`. For an event to "complete" means that the previous tasks (like a kernel) is finished executing. If the `cudaEventBlockingSync` flag is set for the event, the CPU will block while waiting (which yields the CPU), otherwise it will busy-wait.
+
+### Memory Throughput Measurements
+
+- To calculate the theoretical bandwidth, check the hardware specifications for the device, wrt. the memory clock rate, bus width and if using DDR.
+- To measure the effective bandwidth, divide the sum of the read and written data by the measured total duration of the transfers.
+- Remember bit-byte-conversion.
+
+### Computational Throughput Measurements
+
+- Measured in FLOPS (or "FLOP/s" or "flops"), separately for the type of precision (half, single, double).
+- Measured by manually analyzing how many FLOPS a compoind operation is (e.g. a multiply-add could count as two) and then multiplied by how many times it was performed, divided by the total duration.
+- Make sure it's not memory bound (or label it as so).
+
+### Metrics
 
 - **Occupancy** (group of metrics): The ratio of active warps on an SM to the maximum number of active warps on the SM. Low occupancy generally leads to poor instruction issue efficiency since there may not be enough eligible warps per clock to saturate the warp schedulers. Too high occupancy may also degrade performance as resources may be contend by threads. The occupancy should be high enough to hide memory latencies without causing considerable resource contention, which depends on both the device and application.
 - **Theoretical occupancy** (theoretical metric): Maximum possible occupancy, limited by factors such as warps per SM, blocks per SM, registers per SM and shared memory per SM. This is computed statically without running the kernel.
 - **Achieved occupancy** (`achieved_occupancy`): I.e. actual occupancy. Average occupancy of an SM for the whole duration it's active. Measured as the sum of active warps all warp schedulers for an SM for each clock cycle the SM is active, divided by number of clock cycles and then again divided by the maximum active warps for the SM. In addition to the reasons mentioned for theoretical occupancy, it may be limited due to unbalanced workload within blocks, unbalanced workload across blocks, too few blocks launched, and partial last wave (meaning that the last "wave" of blocks aren't enough to activate all warp schedulers of all SMs).
 - **Issue slot utilization** (`issue_slot_utilization` or `issue_active`): The fraction of issued warps divided by the total number of cycles (e.g. 100% if one warp was issued per each clock for each warp scheduler).
-
-## NVLink & NVSwitch
-
-- Interconnect for connecting NVIDIA GPUs and NICs/HCAs as a mesh within a node, because PCIe was too limited.
-- NVLink alone is limited to only eight GPUs, but NVSwitches allows connecting more.
-- A bidirectional "link" consists of two unidirectional "sub-links", which each contain eight differential pairs (i.e. lanes). Each device may support multiple links.
-- NVLink transfer rate per differential pair:
-    - NVLink 1.0 (Pascal): 20Gb/s
-    - NVLink 2.0 (Volta): 25Gb/s
-    - NVLink 3.0 (Ampere): 50Gb/s
 
 ## Tools
 

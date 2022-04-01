@@ -2,7 +2,7 @@
 title: CUDA
 breadcrumbs:
 - title: Software Engineering
-- title: Languages & Platforms
+- title: Languages Etc.
 ---
 {% include header.md %}
 
