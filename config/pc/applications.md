@@ -118,6 +118,128 @@ GUI for configuring gaming mice.
 1. Install `piper`.
 1. Configure the mouse using the GUI application.
 
+## PipeWire (Linux)
+
+A modern audio server replacement for PulseAudio, JACK and ALSA.
+Comes with adapters for compatibility with existing applications and such that existing tools can be used.
+
+### Resources
+
+- [[Pipewire Wiki] Config PipeWire](https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Config-PipeWire)
+- [[Pipewire Wiki] Virtual devices](https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Virtual-Devices)
+
+### Usage
+
+- Open audio control panel:
+    - GUI: `pavucontrol`
+    - TUI: `alsamixer -c <card-id>`
+- Show stuff:
+    - Show audio server info: `pactl info`
+    - Show cards: `pactl list cards`
+    - Show inputs: `pactl list sources`
+    - Show outputs: `pactl list sinks`
+    - Show sound card info: `cat /proc/asound/UMC1820/stream0` (for card UMC1820)
+
+### Installation
+
+See the [Arch (i3)](../arch-i3/) or [Kubuntu](../kubuntu/) config notes.
+
+### Configuration
+
+#### General
+
+1. Set the sample rate:
+    1. Find the card's current rate and supported rates: `cat /proc/asound/UMC1820/stream0` (for card UMC1820)
+    1. Create `/etc/pipewire/pipewire.conf.d/10-clock-rate.conf` containing the snippet below, with your chosen sample rate.
+1. Set sample depth:
+    1. **TODO**
+1. **TODO** Fix stuttering. When using loopback module only? Weird playback of old buffer for a split second when opening new audio application?
+1. Restart PipeWire to apply changes: `systemctl --user restart pipewire.service`
+
+Example contents of `/etc/pipewire/pipewire.conf.d/10-clock-rate.conf`:
+
+```
+context.properties = {
+   default.clock.rate = 96000
+}
+```
+
+#### Disable ALSA Card Profiles (ACP) for a Card
+
+Disabling ACP for an ALSA card means that all of its inputs and outputs will be provided as raw channels without surround mixing etc.
+The same result (seemingly) may also be achieved by setting the card profile to "pro audio" in e.g. pavucontrol,
+although the pro audio profile seems to mess up my sink/source routing.
+
+1. In `/etc/pipewire/media-session.d/alsa-monitor.conf`, add the snippet below in the `rules` list.
+    - `device.vendor.id` should be set to the vendor ID of the USB device. Use `lsusb` to find it. Behringer typically uses `1397`.
+1. Restart PipeWire: `systemctl --user restart pipewire.service`
+
+Snippet for `/etc/pipewire/media-session.d/alsa-monitor.conf`:
+
+```
+# Add into the existing section below
+# rules = [
+    # ...
+    {
+        matches= [
+            {
+                # Behringer
+                device.name = "~alsa_card.*"
+                device.vendor.id = "1397"
+            }
+        ]
+        actions = {
+            update-props = {
+                api.alsa.use-acp = false
+            }
+        }
+    }
+# ]
+```
+
+#### Setup Virtual Sinks and Sources Using Channels from a Multi-Channel Card
+
+Split e.g. an 8-channel output device into four stereo devices.
+Requires PipeWire v3.27 or newer.
+
+1. (Note) See [Virtual Devices (PipeWire Wiki)](https://gitlab.freedesktop.org/pipewire/pipewire/-/wikis/Virtual-Devices).
+1. Disable ACP for the card (see above). (Or change to the "pro audio" profile, but that didn't work for me.)
+1. In `/etc/pipewire/media-session.d/media-session.conf`, add the snippet below in the `context.modules` list.
+    - Add a module instance for each virtual input/output device.
+    - Find the target device using `pactl list sinks` or `pactl list sources`.
+1. Restart PipeWire: `systemctl --user restart pipewire.service`
+
+Snippets for `/etc/pipewire/media-session.d/media-session.conf`:
+
+```
+# Add into the existing section below
+# context.modules = [
+    # ...
+
+    # Virtual output example
+    {   name = libpipewire-module-loopback
+        args = {
+            node.name = "BEHRINGER_UMC1820_0102"
+            node.description = "Behringer UMC1820 (1-2)"
+            capture.props = {
+                media.class = "Audio/Sink"
+                audio.position = [ FL FR ]
+            }
+            playback.props = {
+                audio.position = [ AUX0 AUX1 ]
+                node.target = "alsa_output.usb-BEHRINGER_UMC1820_B572BD9B-00.pro-output-0"
+                stream.dont-remix = true
+                node.passive = true
+            }
+        }
+    }
+
+    # Virtual input example
+    # TODO
+
+#]
+```
+
 ## PuTTY (Windows)
 
 - In `Terminal > Features`, activate `Disable application keypad mode`.

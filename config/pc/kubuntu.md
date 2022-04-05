@@ -52,11 +52,11 @@ breadcrumbs:
 
 ### PipeWire
 
-Kubuntu comes with PulseAudio. PipeWire is a modern solution designed to replace PulseAudio, JACK and ALSA. This means it combines the simplicity of basic desktop usage from PulseAudio with the complexity of session managers from JACK, with extra focus on security, performance and compatibility. Plus it supports video.
+Kubuntu comes with PulseAudio. PipeWire is a modern solution designed to replace PulseAudio, JACK and ALSA. This means it combines the simplicity of basic desktop usage from PulseAudio with the complexity of session managers from JACK, with extra focus on security, performance and compatibility. Plus it supports video. See [PipeWire (Applications)](../applications/#pipewire) for more config info.
 
 1. Install PipeWire:
-    1. Install: `sudo apt install pipewire pipewire-audio-client-libraries`
-    1. Enable: `systemctl --user enable --now pipewire-pulse`
+    1. Install: `sudo apt install pipewire pipewire-audio-client-libraries pipewire-pulse`
+    1. **TODO** Required to enable pipewire or pipewire-pulse?
 1. Disable PulseAudio:
     1. (Note) The package is required by Kubuntu, so it can't be completely removed.
     1. Disable PulseAudio: `systemctl --user disable --now pulseaudio.service pulseaudio.socket`

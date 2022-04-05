@@ -373,6 +373,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 ### Setup Audio
 
 Note: We're using the PipeWire sound server, a modern, security-focused and compatible replacement for both PulseAudio and JACK.
+See [PipeWire (Applications)](../applications/#pipewire) for more config info.
 
 1. Install ALSA stuff:
     1. (Note) ALSA itself is already provided as built-in kernel modules and ALSA drivers will just work.
@@ -384,9 +385,28 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
     1. Run `pavucontrol` to configure volumes, inputs, outputs and stuff.
 1. Test it:
     1. Try playing something from the browser or whatever. It should work.
-1. (Optional) Install useful audio applications:
+1. Install useful audio applications:
     1. Install the Helvum patchbay to patch nodes and endpoints (inputs and outputs for all audio devices): `sudo pacman -S helvum`
     1. See the [PipeWire page (Arch Wiki)](https://wiki.archlinux.org/title/PipeWire).
+
+### Setup General Applications
+
+1. Setup terminal emulator:
+    1. Already done.
+1. Setup ZSH:
+    1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
+1. Setup the VLC video and audio player:
+    1. `sudo pacman -S vlc`
+1. Setup the Mirage image viewer:
+    1. `yay -S mirage`
+1. Setup the Thunar graphical file manager:
+    1. `sudo pacman -S thunar`
+1. Setup the Ranger terminal file explorer:
+    1. `sudo pacman -S ranger`
+1. Setup the VS Code text editor/IDE:
+    1. `sudo pacman -S code`
+1. Setup the LibreOffice office document suite:
+    1. `sudo pacman -S libreoffice-fresh`
 
 ### Setup Bluetooth
 
