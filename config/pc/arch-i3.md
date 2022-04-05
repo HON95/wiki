@@ -31,14 +31,11 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
 
 - The "i3 User's Guide"
 - Plymouth
-- LightDM "Multiple-monitor setup"
 - picom compositor
-- https://wiki.archlinux.org/title/Power_management
-- https://wiki.archlinux.org/title/Display_Power_Management_Signaling
-- Screen snippet tool
-- xautolock?
 
 ## Installation
+
+Note: The use of `sudo` in the text below is a bit inconsistent, but you should know when you need it and when you don't.
 
 ### Live Image Install
 
@@ -50,21 +47,24 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
     1. Make sure you're in UEFI BIOS mode. Disable CSM in the BIOS settings if you don't need legacy BIOS for anything, to avoid future complications.
     1. Avoid broken display drivers: In the GRUB bootloader menu, press `E` on the main entry, add `nomodeset` at the end, and press enter to boot.
 1. Set the keymap:
-    1. List available keymaps: `ls /usr/share/kbd/keymaps/**/*.map.gz | less`
-    1. Find the appropriate keymap, e.g. the Norwegian `no` for `/usr/share/kbd/keymaps/i386/qwerty/no.map.gz`
+    1. (Optional) List available keymaps: `ls /usr/share/kbd/keymaps/**/*.map.gz | less`
+    1. (Optional) Find the appropriate keymap, e.g. the Norwegian `no` for `/usr/share/kbd/keymaps/i386/qwerty/no.map.gz`
     1. Load: `loadkeys <keymap>` (e.g. `loadkeys no`)
 1. Verify the (UEFI) boot mode:
     1. Check `efivar --list` or `ls /sys/firmware/efi/efivars`. If either exists, it's in UEFI mode.
 1. Setup networking:
     1. (Note) For cabled Ethernet with DHCP, it should already be working. For WLAN or exotic setups, check the wiki.
-    1. Test it somehow (e.g. with `ping` or `curl`).
+    1. (Optional) Test it somehow (e.g. with `ping` or `curl`).
 1. Setup time:
     1. Enable NTP: `timedatectl set-ntp true`
-    1. Check the "synchronized" line from `timedatectl`.
+    1. (Optional) Check the "synchronized" line from `timedatectl`.
 1. Partition the main disk (for LUKS encryption):
     1. Find the main disk: `lsblk`
     1. (Optional) Overwrite the full disk to get rid of all traces of the previous install: `dd if=/dev/zero of=/dev/<disk> bs=1M conv=fsync status=progress`
-    1. See the main disk partition table below for an overview of the partition to create.
+    1. (Note) Create these partitions by repeatedly running the steps below:
+        - Partition 1: Size 512MiB, type ESP (type 1 in fdisk and EF00 in gdisk), mountpoint `/boot/efi/`.
+        - Partition 2: Remaining space, type doesn't matter (leave as-is). Will contain the encrypted root filesystem.
+        - **TODO** Maybe add an _encrypted_ swap partition. For hibernation support and stuff, idk.
     1. Setup and partition the disk: `fdisk /dev/<disk>`
         1. Create a new GPT partition table: `g`
         1. Start the new partition wizard (for each partition): `n`
@@ -75,14 +75,14 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
             - Partition number and type: See table.
         1. Show partitions: `p`
         1. Write to disk and exit: `w`
-1. Format the ESP:
+1. Format the ESP (first partition):
     1. `mkfs.fat -F32 /dev/<partition-1>`
-1. Create encrypted root volume:
-    1. (Note) GRUB has limited support for LUKS2, so use LUKS1.
+1. Create encrypted root volume (second partition):
+    1. (Note) GRUB currently has limited support for LUKS2, so use LUKS1.
     1. Check which cryptohash and encryption algorithms are fastest on the system: `cryptsetup benchmark`
-    1. Create: `cryptsetup luksFormat --type=luks1 --use-random -h sha256 -i 5000 -c aes-xts-plain64 -s 256 /dev/<partition-2>` (example parameters)
+    1. Create: `cryptsetup luksFormat --type=luks1 --use-random -h sha256 -i 2000 -c aes-xts-plain64 -s 256 /dev/<partition-2>` (example parameters)
     1. Enter the password to unlock the system during boot.
-    1. (Note) See the step way down for avoiding entering the password twice during boot.
+    1. (Note) There is a later step for avoiding entering the password twice during boot.
 1. Unlock the encrypted root volume:
     1. `cryptsetup luksOpen /dev/<partition> crypt_root` (for example name `crypt_root`)
 1. Format the root volume:
@@ -91,7 +91,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
     - Mount root: `mount /dev/mapper/crypt_root /mnt`
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
-    - Base command and packages: `pacstrap /mnt base linux linux-firmware vim sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs`
+    - Base command and packages: `pacstrap /mnt base linux linux-firmware archlinux-keyring vim sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs zsh vim htop git jq rsync openssh tmux screen reflector usbutils`
     - **TODO** Maybe for laptops: `wpa_supplicant networkmanager`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
@@ -105,7 +105,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
         - Always include `en_US.UTF-8 UTF-8`.
     1. Generate selected locales: `locale-gen`
     1. Set the locale: In `/etc/locale.conf`, set `LANG=<locale>` (e.g. `LANG=en_US.UTF-8`).
-    1. Set the keyboard layout: In `/etc/vconsole.conf`, set `KEYMAP=<keymap>` (e.g. `KEYMAP=no`).
+    1. Set the TTY keyboard layout: In `/etc/vconsole.conf`, set `KEYMAP=<keymap>` (e.g. `KEYMAP=no`).
 1. Set hostname:
     1. `echo <hostname> > /etc/hostname`
 1. Set the root password:
@@ -115,7 +115,7 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
     1. Create the initial ramdisk: `mkinitcpio -P`
 1. Setup GRUB:
     1. Install bootloader: `pacman -S grub efibootmgr`
-    1. Install CPU microcode updates: `pacman -S X-ucode` (for `X={amd, intel}`)
+    1. Install CPU microcode updates: `pacman -S <x>-ucode` (for `amd` or `intel`)
     1. Enable encrypted disk support: In `/etc/default/grub`, set `GRUB_ENABLE_CRYPTODISK=y`.
     1. Find the UUID of the encrypted root partition: `blkid`
     1. Add kernel parameters for the encrypted root (e.g. `/dev/sda2`): In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptdevice=UUID=<device-UUID>:crypt_root root=/dev/mapper/crypt_root`.
@@ -149,22 +149,20 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
     1. Enable color: In `/etc/pacman.conf`, uncomment `Color`.
 1. Update the system and install useful stuff:
     1. Upgrade: `pacman -Syu`
-    1. Install useful tools: `pacman -S --needed zsh vim man-db man-pages htop bash-completion p7zip git jq rsync openssh tmux screen reflector usbutils`
 1. Install display driver:
     - (Note) For AMD GPUs, Intel GPUs, older NVIDIA GPUs etc., check the Arch wiki.
     - For NVIDIA Maxwell and newer GPUs: `pacman -S nvidia nvidia-utils nvidia-settings`.
     - (Optional) For NVIDIA CUDA (in addition to driver): `pacman -S cuda`
 1. Avoid having to enter the encryption password twice during boot:
     1. (Note) To avoid entering the password once for GRUB and then for the initramfs, we can create a keyfile and embed it into the initramfs. If the keyfile fails, it will fall back to asking for a password again.
-    1. Secure the boot dir: `chmod 700 /boot`
+    1. Secure the boot dir (to protect the embedded key from user processes): `chmod 700 /boot`
     1. Generate keyfile:
-        1. `mkdir -p /root/.keys && chmod 700 /root/.keys`
-        1. `dd if=/dev/random of=/root/.keys/crypt_root bs=2048 count=1 iflag=fullblock`
-        1. `chmod 600 /root/.keys/crypt_root`
-    1. Add key to LUKS: `cryptsetup luksAddKey /dev/<partition> /root/.keys/crypt_root`
-    1. Add key to initramfs: In `/etc/mkinitcpio.conf`, set `FILES=(/root/.keys/crypt_root)`.
+        1. `mkdir -p /root/.keys/luks && chmod 700 /root/.keys`
+        1. `dd if=/dev/random of=/root/.keys/luks/luks/crypt_root bs=2048 count=1 iflag=fullblock && chmod 600 /root/.keys/luks/crypt_root`
+    1. Add key to LUKS: `cryptsetup luksAddKey /dev/<partition> /root/.keys/luks/crypt_root`
+    1. Add key to initramfs: In `/etc/mkinitcpio.conf`, set `FILES=(/root/.keys/luks/crypt_root)`.
     1. Recreate initramfs: `mkinitcpio -P`
-    1. Add extra kernel parameters for the keyfile: In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptkey=rootfs:/root/.keys/crypt_root`.
+    1. Add extra kernel parameters for the keyfile: In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptkey=rootfs:/root/.keys/luks/crypt_root`.
     1. Update GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
     1. Reboot to make sure it works. If not, it should fall back to the extra password prompt.
 1. Setup sudo:
@@ -172,22 +170,23 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
     1. Install: `pacman -S sudo`
     1. Add the sudo group: `groupadd -r sudo`
     1. Enter the config: `EDITOR=vim visudo`
-    1. Add line to allow sudo group without password: `%sudo ALL=(ALL) NOPASSWD: ALL`
-    1. (Later) Give users sudo access through the group: `usermod -aG sudo <user>`
-1. Add a personal user:
+    1. Add line to allow sudo group without password: `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`
+    1. (Note) To give users sudo access through the group: `usermod -aG sudo <user>`
+1. Add a personal admin user:
     1. Create the user and add it to relevant groups: `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal <user>`
     1. Set its password: `passwd <user>`
     1. Relog as the new user, both to make sure that it's working and because some next steps require a non-root user.
-1. Install yay to access the AUR:
+1. Install yay to access the AUR (as non-root):
     1. (Note) This needs to be done as non-root.
     1. Install requirements: `sudo pacman -S --needed base-devel git`
-    1. Clone and enter: `git clone https://aur.archlinux.org/yay.git && cd yay`
-    1. Install: `makepkg -si`
+    1. Clone and enter: `git clone https://aur.archlinux.org/yay.git`
+    1. Install: `cd yay && makepkg -si`
     1. Remove the tmp. repo: `cd .. && rm -rf yay`
     1. Idk (once): `yay -Y --gendb`
+    1. (Note) Yay needs to be run as a normal user, not as root and not with sudo.
 1. Enable early numlock (initramfs phase):
     1. Install package: `yay -S mkinitcpio-numlock`
-    1. Add `numlock` to the `HOOKS` list in `/etc/mkinitcpio.conf` before `encrypt` (assuming the system is encrypted) (e.g. before `modconf`).
+    1. Add `numlock` to the `HOOKS` list in `/etc/mkinitcpio.conf` somewhere before `encrypt` (assuming the system is encrypted) (e.g. before `modconf`).
     1. Regenerate the initramfs: `mkinitcpio -P`
 1. Tweak the PAM login faillock:
     1. (Note) It applies to password logins only, not SSH keys.
@@ -211,16 +210,19 @@ For Arch with LUKS encrypted root (and boot), using the i3 window manager.
     1. Download my IPTables script (or do it yourself): `curl https://raw.githubusercontent.com/HON95/scripts/master/iptables/iptables.sh -o /etc/iptables/config.sh`
     1. Make it executable: `chmod +x /etc/iptables/config.sh`
     1. Modify it.
+        - It currently defaults to Debian-specific stuff, so remove those lines and uncomment the Arch-specific lines.
     1. Run it: `/etc/iptables/config.sh`
 1. (Optional) Setup colored man pages:
     1. (Note) Most breaks on wide displays (e.g. UHD), so don't use it if that may be a problem.
     1. Install the most pager: `sudo pacman -S most`
     1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export PAGER=most`
+1. Reboot to reload stuff and make sure nothing broke:
+    1. `sudo reboot`
 
 ### Setup the Xorg Display Server
 
 1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr`
-1. Fix the keyboard layout for X11: `sudo localectl set-x11-keymap <keymap>` (e.1. `no`)
+1. Fix the keyboard layout for X11: `sudo localectl set-x11-keymap <keymap>` (e.g. `no`)
 
 ### Setup the LightDM or Ly Display Manager
 
@@ -246,7 +248,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 1. Setup Ly:
     1. (Note) The config file is `/etc/ly/config.ini`.
     1. Install: `yay -S ly`
-    1. Enable: `systemctl enable ly`
+    1. Enable: `sudo systemctl enable ly`
     1. Add fire background: In the config, set `animate = true` and `hide_borders = true`.
 1. Enable numlock on by default in X11:
     1. Install: `sudo pacman -S numlockx`
@@ -259,11 +261,12 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Use `Mod+Shift+R` to reload the i3 config. Note that `exec_always` statements will be run again during reload but `exec` will only run when starting i3.
 1. Install i3:
     1. Install: `sudo pacman -S i3-wm`
+    1. (Note) Vital parts are missing in the i3 config, follow the remaining steps before attempting to use i3.
 1. Setup the Polybar system bar:
     1. (Note) i3bar, the default i3 system bar, shows workspaces and tray icons. It can include extra info like IP addresses and resource usage using i3status or i3blocks. Polybar is a replacement for i3bar.
     1. Disable i3bar: Comment the whole `bar` section of the i3 config.
     1. Install polybar: `yay -S polybar`
-    1. Create the config: `mkdir ~/.config/polybar && cp /usr/share/doc/polybar/config ~/.config/polybar/config`
+    1. Create the config: `mkdir ~/.config/polybar && cp /usr/share/doc/polybar/examples/config.ini ~/.config/polybar/config`
     1. Customize config:
         - Rename the "example" bar to e.g. "main" (or create one from scratch).
         - Set the font: In the bar section, remove the existing `font-<n>` statements. Set `font0 = <family>:style=<s>:size=<n>;<vertical-offset>` (e.g. `font-0 = "MesloLGS NF:style=Regular:size=9;2"`). Use `fc-list | grep <font-name>` (the part after the first colon) to search for fonts. Make sure to use a Unicode-compatible font (which the default may not be.
@@ -273,7 +276,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         - For the date module, customize how time should appear. "Alt" variants are swapped to when the module is clicked.
         - For the network/"eth" module, use `%local_ip6%` for the IPv6 address (one of them). Maybe clone the module to have one for IPv4 and one for IPv6. Maybe change the color to purple (`#800080`), so it doesn't clash with the Spotify module (if added).
         - Update the panel modules in the `modules-{left,center,right}` variables.
-    1. Create a startup script: See the section below to use the new "main" bar.
+    1. Create a startup script: See the section below to use the new "main" bar. Make it executable.
     1. Add to i3: In the i3 config, add `exec_always --no-startup-id $HOME/.config/polybar/launch.sh`.
 1. Setup the Alacritty terminal emulator (or some other):
     1. Install: `sudo pacman -S alacritty`
@@ -286,7 +289,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 1. Setup the Rofi application launcher:
     1. Install: `sudo pacman -S rofi`
     1. Install rofimoji for emoji menu: `sudo pacman -S rofimoji xdotool`
-    1. Find a theme interactively (without selecting any): `rofi-theme-selector` (e.g. `glue_pro_blue`)
+    1. (Optional) Find a theme interactively (without selecting any): `rofi-theme-selector` (e.g. `glue_pro_blue`)
     1. Configure Rofi: Create `~/.config/rofi/config.rasi`, see the example below.
     1. Configure Rofimoji: Create `~/.config/rofimoji.rc` and set `action = copy` (copy to clipboard by default).
     1. Disable old i3 dmenu shortcut: In the i3 config, comment the `bindsym $mod+d` line.
@@ -294,14 +297,17 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Setup i3 window shortcut: In the i3 config, set `bindsym $mod+shift+d exec rofi -show window`.
     1. Setup i3 emoji shortcut: In the i3 config, set `bindsym $mod+mod1+d exec rofi -modi "emoji:rofimoji" -show emoji`.
 1. Setup fonts:
-    1. `sudo pacman -S noto-fonts notn-fonts-emoji`
+    1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
+    1. (Optional) Download the MesloLGS font (used in examples here): Download the TTF font files from [here](https://github.com/romkatv/powerlevel10k#fonts) and move them into `/usr/share/fonts/TTF/`.
 1. (Optional) Test the display server, display manager and and window manager:
-    1. Restart LightDM/Ly and get pulled into it: `systemctl restart lightdm` or `[...] ly`
+    1. Restart LightDM/Ly and get pulled into it: `sudo systemctl restart lightdm` or `[...] ly`
+        - Note that you will not be logged out of the PTY, use `Ctrl+Alt+F1` to go back to it and log out.
     1. Select the i3 WM and log in.
-    1. Follow the basic i3 setup wizard:
+    1. If prompted, follow the basic i3 setup wizard:
         1. Generate a new config.
         1. `Win` as default modifier.
     1. Test i3: `Mod+Return` to open terminal, `Mod+D` to open app launcher, etc.
+    1. (Optional) Install Firefox to access the web ASAP: `sudo pacman -S firefox`
 1. Setup background image:
     1. Download a desktop image.
     1. Install the FEH image viewer: `sudo pacman -S feh`
@@ -322,6 +328,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         1. Create and open it: `mkdir -p ~/.config/dunst && vim ~/.config/dunst/dunstrc`
         1. Fix scaling for high-res displays, if broken (doesn't affect text size): In the `global` section, set e.g. `scale = 2`.
         1. Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 15`.
+    1. (Optional) Restart dunst: `systemctl --user restart dunst`
     1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
 1. Setup media keys:
     1. (Note) Install e.g. Spotify (`aur/spotify`) to test with.
@@ -357,6 +364,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         - For each connected monitor, create a separate section.
         - Run `xrandr` to get display IDs.
         - Make sure to have exactly one display with `Option "Primary" "true"`.
+    1. Alternatively, create a script to set up displays using `xrandr` and call is from the i3 config.
 1. Setup display power management signaling (DPMS):
     1. See the example Xorg DPMS config below.
         - For non-CRT displays, the standby, suspend and off modes typically mean the same thing.
@@ -376,8 +384,7 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
     1. Run `pavucontrol` to configure volumes, inputs, outputs and stuff.
 1. Test it:
     1. Try playing something from the browser or whatever. It should work.
-1. **TODO** Bluetooth support. Check the PipeWire page.
-1. Install useful audio applications:
+1. (Optional) Install useful audio applications:
     1. Install the Helvum patchbay to patch nodes and endpoints (inputs and outputs for all audio devices): `sudo pacman -S helvum`
     1. See the [PipeWire page (Arch Wiki)](https://wiki.archlinux.org/title/PipeWire).
 
@@ -455,17 +462,6 @@ Note: We're using the PipeWire sound server, a modern, security-focused and comp
 
 ### Notes and Snippets
 
-#### Main Disk Partitions
-
-| Partition Number | Size | Type | Description | Mountpoint |
-| - | - | - | - | - |
-| 1 | 512MiB | ESP, 1 (fdisk), EF00 (gdisk) | EFI system partition (ESP) | `/boot/efi/` |
-| 2 | Remaining | Doesn't matter | LUKS | `/` |
-
-**Swap**:
-
-Avoid creating an unencrypted swap partition. Just use a swap file in the (encrypted) root filesystem instead.
-
 #### systemd-networkd Network Config
 
 File: `/etc/systemd/network/eno1.network` (example)
@@ -485,7 +481,7 @@ UseNTP=no
 UseHostname=no
 UseDomains=yes
 
-[IPV6ACCEPTRA]
+[IPv6AcceptRA]
 UseDNS=yes
 UseDomains=yes
 ```
@@ -515,7 +511,8 @@ File: `~/.config/polybar/launch.sh`
 
 killall -q polybar
 
-polybar main &>>/tmp/polybar.log
+#polybar main &>>/tmp/polybar.log
+polybar main
 
 echo "Polybar launched"
 ```
