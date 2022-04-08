@@ -51,6 +51,11 @@ interpreter_python = /usr/bin/python3
 host_key_checking = false
 ```
 
+## Templating
+
+- YAML files:
+    - Conditionals and stuff tend to mess up indentation. Specify `#jinja2: trim_blocks:False` to avoid that. This will also make the output a little uglier with empty lines in place of unsatisfied conditionals and stuff though.
+
 ## Troubleshooting
 
 ### Ansible Freezes when Connecting

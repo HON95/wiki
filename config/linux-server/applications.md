@@ -934,6 +934,10 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
        ```
     1. In `/etc/fstab`, add: `//<share> <mountpoint> cifs vers=3.1.1,uid=<uid>,gid=<gid>,credentials=<file>,iocharset=utf8 0 0`
     1. Test it: `mount -a`
+- Add automounted share:
+    1. Set up the permanent share (see steps above).
+    1. In the `/etc/fstab` entry, add `,noauto,x-systemd.automount,x-systemd.idle-timeout=30`.
+    1. Reload systemd automounting: `systemctl daemon-reload && systemctl restart remote-fs.target`
 
 ## smartmontools
 
