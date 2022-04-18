@@ -84,12 +84,13 @@ The backports repo is used to get the newest version of ZoL.
 ### Pools
 
 - Recommended pool options:
-    - Typical example: `-o ashift=<9|12> -o autotrim=on -O compression=zstd -O xattr=sa -O atime=off -O relatime=on` (`autotrim` only for SSDs)
+    - Typical example: `-o ashift=<9|12> -o autotrim=on -o autoreplace=on -O compression=zstd -O xattr=sa -O atime=off -O relatime=on` (`autotrim` only for SSDs)
     - Specifying options during creation: For `zpool`/pools, use `-o` for pool options and `-O` for dataset options. For `zfs`/datasets, use `-o` for dataset options.
     - Set physical block/sector size (pool option): `ashift=<9|12>`
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
     - Enable TRIM (for SSDs): `autotrim=on`
         - It's also recommended to create a cron job to run `zpool trim` periodically for the SSD pool.
+    - Enable autoreplacement for disks in the same physical slot (using ZED): `autoreplace=on`
     - Enable compression (dataset option): `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
     - Store extended attributes in the inodes (dataset option): `xattr=sa`
@@ -109,6 +110,7 @@ The backports repo is used to get the newest version of ZoL.
     - Create encrypted pool: See encryption section.
     - Add special device: See special device section.
     - Add hot spare (if after creation): `zpool add <pool> spare <disks>`
+        - Note that hot spares are currently a bit broken and don't automatically replace pool disks. Make sure to test the setup before relying on it.
     - Use absolute drive paths (`/dev/disk/by-id/` or similar), not `/dev/sdX`.
 - View pool activity: `zpool iostat [-v] [interval]`
     - Includes metadata operations.
@@ -256,6 +258,21 @@ The backports repo is used to get the newest version of ZoL.
 - Replace a drive and begin resilvering: `zpool replace [-f] <pool> <old-drive> <new-drive>`
 - Bring a drive online or offline: `zpool (online|offline) <pool> <drive>`
 - Re-add drive that got wiped: Take it offline and then online again.
+- Spares:
+    - (See the pool section.)
+    - Note that hot spares are currently a bit broken and don't automatically replace pool disks. Make sure to test the setup before relying on it.
+    - When replacing pool disks with spare disks, they will show both as part of the pool and as "INUSE" spares. This is becayse spares are meant as _temporary_ replacements.
+- Enable or disable automatically formatting and using a new disk physically installed in the same slot as a previous disk (using ZED): `zpool set autoreplace=on <pool>`
+    - This does the same as `zpool replace [-f] <pool> <device>` (no new device specified, the paths are the same), but automatically.
+    - This feature is broken in ZED version 0.8-something ([bug](https://github.com/openzfs/zfs/pull/10730)).
+
+### Events
+
+- Events are handled by ZED (ZFS Event Daemon).
+- ZED hangles e.g. sending emails when disks go bad, replacing disks, custom scripts, etc.
+- See event log: `zpool events [-vf] [pool]`
+    - `-v` for verbose.
+    - `-f` for follow.
 
 ### Miscellanea
 
