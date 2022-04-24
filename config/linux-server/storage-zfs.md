@@ -84,13 +84,13 @@ The backports repo is used to get the newest version of ZoL.
 ### Pools
 
 - Recommended pool options:
-    - Typical example: `-o ashift=<9|12> -o autotrim=on -o autoreplace=on -O compression=zstd -O xattr=sa -O atime=off -O relatime=on` (`autotrim` only for SSDs)
+    - Typical example: `-o ashift=<9|12> -o autotrim=on -o autoreplace=off -O compression=zstd -O xattr=sa -O atime=off -O relatime=on` (`autotrim` only for SSDs)
     - Specifying options during creation: For `zpool`/pools, use `-o` for pool options and `-O` for dataset options. For `zfs`/datasets, use `-o` for dataset options.
     - Set physical block/sector size (pool option): `ashift=<9|12>`
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
     - Enable TRIM (for SSDs): `autotrim=on`
         - It's also recommended to create a cron job to run `zpool trim` periodically for the SSD pool.
-    - Enable autoreplacement for disks in the same physical slot (using ZED): `autoreplace=on`
+    - Enable autoreplacement for new disks in the same physical slot as old ones (using ZED): `autoreplace=on`
     - Enable compression (dataset option): `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
     - Store extended attributes in the inodes (dataset option): `xattr=sa`
