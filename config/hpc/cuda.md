@@ -38,6 +38,7 @@ Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-do
 #### Ubuntu w/ NVIDIA's CUDA Repo
 
 1. Follow the steps to add the NVIDIA CUDA repo: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
+    - Use the "deb (network)" method, which will show instructions for adding the repo.
     - But don't install `cuda` yet.
 1. Remove anything NVIDIA or CUDA from the system to avoid conflicts: `apt purge --autoremove 'cuda' 'cuda-' 'nvidia-*' 'libnvidia-*'`
     - Warning: May break your PC. There may be better ways to do this.
