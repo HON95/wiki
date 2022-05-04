@@ -39,9 +39,11 @@ breadcrumbs:
 - Disable the lock screen:
     - Because it's annoying.
     - Open `regedit`.
-    - Go to `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows`.
-    - Create a new key (dir) named `Personalization`.
-    - Add a new DWORD named `NoLockScreen` with value `1`.
+    - Set DWORD `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows/Personalization` to `1`.
+- Set hardware clock to use UTC:
+    - Because Linux uses it, so the Windows time will be wrong if dual booting.
+    - Open `regedit`.
+    - Set DWORD `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation\RealTimeIsUniversal` to `1`.
 - Change the computer name.
 - Check Windows Security.
 - Start menu:
