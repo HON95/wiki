@@ -306,7 +306,7 @@ Everything here is optional.
     - Clear `/etc/motd`, `/etc/issue` and `/etc/issue.net`.
     - Download [dmotd.sh](https://github.com/HON95/scripts/blob/master/login/dmotd.sh) to `/etc/profile.d/`.
     - Install the dependencies: `neofetch lolcat`
-    - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. [TAAG](http://patorjk.com/software/taag/).
+    - Add an ASCII art (or Unicode art) logo to `/etc/logo`, using e.g. `figlet <text>` or [TAAG](http://patorjk.com/software/taag/).
     - (Optional) Add a MOTD to `/etc/motd`.
     - Test it: `su - <some-normal-user>`
 - Setup monitoring:
