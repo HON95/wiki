@@ -89,7 +89,7 @@ breadcrumbs:
 
 ### Headers
 
-- Note: These are response headers unless otherwise stated.
+- (Note) These are response headers unless otherwise stated.
 - `X-Frame-Options`: Determines if the current page can be framed. Can prevent e.g. clickjacking. Unless the page is intended to be framed on other sites, set it to `SAMEORIGIN` or `DENY`.
 - `X-Content-Type-Options`: Can prevent e.g. MINE sniffing by denying browsers to ignore the sent `Content-Type` and try to determine the content type of a document by itself, which can lead to XSS. Always set to `nosniff`.
 - `X-XSS-Protection`: Determines if built-in XSS features in the browser (e.g. for detecting reflected XSS) should be enabled or disabled. The default (`1`) is to detect and sanitize unsafe parts (which could potentially be exploited). Set to `1; mode=block` to stop loading the page when detected instead.

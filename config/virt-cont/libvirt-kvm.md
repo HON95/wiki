@@ -82,7 +82,7 @@ I'll only focus on using it with KVM (and QEMU) here.
 - Edit network config (without applying it): `virsh net-edit <network>`
 - Apply changed network config: Restart libvirt or reboot the system.
 - Create bridge connected to physical NIC:
-    - Note: If you're connected remotely, try to avoid locking yourself out.
+    - (Note) If you're connected remotely, try to avoid locking yourself out.
     - Create bridge on the host: See [BridgeNetworkConnections (Debian Wiki)](https://wiki.debian.org/BridgeNetworkConnections) or something.
 
 ### Storage

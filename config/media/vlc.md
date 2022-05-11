@@ -92,7 +92,7 @@ breadcrumbs:
 ### Media Processing
 
 - Convert/transcode or fix badly encoded files (GUI method):
-    1. Note: E.g. when othe programs complain that a GoPro video file is corrupted but VLC still manages to open it somehow.
+    1. (Note) E.g. when othe programs complain that a GoPro video file is corrupted but VLC still manages to open it somehow.
     1. Open VLC.
     1. Go to "File", "Convert".
     1. Open add the source files.

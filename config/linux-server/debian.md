@@ -107,8 +107,9 @@ The first steps may be skipped if already configured during installation (i.e. n
     - Disable mouse globally: In `/etc/vim/vimrc.local`, add `set mouse=` and `set ttymouse=`.
     - Fix YAML formatting globally: In `/etc/vim/vimrc.local`, add `autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab`.
 1. Add mount options:
-    - Setup hidepid:
-        - Note: The `adm` group will be granted access.
+    - (Not recommended) Setup hidepid:
+        - (Note) Hidepid breaks certain systemd things. It's not recommended to use it until that gets fixed.
+        - (Note) The `adm` group will be granted access.
         - Add your personal user to the PID monitor group: `usermod -aG adm <user>`
         - Enable hidepid in `/etc/fstab`: `proc /proc proc defaults,hidepid=2,gid=<adm-gid> 0 0` (using the numerical GID of `adm`)
     - (Optional) Disable the tiny swap partition added by the guided installer by commenting it in the fstab.
@@ -140,10 +141,10 @@ The first steps may be skipped if already configured during installation (i.e. n
     - Clear `/etc/motd`, `/etc/issue` and `/etc/issue.net`.
     - (Optional) Add a MOTD script (see below).
 1. (Optional) (Buster) Enable persistent logging:
-    - Note: Persistent logging is the default for Debian 11/Bullseye, but not Debian 10/Buster.
+    - (Note) Persistent logging is the default for Debian 11/Bullseye, but not Debian 10/Buster.
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
-    - Note: `auto` (the default) is like `persistent`, but does not automatically create the log directory.
-    - Note: The default journal directory is `/var/log/journal`.
+    - (Note) `auto` (the default) is like `persistent`, but does not automatically create the log directory.
+    - (Note) The default journal directory is `/var/log/journal`.
 
 ### Machine-Specific Configuration
 
@@ -152,7 +153,7 @@ The first steps may be skipped if already configured during installation (i.e. n
 1. Install extra firmware:
     - Enable the `non-free` repo areas.
     - Update microcode: Install `intel-microcode` (for Intel) or `amd64-microcode` (for AMD) and reboot (now or later).
-    - Note: APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
+    - (Note) APT package examples: `firmware-atheros -bnx2 -bnx2x -ralink -realtek`
     - If it asked to install non-free firmware in the initial installation installation, try to install it now.
     - Install firmware from other sources (e.g. for some Intel NICs).
     - (Optional) To install all common common firmware and microcode, install `firmware-linux` (or `firmware-linux-free`) (includes e.g. microcode packages).
@@ -215,7 +216,7 @@ Prevent enabled (and potentially untrusted) interfaces from accepting router adv
     - Don't save the current rules when it asks.
 1. Manually add IPTables rules or make [a simple iptables script](https://github.com/HON95/scripts/blob/master/iptables/iptables.sh) or something.
 1. Open a new SSH session and make sure you can still log in without closing the current one.
-1. Note: If you flush the firewall and reconfigure it, remember to restart services modifying it (like libvirt, Docker, Fail2Ban).
+1. (Note) If you flush the firewall and reconfigure it, remember to restart services modifying it (like libvirt, Docker, Fail2Ban).
 
 #### DNS
 
@@ -275,7 +276,7 @@ Everything here is optional.
     - Check status: `fail2ban-client status [sshd]`
     - See [Linux Server Applications: Fail2Ban](applications.md#fail-2-ban) for more info.
 - Set up a swap file:
-    1. Note: You should have enough memory installed to never need swapping, but it's a nice backup to prevent the system from potentially crashing if anything bugs out and eats up too much memory.
+    1. (Note) You should have enough memory installed to never need swapping, but it's a nice backup to prevent the system from potentially crashing if anything bugs out and eats up too much memory.
     1. Show if swap is already enabled: `swapon --show`
     1. Allocate the swap file: `fallocate -l <size> /swapfile`
         - Alternatively, use dd.

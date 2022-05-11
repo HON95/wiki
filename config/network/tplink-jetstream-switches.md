@@ -74,9 +74,9 @@ breadcrumbs:
     1. Enable server: `ip ssh server`
     1. Disable Telnet: `telnet disable`
 1. Change Switch Database Management (SDM) template:
-    1. Note: Show SDM template info: `show sdm prefer {used|default|...}`
-    1. Note: Show actual usage: `ipv6 source binding`
-    1. Note: `enterpriseV6` is required for enabling IPv6 ND inspection.
+    1. (Note) Show SDM template info: `show sdm prefer {used|default|...}`
+    1. (Note) Show actual usage: `ipv6 source binding`
+    1. (Note) `enterpriseV6` is required for enabling IPv6 ND inspection.
     1. Allocate more resources to IPv6: `sdm prefer enterpriseV6`
     1. **TODO** Check how many entries are actually used. The max count seems low.
 1. Setup physical interfaces (basics):
@@ -124,7 +124,7 @@ breadcrumbs:
 1. Set time and NTP servers:
     1. Set recurring DST: `system-time dst recurring last Sun Mar 2:00 last Sun Oct 3:00` (Norway)
     1. (Optional) Set time and NTP servers: `system-time ntp UTC+01:00 <ip-1> <ip-2> <update-hours>`
-    1. Note: Both NTP servers must be IP addresses and using the same IP version, but they may be the same address.
+    1. (Note) Both NTP servers must be IP addresses and using the same IP version, but they may be the same address.
 1. Enable LLDP:
     1. Enable globally: `lldp`
     1. Enter physical interface configs.
@@ -132,12 +132,12 @@ breadcrumbs:
     1. (Optional) Disable receive: `no lldp receive`
     1. (Optional) Enable LLDP-MED: `lldp med-status`
 1. (Optional) Enable flow control:
-    1. Note: Flow control requires that the connected devices support it in order for it to work. As it pauses all traffic when "triggered", setting up QoS _instead_ of flow control is a much better option if possible.
+    1. (Note) Flow control requires that the connected devices support it in order for it to work. As it pauses all traffic when "triggered", setting up QoS _instead_ of flow control is a much better option if possible.
     1. Enter the interface configs (physical or LAG).
     1. Enable: `flow-control`
     1. Show status: `show int status`
 1. Enable Enerfy Efficient Ethernet (EEE):
-    1. Note: EEE is safe to enable on all ports and does not require that the connected devices are compatible in any way.
+    1. (Note) EEE is safe to enable on all ports and does not require that the connected devices are compatible in any way.
     1. Enter the physical interfaces (preferably all ports).
     1. Enable: `eee`
     1. Show status: `show int eee`
@@ -149,13 +149,13 @@ breadcrumbs:
     1. Enable for multicast: `storm-control multicast <threshold>` (e.g. 1%)
     1. Enable for unknown unicast: `storm-control unicast <threshold>` (e.g. 1%)
 1. Enable DHCPv4/DHCPv6/ND snooping:
-    1. Note: Snooping by itself doesn't do anything but is used by other protection mechanisms.
+    1. (Note) Snooping by itself doesn't do anything but is used by other protection mechanisms.
     1. Enable globally (global): `{ip|ipv6} {dhcp|nd} snooping`
     1. Enable for VLAN (global): `{ip|ipv6} {dhcp|nd} snooping vlan <vid-range>`
     1. Set max number of bindings per port (interface): `{ip|ipv6} {dhcp|nd} snooping max-entries <n>` (e.g. 2)
     1. Show bindings: `show {ip|ipv6} source binding`
 1. Enable ARP (IPv4) inspection/detection:
-    1. Note: ARP detection prevents ARP spoofing and flooding.
+    1. (Note) ARP detection prevents ARP spoofing and flooding.
     1. Enable globally: `ip arp inspection`
     1. Enable for VLAN (global): `ip arp inspection vlan <vid-range>`
     1. (Debug) Enable logging (global): `ip arp inspection vlan <vid-range> logging`
@@ -164,16 +164,16 @@ breadcrumbs:
     1. Validate sender/target IP address (global): `ip arp inspection validate ip`
     1. Set trusted interface (interface): `ip arp inspection trust`
     1. **TODO** Rate limiting interfaces.
-    1. Note: To restore an interface that has exceeded the rate limit, run `ip arp inspection recover` on it.
+    1. (Note) To restore an interface that has exceeded the rate limit, run `ip arp inspection recover` on it.
 1. Enable ND (IPv6) detection:
-    1. Note: ND detection will validate the source IPv6 and MAC addresses for ND packets and will discard router adversisements and router redirects on untrusted ports.
+    1. (Note) ND detection will validate the source IPv6 and MAC addresses for ND packets and will discard router adversisements and router redirects on untrusted ports.
     1. Enable globally (global): `ipv6 nd detection`
     1. Enable for VLAN (global): `ipv6 nd detection vlan <vid-range>`
     1. (Debug) Enable logging (global): `ipv6 nd detection vlan <vid-range> logging`
     1. Set trusted interface (interface): `ipv6 nd detection trust`
     1. **TODO** Fix, seems to fail to learn link local addresses from newly connected devices and then drops RSes and NAs from them due to IMPB mismatch.
 1. Enable IPv4/IPv6 source guard:
-    1. Note: IP source guard validates the source IP and MAC addresses for normal traffic.
+    1. (Note) IP source guard validates the source IP and MAC addresses for normal traffic.
     1. Enable DHCPv4/DHCPv6/ND snooping (see above).
     1. **TODO** Enable globally?
     1. Enable for IP and MAC (interface): `{ip|ipv6} verify source sip[v6]-mac`

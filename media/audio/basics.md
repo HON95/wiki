@@ -12,7 +12,7 @@ breadcrumbs:
     - High midrange (ca. 1kHz-10kHz)
     - Highs (ca. 10kHz-20kHz)
 - Signal levels:
-    - Note: This is the voltage (and somewhat impedance) inside cables/equipment.
+    - (Note) This is the voltage (and somewhat impedance) inside cables/equipment.
     - Mic level: Output from a microphone. Very weak, requires a preamp.
     - Instrument level: Output from e.g. a guitar. Like mic level but slightly stronger.
     - Line level (+4dBu): Professional equipment.

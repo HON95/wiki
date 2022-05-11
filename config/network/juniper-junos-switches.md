@@ -30,9 +30,7 @@ breadcrumbs:
 - Serial config: RS-232 w/ RJ45, baud 115200, 8 data bits, no parity bits, 1 stop bit, no flow control.
 - Native VLAN: 0, aka `default`
 
-## Initial Setup
-
-**TODO** (some general info, some switch config info, move this to some appropriate place):
+## Random Notes (**TODO:** Move Somewhere Appropriate)
 
 - `request system storage cleanup` for cleanup of old files.
 - `system auto-snapshot` (already added here)
@@ -109,7 +107,7 @@ breadcrumbs:
         }
         ```
 
-**TODO** Remaining stuff:
+## Initial Setup
 
 1. Connect to the switch using serial:
     - RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow control.
@@ -148,8 +146,8 @@ breadcrumbs:
     1. Set server to use while booting (forces initial time): `set system ntp boot-server <address>`
     1. Set server to use periodically (for tiny, incremental changes): `set system ntp server <address>`
     1. Set time zone: `set system time-zone Europe/Oslo` (example)
-    1. Note: After committing, use `show ntp associations` to verify NTP.
-    1. Note: After committing, use `set date ntp` to force it to update. This may be required if the delta is too large and the NTP client refuses to update.
+    1. (Note) After committing, use `show ntp associations` to verify NTP.
+    1. (Note) After committing, use `set date ntp` to force it to update. This may be required if the delta is too large and the NTP client refuses to update.
 1. Delete default interfaces configs:
     - `wildcard range delete interface ge-0/0/[0-47]` (example, repeat for all FPCs/PICs)
 1. Disable unused interfaces:
@@ -161,14 +159,14 @@ breadcrumbs:
 1. Disable default VLAN:
     1. Delete logical interface (before disabling): `delete int vlan.0`
     1. Disable logical interface: `set int vlan.0 disable`
-1. Create VLANs (not interfaces):
+1. Create VLANs:
     - `set vlans <name> vlan-id <VID>`
-1. Setup port-ranges:
+1. Setup interface-ranges (apply config to multiple configured interfaces):
     - Declare range: `edit interfaces interface-range <name>`
     - Add member ports: `member-range <begin-if> to <end-if>`
     - Configure it as a normal interface, which will be applied to all members.
 1. Setup LACP:
-    1. Note: Make sure you allocate enough LACP interfaces and that the interface numbers are below 512 (empirically discovered on EX3300).
+    1. (Note) Make sure you allocate enough LACP interfaces and that the interface numbers are below 512 (empirically discovered on EX3300).
     1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>` (just set it to some standard large size)
     1. Add individual Ethernet interfaces (not using interface range):
         1. Delete logical units (or the whole interfaces): `wildcard range delete interfaces ge-0/0/[0-1] unit 0` (example)
@@ -180,9 +178,12 @@ breadcrumbs:
     1. Setup VLAN/address/etc.
 1. Setup VLAN interfaces:
     1. Setup trunk ports:
+        1. (Note) `vlan members` supports both numbers and names. Use the `[VLAN1 VLAN2 <...>]` syntax to specify multiple VLANs.
+        1. (Note) Instead of specifying which VLANs to add, specify `vlan members all` and `vlan except <excluded-VLANs>`.
+        1. (Note) `vlan members` should not include the native VLAN (if any).
         1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
         1. Set mode: `set port-mode trunk`
-        1. Set non-native VLANs: `set vlan members [<VLAN-name-1> [VLAN-name-2] [...]]` (once per VLAN or repeated syntax)
+        1. Set VLANs: `set vlan members <VLANs>`
         1. (Optional) Set native VLAN: `set native-vlan-id <VID>`
     1. Setup access ports:
         1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
@@ -196,18 +197,18 @@ breadcrumbs:
     1. IPv4 default gateway: `set routing-options rib inet.0 static route 0.0.0.0/0 next-hop <next-hop>`
     1. IPv6 default gateway: `set routing-options rib inet6.0 static route ::/0 next-hop <next-hop>`
 1. Disable/enable Ethernet flow control:
-    - Note: Junos uses the symmetric/bidirectional PAUSE variant of flow control.
-    - Note: This simple PAUSE variant does not take traffic classes (for QoS) into account and will pause _all_ traffic for a short period (no random early detection (RED)) if the receiver detects that it's running out of buffer space, but it will prevent dropping packets _within_ the flow control-enabled section of the L2 network. Enabling it or disabling it boils down to if you prefer to pause (all) traffic or drop (some) traffic during congestion. As a guideline, keep it disabled generally (and use QoS or more sophisticated variants instead), but use it e.g. for dedicated iSCSI networks (which handle delays better than drops). Note that Ethernet and IP don't require guaranteed packet delivery.
-    - Note: It _may_ be enabled by default, so you should probably enable/disable it explicitly (the docs aren't consistent with my observations).
-    - Note: Simple/PAUSE flow control (`flow-control`) is mutually exclusive with priority-based flow control (PFC) and asymmetric flow control (`configured-flow-control`).
+    - (Note) Junos uses the symmetric/bidirectional PAUSE variant of flow control.
+    - (Note) This simple PAUSE variant does not take traffic classes (for QoS) into account and will pause _all_ traffic for a short period (no random early detection (RED)) if the receiver detects that it's running out of buffer space, but it will prevent dropping packets _within_ the flow control-enabled section of the L2 network. Enabling it or disabling it boils down to if you prefer to pause (all) traffic or drop (some) traffic during congestion. As a guideline, keep it disabled generally (and use QoS or more sophisticated variants instead), but use it e.g. for dedicated iSCSI networks (which handle delays better than drops). Note that Ethernet and IP don't require guaranteed packet delivery.
+    - (Note) It _may_ be enabled by default, so you should probably enable/disable it explicitly (the docs aren't consistent with my observations).
+    - (Note) Simple/PAUSE flow control (`flow-control`) is mutually exclusive with priority-based flow control (PFC) and asymmetric flow control (`configured-flow-control`).
     - Disable on Ethernet interface (explicit): `set interface <if> [aggregated-]ether-options no-flow-control`
     - Enable (explicit): `... flow-control`
 1. Enable EEE (Energy-Efficient Ethernet, IEEE 802.3az):
-    - Note: For reducing power consumption during idle periods. Supported on RJ45 copper ports.
-    - Note: There generally is no reason to not enable this on all ports, however, there may be certain devices or protocols which don't play nice with EEE (due to poor implementations).
+    - (Note) For reducing power consumption during idle periods. Supported on RJ45 copper ports.
+    - (Note) There generally is no reason to not enable this on all ports, however, there may be certain devices or protocols which don't play nice with EEE (due to poor implementations).
     - Enable on RJ45 Ethernet interface: `set interface <if> ether-options ieee-802-3az-eee`
 1. (Optional) Configure RSTP:
-    - Note: RSTP is the default STP variant for Junos.
+    - (Note) RSTP is the default STP variant for Junos.
     - Enter config section: `edit protocols rstp`
     - (ELS) Set interfaces: `set interfaces all` (or specific)
     - Set priority: `set bridge-priority <priority>` (default 32768, should be a multiple of 4096, use e.g. 32768 for access, 16384 for distro and 8192 for core)
@@ -218,7 +219,7 @@ breadcrumbs:
     - **TODO** Guards, e.g. `bpdu-block-on-edge` or something.
     - **TODO** Enabled on all interfaces and VLANs by default?
 1. Configure SNMP:
-    - Note: SNMP is extremely slow on the Juniper switches I've tested it on.
+    - (Note) SNMP is extremely slow on the Juniper switches I've tested it on.
     - Enable public RO access: `set snmp community public authorization read-only`
 1. Configure sFlow:
     - **TODO**

@@ -58,7 +58,7 @@ Using an FS S3700-24T4F (access) and an FS S5860-20SQ (core).
     1. Enter VTY lines: `line vty 0 35`
     1. Use default authentication (e.g. local): `login authentication default`
 1. (Optional) Disable inactivity timeout:
-    1. Note: For prod systems you should keep this disabled, but it's really annoying when labbing.
+    1. (Note) For prod systems you should keep this disabled, but it's really annoying when labbing.
     1. Enter console line.
     1. Disable timer: `exec-timeout 0`
 1. (Optional) Disable management interface:
@@ -69,7 +69,7 @@ Using an FS S3700-24T4F (access) and an FS S5860-20SQ (core).
     1. Enter physical interface range (e.g. `int range te0/1-20`).
     1. Disable them: `shutdown`
 1. (Meta) Setup basic interface:
-    1. Note: Applies to most interfaces.
+    1. (Note) Applies to most interfaces.
     1. Set description: `description <description>`
     1. Enable or disable: `[no] shutdown`
 1. Setup physical L2 interface:
@@ -86,7 +86,7 @@ Using an FS S3700-24T4F (access) and an FS S5860-20SQ (core).
 1. Setup VLANs:
     1. Define L2 VLAN and enter section: `vlan <VID>`
     1. Set name: `name <name>`
-    1. Note: To setup L3 interfaces for VLANs, enter `interface VLAN <VID>`.
+    1. (Note) To setup L3 interfaces for VLANs, enter `interface VLAN <VID>`.
 1. Add interfaces to VLANs:
     1. Enter the interface(s).
     1. Set the mode: `switchport mode {access|trunk}`
@@ -105,9 +105,9 @@ Using an FS S3700-24T4F (access) and an FS S5860-20SQ (core).
 1. Set default gateway (and other static routes):
     1. Set default gateway (IPv4): `ip route 0.0.0.0 0.0.0.0 <next-hop>`
     1. Set default gateway (IPv6): `ipv6 route ::/0 <next-hop>`
-    1. Note: To avoid leakage, you may want to setup a blackhole route for the site prefixes on the topmost routers.
+    1. (Note) To avoid leakage, you may want to setup a blackhole route for the site prefixes on the topmost routers.
 1. Enable router advertisements (RAs) for IPv6 L3 interfaces:
-    1. Note: This is required for IPv6 autoconfiguration. Set the two flags for DHCPv6 or unset them for SLAAC.
+    1. (Note) This is required for IPv6 autoconfiguration. Set the two flags for DHCPv6 or unset them for SLAAC.
     1. Enter the interface.
     1. (DHCPv6) Set the ND managed flag: `ipv6 nd managed-config-flag`
     1. (DHCPv6) Set the ND other flag: `ipv6 nd other-config-flag`

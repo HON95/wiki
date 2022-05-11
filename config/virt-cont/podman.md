@@ -129,7 +129,7 @@ Warning: If you have any existing CNI networks, forcing Netavark will break thos
 
 ### Networking
 
-- Note: Podman 4.0 introduced a new network stack built from scratch and scrapped the CNI network stack (which targets Kubernetes more than Podman).
+- (Note) Podman 4.0 introduced a new network stack built from scratch and scrapped the CNI network stack (which targets Kubernetes more than Podman).
 - **TODO** Update the below notes for Podman 4.0.
 - Firewall:
     - Unlike Docker, you can't just restart some daemon to fix the firewall rules after reapplying your normal IPTables rules from a script or something.

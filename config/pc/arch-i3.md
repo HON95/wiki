@@ -91,7 +91,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Mount root: `mount /dev/mapper/crypt_root /mnt`
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
-    - Base command and packages: `pacstrap /mnt base linux linux-firmware archlinux-keyring vim sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs zsh vim htop git jq rsync openssh tmux screen reflector usbutils`
+    - Base command and packages: `pacstrap /mnt base linux linux-firmware archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools zsh vim tar zip unzip htop git jq rsync openssh tmux screen reflector usbutils tcpdump nmap`
     - **TODO** Maybe for laptops: `wpa_supplicant networkmanager`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
@@ -138,15 +138,17 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Set the editor: `export EDITOR=vim`
     - Set the visual editor: `export VISUAL=vim`
 1. Setup wired networking:
-    1. Enable and start: `systemctl enable --now systemd-networkd`
+    1. Enable: `systemctl enable systemd-networkd`
+    1. Don't wait for network during boot: `systemctl disable systemd-networkd-wait-online.service`
     1. Add a config for the main interface (or all interfaces): See the section with an example below.
-    1. Restart: `systemctl restart systemd-networkd`
+    1. (Re)start: `systemctl restart systemd-networkd`
     1. Wait for connectivity (see `ip a`).
 1. Setup DNS server(s):
     1. `echo nameserver 1.1.1.1 >> /etc/resolv.conf` (Cloudflare)
     1. `echo nameserver 2606:4700:4700::1111 >> /etc/resolv.conf` (Cloudflare)
 1. Setup Pacman:
     1. Enable color: In `/etc/pacman.conf`, uncomment `Color`.
+    1. Enable the multilib repo (for 32-bit apps): In `/etc/pacman.conf`, uncomment the `[multilib]` section.
 1. Update the system and install useful stuff:
     1. Upgrade: `pacman -Syu`
 1. Install display driver:
@@ -284,7 +286,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.yml -o ~/.config/alacritty/dracula.yml`
     1. Configure: Setup `~/.config/alacritty/alacritty.yml`, see the example config below.
     1. Setup i3: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
-    1. Fix `TERM` for SSH (since the remote probably don't have Alacritty terminal support): In `.zshrc` (or `.bashrc` if using BASH), set `alias ssh="TERM=xterm-256color ssh"`.
     1. (Note) Press `Ctrl+Shift+Space` to enter vi mode, allowing you to e.g. move around (and scroll up) using arrow keys and select text using `V` or `Shift+V`. Press `Ctrl+Shift+Space` again to exit.
 1. Setup the Rofi application launcher:
     1. Install: `sudo pacman -S rofi`
@@ -408,7 +409,7 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
     1. Enable tray icon on i3 start: In the i3 config, add `exec --no-startup-id blueman-applet`. (**TODO** Test.)
     1. (Optional) Try to run it. It's the "Bluetooth Manager" entry in e.g. Rofi.
 1. (Example) Connect a device using `bluetoothctl`:
-    1. Note: To avoid entering the interactive TUI and run single commands instead, use `bluetoothctl -- <cmd>`.
+    1. (Note) To avoid entering the interactive TUI and run single commands instead, use `bluetoothctl -- <cmd>`.
     1. Enter the TUI: `bluetoothctl`
     1. List controllers: `list`
     1. (Optional) Select a controller: `select <mac>`
@@ -456,6 +457,8 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
 1. Setup the 7-Zip CLI/GUI archiver:
     1. Install: `yay -S p7zip-gui`
     1. (Note) Don't use the `.7z` file format, it doesn't preserve owner info.
+1. Setup network tools:
+    1. Install: `sudo pacman -S nmap tcpdump wireshark-qt`
 
 ### Extra (Optional)
 
@@ -497,6 +500,9 @@ font:
   #   family: MesloLGS NF
   #   style: Regular
   size: 9
+
+env:
+  TERM: xterm-256color
 
 import:
   # Theme

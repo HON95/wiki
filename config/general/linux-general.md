@@ -70,6 +70,11 @@ breadcrumbs:
     - Test with various record sizes and file sizes: `iozone -a`
     - Benchmark: `iozone -t1` (1 thread)
     - Plot results: **TODO** It should be doable with gnuplot somehow.
+- Shred disk with `shred`:
+    - Example: `shred -n2 -v <file>`
+    - `-n<n>` speficied the number of passes. This takes ages to begin with for large disks, so keep it as low as appropriate. 1 pass is generally enough, 2 to be sure.
+    - `--zero` adds an extra, final pass to write all zeroes.
+    - `-v` shows progress.
 
 ### Files
 
@@ -83,7 +88,7 @@ breadcrumbs:
     - `du -sh <dirs>`
     - K4DirStat (GUI) (package `k4dirstat`)
 - Shred files:
-    - `shred --remove --zero <file>`
+    - `shred --remove --zero -v <file>`
 
 ### Fun
 
@@ -188,7 +193,7 @@ breadcrumbs:
     - Internal: `iperf3`
 - Show sockets (with `ss`):
     - Example: `ss -tulpn`
-    - Note: `ss` replaces `netstat` and is mostly option compatible.
+    - (Note) `ss` replaces `netstat` and is mostly option compatible.
     - Option `tu`: Include TCP and UDP sockets (no UNIX sockets).
     - Option `l`: Include listening sockets (no client sockets).
     - Option `p`: Show protocol (requires root).
@@ -197,7 +202,7 @@ breadcrumbs:
     - Show kernel SNMP counters: `nstat`
     - Show per-protocol stats: `netstat -s`
 - Bring interface up or down:
-    - Note: Your network manager probably has a more appropriate way to do this.
+    - (Note) Your network manager probably has a more appropriate way to do this.
     - Directly up or down interface: `ip link set dev <if> {up|down}`
 - Traffic shaping and link simulation:
     - See `tc` to simulate e.g. random packet drop, random latencies, limited bandwidth etc.
@@ -344,7 +349,7 @@ Using GPG (from package `gnupg2` on Debian).
     - Install (Debian): `apt install stress-ng`
     - Stress CPU: `stress-ng -c $(nproc) -t $((10*60))` (use all CPU threads for 10 minutes)
 - Chroot into other Linux installation:
-    1. Note: Used to e.g. fix a broken install or reset a user password from a USB live ISO.
+    1. (Note) Used to e.g. fix a broken install or reset a user password from a USB live ISO.
     1. Mount the root partition: `mount /dev/sda2 /mnt` (example)
     1. Mount e.g. the EFI partition: `mount /dev/sda1 /mnt/boot/efi` (example)
     1. Mount system stuff:

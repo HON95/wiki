@@ -32,23 +32,32 @@ breadcrumbs:
 - Specify inventory file: `ansible-playbook -i <hosts> <playbook>`
 - Limit which groups/hosts to use (comma-separated): `ansible-playbook -l <group|host> <playbook>`
 - Limit which tasks to run using tags (comma-separated): `ansible-playbook -t <tag> <playbook>`
-- Use Vault password file: `ansible-playbook --vault-password-file <file> <...>`
 
 ### Vault
 
-- Use file for password: Just add the password as the only line in a file.
-- Encrypt, prompt for secret, using password file: `ansible-vault encrypt_string --vault-password-file ~/.ansible_vault/stuff`
+- Used to encrypt files and values. For values, just paste the `!vault ...` output directly into the configs to use the encrypted value in.
+- Use file to keep password: Just add the password as the only line in a file, e.g. `~/.ansible_vault/<name>` (with appropriate parent dir perms). A generated `[a-zA-Z0-9]{32}` string is more than strong enough.
+- Encrypt, prompt for secret, using password file: `ansible-vault encrypt_string --vault-password-file=~/.ansible_vault/stuff`
+- Use password file with playbook: `ansible-playbook --vault-password-file=<file> <...>`
 - To avoid leaking secrets in logs and stuff, use `no_log` in tasks handling secrets.
 
 ## Configuration
 
-Example `/etc/ansible/ansible.cfg` or `~/.ansible.cfg`:
+Config locations:
+
+- Global: `/etc/ansible/ansible.cfg`
+- User: `~/.ansible.cfg`
+- Project: `ansible.cfg`
+
+Example config:
 
 ```
 [defaults]
-# Change to "auto" if this path causes problems
-interpreter_python = /usr/bin/python3
 host_key_checking = false
+#interpreter_python = auto
+interpreter_python = /usr/bin/python3
+#inventory = hosts.ini
+#roles_path = ansible-roles:~/.ansible/roles:/usr/share/ansible/roles:/etc/ansible/roles
 ```
 
 ## Templating

@@ -22,7 +22,7 @@ breadcrumbs:
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
 - Enable BitLocker drive encryption (requires Pro edition):
-    - Note: Using passwords and not TPM because I don't want my PC to decrypt itself without me and because I need to move disks between PCs.
+    - (Note) Using passwords and not TPM because I don't want my PC to decrypt itself without me and because I need to move disks between PCs.
     - Allow using it without a TPM module:
         - Open `gpedit.msc`.
         - Go to: `Local Computer Policy/Computer Configuration/Administrative Templates/Windows Components/Bitlocker Drive Encryption/Operating System Drives`

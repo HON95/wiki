@@ -31,7 +31,7 @@ Everyone knows this, no point reiterating.
 - Host systems and recursive DNS servers may be configured to validate received RRs for DNSSEC-enabled domains.
 - The set of all RRs of the same type for a domain is called an "RRset".
 - The presence if a DS record for a child zone signals that the child zone is DNSSEC-enabled.
-- The NSEC RR may be used to search for all subdomains and which RRs exist for them (aka "zone walking"), so _secret_ subdomains are no longer possible, although NSEC3 _partially_ prevents this. See "DNSSEC white lies" as well for more info.
+- The NSEC RR may be used to search for all subdomains and which RRs exist for them (aka zone walking or zone enumeration), so hidden records are no longer possible. NSEC3 with "white lies" and NSEC5 (when supported) prevents this. Blocking NSEC all-together breaks DNSSEC-enabled resolvers, so don't do that.
 - A zone's RRsets may be signed in live mode, where the DNSKEY private key is present on the authorative DNS server(s), or in offline mode, where the zone's RRsets are signed in advance and the private key is somewhere safe.
 - Due to the size of DNSSEC record types, it makes the DNS server more vulnerable to amplification attacks.
 

@@ -44,7 +44,7 @@ The backports repo is used to get the newest version of ZoL.
 
 ### Configuration (Debian)
 
-1. Check that the cron scrub script exists:
+1. (Typically not needed) Check that the cron scrub script exists:
     - Typical location: `/etc/cron.d/zfsutils-linux`
     - If it doesn't exist, add one which runs `/usr/lib/zfs-linux/scrub` e.g. monthly. It'll scrub all disks.
 1. (Typically not needed) Check that ZED is working:
@@ -52,11 +52,12 @@ The backports repo is used to get the newest version of ZoL.
     - Email sending: In `/etc/zfs/zed.d/zed.rc`, make sure `ZED_EMAIL_ADDR="root"` is uncommented.,
     - Service: `zfs-zed.service` should be enabled.
 1. (Optional) Set the max ARC size:
-    - Command: `echo "options zfs zfs_arc_max=<bytes>" >> /etc/modprobe.d/zfs.conf`
+    - Command: `echo "options zfs zfs_arc_max=$((<gigabytes>*1024*1024*1024))" >> /etc/modprobe.d/zfs.conf`
     - It should typically be around 15-25% of the physical RAM size on general nodes. It defaults to 50%.
     - This is generally not required, ZFS should happily yield RAM to other processes that need it.
+1. (Optional) Automatically load key (if encrypted) and mount pool/dataset on boot: See encryption section.
 1. (Optional) Fix pool cache causing pool loading problems at boot:
-    1. Note: Do this if `systemctl status zfs-import-cache.service` shows that no pools were found. I had significant problems with this multiple times with Proxmox VE on an older server.
+    1. (Note) Do this if `systemctl status zfs-import-cache.service` shows that no pools were found. I had significant problems with this multiple times with Proxmox VE on an older server.
     1. Make sure the pools are not set to use a cache file: `zpool get cachefile` and `zpool set cachefile=none <pool>`
     1. Copy `/lib/systemd/system/zfs-import-scan.service` to `/etc/systemd/system/`.
     1. In `zfs-mount.service`, comment the `ConditionFileNotEmpty=!/etc/zfs/zpool.cache` line (the file tends to find a way back to existance).
@@ -83,13 +84,18 @@ The backports repo is used to get the newest version of ZoL.
 
 ### Pools
 
-- Recommended pool options:
-    - Typical example: `-o ashift=<9|12> -o autotrim=on -o autoreplace=off -O compression=zstd -O xattr=sa -O atime=off -O relatime=on` (`autotrim` only for SSDs)
+- Create pool:
+    - Format: `zpool create [options] <name> <levels-and-drives>`
+    - Basic example: `zpool create [-f] [options] <name> {[mirror|raidz|raidz2|spare|...] <drives>}+`
+        - Use `-f` (force) if the disks aren't clean.
+        - See example above for recommended options.
+    - Recommended example: `zpool create -o ashift=<9|12> -o autotrim=on -O compression=zstd -O xattr=sa -O atime=off -O relatime=on <disks>` (`autotrim` only for SSDs)
     - Specifying options during creation: For `zpool`/pools, use `-o` for pool options and `-O` for dataset options. For `zfs`/datasets, use `-o` for dataset options.
     - Set physical block/sector size (pool option): `ashift=<9|12>`
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
     - Enable TRIM (for SSDs): `autotrim=on`
-        - It's also recommended to create a cron job to run `zpool trim` periodically for the SSD pool.
+        - Auto-trim is the continuous type (not periodic), but it avoids trimming if the deleted range is too small to avoid excessive load.
+        - It's also somewhat recommended to create a cron job to run `zpool trim <pool>` periodically for the SSD pool.
     - Enable autoreplacement for new disks in the same physical slot as old ones (using ZED): `autoreplace=on`
     - Enable compression (dataset option): `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
@@ -97,25 +103,19 @@ The backports repo is used to get the newest version of ZoL.
         - The default is `on`, which stores them in a hidden file.
     - Relax access times (dataset option): `atime=off` and `relatime=on`
     - Don't enable dedup.
-- Create pool:
-    - Format: `zpool create [options] <name> <levels-and-drives>`
-    - Basic example: `zpool create [-f] [options] <name> {[mirror|raidz|raidz2|spare|...] <drives>}+`
-        - Use `-f` (force) if the disks aren't clean.
-        - See example above for recommended options.
-    - The pool definition is two-level hierarchical, where top-level elements are striped.
+    - Use absolute drive paths (`/dev/disk/by-id/` or similar), not `/dev/sdX`.
+    - The pool definition is two-level hierarchical, where top-level elements are striped. Examples:
         - RAID 0 (striped): `<drives>`
         - RAID 1 (mirrored): `mirror <drives>`
         - RAID 10 (stripe of mirrors): `mirror <drives> mirror <drives>`
-        - Etc.
+        - RAID 50 (stripe of mirrors): `raidz <drives> raidz <drives>`
     - Create encrypted pool: See encryption section.
     - Add special device: See special device section.
     - Add hot spare (if after creation): `zpool add <pool> spare <disks>`
         - Note that hot spares are currently a bit broken and don't automatically replace pool disks. Make sure to test the setup before relying on it.
-    - Use absolute drive paths (`/dev/disk/by-id/` or similar), not `/dev/sdX`.
 - View pool activity: `zpool iostat [-v] [interval]`
     - Includes metadata operations.
     - If no interval is specified, the operations and bandwidths are averaged from the system boot. If an interval is specified, the very first interval will still show this.
-- Automatically load key (if encrypted) and mount on boot: See dataset section.
 
 #### L2ARC
 
@@ -157,7 +157,8 @@ The backports repo is used to get the newest version of ZoL.
 - Recommended dataset options:
     - Set quota: `quota=<size>`
     - Set reservation: `reservation=<size>`
-    - Disable data caching (in the ARC) if the upper layer already uses caching (databases, VMs, etc.): `primarycache=metadata`
+    - Disable data caching (in the ARC), if the upper layer already uses caching (databases, VMs, etc.): `primarycache=metadata`
+    - Unset the mountpoint, e.g. if it will only be a parent of volumes: `mountpoint=none`
     - (See the recommended pool options since most are inherited.)
 - Create dataset:
     - Format: `zfs create [options] <pool>/<name>`
@@ -167,17 +168,11 @@ The backports repo is used to get the newest version of ZoL.
     - Properties may have the following sources, as seen in the "source" column: Local, default, inherited, temporary, received and none.
     - Get: `zfs get {all|<property>} [-r] [dataset]` (`-r` for recursive)
     - Set: `zfs set <property>=<value> <dataset>`
-    - Inherit: `zfs inherit [-r] [dataset]` (`-r` for recursive)
+    - Unset: `zfs set <property>=none <dataset>` (keeps source "local")
+    - Inherit: `zfs inherit [-r] [dataset]` (`-r` for recursive, `-S` to use the received value if one exists)
         - See the encryption section for inheritance of certain encryption properties.
-    - Reset to default/inherit: `zfs inherit -S [-r] <property> <dataset>` (`-r` for recursive, `-S` to use the received value if one exists)
 - Other useful dataset properties:
     - `canmount={on|off|noauto}`: If the dataset will be mounted by `zfs mount` or `zfs mount -a`. Set to no if it shouldn't be mounted automatically e.g. during boot.
-- Automatically load key (if encrypted) and mount on boot:
-    - Note: This will load all keys and mount everything (unless `canmount=off`) within the pool by generating mounting and key-load services at boot. Key-load services for encrypted roots will ge generated regardless of `canmount`, use `org.openzfs.systemd:ignore=on` to avoid creating any services for the dataset.
-    - Make sure ZED is set up correctly (see config section).
-    - Enable tracking for the pool: `touch /etc/zfs/zfs-list.cache/POOLNAME`
-    - Trigger an update of the stale cache file: `zfs set canmount=on <pool>`
-    - (Optional) Don't automatically decrypt and mount a dataset: Set `org.openzfs.systemd:ignore=on` on it.
 - Don't store anything in the root dataset itself, since it can't be replicated.
 
 ### Snapshots
@@ -227,16 +222,16 @@ The backports repo is used to get the newest version of ZoL.
 - Create a password encrypted pool:
     - Create: `zpool create -O encryption=aes-128-gcm -O keyformat=passphrase ...`
 - Create a raw key encrypted pool:
-    - Generate the key: `dd if=/dev/urandom of=/root/keys/zfs/<tank> bs=32 count=1`
-    - Create: `zpool create <normal-options> -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///root/keys/zfs/<tank> <name> ...`
+    - Generate the key: `dd if=/dev/urandom of=/var/keys/zfs/<tank> bs=32 count=1` (and fix permissions)
+    - Create: `zpool create <normal-options> -O encryption=aes-128-gcm -O keyformat=raw -O keylocation=file:///var/keys/zfs/<tank> <name> ...`
 - Encrypt an existing dataset by sending and receiving:
     1. Rename the old dataset: `zfs rename <dataset> <old-dataset>`
     1. Snapshot the old dataset: `zfs snapshot -r <dataset>@<snapshot-name>`
-    1. Command: `zfs send [-R] <snapshot> | zfs recv -o encryption=aes-128-gcm -o keyformat=raw -o keylocation=file:///root/keys/zfs/<tank> <new-dataset>`
+    1. Command: `zfs send [-R] <snapshot> | zfs recv -o encryption=aes-128-gcm -o keyformat=raw -o keylocation=file:///var/keys/zfs/<tank> <new-dataset>`
     1. Test the new dataset.
     1. Delete the snapshots and the old dataset.
-    1. Note: All child datasets will be encrypted too (if `-r` and `-R` were used).
-    1. Note: The new dataset will become its own encryption root instead of inheriting from any parent dataset/pool.
+    1. (Note) All child datasets will be encrypted too (if `-r` and `-R` were used).
+    1. (Note) The new dataset will become its own encryption root instead of inheriting from any parent dataset/pool.
 - Change encryption property:
     - The key must generally already be loaded.
     - The encryption properties `keyformat`, `keylocation` and `pbkdf2iters` are inherited from the encryptionroot instead, unlike normal properties.
@@ -250,6 +245,12 @@ The backports repo is used to get the newest version of ZoL.
     - Sending encrypted datasets requires using raw (`-w`).
     - Encrypted snapshots sent as raw may be sent incrementally.
     - Make sure to check the encryption root, key format, key location etc. to make sure they're what they should be.
+- Automatically load key (if encrypted) and mount on boot:
+    - (Note) This will load all keys and mount everything (unless `canmount=off`) within the pool by generating mounting and key-load services at boot. Key-load services for encrypted roots will be generated regardless of `canmount`, use `org.openzfs.systemd:ignore=on` to avoid creating any services for the dataset.
+    - Make sure ZED is set up correctly (see config section).
+    - Enable tracking for the pool: `mkdir /etc/zfs/zfs-list.cache && touch /etc/zfs/zfs-list.cache/<pool>`
+    - Trigger an update of the stale cache file: `zfs set canmount=on <pool>`
+    - (Optional) Don't automatically decrypt and mount a dataset: Set `org.openzfs.systemd:ignore=on` on it.
 
 ### Error Handling and Replacement
 
@@ -288,6 +289,9 @@ The backports repo is used to get the newest version of ZoL.
 
 - As far as possible, use raw disks and HBA disk controllers (or RAID controllers in IT mode).
 - Always use `/etc/disk/by-id/X`, not `/dev/sdX`.
+    - Using `/dev/sdX` may degrade/fail the pool if the active disks are swapped or the numbering is shuffled for some reason.
+    - Pool info is stored on the disks themselves, so running an `zpool export <pool> && zpool import <pool>` may fix disks that got degraded due to number shuffling.
+    - If you want auto-replacement wrt. physical slots, you need to use whatever naming works for the physical slots.
 - Always manually set the correct ashift for pools.
     - Should be the log-2 of the physical block/sector size of the drive.
     - E.g. 12 for 4kB (Advanced Format (AF), common on HDDs) and 9 for 512B (common on SSDs).

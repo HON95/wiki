@@ -74,16 +74,16 @@ An example of a full configuration.
 1. Configure DNS: `ip name-server <addr1> <addr2> [...]`
 1. Enable IPv6 forwarding: `ipv6 unicast-routing`
 1. Enable Cisco Express Forwarding (CEF):
-    1. Note: This may be enabled by default and the commands below to enable it may not work.
+    1. (Note) This may be enabled by default and the commands below to enable it may not work.
     1. Enable for IPv4: `ip cef`
     1. Enable for IPv6: `ipv6 cef`
     1. Show status: `sh cef state` (should show "enabled/running" for both IPv4 and IPv6)
 1. (Optional) Add black hole route for the site prefixes:
-    1. Note: To avoid leakage of local traffic without a route.
+    1. (Note) To avoid leakage of local traffic without a route.
     1. IPv4 prefix: `ip route <address> <mask> Null 0`
     1. IPv6 prefix: `ipv6 route <prefix> Null 0`
 1. (Optional) Configure management interface:
-    1. Note: The management interface is out-of-band by being contained in the special management interface VRF "Mgmt-intf".
+    1. (Note) The management interface is out-of-band by being contained in the special management interface VRF "Mgmt-intf".
     1. Enter the mgmt interface config: `interface GigabitEthernet 0` (example)
     1. Set an IPv4 and IPv6 address: See "configure interface".
     1. Set a default IPv4 route: `ip route vrf Mgmt-intf 0.0.0.0 0.0.0.0 <gateway>`

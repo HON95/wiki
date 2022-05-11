@@ -254,7 +254,7 @@ Snippets for `/etc/pipewire/media-session.d/media-session.conf`:
 
 - Open serial session: `screen /dev/ttyUSB0 38400,-crtscts` (38400 baud, no flow control)
 - End session: `Ctrl+A, \`
-- Note: For some devices, you may need to use `Ctrl+H` instead of backspace.
+- (Note) For some devices, you may need to use `Ctrl+H` instead of backspace.
 
 ## SMB
 

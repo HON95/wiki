@@ -6,41 +6,47 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Proxmox VE 7**.
+Using **Proxmox VE 7** (based on Debian 11).
 
 ## Host
 
 ### Installation
 
-1. Find a mouse.
-    - Just a keyboard is not enough.
-    - You don't need the mouse too often, though, so you can hot-swap between the keyboard and mouse during the install.
-1. Download PVE and boot from the installation medium (in UEFI mode if supported, otherwise BIOS is fine).
+1. Make sure UEFI and virtualization extensions are enabled in the BIOS settings.
+1. (Optional) Find a mouse.
+    - The GUI installer doesn't require it any more, but it's still somewhat practical.
+1. Download PVE and boot from the installation medium
 1. Storage:
-    - Use 1-2 mirrored SSDs with ZFS.
+    - Note that you can use e.g. ZFS with 2 mirrored SSDs. But a single reliable one with EXT4 is fine too.
     - (ZFS) enable compression and checksums and set the correct ashift for the SSD(s). If in doubt, use ashift=12.
 1. Localization:
     - (Nothing special.)
 1. Administrator user:
-    - Set a root password. It should be different from your personal password.
-    - Set the email to "root@localhost" or something. It's not important before actually setting up email.
+    - Set a root password. It _should_ be different from your personal user's password.
+    - Set the email to "root@localhost" or something. It's not important (yet).
 1. Network:
-    - (Nothing special.)
+    - Just set up something temporary that works. You'll probably change this after installation to setup bonding and VLANs and stuff.
+1. Miscellanea:
+    - Make sure you set the correct FQDN during the install. This is a bit messy to change afterwards.
 
 ### Initial Configuration
 
-Follow the instructions for [Debian](/config/linux-server/debian/), but with the following changes:
+Follow the instructions for [Debian server](/config/linux-server/debian/) in addition to the notes and instructions below (read them first).
 
-1. Before installing updates, setup the PVE repos (assuming no subscription):
+Warning: Don't install any of the firmware packages, it will remove the PVE firmware packages.
+
+PVE-specific instructions:
+
+1. Setup the PVE repos (assuming no subscription):
+    1. (Note) More info: [Proxmox VE: Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
     1. Comment out all content from `/etc/apt/sources.list.d/pve-enterprise.list` to disable the enterprise repo.
-    1. Create `/etc/apt/sources.list.d/pve-no-subscription.list` containing `deb http://download.proxmox.com/debian/pve buster pve-no-subscription` to enable the no-subscription repo.
-    1. More info: [Proxmox VE: Package Repositories](https://pve.proxmox.com/wiki/Package_Repositories#sysadmin_no_subscription_repo)
-1. Don't install any of the firmware packages, it will remove the PVE firmware packages.
-1. Update network config and hostname:
-    1. Do NOT manually modify the configs for network, DNS, NTP, firewall, etc. as specified in the Debian guide.
-    1. (Optional) Install `ifupdown2` to enable live network reloading. This does not work if using OVS interfaces.
+    1. Create `/etc/apt/sources.list.d/pve-no-subscription.list` containing `deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription` to enable the no-subscription repo.
+    1. Run a full upgrade: `apt update && apt full-upgrade`
+1. Update network config:
+    1. (Note) Do NOT manually modify the configs for DNS, NTP, IPTables, etc. However, the network config (`/etc/network/interfaces`) and PVE configs _may_ be manually modified, but the GUI or API is still recommended.
+    1. (Note) For complicated VLAN setups, you want to use OVS stuff instead of plain Linux stuff. Plain Linux stuff (the way PVE uses it) may break for certain setups where e.g. PVE has a VLAN L3 interface on the same bridge as a VM is connected to the same VLAN.
+    1. (Note) OVS bonds: Use mode "LACP (balance-tcp)" and manually specify OVS option `lacp-time=fast`.
     1. Update network config: Use the web GUI.
-    1. (Optional) Update hostname: See the Debian guide. Note that the short and FQDN hostnames must resolve to the IPv4 and IPv6 management address to avoid breaking the GUI.
 1. Update MOTD:
     1. Disable the special PVE banner: `systemctl disable --now pvebanner.service`
     1. Clear or update `/etc/issue` and `/etc/motd`.
@@ -61,6 +67,46 @@ Follow the instructions for [Debian](/config/linux-server/debian/), but with the
     1. Setup backup pruning:
         - [Backup and Restore (Proxmox VE)](https://pve.proxmox.com/wiki/Backup_and_Restore)
         - [Prune Simulator (Proxmox BS)](https://pbs.proxmox.com/docs/prune-simulator/)
+1. Setup users (PAM realm):
+    1. Add a Linux user: `adduser <username>` etc.
+    1. Create a PVE group: In the "groups" menu, create e.g. an admin group.
+    1. Give the group permissions: In the "permissions" menu, add a group permission. E.g. path `/` and role `Administrator` for full admin access.
+    1. Add the user to PVE: In the "users" menu, add the PAM user and add it to the group.
+    1. (Optional) Relog as the new admin user and disable the root user.
+1. Setup backups:
+    1. Figure it out. You probably want to set up a separate storage for backups.
+
+### Manual Configuration
+
+This is generally not recommended if you want to avoid breaking the system.
+Most of this stuff may be changed in the GUI.
+None of this stuff is required for a normal, full setup.
+
+- Change domain:
+    - Note that changing the hostname (excluding the domain part) is rather messy. Check the wiki if you really need to.
+    - Update the search domain in `/etc/resolv.conf`.
+    - Update `/etc/hosts` with the new FQDN.
+- Change DNS:
+    - Update `/etc/resolv.conf`.
+- Change NTP:
+    - Update `/etc/chrony/chrony.conf`.
+- Change network interfaces:
+    - Change `/etc/network/interfaces`.
+    - Reload: **TODO:** How? OVS requires special care?
+- Change firewall:
+    - Do NOT manually change IPTables rules.
+    - Update the datacenter firewall in `/etc/pve/TODO.fw`.
+    - Update the node firewall in `/etc/pve/local/TODO.fw`.
+- Change storage:
+    - Update `/etc/pve/storage.cfg`.
+    - See the wiki for config options.
+- Change users, groups and permissions:
+    - Update `/etc/pve/user.cfg`.
+    - Note that PAM users need a backing local Linux user.
+    - This file is a bit messy, avoid breaking it.
+- Change tokens:
+    - Update `/etc/pve/user.cfg` (again).
+    - Update `/etc/pve/priv/token.cfg` with the token ID and the secret key.
 
 ### Configure PCI(e) Passthrough
 
@@ -161,7 +207,7 @@ If you lost quorum because if connection problems and need to modify something (
 
 - List: `qm list`
 
-### General Setup
+### General VM Setup
 
 The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the separate section below first if you are.
 
@@ -213,24 +259,95 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
     - Open a graphical console to show what's going on.
     - See the separate sections below for more specific stuff.
 
-### Linux Setup (Manual)
+### Linux VM Setup (Manual)
 
 1. Setup the VM (see the general setup section).
 1. (Recommended) Setup the QEMU guest agent: See the section about it.
 1. (Optional) Setup SPICE (for better graphics): See the section about it.
 1. More detailed Debian setup: [Debian](/config/linux-server/debian/)
 
-### Linux Setup (Cloud-Init)
+### Linux VM Cloud-Init Debian Template
+
+*Using Debian 11.*
+
+Example for creating a Cloud-Init-enabled Debian template using official cloud images.
+
+**Resources:**
+
+- [Proxmox: Cloud-Init Support](https://pve.proxmox.com/wiki/Cloud-Init_Support)
+- [Debian: Cloud](https://wiki.debian.org/Cloud/)
+- [Debian: Debian Official Cloud Images](https://cloud.debian.org/images/cloud/)
+
+**Instructions:**
+
+1. Download the VM image:
+    1. (Note) Supported formats: `qcow2`, `vmdk`, `raw` (use `qemu img <FILE>` to check support)
+    1. Download the image.
+    1. (Optional) Verify the image integrity and authenticity: See [Debian: Verifying authenticity of Debian CDs](https://www.debian.org/CD/verify).
+1. Create the VM:
+    1. (Note) You may want to use a high VMID like 1000+ for templates to visually separate them from the rest of VMs e.g. in the PVE UI.
+    1. (Note) Using legacy BIOS and chipset (SeaBIOS and i440fx).
+    1. Create: `qm create <VMID> --name <NAME> --description "<DESC>" --ostype l26 --numa 1 --cpu cputype=host --sockets <CPU_SOCKETS> --cores <CPU_CORES> --memory <MEM_MB> --scsihw virtio-scsi-pci --ide2 <STORAGE>:vm-<VMID>-cloudinit --net0 virtio,bridge=<NET_BRIDGE>[,tag=<VLAN_ID>][,firewall=1] --serial0 socket [--vga serial0] --boot c --bootdisk scsi0  --onboot no`
+1. Import the cloud disk image:
+    1. Import as unused disk: `qm importdisk <VMID> <FILE> <STORAGE>`
+    1. Attach the disk: `qm set <VMID> --scsi0 <STORAGE>:vm-<VMID>-disk-0` (or whatever disk ID it got)
+1. Make it a template:
+    1. (Note) The Cloud-Init disk will not be created automatically before starting the VM, so the the template command might complain about it not existing.
+    1. Protect it (prevent destruction): `qm set <VMID> --protection 1`
+    1. Convert to template: `qm template <VMID>`
+1. (Example) Create a VM:
+    1. (Note) Only SSH login is enabled, no local credentials. Use user `debian` with the specified SSH key(s). Sudo is passwordless for that user.
+    1. Clone the template: `qm clone <TEMPL_VMID> <VMID> --name <NAME> --storage <STORAGE> --full`
+    1. Set Cloud-Init user and SSH pubkeys: `qm set <VMID> --ciuser <USERNAME> --sshkeys <PUBKEYS_FILE>`
+    1. Update the network interface: `qm set <VMID> --net0 virtio,bridge=vmbr1,tag=10,firewall=1` (example)
+    1. Set static IP config: `qm set <VMID> --ipconfig0 ip=<>,gw=<>,ip6=<>,gw6=<>` (for netif 0, using CIDR notation)
+        - (Alternative) Set dynamic IP config: `qm set <VMID> --ipconfig0 ip=dhcp,ip6=auto`
+    1. Set DNS server and search domain: `qm set <VMID> --nameserver "<DNS_1> <DNS_2> <DNS_3>" --searchdomain <DOMAIN>`
+    1. (Optional) Disable protection: `qm set <VMID> --protection 1`
+    1. (Optional) Enable auto-start: `qm set <VMID> --onboot yes`
+    1. (Optional) Enable the QEMU agent (must be installed in guest): `qm set <VMID> --agent enabled=1>`
+    1. Resize the volume (Cloud-Inif will resize the FS): `qm resize <VMID> scsi0 <SIZE>` (e.g. `20G`)
+    1. Set firewall config: See the example file and notes below.
+    1. Start the VM: `qm start 101`
+    1. Check the console in the web UI to see the status. Connect using SSH when it's up.
+
+**VM firewall example:**
+
+File `/etc/pve/firewall/<VMID>.fw`:
+
+```
+[OPTIONS]
+enable: 1
+ndp: 1
+dhcp: 0
+radv: 0
+policy_in: ACCEPT
+policy_out: REJECT
+
+[RULES]
+OUT ACCEPT -source fe80::/10 -log nolog # Allow IPv6 LL local source
+OUT ACCEPT -source <IPV4_ADDR> -log nolog # Verify IPv4 local source
+OUT ACCEPT -source <IPV6_ADDR> -log nolog # Verify IPv6 GUA/ULA local source
+```
+
+Notes:
+
+- `dhcp` and `radv` decides if the VM is allowed to act as a DHCP server and to send router advertisements. Most VMs should not be able to do this.
+- `ndp` enable IPv6 NDP, which is required for IPv6 to function properly.
+- The input policy is set to allow all since the VM is expected to implement its own firewall.
+- The output policy and rules are defined to enforce (static) IP source verification, to prevent it from spoofing other (non-local) addresses.
+
+#### Old Notes
 
 *Using Debian 10.*
 
-**TODO** Script this and use snippets. The UEFI boot order fix, though ...
+**Ignore this section.** I'm keeping it for future reference only.
 
 1. Download a cloud-init-ready Linux image to the hypervisor:
     - Debian cloud-init downloads: [Debian Official Cloud Images](https://cloud.debian.org/images/cloud/) (the `genericcloud` or `generic` variant and `qcow2` format)
     - **TODO**: `genericcloud` or `generic`? Does the latter fix the missing console?
     - Copy the download link and download it to the host (`wget <url>`).
-1. Note: It is an UEFI installation (so the BIOS/UEFI mode must be set accordingly) and the image contains an EFI partition (so you don't need a separate EFI disk).
+1. (Note) It is an UEFI installation (so the BIOS/UEFI mode must be set accordingly) and the image contains an EFI partition (so you don't need a separate EFI disk).
 1. Setup a VM as in the general setup section (take note of the specified Cloud-Init notes).
     1. Set the VM up as UEFI with an "EFI disk" added.
     1. Add a serial interface since the GUI console may be broken (it is for me).
@@ -266,9 +383,9 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
     - Consider purging the cloud-init package to avoid accidental reconfiguration later.
     - Consider running `cloud-init status --wait` before configuring it to make sure the Cloud-Init setup has completed.
 
-### Windows Setup
+### Windows VM Setup
 
-*Using Windows 10.*
+Using Windows 10.
 
 [Proxmox VE Wiki: Windows 10 guest best practices](https://pve.proxmox.com/wiki/Windows_10_guest_best_practices)
 

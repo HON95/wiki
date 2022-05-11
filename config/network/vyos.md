@@ -40,7 +40,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Enter configuration mode: `configure`
     - This changes the prompt from `$` to `#`.
 1. Set hostname:
-    1. Note: `<host-name>.<domain-name>` should be an FQDN.
+    1. (Note) `<host-name>.<domain-name>` should be an FQDN.
     1. Hostname: `set system host-name <hostname>`
     1. Domain name: `set system domain-name <domain-name>`
 1. Set the DNS servers: `set system name-server <ip-address>` (for each server)
@@ -64,7 +64,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. Enable server: `set service ssh`
     1. (Optional) Commit and log in through SSH instead of the console.
 1. Replace default user:
-    1. Note: You may want to skip ahead to the SSHD step so you can paste stuff vis SSH instead of manually writing it into the console.
+    1. (Note) You may want to skip ahead to the SSHD step so you can paste stuff vis SSH instead of manually writing it into the console.
     1. Enter new user: `edit system login user <username>`
     1. Set password: `set authentication plaintext-password "<password>"`
         - Remember quotation marks if the password string spaces.

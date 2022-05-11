@@ -76,7 +76,7 @@ breadcrumbs:
     - **TODO** Certain restrictions of committing for exclusive mode.
 - Exit any mode: `exit`
 - Show configuration:
-    - Note: You can only see config elements and changes you have permissions to see. Chekc the `system login` section to check.
+    - (Note) You can only see config elements and changes you have permissions to see. Chekc the `system login` section to check.
     - From (op mode): `show configuration [statement]`
     - From (conf mode): `show [statement]`
     - Show changes (conf mode): `show | compare`

@@ -78,6 +78,10 @@ Using **Debian**, unless otherwise stated.
 
 This is just a suggestion for how to partition your main system drive. Since LVM volumes can be expanded later, it's fine to make them initially small. Create the volumes during system installation and set the mount options later in `/etc/fstab`.
 
+For a much simpler setup, just use a big root partition with a separate EFI partition. This complex setup is mainly targeted for old-fashioned, "monolithic" servers.
+
+Note: Hidepid is no longer recommended, but still kept here for reference.
+
 | Volume/Mount | Type | Minimal Size (GB) | Mount Options |
 | :--- | :--- | :--- | :--- |
 | `/proc` | Runtime | N/A | hidepid=2,gid=1500 |

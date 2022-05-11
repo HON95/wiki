@@ -23,6 +23,11 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Ansible](/config/automation/ansible/)
 - [Puppet](/config/automation/puppet/)
 
+### Cloud
+
+- [Azure](/config/cloud/azure/)
+- [AWS](/config/cloud/aws/)
+
 ### Computers
 
 - [Dell OptiPlex Series](/config/computers/dell-optiplex/)
@@ -54,7 +59,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Linux Server
 
-- [Debian](/config/linux-server/debian/)
+- [Debian Server](/config/linux-server/debian/)
 - [Applications](/config/linux-server/applications/)
 - [Storage](/config/linux-server/storage/)
 - [Storage: ZFS](/config/linux-server/storage-zfs/)
@@ -70,6 +75,12 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Video4Linux 2 (V4L2)](/config/media/v4l2/)
 - [VLC](/config/media/vlc/)
 - [youtube-dl](/config/media/youtube-dl/)
+
+### Monitoring
+
+- [Grafana](/config/monitoring/grafana/)
+- [Prometheus](/config/monitoring/prometheus/)
+- [Grafana Loki](/config/monitoring/loki/)
 
 ### Network
 
@@ -106,7 +117,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Kubuntu](/config/pc/kubuntu/)
 - [Manjaro (KDE)](/config/pc/manjaro-kde/)
 - [Windows](/config/pc/windows/)
-- [PC Applications](/config/pc/applications/)
+- [Applications](/config/pc/applications/)
 
 ### Power
 
