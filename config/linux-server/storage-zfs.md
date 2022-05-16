@@ -89,7 +89,7 @@ The backports repo is used to get the newest version of ZoL.
     - Basic example: `zpool create [-f] [options] <name> {[mirror|raidz|raidz2|spare|...] <drives>}+`
         - Use `-f` (force) if the disks aren't clean.
         - See example above for recommended options.
-    - Recommended example: `zpool create -o ashift=<9|12> -o autotrim=on -O compression=zstd -O xattr=sa -O atime=off -O relatime=on <disks>` (`autotrim` only for SSDs)
+    - Recommended example: `zpool create -o ashift=<9|12> -o autotrim=on -O compression=zstd -O xattr=sa -O dnodesize=auto -O atime=off -O relatime=on <disks>` (`autotrim` only for SSDs)
     - Specifying options during creation: For `zpool`/pools, use `-o` for pool options and `-O` for dataset options. For `zfs`/datasets, use `-o` for dataset options.
     - Set physical block/sector size (pool option): `ashift=<9|12>`
         - Use 9 for 512 (2^9) and 12 for 4096 (2^12). Use 12 if unsure (bigger is safer).
@@ -99,8 +99,10 @@ The backports repo is used to get the newest version of ZoL.
     - Enable autoreplacement for new disks in the same physical slot as old ones (using ZED): `autoreplace=on`
     - Enable compression (dataset option): `compression=zstd`
         - Use `lz4` for boot drives (`zstd` booting isn't currently supported) or if `zstd` isn't yet available in the version you're using.
-    - Store extended attributes in the inodes (dataset option): `xattr=sa`
-        - The default is `on`, which stores them in a hidden file.
+    - Store extended attributes in the inodes/dnodes (dataset option): `xattr=sa` and `dnodesize=auto`
+        - The default for `xattr` is `on`, which stores them in a hidden file.
+        - `dnodesize=auto` allows for bigger dnodes and is typically used with `xattr=sa`.
+        - GRUB doesn't support `dnodesize=auto`, so never use it on ZFS boot pools.
     - Relax access times (dataset option): `atime=off` and `relatime=on`
     - Don't enable dedup.
     - Use absolute drive paths (`/dev/disk/by-id/` or similar), not `/dev/sdX`.
@@ -150,6 +152,7 @@ The backports repo is used to get the newest version of ZoL.
 
 ### Datasets
 
+- See the "pools" section for more info, especially the `-O` options there which actually apply to datasets and not pools.
 - Basics:
     - List datasets: `zfs list [-t {filesystem|volume|snapshot|bookmark}] [-r] [dataset]`
     - Check if mounted: `zfs get mounted -t filesystem`

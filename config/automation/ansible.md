@@ -62,8 +62,42 @@ interpreter_python = /usr/bin/python3
 
 ## Templating
 
-- YAML files:
-    - Conditionals and stuff tend to mess up indentation. Specify `#jinja2: trim_blocks:False` to avoid that. This will also make the output a little uglier with empty lines in place of unsatisfied conditionals and stuff though.
+### YAML Files
+
+- Indented conditionals/loops (tags) might mess up indentation for the next line. Either avoid indenting Ansible tags or specify `#jinja2: trim_blocks:False` at the top of the file to avoid removing the newline after a block.
+
+#### ipaddr Filter
+
+- There currently exists three versions, [`ipaddr`](https://docs.ansible.com/ansible/2.4/playbooks_filters_ipaddr.html) (deprecated), [`ansible.netcommon.ipaddr`](https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html) (deprecated) and [`ansible.utils.ipaddr`](https://docs.ansible.com/ansible/latest/collections/ansible/utils/docsite/filters_ipaddr.html).
+- The filter takes either a single value or a list of values. For single value input, it returns false if the input is invalid. For list input, it filters out any invalid input elements.
+- Common, basic usage:
+    - Normal usage: `{{ some_address | ansible.utils.ipaddr('address') }}`
+    - Filter IPv4 or IPv6 addresses: `ansible.utils.ipv4` and `ansible.utils.ipv6`
+    - Get address without length: `ansible.utils.ipaddr('address')`
+    - Get address with length: `ansible.utils.ipaddr('host')`
+    - Get address with length (alternative): `ansible.utils.ipaddr('address/prefix')`
+    - Get network without length: `ansible.utils.ipaddr('network')`
+    - Get network with length: `ansible.utils.ipaddr('subnet')`
+    - Get prefix length: `ansible.utils.ipaddr('prefix')`
+    - Get netmask: `ansible.utils.ipaddr('netmask')`
+    - Get broadcast address: `ansible.utils.ipv4 | ansible.utils.ipaddr('broadcast')`
+    - Get addresses count: `ansible.utils.ipaddr('size')`
+    - Get indexed address with length: `ansible.utils.ipaddr('net') | ansible.utils.ipaddr(1)` (`-1` for last address)
+    - Get the other address for a P2P link without length: `ansible.utils.ipaddr('peer')`
+    - Convert IPv4 to IPv6 (IPv4-mapped): `ansible.utils.ipv4('ipv6')`
+    - Filter MAC addresses: `ansible.utils.hwaddr`
+
+## Examples
+
+**Combine key-value pairs to string:**
+
+```yaml
+vars:
+  qm_params:
+    name: "{{ vm.name }}"
+    description: "{{ vm.description | default('') }}"
+  qm_params_string: "{{ vm_config.items() | map('join', '=') | map('regex_replace', '^([^=]*)=(.*)$', '--\\1=\"\\2\"') | join(' ') }}"
+```
 
 ## Troubleshooting
 

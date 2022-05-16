@@ -245,6 +245,8 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
 - CPU tab:
     - CPU type: Generally, use "kvm64". For HA, use "kvm64" or similar (since the new host must support the same CPU flags). For maximum performance on one node or HA with same-CPU nodes, use "host".
     - NUMA: Enable for NUMA systems. Set the socket count equal to the number of NUMA nodes (if giving it more than one vCPU).
+    - Sockets: Should match the host if NUMA is enabled.
+    - Cores: Cores per socket.
     - CPU limit: Aka CPU quota. Floating-point number where 1.0 is equivalent to 100% of *one* CPU core.
     - CPU units: Aka CPU shares/weight. Processing priority, higher is higher priority.
     - See the documentation for the various CPU flags (especially the ones related to Meltdown/Spectre).
@@ -287,7 +289,7 @@ Example for creating a Cloud-Init-enabled Debian template using official cloud i
 1. Create the VM:
     1. (Note) You may want to use a high VMID like 1000+ for templates to visually separate them from the rest of VMs e.g. in the PVE UI.
     1. (Note) Using legacy BIOS and chipset (SeaBIOS and i440fx).
-    1. Create: `qm create <VMID> --name <NAME> --description "<DESC>" --ostype l26 --numa 1 --cpu cputype=host --sockets <CPU_SOCKETS> --cores <CPU_CORES> --memory <MEM_MB> --scsihw virtio-scsi-pci --ide2 <STORAGE>:vm-<VMID>-cloudinit --net0 virtio,bridge=<NET_BRIDGE>[,tag=<VLAN_ID>][,firewall=1] --serial0 socket [--vga serial0] --boot c --bootdisk scsi0  --onboot no`
+    1. Create: `qm create <VMID> --name <NAME> --description "<DESC>" --ostype l26 --numa 1 --cpu cputype=host --sockets <CPU_SOCKETS> --cores <CPU_CORES> --memory <MEM_MB> --scsihw virtio-scsi-pci --ide2 <STORAGE>:vm-<VMID>-cloudinit --net0 virtio,bridge=<NET_BRIDGE>[,tag=<VLAN_ID>][,firewall=1] --serial0 socket [--vga serial0] --boot order=scsi0;ide2 --onboot no`
 1. Import the cloud disk image:
     1. Import as unused disk: `qm importdisk <VMID> <FILE> <STORAGE>`
     1. Attach the disk: `qm set <VMID> --scsi0 <STORAGE>:vm-<VMID>-disk-0` (or whatever disk ID it got)
@@ -441,6 +443,8 @@ The QEMU guest agent provides more info about the VM to PVE, allows proper shutd
 
 SPICE allows interacting with graphical VM desktop environments, including support for keyboard, mouse, audio and video.
 
+SPICE in PVE uses authentication and encryption by default.
+
 1. Install a SPICE compatible viewer on your client:
     - Linux: `virt-viewer`
 1. Install the guest agent:
@@ -464,7 +468,7 @@ Check the host system logs. It may for instance be due to hardware changes or st
 - To enable the firewall for VMs, both the VM option and the option for individual interfaces must be enabled.
 - The firewall is pretty pre-configured for most basic stuff, like connection tracking and management network access.
 - Host NDP problem:
-    - For hosts, there is a vulnerability where the hosts autoconfigures itself for IPv6 on all bridges (see [Bug 1251 - Security issue: IPv6 autoconfiguration on Bridge-Interfaces ](https://bugzilla.proxmox.com/show_bug.cgi?id=1251)).
+    - For hosts, there is a vulnerability where the hosts autoconfigures itself for IPv6 on all bridges (see [Bug 1251 - Security issue: IPv6 autoconfiguration on Bridge-Interfaces](https://bugzilla.proxmox.com/show_bug.cgi?id=1251)).
     - Even though you firewall off management traffic to the host, the host may still use the "other" networks as default gateways, which will cause routing issues for IPv6.
     - To partially fix this, disable NDP on all nodes and add a rule allowing protocol "ipv6-icmp" on trusted interfaces.
     - To verify that it's working, reboot and check its IPv6 routes and neighbors.
