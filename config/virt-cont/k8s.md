@@ -38,17 +38,27 @@ Using **Debian**.
 - Events:
     - Show: `kubectl get events`
 
-## Minikube
+## Notes and Best Practices
+
+- k8s is the foundation for a platform-as-a-service (PaaS), but requires a ton of configuration if self-hosting/on-premise.
+
+## Related Software
+
+**TODO**
+
+## Alternative Variants
+
+### Minikube
 
 Minikube is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
 
-### Setup
+#### Setup
 
 1. See: [minikube start (minikube docs)](https://minikube.sigs.k8s.io/docs/start/)
 1. Add `kubectl` symlink: `sudo ln -s $(which minikube) /usr/local/bin/kubectl`
 1. Add command completion: See normal k8s setup instructions.
 
-### Usage
+#### Usage
 
 - Generally all of the normal k8s stuff applies.
 - Generally sudo isn't required.

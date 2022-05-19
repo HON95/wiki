@@ -159,14 +159,34 @@ breadcrumbs:
 
 #### APT (Debian)
 
-- Find packages depending on the package: `apt rdepends --installed <package>`
-- Quickly add new repo: `add-apt-repository <repo-line`
-    - It will add the line to `/etc/apt/sources.list`, where you can manually remove it again.
-- Keys:
+- Dependencies:
+    - Find packages which this package depends on: `apt depends <package>`
+    - Find packages which depend on this package: `apt rdepends [--installed] <package>`
+- Add repo (simple, not recommended):
+    1. Add key: Download and run `apt-key add <key-file>`.
+    1. Add repo: `add-apt-repository <repo-line>`
+    1. (Note) This will add the line to `/etc/apt/sources.list`, where you can manually remove it again.
+- Add repo (recommended):
+    1. (Note) This method makes sure a repo key is only used to verify packages from that repo and isn't trusted globally. It doesn't prevent the repo from providing malicious versions of packages that should come from elsewere, however.
+    1. Download the key: Download it to `/usr/share/keyrings/<name>.gpg`.
+    1. Add the repo: In `/etc/apt/sources.list.d/<name>.list`, add the repo line and add `[signed-by=/usr/share/keyrings/<name>.gpg]` after `deb` (in the existing square brackets if one exists already).
+    1. Update cache: `apt update`
+- Keys (for authenticating packages):
     - List: `apt-key list`
         - It will also show which file contains it.
+    - Add key (easy): `apt-key add <key-file>`
+    - Add key (alternative): Save the keyring file as `/etc/apt/trusted.gpg.d/<name>.gpg` (or `.asc`).
     - Remvoe key: `apt-key del <key-id>`
         - The 8-digit hex key ID may either be found on `pub` line or as the last 8 hex digits on the continuation line.
+- Preferences:
+    - Used to override package priorities, to control which package version or origin is used (or not).
+    - Preferences are stored in `/etc/apt/preferences` and `/etc/apt/preferences.d/<name>`.
+- Log:
+    - See `/var/log/dpkg.log`.
+- Error handling (when `apt install -f` doesn't fix it):
+    - Always run `apt install -f` afterwards, to make sure the problem is resolved and make sure APT isn't left in an errored state.
+    - If package conflict, force removal of conflicting package: `dpkg -r --force-depends <package>`
+    - If cache trouble, clean the cache: `apt clean` (or `apt autoclean`)
 
 #### Pacman (Arch)
 

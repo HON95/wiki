@@ -44,15 +44,15 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. Hostname: `set system host-name <hostname>`
     1. Domain name: `set system domain-name <domain-name>`
 1. Set the DNS servers: `set system name-server <ip-address>` (for each server)
-1. Set the time zone: `set system time-zone Europe/Oslo` (Norway)
+1. Set the time zone: `set system time-zone Europe/Oslo` (example)
 1. (Optional) Replace the NTP servers:
     1. Remove default NTP servers: `delete system ntp <server>` (for each server)
     1. Add new NTP servers: `set system ntp server ntp.justervesenet.no` (example)
 1. (Optional) Enable Ctrl+Alt+Del reboot: `set system options ctrl-alt-del-action reboot` (or `ignore`)
 1. Set up a plain WAN-facing interface with an IP address (without LAG or VLAN):
-    1. Show all Ethernet interfaces: `run show interfaces ethernet`
+    1. Show all Ethernet interfaces: `run show interfaces ethernet detail`
     1. Enter interface config: `edit interfaces ethernet <if>`
-    1. Set the MAC address for the interface to bind to if missing: `set hw-id <mac-addr>`
+    1. Set the MAC address if missing (from `show int ...`): `set hw-id <mac-addr>`
     1. Set description: `set description <description>`
     1. (Alternative) Set static address (IPv4 + IPv6): `set address <addr>/<prefix-length>`
     1. (Alternative) Set to get IPv4 address from DHCPv4: `set address dhcp`
@@ -107,6 +107,10 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
         - `set firewall state-policy invalid action drop`
     1. Create IPv4 and IPv6 rule sets. Note that IPv4 and IPv6 rule sets can't share names, so you can suffix the names with `-4` and `-6` to avoid conflict.
     1. Attach rule sets to interfaces (typically "local" and "out").
+1. Set banners:
+    1. (Note) Newlines must be escaped with `\n`.
+    1. Set pre-login banner: `set system login banner pre-login ""` (disable)
+    1. Set post-login banner: `set system logim banner post-login ""`
 1. (Optional) Tuning (bare metal):
     - **TODO** This can be done in the interface ethernet configs instead.
     - See the Linux router notes.
