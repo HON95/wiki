@@ -46,10 +46,6 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 - [Slurm Workload Manager](/config/hpc/slurm/)
 - [Containers](/config/hpc/containers/)
 - [Singularity](/config/hpc/singularity/)
-- [HIP](/config/hpc/hip/)
-- [ROCm](/config/hpc/rocm/)
-- [CUDA](/config/hpc/cuda/)
-- [Open MPI](/config/hpc/openmpi/)
 - [Interconnects](/config/hpc/interconnects/)
 
 ### IoT & Home Automation
@@ -157,7 +153,7 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Lighting
 
-- [DMX512](/media/lighting/dmx/)
+- [DMX512](/media/lighting/dmx512/)
 
 ## Software Engineering
 
@@ -169,8 +165,11 @@ Random collection of config notes and miscellaneous stuff. _Technically not a wi
 
 ### Languages & Frameworks
 
-- [CUDA](/se/lang/cuda/)
 - [Go](/se/lang/go/)
+- [HIP](/se/lang/hip/)
+- [ROCm](/se/lang/rocm/)
+- [CUDA](/se/lang/cuda/)
+- [Open MPI](/se/lang/openmpi/)
 
 ## Guides
 

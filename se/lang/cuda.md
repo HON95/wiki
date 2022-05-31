@@ -11,7 +11,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 ### Related Pages
 {:.no_toc}
 
-- [CUDA (configuration)](/config/config/hpc/cuda.md)
+- [HIP](/se/lang/hip/)
 
 ## TODO
 
@@ -19,6 +19,52 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - SM processing blocks/partitions same as warp schedulers?
 - SM processing block datapaths.
 - PTX.
+
+## Resources
+
+- [CUDA GPUs (NVIDIA)](https://developer.nvidia.com/cuda-gpus)
+- [CUDA Programming Guide (NVIDIA)](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+
+## Setup
+
+### Resources
+
+- [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
+- [NVIDIA CUDA Installation Guide for Windows (NVIDIA)](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html)
+- [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
+
+### Linux Installation
+
+The toolkit on Linux can be installed in different ways:
+
+- Through an an existing package in your distro's repos (simplest and most compatible with other packages, but may be outdated).
+- Through a downloaded package manager package (up to date but may be incompatible with your installed NVIDIA driver).
+- Through a runfile (same as previous but more cross-distro and harder to manage).
+
+If an NVIDIA driver is already installed, it must match the CUDA version.
+
+Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
+
+#### Ubuntu w/ NVIDIA's CUDA Repo
+
+1. Follow the steps to add the NVIDIA CUDA repo: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
+    - Use the "deb (network)" method, which will show instructions for adding the repo.
+    - But don't install `cuda` yet.
+1. Remove anything NVIDIA or CUDA from the system to avoid conflicts: `apt purge --autoremove 'cuda' 'cuda-' 'nvidia-*' 'libnvidia-*'`
+    - Warning: May break your PC. There may be better ways to do this.
+1. Install CUDA from the new repo (includes the NVIDIA driver): `apt install cuda`
+1. Setup PATH: `echo 'export PATH=$PATH:/usr/local/cuda/bin' | sudo tee -a /etc/profile.d/cuda.sh`
+
+### Docker Containers
+
+Docker containers may run NVIDIA applications using the NVIDIA runtime for Docker.
+
+See [Docker](/config/virt-cont/docker/).
+
+### DCGM
+
+- Official NVIDIA solution for monitoring GPU hardware and performance.
+- The DCGM exporter for Prometheus may be used for monitoring NVIDIA GPUs. It's standalone and doesn't require any other DCGM software to be installed.
 
 ## Hardware Architecture
 
@@ -50,9 +96,106 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - Branch divergence: Each warp scheduler (which an SM has one or more of) has only a single control unit for all cores within it, so for each branches any of the threads in the warp takes (added together), the warp scheduler and all of its cores will need to go through all of the branches but mask the output for all threads which were not meant to follow the branch. If no threads take a specific branch, it will not be executed by the warp scheduler.
 - **TODO** scheduling policy?
 
-### Memory
+### Memories
 
-#### Memory Hierarchy Overview
+- Hardware memories:
+    - Register (on-chip, thread-level).
+    - Local (off-chip, thread-level).
+    - Shared (on-chip, block-level).
+    - Global (off-chip, device-level).
+    - Constant (**TODO**).
+    - Texture (**TODO**).
+    - **TODO** Caches.
+See the programming section for more info about them.
+
+### GPUDirect
+
+- A family of technologies to facilitate direct GPU memory access to/from other devices (other GPUs, NICs/HBAs, etc.), bypassing the host/CPU.
+
+#### GPUDirect Peer to Peer (P2P)
+
+- Provides direct memory access between devices/GPUs in the same system.
+- See the P2P communication section.
+
+#### GPUDirect RDMA
+
+- Provides direct memory access between devices/GPUs in separate systems.
+- Requires a supported RDMA interconnect, e.g. using InfiniBand HCAs like NVIDIA ConnectX®-3 VPI or newer.
+- In CUDA 11, the `nvidia-peermem` Linux kernel module is used to facilitate communication between NVIDIA Infiniband HCAs and NVIDIA GPUs.
+- The PCIe devices (GPU and NIC/HCA) must share the same upstream PCI Express root complex for maximum performance. Going through CPU interconnects will limit the performance. Use a tool like `lstopo` to check the hardware topology.
+
+#### GPUDirect Async
+
+- **TODO** Unknown if this is implemented and used.
+- Provides inter-node GPU control communication, to avoid having the CPU poll the GPU and HCA and schedule the next action.
+- Meant to be used together with GPUDirect RDMA (for inter-node GPU data communication).
+
+#### GPUDirect Storage
+
+- Provides direct access to local storage (e.g. NVMe disks) or remote storage (e.g. NVMeOF).
+
+### NVLink & NVSwitch
+
+- Interconnect for connecting NVIDIA GPUs and NICs/HCAs as a mesh within a node, because PCIe was too limited.
+- NVLink alone is limited to only eight GPUs, but NVSwitches allows connecting more.
+- A bidirectional "link" consists of two unidirectional "sub-links", which each contain eight differential pairs (i.e. lanes). Each device may support multiple links.
+- NVLink transfer rate per differential pair:
+    - NVLink 1.0 (Pascal): 20Gb/s
+    - NVLink 2.0 (Volta): 25Gb/s
+    - NVLink 3.0 (Ampere): 50Gb/s
+- Some CPUs like IBM POWER9 have build-in NVLink in addition to PCIe.
+- **TODO** Hopper updates.
+
+## Programming
+
+### General
+
+- Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
+- Kernels are specified as functions with the `__global__` keyword.
+- Always check API call error codes and stop if not `cudaSuccess`. A macro may be defined and used to wrap the API call in to keep the code clean.
+
+### Thread Hierarchy
+
+- Grids consist of a number of blocks and blocks concist of a number of threads.
+- Threads and blocks are indexed in 1D, 2D or 3D space (separately), which threads may access through the 3-compoent vectors `blockDim`, `blockIdx` and `threadIdx`.
+- The programmer decides the number of grids, blocks and threads to use, as well as the number of dimensions to use, for each kernel invocation.
+- The number of threads per block is typically limited to 1024.
+- The programmer decides the grid size (number of blocks and threads therein) when launching a kernel.
+- The device has a constant number of streaming multiprocessors (SMs) and CUDA cores (not to be confused with tensor cores or RT cores).
+- Each kernel launch (or rather its grid) is executed by a single GPU. To use multiple GPUs, multiple kernel launches are required by the CUDA application.
+- Each thread block is executed by a single SM and is bound to it for the entire execution. Each SM may execute multiple thread blocks.
+- Each CUDA core within an SM executes a thread from a block assigned to the SM.
+- **TODO** Warps and switches. 32 threads per warp for all current GPUs.
+
+### Synchronization
+
+- **TODO**
+- `__syncthreads` provides block level barrier synchronization. Is must never be used in divergent code.
+- Grid level barrier synchronization is currently not possible through any native API call.
+- `cudaDeviceSynchronize`/`cudaStreamSynchronize` (host) blocks until the device or stream has finished all tasks (kernels/copies/etc.).
+- **TODO** Streams, cooperative groups, etc.
+
+### Contexts
+
+- CUDA contexts contains the CUDA state and generally maps one-to-one with the devices in the system.
+- Contexts are created and switched on-demand, e.g. using `cudaSetDevice()`.
+- Contexts contain state like memory allocations, streams, events etc. Destroying a context automatically destroys the state kept within it.
+
+### Streams
+
+- All device operations (kernels and memory operations) run sequentially in a single stream, which defaults to the "null stream" (stream 0) if none is specified.
+- The null stream is synchronous with all other streams. The `cudaStreamNonBlocking` flag may be specified to other streams to avoid synchronizing with the null stream. CUDA 7 allows setting an option ("per-thread default stream") for changing the default behavior to (1) each host thread having a separate default stream and (2) default streams acting like regular streams (no longer synchronized with every other stream). To enable this, set `--default-stream per-thread` for `nvcc`. When enable, `cudaStreamLegacy` may be used if you need the old null stream for some reason.
+- If using streams and the application is running less asynchronously than it should, make sure you're not (accidentally) using the null stream for anything.
+- While streams are useful for decoupling and overlapping independent execution streams, the operations are still _somewhat_ performed in order (but potentially overlapping) on the device (on the different engines). Keep this in mind, e.g. when issuing multiple memory transfers for multiple streams.
+- Streams allow for running asynchronous memory transfers and kernel execution at the same time, by running them in _different_, _non-default_ streams. For memory transfers, the memory must be managed/pinned. Take care _not_ to use the default stream as this will synchronize with everything.
+- Streams are created with `cudaStreamCreate` and destroyed with `cudaStreamDestroy`.
+- Memory transfers using streams requires using `cudaMemcpyAsync` (with the stream specified) instead of `cudaMemcpy`. The variants `cudaMemcpyAsync2D` and `cudaMemcpyAsync3D` may also be used for strided access.
+- Kernels are issued within a stream by specifying teh stream as the fourth parameter (the third parameter may be set to `0` to ignore it).
+- To wait for all operations for a stream and device to finish, use `cudaStreamSynchronize`. `cudaStreamQuery` may be used to query pending/unfinished operations without blocking. Events may also be used for synchronization. To wait for _all_ streams on a device, use the normal `cudaDeviceSynchronize` instead.
+
+### Memories
+
+#### Memory Hierarchy
 
 - Memories:
     - Register.
@@ -76,7 +219,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 #### Register Memory
 
 - The fastest thread-scope memory.
-- Spills over into local memory.
+- Spills over into local memory (off-chip), which should be avoided to prevent potentially severe performance degregation.
 
 #### Local Memory
 
@@ -89,16 +232,20 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 
 - Shared between all threads of a block (block-local).
 - The scope is the lifetime of the block.
-- Resides in fast, high-bandwidth on-chip memory.
-- Organized into banks which can be accessed concurrently. Each bank is accessed serially and multiple concurrent accesses to the same bank will result in a bank conflict.
-- Declared using the `__shared__` variable qualifier. The size may be specified during kernel invocation.
+- Resides in fast, high-bandwidth, on-chip memory.
+- Organized into interleaved banks (originally 32 bits wide), such that large accesses hit multiple banks. Bank size (width) on newer compute capabilities may be set using `cudaDeviceSetSharedMemConfig()` to either 32 or 64 bits.
+- Separate banks can be accessed concurrently, yielding higher total bandwidth. Multiple concurrent accesses to different addresses within a bank will result in a bank conflict and serial access to it, but multiple (read) accesses to the _same_ address within the bank will result in a broadcase (effectively concurrent access).
 - On modern devices, shared memory and the L1 cache resides on the same physical memory and the amount of memory allocated to each may be specified by the program.
-- **TODO** Static (`__shared__`) and dynamic (specified during kernel invocation).
+- Variable allocation:
+    - The variable size may be specified at compile-time (static) or during kernel invocation (dynamic).
+    - Both static and dynamic use the `__shared__` variable qualifier.
+    - Static allocation: Variables are specified as a constant-sized array (e.g. `__shared__ int data[64]`)
+    - Dynamic allocation: A single variable is specified as extern array without an explicit size (e.g. `extern __shared__ int data[]`). The size is provided during kernel invocation in the angle brackets. Only one such variable can exist, if you need more then you must partition that variable in some way.
 
 #### Global Memory
 
 - The largest and slowest memory on the device.
-- Resides in the GPU DRAM.
+- Resides in the GPU DRAM (off-chip).
 - Per-grid, accessible outside of kernels.
 - Accessible by the host.
 - The only memory threads from different blocks can share stored data in.
@@ -111,136 +258,76 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 - Resides in the special constant memory.
 - Per-grid, accessible outside of kernels.
 - Accessible by the host.
-- Declared using the `__constant__` variable qualifier.
+- Variables are declared using the `__constant__` variable qualifier.
 - Multiple/all threads in a warps can access the same memory address simultaneously, but accesses to different addresses are serialized.
 
 #### Texture Memory
 
 **TODO**
 
-#### Managed Memory
+### Data Alignment
 
-- Data that may be accessed from both the host and the device (related to UVA).
-- Shared by all GPUs.
-- Declared using the `__managed__` variable qualifier.
-
-#### Data Alignment and Coalescing
-
-- Accessing data with unaligned pointers generally incurs a performance hit, since it may fetch more segments than for aligned data or since it may prevent coalesced access.
+- Aligning data to the memory or data types it's stored in generally gives better data access performance.
+- Unaligned data may lead to wasted space and effectlively more data that needs to be transfered, and it may prevent memory access coalescing (se explanation below).
 - Caching will typically mitigate somewhat the impact of unaligned memory accesses.
 - Memory allocated through the CUDA API is guaranteed to be aligned to 256 bytes.
-- Elements _within_ allocated arrays are generally not aligned unless special care is taken.
+- Elements _within_ allocated arrays are generally not aligned unless done explicitly by the programmer.
 - To make sure array elements are aligned, use structs/classes with the `__align__(n)` qualifier and `n` as some multiple of the transaction sizes.
-- Memory access granularity is 32 bytes, called a sector. Global memory is accessed by the device using 32-, 64-, or 128-byte transactions, that are aligned to their size.
-- When multiple threads in a warp access global memory in an _aligned_ and _sequential_ fashion (e.g. when all threads in the warp access sequential parts of an array), the device will try to _coalesce_ the access into as few 32-byte transactions as possible in order to reduce the number of transaction and  increase the ratio of useful to fetched data.
-- Caching will typically mitigate the impact of unaligned memory accesses.
-- Thread block sizes that are multiple of the warp size (32) will give the most optimal alignments.
-- Older hardware coalesce accesses within half warps instead of the whole warp.
-- To access strided data (like multidimensional arrays) in global memory, it may be better to first copy the data into shared memory (which is fast for all access patterns).
+- Memory access granularity is 32 bytes, called a sector. Global memory is accessed by the device using 32-, 64-, or 128-byte transactions that are aligned to their size.
 - Cache lines are 128 bytes, i.e. 4 sectors.
+- When multiple threads in a warp access global memory in an _aligned_ and _sequential_ fashion (e.g. when all threads in the warp access sequential parts of an array), the device will try to _coalesce_ the access into as few transactions as possible in order to reduce the number of transactions and increase the ratio of useful to fetched data.
+- Thread block sizes that are multiple of the warp size (32) will give the most optimal alignments.
+- Older hardware coalesces accesses within half warps instead of the whole warp.
+- To access strided data (like components from multidimensional arrays) in global memory, it may be better to first copy the data into shared memory.
 
-### NVLink & NVSwitch
+### Managed Data
 
-- Interconnect for connecting NVIDIA GPUs and NICs/HCAs as a mesh within a node, because PCIe was too limited.
-- NVLink alone is limited to only eight GPUs, but NVSwitches allows connecting more.
-- A bidirectional "link" consists of two unidirectional "sub-links", which each contain eight differential pairs (i.e. lanes). Each device may support multiple links.
-- NVLink transfer rate per differential pair:
-    - NVLink 1.0 (Pascal): 20Gb/s
-    - NVLink 2.0 (Volta): 25Gb/s
-    - NVLink 3.0 (Ampere): 50Gb/s
-- **TODO** Hopper updates.
+- Managed data may be accessed from the host and all devices.
+- Data/cache coherence is handled by hardware and the driver.
+- Uses the Unified Virtual Addressing (UVA) and Unified Memory technologies, see below for more info.
 
-## Programming
+#### Unified Virtual Addressing (UVA)
 
-### General
+- Introduced in CUDA 4 and compute capability 2.0.
+- Causes CUDA to use a single virtual address space for allocations for both the host and all devices.
+- For UVA to apply, managed memory (i.e. pinned/page-locked memory) is used.
+- Managed memory (for UVA) is allocated on the host with `cudaHostAlloc()` and deallocated with `cudaFreeHost()`. Host memory allocated through other non-CUDA means may become managed using `cudaHostRegister()`. (Note that Unified Memory uses `cudaMallocManaged` and `cudaFree` instead.)
+- By default, memory allocations are usable within the active CUDA context only (i.e. the current device only). To make it portable (usable by all contexts), use the `cudaHostAllocPortable` flag with `cudaHostAlloc()` or the `cudaHostRegisterPortable` flag with `cudaHostRegister()`.
+- Allows using `cudaMemcpy` for managed data without having to specify in which device (or host) the data is located in. The `cudaMemcpy{Host,Device}To{Host,Device}` memory copy directions may be replaced by `cudaMemcpyDefault`. It also eliminates the need for e.g. `cudaHostGetDevicePointer`.
+- `cudaPointerGetAttributes` may be used with managed data to get info about which host/device the data is allocated on and if it's managed.
+- `cudaMemcpy` automatically becomes zero-copy for managed memory. This is because managed memory is pinned so no extra, pinned buffer must be allocated on the host during the transfer.
+- The device can directly access managed host memory (aka zero-copy access), but with a significant performance penalty. However, for certain cases where small amounts of data from the host are used only once, this direct access may give better performance than copying the data to the device before accessing it.
+- Managed memory may result in improved data migration, but using too much of it might reduce overall system performance as it might fill up the physical memory on the host with pinned pages and leave little room for pageable memory.
 
-- Host code and device code: Specifying the `__host__` keyword for a function means that it will be accessible by the host (the default if nothing is specified). Specifying the `__device__` keyword for a function means that it will be accessible by devices. Specifying both means it will be accessible by both.
-- Kernels are specified as functions with the `__global__` keyword.
-- Always check API call error codes and stop if not `cudaSuccess`. A macro may be defined and used to wrap the API call in to keep the code clean.
+#### Unified Memory
 
-### Thread Hierarchy and Mapping to the Execution Model
-
-- Grids consist of a number of blocks and blocks concist of a number of threads.
-- Threads and blocks are indexed in 1D, 2D or 3D space (separately), which threads may access through the 3-compoent vectors `blockDim`, `blockIdx` and `threadIdx`.
-- The programmer decides the number of grids, blocks and threads to use, as well as the number of dimensions to use, for each kernel invocation.
-- The number of threads per block is typically limited to 1024.
-- The programmer decides the grid size (number of blocks and threads therein) when launching a kernel.
-- The device has a constant number of streaming multiprocessors (SMs) and CUDA cores (not to be confused with tensor cores or RT cores).
-- Each kernel launch (or rather its grid) is executed by a single GPU. To use multiple GPUs, multiple kernel launches are required by the CUDA application.
-- Each thread block is executed by a single SM and is bound to it for the entire execution. Each SM may execute multiple thread blocks.
-- Each CUDA core within an SM executes a thread from a block assigned to the SM.
-- **TODO** Warps and switches. 32 threads per warp for all current GPUs.
-
-### Memory
-
-See the hardware architecture section.
-
-### Synchronization
-
-- **TODO**
-- `__syncthreads` provides block level barrier synchronization.
-- Grid level barrier synchronization is currently not possible through any native API call.
-- `cudaDeviceSynchronize`/`cudaStreamSynchronize` (host) blocks until the device or stream has finished all tasks (kernels/copies/etc.).
-- **TODO** Streams, cooperative groups, etc.
-
-### Streams
-
-- All device operations (kernels and memory operations) run sequentially in a single stream, which defaults to the "null stream" (stream 0) if none is specified.
-- The null stream is synchronous with all other streams. The `cudaStreamNonBlocking` flag may be specified to other streams to avoid synchronizing with the null stream. CUDA 7 allows setting an option ("per-thread default stream") for changing the default behavior to (1) each host thread having a separate default stream and (2) default streams acting like regular streams (no longer synchronized with every other stream). To enable this, set `--default-stream per-thread` for `nvcc`. When enable, `cudaStreamLegacy` may be used if you need the old null stream for some reason.
-- If using streams and the application is running less asynchronously than it should, make sure you're not (accidentally) using the null stream for anything.
-- While streams are useful for decoupling and overlapping independent execution streams, the operations are still _somewhat_ performed in order (but potentially overlapping) on the device (on the different engines). Keep this in mind, e.g. when issuing multiple memory transfers for multiple streams.
-- Streams allow for running asynchronous memory transfers and kernel execution at the same time, by running them in _different_, _non-default_ streams. For memory transfers, the memory must be managed/pinned. Take care _not_ to use the default stream as this will synchronize with everything.
-- Streams are created with `cudaStreamCreate` and destroyed with `cudaStreamDestroy`.
-- Memory transfers using streams requires using `cudaMemcpyAsync` (with the stream specified) instead of `cudaMemcpy`. The variants `cudaMemcpyAsync2D` and `cudaMemcpyAsync3D` may also be used for strided access.
-- Kernels are issued within a stream by specifying teh stream as the fourth parameter (the third parameter may be set to `0` to ignore it).
-- To wait for all operations for a stream and device to finish, use `cudaStreamSynchronize`. `cudaStreamQuery` may be used to query pending/unfinished operations without blocking. Events may also be used for synchronization. To wait for _all_ streams on a device, use the normal `cudaDeviceSynchronize` instead.
-
-### Unified Virtual Addressing (UVA)
-
-- Causes CUDA to use a single address space for allocations for both the host and all devices.
-- Requires a 64-bit application, Fermi-class or newer GPU and CUDA 4.0 or newer. The host must also support it, but most do (I don't know the details).
-- Allows using `cudaMemcpy` without having to specify in which device (or host) the data is located in. `cudaMemcpyDefault` replaces `cudaMemcpyHostToHost`, `cudaMemcpyHostToDevice`, `cudaMemcpyDeviceToHost`, and `cudaMemcpyDeviceToDevice`. Eliminates the need for e.g. `cudaHostGetDevicePointer`.
-- Allows zero-copy memory when transferring from/to the host if using managed/pinned memory. For unpinned host pages, CUDA must first copy the data to a temporary pinned set of pages before copying the data to the device. For pinned data, no such temporary buffer is needed (i.e. zero copies on the host side). The programmer must explicitly allocate data (or mark allocated data) as managed using `cudaMallocHost`/`cudaHostAlloc` and `cudaFreeHost`. `cudaMemcpy` automatically becomes zero-copy if using managed memory.
-- The GPU can directly access pinned/managed host memory over the PCIe interconnect, but with a significant performance penalty as the data resides off-chip.
-- While pinning memory results in improved transfers, pinning too much memory might reduce overall system performance as it might fill up the physical memory and leave little room for pageable memory. Finding a good balance may in some cases require some tuning.
-
-### Unified Memory
-
-- Depends on UVA, which provides a single address space for both the host and devices, as well as zero-copy memory when using managed/pinned memory.
-- Virtually combines the pinned host and device memories by extending UVA with automatic, on-demand page migration.
-- The automatic page migration means that explicit memory copies aren't needed and that there's no off-chip memory access penalty as for the older UVA (in theory).
-- Data migration happens automatically at page-level granularuity and follows pointers in order to support deep copies. As it automatically migrates data to/from the devices instead of accessing it over the PCIe interconnect on demand, it yields much better performance than UVA.
-- As unified memory uses paging on the device, it implicitly allows oversubscribing GPU memory. But keep in mind that GPU page faulting will affect kernel performance.
+- Introduced in CUDA 6 and compute capability 6.0 (limited support in lower compute capabilities).
+- Based on UVA, which provides a single virtual address space for both the host and devices, as well as zero-copy memory when using managed/pinned memory.
+- Extends UVA with automatic, on-demand page migration, removing the need for explicit memory copying.
+- Data migration happens automatically at page-level granularuity and follows pointers in order to support deep copies.
+- As unified memory uses paging on the device, it implicitly allows oversubscribing GPU memory, where device pages are evicted to host memory and host pages are fetched to device memory.
 - Unified memory also provides support for system-wide atomic memory operations, for multi-GPU cooperative programs.
 - Explicit memory management may still be used for optimization purposes. Use of streams and async copying is typically needed to actually increase the performance. But keep in mind that explicit memory management is error-prone and tracking down bugs may significantly reduce productivity, despite the slightly better performance in the end.
+- The litterature may be a little unclear when talking about "managed memory" here. In this context, "managed memory" may specifically mean memory allocations supporting Unified Memory.
+- `cudaMallocManaged` and `cudaFree` are used to allocate and deallocate managed memory for Unified Memory.
 - To assist automatic migration, `cudaMemPrefetchAsync` may be used to trigger a prefetch and `cudaMemAdvise` may be used to provide hints for data locality wrt. a specific managed memory allocation. `cudaMemPrefetchAsync` may be run concurrently in a separate stream, although it may exhibit sequential or blocking behaviour sometimes (unlike e.g. the explicit `cudaMemcpyAsync`). The `cudaMemAdviseSetReadMostly` hint automatically duplicates data that is used by multiple devices.
-- `cudaMallocManaged` and `cudaFree` are used to allocate and deallocate managed memory (just as for UVA).
 - Since unified memory removes the need for `cudaMemcpy` when copying data back to the host after the kernel is finished, you may have to use e.g. `cudaDeviceSynchronize` to wait for the kernel to finish before accessing the managed data.
-- While the Kepler and Maxwell architectures support a limited version of Unified Memory, the Pascal architecture is the first with hardware support for page faulting and on-demand page migration via its page migration engine. Volta introduces better access counters to migrate less naively and reduce thrashing. For the pre-Pascal architectures, _all_ allocated space is allocated in physical GPU memory (no oversubscription). All data accesses by the CPU is page faulted and fetched from GPU memory to system memory and all managed data present in system memory is automatically migrated to the GPU right before lanuching a kernel on it (never during execution, since the GPUs don't have a page fualt engine). This also means that Pascal and later includes memory copy delays in the kernel run time while pre-Pascal does not as everything is migrated before it begins executing (increasing the overall application runtime). This also prevents pre-Pascal GPUs from accessing managed data from both host and device concurrently, as it can't assure data coherence (although care must still be taken to avoid race conditions and data in invalid states for Pascal and later GPUs).
+- While the Kepler and Maxwell architectures support a limited version of Unified Memory, the Pascal architecture (compute capability 6.0) is the first with hardware support for page faulting and on-demand page migration via its page migration engine. Volta introduces better access counters to migrate less naively and reduce thrashing. For the pre-Pascal architectures, _all_ allocated space is allocated in physical GPU memory (no oversubscription). All data accesses by the CPU is page faulted and fetched from GPU memory to system memory and all managed data present in system memory is automatically migrated to the GPU right before lanuching a kernel on it (never during execution, since the GPUs don't have a page fualt engine). This also means that Pascal and later includes memory copy delays in the kernel run time while pre-Pascal does not as everything is migrated before it begins executing (increasing the overall application runtime). This also prevents pre-Pascal GPUs from accessing managed data from both host and device concurrently, as it can't assure data coherence (although care must still be taken to avoid race conditions and data in invalid states for Pascal and later GPUs).
 
 ### Peer-to-Peer (P2P) Communication
 
-- Based on UVA.
-- Unified memory may be used to avoid explicit memory copies.
-- Allows devices to directly access and transfer data to/from neighboring devices/peers over PCIe or NVLink/NVSwitch, without any unnecessary copies. This significantly reduces latency since the host/CPU doesn't need to be involved and it typically saturates PCIe bandwidth.
+- Allows devices to directly access and transfer data to/from neighboring devices/peers over PCIe or NVLink, without going through the host. This significantly reduces latency since the host/CPU doesn't need to be involved and it typically saturates PCIe bandwidth.
+- Uses UVA and GPUDirect P2P internally.
 - To check if peers can access eachother, use `cudaDeviceCanAccessPeer` (for each direction).
-- To enable access between peers, use `cudaDeviceEnablePerAccess` (for the other device within the context of the first device). (**TODO** Is this required when using unified memory?)
-
-### GPUDirect
-
-**TODO**
-
-### GPUDirect P2P
-
-**TODO**
-
-### GPUDirect RDMA
-
-**TODO**
+- To enable access between peers, use `cudaDeviceEnablePerAccess` (for the other device within the context of the first device).
+- With UVA, `cudaMemcpy()` with `cudaMemcpyDefault` may be used instead of the older `cudaMemcpyPeer` variants. It supports Unified Memory with implicit copying too.
 
 ### CUDA-Aware MPI
 
-**TODO**
+- Allows using CUDA pointers in MPI communication, e.g. to transfer memory directly to/from device memory instead of copying it to the host first.
+- Requires CUDA 5 and a Kepler-class GPU or newer. May require a Tesla or Quadro GPU (at least for Kepler).
+- Requires a supported MPI implementation. e.g. Open MPI 1.7 or later.
+- Uses GPUDirect RDMA internally.
 
 ### Miscellanea
 
@@ -248,7 +335,7 @@ See the hardware architecture section.
 - For getting device attributes/properties, `cudaDeviceGetAttribute` is significantly faster than `cudaGetDeviceProperties`.
 - Use `cudaDeviceReset` to reset all state for the device by destroying the CUDA context.
 
-## Performance
+## Performance Measurements
 
 ### Time Measurements
 
@@ -277,6 +364,16 @@ See the hardware architecture section.
 - **Theoretical occupancy** (theoretical metric): Maximum possible occupancy, limited by factors such as warps per SM, blocks per SM, registers per SM and shared memory per SM. This is computed statically without running the kernel.
 - **Achieved occupancy** (`achieved_occupancy`): I.e. actual occupancy. Average occupancy of an SM for the whole duration it's active. Measured as the sum of active warps all warp schedulers for an SM for each clock cycle the SM is active, divided by number of clock cycles and then again divided by the maximum active warps for the SM. In addition to the reasons mentioned for theoretical occupancy, it may be limited due to unbalanced workload within blocks, unbalanced workload across blocks, too few blocks launched, and partial last wave (meaning that the last "wave" of blocks aren't enough to activate all warp schedulers of all SMs).
 - **Issue slot utilization** (`issue_slot_utilization` or `issue_active`): The fraction of issued warps divided by the total number of cycles (e.g. 100% if one warp was issued per each clock for each warp scheduler).
+
+## Usage
+
+- Gathering system/GPU information with `nvidia-smi`:
+    - Show overview: `nvidia-smi`
+    - Show topology matrix: `nvidia-smi topo --matrix`
+    - Show topology info: `nvidia-smi topo <option>`
+    - Show NVLink info: `nvidia-smi  nvlink --status -i 0` (for GPU #0)
+    - Monitor device stats: `nvidia-smi dmon`
+- To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
 
 ## Tools
 
@@ -337,5 +434,18 @@ See the hardware architecture section.
 - For each mode, the "sections" (profiling types) to run must be specified. More sections means it takes longer to profile as it may require running the kernel invocations multiple times (aka kernel replaying).
 - Kernel replays: In order to run all profiling methods for a kernel execution, Nsight might have to run the kernel multiple times by storing the state before the first kernel execution and restoring it for every replay. It does not restore any host state, so in case of host-device communication during the execution, this is likely to put the application in an inconsistent state and cause it to crash or give incorrect results. To rerun the whole application (aka "application mode") instead of transparently replaying individual kernels (aka "kernel mode"), specify `--replay-mode=application` (or the equivalent option in the GUI).
 - Supports NVTX (NVIDIA Tools Extension) for instrumenting the application in order to provide context/information around events and certain code.
+
+## Troubleshooting
+
+**"Driver/library version mismatch" and similar**:
+
+Other related error messages from various tools:
+
+- "Failed to initialize NVML: Driver/library version mismatch"
+- "forward compatibility was attempted on non supported HW"
+
+Caused by the NVIDIA driver being updated without the kernel module being reloaded.
+
+Solution: Reboot.
 
 {% include footer.md %}

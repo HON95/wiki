@@ -1,8 +1,8 @@
 ---
 title: Open MPI
 breadcrumbs:
-- title: Configuration
-- title: High-Performance Computing (HPC)
+- title: Software Engineering
+- title: Languages Etc.
 ---
 {% include header.md %}
 

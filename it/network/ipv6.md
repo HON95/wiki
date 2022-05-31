@@ -6,6 +6,11 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## Resources
+
+- [IETF RFC 8200, STD 86: Internet Protocol, Version 6 (IPv6) Specification](https://datatracker.ietf.org/doc/html/rfc8200)
+- [IETF BCP 204: Host Address Availability Recommendations](https://datatracker.ietf.org/doc/html/rfc7934)
+
 ## Special Prefixes
 
 | Prefix | Description |
@@ -107,7 +112,8 @@ breadcrumbs:
     - Stateless address autoconfiguration (SLAAC).
     - Stateless DHCP.
     - Stateful DHCP.
-- SLAAC interface addresses:
+- SLAAC:
+    - Unlike (stateful) DHCP **TODO**
     - EUI-64 (permanent): Deterministically based on the MAC address.
     - Privacy extensions (temporary): In addition to the permanent. Preferred for sending.
 - The unspecified address: `::`
@@ -208,8 +214,8 @@ breadcrumbs:
 - Renew and rebind.
 - Prefix delegation with prefix exclusion.
 - IPsec can be used.
-- E.g. Android currently does not support DHCPv6, only SLAAC.
-    - To help with traceability, Netflow or periodic NDP cache scans with SNMP can be used.
+- Android and Chrome OS does not support DHCPv6, by design.
+    - To help with traceability without DHCPv6, Netflow or periodic NDP cache scans with SNMP can be used.
 
 ### Domain Name System (DNS)
 
@@ -407,7 +413,7 @@ breadcrumbs:
 - Try to subnet on nibble boundaries since a nibble is one hex digit.
 - GUA VS ULA.
 - SLAAC VS DHCP.
-    - Android does not support SLAAC.
+    - Android and Chrome OS does not support SLAAC, by design.
     - DHCP provides more accountability.
 - Implement appropriate first-hop security mechanisms, such as ICMP guard and DHCPv6 guard.
 - Consider blocking certain multicast addresses, especially with site scope, to prevent attackers from identifying certain important resources on the network.

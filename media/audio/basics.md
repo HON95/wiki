@@ -37,6 +37,19 @@ breadcrumbs:
         - Use a resistor and/or a ferrite bead to limit AC current.
 - Phantom power: Applies 48V to XLR3 (or similar) inputs, for powering mics and similar. Applying this to devices which aren't made for it can break them.
 - Impedance: Basically resistance but for AC.
-- Proximity effect: Increase of low frequency response when a audio source is close to a directional or cardioid microphone.
+- Proximity effect: Increase of low frequency response when an audio source is close to a directional or cardioid microphone.
+- Equal-loudness contours:
+    - The perceived loudness for a given SPL depends on the frequency.
+    - This is typically visualized as equal-loudness contours, with frequency on the first axis, SPL on the second axis and a set of equal-loudness curves.
+    - Fletcher–Munson curves is an early version of equal-loudness contours, but is still sometimes used to refer to the same thing.
+    - This is why low-volume music sounds so bass-less and why e.g. car stereos typically provide a "loudness" setting to try to correct it for low volume levels (and make it sound terrible for normal volume levels).
+- Feedback:
+    - Happens when sound is fed from speakers back into a microphone (accidentally), at a high enough "loop gain" that the feedback noise level quickly escalates to annoying/damaging levels.
+    - Generally only happens at certain resonating frequencies, depending on the venue/room.
+    - Preventing feedback:
+        - Avoid placing microphones in front of speakers.
+        - Use appropriate microphones, e.g. dynamic microphones pointing away from any (loud)speakers.
+        - Use an equalizer to reduce the level for feedback-inducing frequencies. To find the frequencies, test the setup at loud levels to try to induce it, then measure which frequency it's happening at.
+        - Don't use "feedback destroyers", they're crap.
 
 {% include footer.md %}
