@@ -6,184 +6,151 @@ no_toc: true
 
 Random collection of config notes and miscellaneous stuff. _Technically not a wiki._
 
-## Configuration
+## General
 
-### General
+- [General](/general/general/)
+- [Linux General](/general/linux-general/)
+- [Computer Testing](/general/computer-testing/)
 
-- [General](/config/general/general/)
-- [Linux General](/config/general/linux-general/)
-- [Computer Testing](/config/general/computer-testing/)
+## Cloud
 
-### Authentication, Authorization and Accounting (AAA)
+- [AWS](/cloud/aws/)
+- [Azure](/cloud/azure/)
 
-- [Kerberos](/config/aaa/kerberos/)
+## Automation
 
-### Automation
+- [Puppet](/automation/puppet/)
+- [Ansible](/automation/ansible/)
 
-- [Ansible](/config/automation/ansible/)
-- [Puppet](/config/automation/puppet/)
+## High-Performance Computing (HPC)
 
-### Cloud
+- [HIP](/hpc/hip/)
+- [Enroot](/hpc/enroot/)
+- [Betzy (Supercomputer)](/hpc/betzy/)
+- [Vilje (Supercomputer)](/hpc/vilje/)
+- [ROCm](/hpc/rocm/)
+- [Open MPI](/hpc/openmpi/)
+- [Singularity](/hpc/singularity/)
+- [HPC Cluster](/hpc/slurm/)
+- [Interconnects](/hpc/interconnects/)
+- [CUDA](/hpc/cuda/)
+- [Containers](/hpc/containers/)
 
-- [Azure](/config/cloud/azure/)
-- [AWS](/config/cloud/aws/)
+## Network
 
-### Computers
+- [Brocade FastIron Switches](/network/brocade-fastiron-switches/)
+- [Juniper Junos General](/network/juniper-junos-general/)
+- [Ubiquiti UniFi Access Points](/network/ubiquiti-unifi-aps/)
+- [Wireless Basics](/network/wireless-basics/)
+- [Cisco IOS General](/network/cisco-ios-general/)
+- [Cisco Hardware](/network/cisco-hardware/)
+- [Linksys LGS Switches](/network/linksys-lgs/)
+- [Cisco IOS Routers](/network/cisco-ios-routers/)
+- [Network Architecture](/network/architecture/)
+- [Juniper EX Series Switches](/network/juniper-junos-switches/)
+- [General](/network/general/)
+- [FS FSOS Switches](/network/fs-fsos-switches/)
+- [Network Security](/network/security/)
+- [Juniper Hardware](/network/juniper-hardware/)
+- [VyOS](/network/vyos/)
+- [WLAN Theory](/network/wlan/)
+- [IPv6 Theory](/network/ipv6/)
+- [TP-Link JetStream Switches](/network/tplink-jetstream-switches/)
+- [Cisco IOS Switches](/network/cisco-ios-switches/)
+- [BGP](/network/bgp/)
+- [Linux Switching & Routing](/network/linux/)
+- [Ubiquiti UniFi Controllers](/network/ubiquiti-unifi-controllers/)
+- [Switching](/network/switching/)
+- [Juniper EX3300 Fan Mod](/network/juniper-ex3300-fanmod/)
+- [IPv6 Theory](/network/ipv4/)
+- [Routing Theory](/network/routing/)
+- [pfSense](/network/pfsense/)
 
-- [Dell OptiPlex Series](/config/computers/dell-optiplex/)
-- [Dell PowerEdge Series](/config/computers/dell-poweredge/)
-- [HP ProLiant](/config/computers/hp-proliant/)
-- [PCs](/config/computers/pcs/)
+## Computers
 
-### Game Servers
-
-- [Counter-Strike: Global Offensive (CS:GO)](/config/game-server/csgo/)
-- [Minecraft (Bukkit)](/config/game-server/minecraft-bukkit/)
-- [Team Fortress 2 (TF2)](/config/game-server/tf2/)
-
-### HPC
-
-- [Slurm Workload Manager](/config/hpc/slurm/)
-- [Containers](/config/hpc/containers/)
-- [Singularity](/config/hpc/singularity/)
-- [Interconnects](/config/hpc/interconnects/)
-
-### IoT & Home Automation
-
-- [Raspberry Pi](/config/iot-ha/raspberry-pi/)
-- [Home Assistant](/config/iot-ha/home-assistant/)
-
-### Linux Server
-
-- [Debian Server](/config/linux-server/debian/)
-- [Applications](/config/linux-server/applications/)
-- [Storage](/config/linux-server/storage/)
-- [Storage: ZFS](/config/linux-server/storage-zfs/)
-- [Storage: Ceph](/config/linux-server/storage-ceph/)
-
-### Media
-
-- [General](/config/media/general/)
-- [Video Processing](/config/media/video-processing/)
-- [Video Ripping](/config/media/video-ripping/)
-- [Video Streaming](/config/media/video-streaming/)
-- [FFmpeg](/config/media/ffmpeg/)
-- [Video4Linux 2 (V4L2)](/config/media/v4l2/)
-- [VLC](/config/media/vlc/)
-- [youtube-dl](/config/media/youtube-dl/)
-
-### Monitoring
-
-- [Grafana](/config/monitoring/grafana/)
-- [Prometheus](/config/monitoring/prometheus/)
-- [Grafana Loki](/config/monitoring/loki/)
-
-### Network
-
-#### General
-
-- [General](/config/network/general/)
-- [Routing](/config/network/routing/)
-- [Switching](/config/network/switching/)
-- [WLAN](/config/network/wlan/)
-- [Security](/config/network/security/)
-
-#### Specific
-
-- [Brocade FastIron Switches](/config/network/brocade-fastiron-switches/)
-- [Cisco Hardware](/config/network/cisco-hardware/)
-- [Cisco IOS General](/config/network/cisco-ios-general/)
-- [Cisco IOS Routers](/config/network/cisco-ios-routers/)
-- [Cisco IOS Switches](/config/network/cisco-ios-switches/)
-- [FS FSOS Switches](/config/network/fs-fsos-switches/)
-- [Juniper Hardware](/config/network/juniper-hardware/)
-- [Juniper Junos General](/config/network/juniper-junos-general/)
-- [Juniper Junos Switches](/config/network/juniper-junos-switches/)
-- [Linksys LGS Switches](/config/network/linksys-lgs/)
-- [Linux Switching & Routing](/config/network/linux/)
-- [pfSense](/config/network/pfsense/)
-- [TP-Link JetStream Switches](/config/network/tplink-jetstream-switches/)
-- [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/)
-- [Uniquiti UniFi Access Points](/config/network/ubiquiti-unifi-aps/)
-- [VyOS](/config/network/vyos/)
-
-### PC
-
-- [Arch (i3)](/config/pc/arch-i3/)
-- [Kubuntu](/config/pc/kubuntu/)
-- [Manjaro (KDE)](/config/pc/manjaro-kde/)
-- [Windows](/config/pc/windows/)
-- [Applications](/config/pc/applications/)
-
-### Power
-
-- [APC PDUs](/config/power/apc-pdus/)
-
-### Virtualization & Containerization
-
-- [Docker](/config/virt-cont/docker/)
-- [Podman](/config/virt-cont/podman/)
-- [Kubernetes](/config/virt-cont/k8s/)
-- [libvirt & KVM](/config/virt-cont/libvirt-kvm/)
-- [Proxmox VE](/config/virt-cont/proxmox-ve/)
-
-## Information Technology
-
-### Network
-
-- [IPv4 Theory](/it/network/ipv4/)
-- [IPv6 Theory](/it/network/ipv6/)
-- [Network Architecture](/it/network/architecture/)
-- [Routing Theory](/it/network/routing/)
-- [BGP](/it/network/bgp/)
-- [Switching Theory](/it/network/switching/)
-- [Wireless Basics](/it/network/wireless-basics/)
-- [WLAN Theory](/it/network/wlan/)
-
-### Services
-
-- [Email](/it/services/email/)
-- [DNS](/it/services/dns/)
+- [PCs](/computers/pcs/)
+- [Dell OptiPlex Series](/computers/dell-optiplex/)
+- [Dell PowerEdge Series](/computers/hp-proliant/)
+- [Dell PowerEdge Series](/computers/dell-poweredge/)
 
 ## Media
 
-### Audio
+- [Video Ripping](/media/video-ripping/)
+- [Video4Linux 2 (V4L2)](/media/v4l2/)
+- [Video Streaming](/media/video-streaming/)
+- [youtube-dl](/media/youtube-dl/)
+- [DMX512](/media/dmx512/)
+- [Media: General](/media/general/)
+- [Audio Basics](/media/audio-basics/)
+- [Video Processing](/media/video-processing/)
+- [FFmpeg](/media/ffmpeg/)
+- [VLC](/media/vlc/)
 
-- [Audio Basics](/media/audio/basics/)
+## Virtualization, Containerization and Orchestration
 
-### Lighting
+- [Docker](/virt-cont/podman/)
+- [Docker](/virt-cont/docker/)
+- [Proxmox VE](/virt-cont/proxmox-ve/)
+- [libvirt & KVM](/virt-cont/libvirt-kvm/)
+- [Kubernetes](/virt-cont/k8s/)
 
-- [DMX512](/media/lighting/dmx512/)
+## Crypto
+
+- [Headless Linux ETH Mining](/crypto/headless-linux-eth-mining/)
+
+## IoT & Home Automation
+
+- [Raspberry Pi](/iot-ha/raspberry-pi/)
+- [Home Assistant](/iot-ha/home-assistant/)
+
+## Monitoring
+
+- [Grafana](/monitoring/grafana/)
+- [Prometheus](/monitoring/prometheus/)
+- [Grafana Loki](/monitoring/loki/)
+
+## Authentication, Authorization and Accounting (AAA)
+
+- [Kerberos](/aaa/kerberos/)
+- [FreeIPA](/aaa/freeipa/)
+
+## Services
+
+- [DNS Theory](/services/dns/)
+- [Email Theory](/services/email/)
 
 ## Software Engineering
 
-### General
+- [Licensing](/se/licensing/)
+- [CUDA](/se/go/)
+- [Database Management Systems (DBMSes)](/se/dbmses/)
+- [Web Security](/se/web-security/)
+- [Data Stuff](/se/data/)
 
-- [Database Management Systems (DBMSes)](/se/general/dbmses/)
-- [Software Licensing](/se/general/licensing/)
-- [Web Security](/se/general/security/)
+## Personal Computers
 
-### Languages & Frameworks
+- [Kubuntu](/pc/kubuntu/)
+- [PC Applications](/pc/applications/)
+- [Windows](/pc/windows/)
+- [Arch (i3)](/pc/arch-i3/)
+- [Manjaro (KDE)](/pc/manjaro-kde/)
 
-- [Go](/se/lang/go/)
-- [HIP](/se/lang/hip/)
-- [ROCm](/se/lang/rocm/)
-- [CUDA](/se/lang/cuda/)
-- [Open MPI](/se/lang/openmpi/)
+## Linux Server
 
-## Guides
+- [Linux Server Storage](/linux-server/storage/)
+- [Debian Server](/linux-server/debian/)
+- [Linux Server Applications](/linux-server/applications/)
+- [Linux Server Storage: ZFS](/linux-server/storage-zfs/)
+- [Linux Server Storage: Ceph](/linux-server/storage-ceph/)
 
-### Mining
+## Game Servers
 
-- [Headless Linux ETH Mining](/guides/mining/headless-linux-eth-mining/)
+- [Counter-Strike: Global Offensive (CS:GO)](/game-server/csgo/)
+- [Minecraft (Bukkit)](/game-server/minecraft-bukkit/)
+- [Team Fortress 2 (TF2)](/game-server/tf2/)
 
-### Network
+## Power
 
-- [Juniper EX3300 Fan Mod](/guides/network/juniper-ex3300-fanmod/)
-
-## Miscellanea
-
-- [Betzy (Supercomputer)](/misc/betzy/)
-- [Vilje (Supercomputer)](/misc/vilje/)
+- [APC PDUs](/power/apc-pdus/)
 
 {% include footer.md %}
