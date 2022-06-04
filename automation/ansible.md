@@ -70,7 +70,7 @@ interpreter_python = /usr/bin/python3
 - There currently exists three versions, [`ipaddr`](https://docs.ansible.com/ansible/2.4/playbooks_filters_ipaddr.html) (deprecated), [`ansible.netcommon.ipaddr`](https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html) (deprecated) and [`ansible.utils.ipaddr`](https://docs.ansible.com/ansible/latest/collections/ansible/utils/docsite/filters_ipaddr.html).
 - The filter takes either a single value or a list of values. For single value input, it returns false if the input is invalid. For list input, it filters out any invalid input elements.
 - Common, basic usage:
-    - Normal usage: `{{ some_address | ansible.utils.ipaddr('address') }}`
+    - Normal usage: {% raw %}`{{ some_address | ansible.utils.ipaddr('address') }}`{% endraw %}
     - Filter IPv4 or IPv6 addresses: `ansible.utils.ipv4` and `ansible.utils.ipv6`
     - Get address without length: `ansible.utils.ipaddr('address')`
     - Get address with length: `ansible.utils.ipaddr('host')`
@@ -90,6 +90,7 @@ interpreter_python = /usr/bin/python3
 
 **Combine key-value pairs to string:**
 
+{% raw %}
 ```yaml
 vars:
   qm_params:
@@ -97,6 +98,7 @@ vars:
     description: "{{ vm.description | default('') }}"
   qm_params_string: "{{ vm_config.items() | map('join', '=') | map('regex_replace', '^([^=]*)=(.*)$', '--\\1=\"\\2\"') | join(' ') }}"
 ```
+{% endraw %}
 
 ## Troubleshooting
 
