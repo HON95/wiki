@@ -19,10 +19,12 @@ no_toc: true
 {% include header.md %}
 
 Random collection of config notes and miscellaneous stuff. _Technically not a wiki._
+
+_(Alphabetically sorted, so it might seem a bit strange.)_
 EOF
 
 # Add categories and pages
-for dir in $(find . -mindepth 1 -type d); do
+for dir in $(find . -mindepth 1 -type d | sort | sed 's|^\./||'); do
     # Check if the dir contains a name file
     if [[ ! -f $dir/_name ]]; then
         continue
@@ -33,8 +35,8 @@ for dir in $(find . -mindepth 1 -type d); do
     echo "## $dir_name" >> "$index_file"
     echo >> "$index_file"
 
-    for file in $(find "$dir" -type f -name '*.md'); do
-        link="$(echo $file | sed 's|^\./|/|' | sed 's|\.md$|/|')"
+    for file in $(find "$dir" -type f -name '*.md' | sort -t. -k1,1); do
+        link="$(echo $file | sed 's|^|/|' | sed 's|\.md$|/|')"
         name="$(grep -Po -m1 '(?<=^title: ).+$' $file | sed -e 's|^\"||' -e "s|^'||" -e 's|\"$||' -e "s|'$||" || true)"
         if [[ $name == "" ]]; then
             echo "Missing name for page: $file" >&2
