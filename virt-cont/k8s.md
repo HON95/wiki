@@ -40,6 +40,7 @@ Using **Debian**.
 ## Notes and Best Practices
 
 - k8s is the foundation for a platform-as-a-service (PaaS), but requires a ton of configuration if self-hosting/on-premise.
+- **TODO**
 
 ## Related Software
 

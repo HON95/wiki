@@ -174,7 +174,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Add line to allow sudo group without password: `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`
     1. (Note) To give users sudo access through the group: `usermod -aG sudo <user>`
 1. Add a personal admin user:
-    1. Create the user and add it to relevant groups: `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal <user>`
+    1. Create the user and add it to relevant groups: `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video <user>`
     1. Set its password: `passwd <user>`
     1. Relog as the new user, both to make sure that it's working and because some next steps require a non-root user.
 1. Install yay to access the AUR (as non-root):
@@ -348,6 +348,12 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 1. Setup a Spotify module for Polybar:
     1. Install: `yay -S polybar-spotify-git`
     1. In the Polybar config (`~/.config/polybar/config`), add a module `spotify` (see config snipper below) and add it to some bar module section.
+1. Setup autostarting of desktop applications:
+    1. (Note) Desktop applications are applications with `<name>.desktop` files. These applications may be autostarted using a tool like `dex`, following the XDG Autostart spec.
+    1. (Note) To enable autostarting for a desktop application, find/create a `.desktop` entry file for it in `/etc/xdg/autostart` (system) `~/.config/autostart` (user). A simple method is to find the entry in e.g. `/usr/share/applications/` (system) or `~/.local/share/applications/` (user), then symlink it into the appropriate autostart directory (e.g. `ln -s /usr/share/applications/discord.desktop ~/.config/autostart`).
+    1. Install dex: `sudo pacman -S dex`
+    1. Add this to your i3 config: `exec --no-startup-id dex --autostart --environment i3`
+    1. (Optional) Test it: `dex --autostart --environment i3 &>/dev/null`
 
 ### Setup Xorg Multi-Display and Stuff
 
@@ -400,12 +406,9 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
     1. (Optional) Enable auto power-on after boot and resume: In `/etc/bluetooth/main.conf`, in the `Policy` section, set `AutoEnable = true`.
 1. Setup audio:
     1. (Note) Using PipeWire and its PulseAudio adapter (`pipewire-pulse`), which should already have been set up and includes support for Bluetooth.
-1. **TODO** See https://wiki.archlinux.org/title/bluetooth_headset
 1. Setup Blueman:
-    1. **TODO** This broke for some reason, the GUIs won't open and the tray icon won't show. I haven't bothered fixing it yet.
     1. (Note) Blueman is a Bluetooth manager with a practical tray icon.
     1. Install: `pacman -S blueman`
-    1. Enable tray icon on i3 start: In the i3 config, add `exec --no-startup-id blueman-applet`. (**TODO** Test.)
     1. (Optional) Try to run it. It's the "Bluetooth Manager" entry in e.g. Rofi.
 1. (Example) Connect a device using `bluetoothctl`:
     1. (Note) To avoid entering the interactive TUI and run single commands instead, use `bluetoothctl -- <cmd>`.
