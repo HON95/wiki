@@ -111,10 +111,21 @@ breadcrumbs:
     - Stateless address autoconfiguration (SLAAC).
     - Stateless DHCP.
     - Stateful DHCP.
+- DHCP:
+    - See the section below.
+    - Similar to DHCPv6, but with some important changes.
+    - Generally used when indicated by router advertisements that DHCP should be used (stateful or stateless).
+    - Stateless DHCP instructs devices to use address autoconfiguration, but get additional data (e.g. DNS servers) from the DHCP server.
 - SLAAC:
-    - Unlike (stateful) DHCP **TODO**
-    - EUI-64 (permanent): Deterministically based on the MAC address.
-    - Privacy extensions (temporary): In addition to the permanent. Preferred for sending.
+    - It's expected to have up to multiple addresses concurrently, in addition to the link-local address.
+    - EUI-64 addresses:
+        - The first method of autoconfiguring an address, giving a single interface ID deterministically based on the MAC address (i.e. expanding EUI-48 to a EUI-64 as the interface ID).
+        - Typically no longer in use due to privacy concerns (MAC address indirectly visible when accessing remote services).
+        - Useful for servers with autoconfigured addresses due to its stability, unlike temporary addresses that change over time.
+    - Privacy extensions (RFCs 3041, 4841, 8981):
+        - A set of extensions adding temporary, randomized addresses in order to preserve privacy by not revealing the MAC address (visble from the EUI-64) and to periodically change the address.
+        - Mainly used for outbound connections. Rather useless for inbound connections due to its volatility.
+    - **TODO**
 - The unspecified address: `::`
 - The loopback address: `::1`
 - The first and last addresses in a subnet are not reserved and can be assigned to hosts, unlike IPv4.

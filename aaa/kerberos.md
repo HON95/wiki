@@ -10,21 +10,21 @@ It's designed to be run on top of an untrusted network using an appropriate set 
 
 ## Terminology & Conventions
 
-- "Principal": Any user, machine and service.
+- _Principal_: Any user, machine and service.
     - Identified using `<principal>@<realm>` (e.g. `user1@EXAMPLE.NET`).
     - The principal is typically the username.
-- "Principal instance": Optional, special versions of existing, normal principals.
+- _Principal instance_: Optional, special versions of existing, normal principals.
     - Identified using `<principal>/<instance>@<realm>` (e.g. `user1/admin@EXAMPLE.NET`).
     - May be used to e.g. access certain services using different credentials or for using different privileges, e.g. for when running scripts in "less trusted" environments.
-- "Realm": An independent realm/domain of principals.
+- _Realm_: An independent realm/domain of principals.
     - Equivalent to an Active Directory domain.
     - Should have upper-case name, typically the DNA domain (e.g. `EXAMPLE.NET`).
-- "Key distribution center" (KDC): A three-part server consisting the principal database, the "authentication server" (AS) and the "ticket granting server" (TGS).
+- _Key distribution center_ (KDC): A three-part server consisting the principal database, the _authentication server_ (AS) and the _ticket granting server_ (TGS).
     - Each realm has exactly one KDC.
     - The KDCs may be found using special SRV DNS records based on the realm name. They may also simply be configured in the hosts' configuration file.
-- "Ticket granting ticket" (TGT): A ticket issued by the AS to a client after successfully authenticating a user.
+- _Ticket granting ticket_ (TGT): A ticket issued by the AS to a client after successfully authenticating a user.
     - It's symmetrically encrypted using the user password, which is only known to the user and the KDC.
-- "Service ticket": A ticket granted from the TGS after requested by a client using the TGT.
+- _Service ticket_: A ticket granted from the TGS after requested by a client using the TGT.
 - Reliability:
     - Kerberos (typically) depends on properly a configured DNS server.
     - As both the DNS server and KDC are essential, you may want to set up high-availability pairs for both.
