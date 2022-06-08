@@ -152,7 +152,7 @@ _(Alphabetically sorted, so it might seem a bit strange.)_
 - [Docker](/virt-cont/docker/)
 - [Kubernetes](/virt-cont/k8s/)
 - [libvirt & KVM](/virt-cont/libvirt-kvm/)
-- [Docker](/virt-cont/podman/)
+- [Podman](/virt-cont/podman/)
 - [Proxmox VE](/virt-cont/proxmox-ve/)
 
 {% include footer.md %}
