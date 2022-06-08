@@ -20,7 +20,7 @@ no_toc: true
 
 Random collection of config notes and miscellaneous stuff. _Technically not a wiki._
 
-_(Alphabetically sorted, so it might seem a bit strange.)_
+_(Alphabetically sorted, so the ordering might seem a bit strange.)_
 EOF
 
 # Add categories and pages
