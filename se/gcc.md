@@ -104,7 +104,7 @@ ubsan is a run-time checker for different types of undefined behavior.
 - Embed debugging info (compiler and linker): `-g`
 - Add compiler flags to debug info: `-grecord-gcc-switches`
 
-## Common Libraries (`-l`)
+## Common Libraries
 
 - C math library (`math.h`): `-lm`
     - For C++, it's automatically included with the stdlib.

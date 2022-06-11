@@ -34,14 +34,25 @@ breadcrumbs:
         - Use a ground loop isolation transformer.
         - Group the ground cables together so no currents get induced into the cables.
         - Use a resistor and/or a ferrite bead to limit AC current.
-- Phantom power: Applies 48V to XLR3 (or similar) inputs, for powering mics and similar. Applying this to devices which aren't made for it can break them.
-- Impedance: Basically resistance but for AC.
-- Proximity effect: Increase of low frequency response when an audio source is close to a directional or cardioid microphone.
+- Phantom power:
+    - Applies 48V to XLR3 (or similar) inputs, for powering mics and similar.
+    - Applying this to devices which aren't made for it can break them.
+- Impedance:
+    - Basically resistance but for AC.
+- Proximity effect:
+    - Increase of low frequency response when an audio source is close to a directional or cardioid microphone.
+- Optimal SPL for mixing and listening:
+    - Optimal SPL for normal music mixing and listening is around 75 dB SPL (conversational level) for small rooms and 85 dB SPL for large rooms.
+    - The reason a specific SPL is optimal is due to equal-loudness contours, where the music actually sounds different at different volumes.
+    - Mixing at high volume may help for getting the correct feel of the low end, however.
 - Equal-loudness contours:
     - The perceived loudness for a given SPL depends on the frequency.
     - This is typically visualized as equal-loudness contours, with frequency on the first axis, SPL on the second axis and a set of equal-loudness curves.
     - Fletcher–Munson curves is an early version of equal-loudness contours, but is still sometimes used to refer to the same thing.
     - This is why low-volume music sounds so bass-less and why e.g. car stereos typically provide a "loudness" setting to try to correct it for low volume levels (and make it sound terrible for normal volume levels).
+- SPL meter weightings:
+    - Type A is used for noise measurements and cuts off lower and higher frequencies compared to type C.
+    - Type C has flatter response than type A and is often used for audio calibration.
 - Feedback:
     - Happens when sound is fed from speakers back into a microphone (accidentally), at a high enough "loop gain" that the feedback noise level quickly escalates to annoying/damaging levels.
     - Generally only happens at certain resonating frequencies, depending on the venue/room.
@@ -50,5 +61,9 @@ breadcrumbs:
         - Use appropriate microphones, e.g. dynamic microphones pointing away from any (loud)speakers.
         - Use an equalizer to reduce the level for feedback-inducing frequencies. To find the frequencies, test the setup at loud levels to try to induce it, then measure which frequency it's happening at.
         - Don't use "feedback destroyers", they're crap.
+- White and pink noise:
+    - White noise has equal energy per frequency. The frequency-SPL curve is flat.
+    - Pink noise has equal energy per octave. Since each octave has double the frequency of the previous (`log2(freq) = octave`), the frequency-SPL curve is decreasing. This makes pink noise appropriate for equalization for human hearing.
+- Pan law: **TODO**
 
 {% include footer.md %}
