@@ -125,9 +125,11 @@ See the programming section for more info about them.
 
 #### GPUDirect Async
 
-- **TODO** Unknown if this is implemented and used.
-- Provides inter-node GPU control communication, to avoid having the CPU poll the GPU and HCA and schedule the next action.
-- Meant to be used together with GPUDirect RDMA (for inter-node GPU data communication).
+- Provides inter-node GPU control communication, to avoid having the CPU poll the GPU and HCA and schedule the next action when ready (i.e. removing the CPU from the critical path).
+- The CPU still _prepares_ the network communication, but the GPU now _triggers_/_schedules_ it when ready.
+- Meant to be used together with GPUDirect RDMA, such that the GPU tells the HCA directly to "do RDMA" to/from GPU memory.
+- As an example, a ping-pong test over InfiniBand would previously require e.g. MPI send/receive in CPU code. With GPUDirect Async, all the send/receive may be moved into the GPU kernel, replacing MPI with e.g. LibGDSync/LibMP.
+- [LibGDSync](https://github.com/gpudirect/libgdsync) implements GPUDirect Async support on InfiniBand verbs. [LibMP](https://github.com/gpudirect/libmp) is a technology demonstrator based on LibGDSync.
 
 #### GPUDirect Storage
 
@@ -323,10 +325,15 @@ See the programming section for more info about them.
 
 ### CUDA-Aware MPI
 
-- Allows using CUDA pointers in MPI communication, e.g. to transfer memory directly to/from device memory instead of copying it to the host first.
-- Requires CUDA 5 and a Kepler-class GPU or newer. May require a Tesla or Quadro GPU (at least for Kepler).
-- Requires a supported MPI implementation. e.g. Open MPI 1.7 or later.
-- Uses GPUDirect RDMA internally.
+- Provides memory transfers directly to/from device/GPU memory instead of copying it through the host/CPU.
+- Based on UVA plus GPUDirect P2P (intra-node) and GPUDirect RDMA (inter-node).
+- Requirements:
+    - Requires CUDA 5 and a Kepler-class GPU or newer. May require a Tesla or Quadro GPU (at least for Kepler).
+    - Requires a supported MPI implementation. e.g. Open MPI 1.7 or later.
+    - See the GPUDirect P2P and RDMA sections for info and requirements. (GPUDirect RDMA/P2P is optimal but not required.)
+- Implicitly allows using any UVA pointers directly in MPI calls, regardless of where the allocation resides.
+- If GPUDirect P2P or RDMA is _not_ available, the buffer will be copied through host memory, typically through both a CUDA (pinned) and a fabric buffer.
+- If the MPI implementation is _not_ CUDA-aware, the buffer will be copied through host memory, typically through a CUDA buffer, a host buffer and a fabric buffer. An explicit `cudaMemcpy` is required. CUDA streams and async copying should be used.
 
 ### Miscellanea
 
@@ -368,8 +375,7 @@ See the programming section for more info about them.
 
 - Gathering system/GPU information with `nvidia-smi`:
     - Show overview: `nvidia-smi`
-    - Show topology matrix: `nvidia-smi topo --matrix`
-    - Show topology info: `nvidia-smi topo <option>`
+    - Show topology info: `nvidia-smi topo <option>` (e.g. `--matrix`)
     - Show NVLink info: `nvidia-smi  nvlink --status -i 0` (for GPU #0)
     - Monitor device stats: `nvidia-smi dmon`
 - To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
