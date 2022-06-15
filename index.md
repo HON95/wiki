@@ -6,7 +6,7 @@ no_toc: true
 
 Random collection of config notes and miscellaneous stuff. _Technically not a wiki._
 
-_(Alphabetically sorted, so it might seem a bit strange.)_
+_(Alphabetically sorted, so the ordering might seem a bit strange.)_
 
 ## Authentication, Authorization and Accounting (AAA)
 
@@ -103,7 +103,7 @@ _(Alphabetically sorted, so it might seem a bit strange.)_
 - [Cisco IOS Switches](/network/cisco-ios-switches/)
 - [FS FSOS Switches](/network/fs-fsos-switches/)
 - [General](/network/general/)
-- [IPv6 Theory](/network/ipv4/)
+- [IPv4 Theory](/network/ipv4/)
 - [IPv6 Theory](/network/ipv6/)
 - [Juniper EX3300 Fan Mod](/network/juniper-ex3300-fanmod/)
 - [Juniper Hardware](/network/juniper-hardware/)

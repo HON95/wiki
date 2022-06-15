@@ -49,8 +49,9 @@ Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-do
 1. Follow the steps to add the NVIDIA CUDA repo: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
     - Use the "deb (network)" method, which will show instructions for adding the repo.
     - But don't install `cuda` yet.
-1. Remove anything NVIDIA or CUDA from the system to avoid conflicts: `apt purge --autoremove 'cuda' 'cuda-' 'nvidia-*' 'libnvidia-*'`
+1. (Optional) Remove anything NVIDIA or CUDA from the system to avoid conflicts: `apt purge --autoremove 'cuda' 'cuda-' 'nvidia-*' 'libnvidia-*'`
     - Warning: May break your PC. There may be better ways to do this.
+    - This is sometimes required to fix broken CUDA updates etc.
 1. Install CUDA from the new repo (includes the NVIDIA driver): `apt install cuda`
 1. Setup PATH: `echo 'export PATH=$PATH:/usr/local/cuda/bin' | sudo tee -a /etc/profile.d/cuda.sh`
 
@@ -65,7 +66,89 @@ See [Docker](/config/virt-cont/docker/).
 - Official NVIDIA solution for monitoring GPU hardware and performance.
 - The DCGM exporter for Prometheus may be used for monitoring NVIDIA GPUs. It's standalone and doesn't require any other DCGM software to be installed.
 
-## Hardware Architecture
+## Usage
+
+- Gathering system/GPU information with `nvidia-smi`:
+    - Show overview: `nvidia-smi`
+    - Show topology info: `nvidia-smi topo <option>` (e.g. `--matrix`)
+    - Show NVLink info: `nvidia-smi  nvlink --status -i 0` (for GPU #0)
+    - Monitor device stats: `nvidia-smi dmon`
+- To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
+
+## Tools
+
+### CUDA-GDB
+
+**TODO**
+
+### CUDA-MEMCHECK
+
+- Part of the CUDA-MEMCHECK suite (consisting of Memcheck, Racecheck, Initcheck and Synccheck), now called the Compute Sanitizer suite.
+- For checking correctness and discovering memory bugs.
+- Example usage: `cuda-memcheck --leak-check full <application>`
+
+### nvprof
+
+- For profiling CUDA applications.
+- Not supported for Ampere GPUs or later. Use Nsight Compute instead.
+- Basic usage: `sudo nvprof [--metrics <comma-list>] <application>`
+- Show available metrics for the available devices: `nvprof --query-metrics`
+
+### NVIDIA Visual Profiler (nvvp)
+
+- **TODO** Seems like an older version of Nsight.
+
+### Nsight (Suite)
+
+- For debugging and profiling applications.
+- Requires a Turing/Volta or newer GPU.
+- Comes as multiple variants:
+    - Nsight Systems: For general profiling. Provides profiling information along a single timeline. Has less overhead, making it more appropriate for long-running instances with large datasets. May provide clues as to what to look into with Nsight Compute or Graphics.
+    - Nsight Compute: For compute-specific profiling (CUDA). Isolates and profiles individual kernels (**TODO** for a single or all invocations?).
+    - Nsight Graphics: For graphics-specific profiling (OpenGL etc.).
+    - IDE integrations.
+- The tools may be run either interactively/graphically through the GUIs, or through the command line versions to generate a report which can be loaded into the GUIs.
+
+### Nsight Compute
+
+#### Info
+
+- [Nsight Compute: Kernel Profiling Guide (NVIDIA)](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html).
+- Requires Turing/Volta or later.
+- Replaces the much simpler nvprof tool.
+- Supports stepping through CUDA calls.
+
+#### Installation (Ubuntu)
+
+- Nsight Systems and Compute comes with CUDA if installed through NVIDIA's repos.
+- If it complains about something Qt, install `libqt5xdg3`.
+- Access to performance counters:
+    - Since access to GPU performance counters are limited to protect against side channel attacks (see [Security Notice: NVIDIA Response to “Rendered Insecure: GPU Side Channel Attacks are Practical” - November 2018 (NVIDIA)](https://nvidia.custhelp.com/app/answers/detail/a_id/4738)), it must be run either with sudo (or a user with `CAP_SYS_ADMIN`), or by setting a module option which disables the protection. For non-sensitive applications (e.g. for teaching), this protection is not required. See [NVIDIA Development Tools Solutions - ERR_NVGPUCTRPERM: Permission issue with Performance Counters (NVIDIA)](https://developer.nvidia.com/nvidia-development-tools-solutions-err_nvgpuctrperm-permission-issue-performance-counters) for more info.
+    - Enable access for all users: Add `options nvidia "NVreg_RestrictProfilingToAdminUsers=0"` to e.g. `/etc/modprobe.d/nvidia.conf` and reboot. You may need to run `update-initramfs -u` after editing the file and before rebooting (**TODO** verify).
+
+#### Usage
+
+- May be run from command line (`ncu`) or using the graphical application (`ncu-ui`).
+- Running it may require sudo, `CAP_SYS_ADMIN` or disabling performance counter protection for the driver module. See the installation note above. If interactive Nsight ends without results or non-interactive or CLI Nsight shows some `ERR_NVGPUCTRPERM` error, this is typically the cause.
+- May be run either in (non-interactive) profile mode or in interactive profile mode (with stepping for CUDA API calls).
+- For each mode, the "sections" (profiling types) to run must be specified. More sections means it takes longer to profile as it may require running the kernel invocations multiple times (aka kernel replaying).
+- Kernel replays: In order to run all profiling methods for a kernel execution, Nsight might have to run the kernel multiple times by storing the state before the first kernel execution and restoring it for every replay. It does not restore any host state, so in case of host-device communication during the execution, this is likely to put the application in an inconsistent state and cause it to crash or give incorrect results. To rerun the whole application (aka "application mode") instead of transparently replaying individual kernels (aka "kernel mode"), specify `--replay-mode=application` (or the equivalent option in the GUI).
+- Supports NVTX (NVIDIA Tools Extension) for instrumenting the application in order to provide context/information around events and certain code.
+
+## Troubleshooting
+
+**"Driver/library version mismatch" and similar**:
+
+Other related error messages from various tools:
+
+- "Failed to initialize NVML: Driver/library version mismatch"
+- "forward compatibility was attempted on non supported HW"
+
+Caused by the NVIDIA driver being updated without the kernel module being reloaded.
+
+Solution: Reboot.
+
+## Hardware Architecture (Info)
 
 - Modern CUDA-capable GPUs contain multiple types of cores:
     - CUDA cores: Aka programmable shading cores.
@@ -147,7 +230,7 @@ See the programming section for more info about them.
 - Some CPUs like IBM POWER9 have build-in NVLink in addition to PCIe.
 - **TODO** Hopper updates.
 
-## Programming
+## Programming (Info)
 
 ### General
 
@@ -341,7 +424,7 @@ See the programming section for more info about them.
 - For getting device attributes/properties, `cudaDeviceGetAttribute` is significantly faster than `cudaGetDeviceProperties`.
 - Use `cudaDeviceReset` to reset all state for the device by destroying the CUDA context.
 
-## Performance Measurements
+## Performance Measurements (Info)
 
 ### Time Measurements
 
@@ -370,87 +453,5 @@ See the programming section for more info about them.
 - **Theoretical occupancy** (theoretical metric): Maximum possible occupancy, limited by factors such as warps per SM, blocks per SM, registers per SM and shared memory per SM. This is computed statically without running the kernel.
 - **Achieved occupancy** (`achieved_occupancy`): I.e. actual occupancy. Average occupancy of an SM for the whole duration it's active. Measured as the sum of active warps all warp schedulers for an SM for each clock cycle the SM is active, divided by number of clock cycles and then again divided by the maximum active warps for the SM. In addition to the reasons mentioned for theoretical occupancy, it may be limited due to unbalanced workload within blocks, unbalanced workload across blocks, too few blocks launched, and partial last wave (meaning that the last "wave" of blocks aren't enough to activate all warp schedulers of all SMs).
 - **Issue slot utilization** (`issue_slot_utilization` or `issue_active`): The fraction of issued warps divided by the total number of cycles (e.g. 100% if one warp was issued per each clock for each warp scheduler).
-
-## Usage
-
-- Gathering system/GPU information with `nvidia-smi`:
-    - Show overview: `nvidia-smi`
-    - Show topology info: `nvidia-smi topo <option>` (e.g. `--matrix`)
-    - Show NVLink info: `nvidia-smi  nvlink --status -i 0` (for GPU #0)
-    - Monitor device stats: `nvidia-smi dmon`
-- To specify which devices are available to the CUDA application and in which order, set the `CUDA_VISIBLE_DEVICES` env var to a comma-separated list of device IDs.
-
-## Tools
-
-### CUDA-GDB
-
-**TODO**
-
-### CUDA-MEMCHECK
-
-- Part of the CUDA-MEMCHECK suite (consisting of Memcheck, Racecheck, Initcheck and Synccheck), now called the Compute Sanitizer suite.
-- For checking correctness and discovering memory bugs.
-- Example usage: `cuda-memcheck --leak-check full <application>`
-
-### nvprof
-
-- For profiling CUDA applications.
-- Not supported for Ampere GPUs or later. Use Nsight Compute instead.
-- Basic usage: `sudo nvprof [--metrics <comma-list>] <application>`
-- Show available metrics for the available devices: `nvprof --query-metrics`
-
-### NVIDIA Visual Profiler (nvvp)
-
-- **TODO** Seems like an older version of Nsight.
-
-### Nsight (Suite)
-
-- For debugging and profiling applications.
-- Requires a Turing/Volta or newer GPU.
-- Comes as multiple variants:
-    - Nsight Systems: For general profiling. Provides profiling information along a single timeline. Has less overhead, making it more appropriate for long-running instances with large datasets. May provide clues as to what to look into with Nsight Compute or Graphics.
-    - Nsight Compute: For compute-specific profiling (CUDA). Isolates and profiles individual kernels (**TODO** for a single or all invocations?).
-    - Nsight Graphics: For graphics-specific profiling (OpenGL etc.).
-    - IDE integrations.
-- The tools may be run either interactively/graphically through the GUIs, or through the command line versions to generate a report which can be loaded into the GUIs.
-
-### Nsight Compute
-
-#### Info
-
-- [Nsight Compute: Kernel Profiling Guide (NVIDIA)](https://docs.nvidia.com/nsight-compute/ProfilingGuide/index.html).
-- Requires Turing/Volta or later.
-- Replaces the much simpler nvprof tool.
-- Supports stepping through CUDA calls.
-
-#### Installation (Ubuntu)
-
-- Nsight Systems and Compute comes with CUDA if installed through NVIDIA's repos.
-- If it complains about something Qt, install `libqt5xdg3`.
-- Access to performance counters:
-    - Since access to GPU performance counters are limited to protect against side channel attacks (see [Security Notice: NVIDIA Response to “Rendered Insecure: GPU Side Channel Attacks are Practical” - November 2018 (NVIDIA)](https://nvidia.custhelp.com/app/answers/detail/a_id/4738)), it must be run either with sudo (or a user with `CAP_SYS_ADMIN`), or by setting a module option which disables the protection. For non-sensitive applications (e.g. for teaching), this protection is not required. See [NVIDIA Development Tools Solutions - ERR_NVGPUCTRPERM: Permission issue with Performance Counters (NVIDIA)](https://developer.nvidia.com/nvidia-development-tools-solutions-err_nvgpuctrperm-permission-issue-performance-counters) for more info.
-    - Enable access for all users: Add `options nvidia "NVreg_RestrictProfilingToAdminUsers=0"` to e.g. `/etc/modprobe.d/nvidia.conf` and reboot. You may need to run `update-initramfs -u` after editing the file and before rebooting (**TODO** verify).
-
-#### Usage
-
-- May be run from command line (`ncu`) or using the graphical application (`ncu-ui`).
-- Running it may require sudo, `CAP_SYS_ADMIN` or disabling performance counter protection for the driver module. See the installation note above. If interactive Nsight ends without results or non-interactive or CLI Nsight shows some `ERR_NVGPUCTRPERM` error, this is typically the cause.
-- May be run either in (non-interactive) profile mode or in interactive profile mode (with stepping for CUDA API calls).
-- For each mode, the "sections" (profiling types) to run must be specified. More sections means it takes longer to profile as it may require running the kernel invocations multiple times (aka kernel replaying).
-- Kernel replays: In order to run all profiling methods for a kernel execution, Nsight might have to run the kernel multiple times by storing the state before the first kernel execution and restoring it for every replay. It does not restore any host state, so in case of host-device communication during the execution, this is likely to put the application in an inconsistent state and cause it to crash or give incorrect results. To rerun the whole application (aka "application mode") instead of transparently replaying individual kernels (aka "kernel mode"), specify `--replay-mode=application` (or the equivalent option in the GUI).
-- Supports NVTX (NVIDIA Tools Extension) for instrumenting the application in order to provide context/information around events and certain code.
-
-## Troubleshooting
-
-**"Driver/library version mismatch" and similar**:
-
-Other related error messages from various tools:
-
-- "Failed to initialize NVML: Driver/library version mismatch"
-- "forward compatibility was attempted on non supported HW"
-
-Caused by the NVIDIA driver being updated without the kernel module being reloaded.
-
-Solution: Reboot.
 
 {% include footer.md %}

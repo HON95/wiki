@@ -1,5 +1,5 @@
 ---
-title: IPv6 Theory
+title: IPv4 Theory
 breadcrumbs:
 - title: Network
 ---
