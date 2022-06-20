@@ -54,9 +54,10 @@ breadcrumbs:
 - Run application and show dynamic library calls: `ltrace <executable> [args]`
 - Run application and show system calls: `strace <executable> [args]`
 - Strip the symbol table and debug info from an executable: `strip <executable>`
-    - Without certain options, it will still keep some useful info in the file.
+    - Without certain options (read the manual), it will still keep some useful info in the file.
 - Rebuild the symbol table for a statically linked executable: See `gensymtab`.
-- Show symbols (object files only): `nm <file>`
+- Show symbol table: `nm <file>`
+    - Only works for object files and unstripped executables (see `strip`).
 
 ### File Systems and Logical Volume Managers
 
