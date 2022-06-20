@@ -45,20 +45,22 @@ breadcrumbs:
 ### Executables
 
 - Show type and info: `file <executable>`
+    - Shows e.g. if it's an ELF executable, target architecture, if dynamically linked, which ELF interpreter to use, if it's stripped etc.
 - Show library dependencies (for glibc): `ldd <executable>`
     - It lists shared library file names and memory location to map it to, or "statically linked" if no dynamic dependencies.
-    - Alternatively, run the executable with envvar `LD_TRACE_LOADED_OBJECTS=1` set instruct glibc to print dependencies and exit. This is basically how `ldd` works internally, but with more options.
-    - Warning: This might execute the program if not using glibc.
+    - Alternatively, run the executable with env var `LD_TRACE_LOADED_OBJECTS=1` set to instruct glibc (**TODO** the loader/interpreter?) to print dependencies and exit (this is normally how `ldd` works internally).
+    - Warning: Never use this on untrusted executables, they may bypass the expected behavior and run malicious code instead.
 - Show printable character strings in the executable: `strings -a <executable>`
 - Run application and show dynamic library calls: `ltrace <executable> [args]`
 - Run application and show system calls: `strace <executable> [args]`
 - Strip the symbol table and debug info from an executable: `strip <executable>`
     - Without certain options, it will still keep some useful info in the file.
 - Rebuild the symbol table for a statically linked executable: See `gensymtab`.
+- Show symbols (object files only): `nm <file>`
 
 ### File Systems and Logical Volume Managers
 
-- Partition disk: `gdisk <dev>` or `fdisk <dev>`
+- Partition disk (TUI): `gdisk <dev>` or `fdisk <dev>`
 - Create filesystem: `mkfs.<fs> <dev>`
 - Modify fstab:
     - Test it with `mount -a` to make sure it doesn't have errors that may cause boot to fail.
