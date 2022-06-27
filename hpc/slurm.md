@@ -1,5 +1,5 @@
 ---
-title: HPC Cluster
+title: Slurm
 breadcrumbs:
 - title: High-Performance Computing (HPC)
 ---
