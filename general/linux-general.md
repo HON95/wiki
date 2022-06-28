@@ -92,6 +92,7 @@ breadcrumbs:
 - Moving files with `rsync`:
     - Base command: `rsync [opts] <src> <dst>`
     - (Arg) `-v`: Verbose.
+    - (Arg) `-s`: Protect args. Prevents remote hosts from interpreting paths, which might cause trouble e.g. if the path contains spaces.
     - (Arg) `-h`: Show numbers as human-readable.
     - (Arg) `--progress`: Show fancy progress bar.
     - (Arg) `-a`: Archive, equal to `-rlptgoD` (recursive, preserve symlinks/owner/group/permissions/modification-time etc.).
@@ -99,10 +100,11 @@ breadcrumbs:
     - (Arg) `--include <pattern>`: Only copy files/dirs matching the provided pattern. Supports `*` globbing, if quoted properly.
     - (Arg) `--exclude <pattern>`: Exclude files matching the pattern. THe matching works similarly to `--include`, but files matching the `--exclude` pattern overrides any files matched with the `--include` pattern (if any).
     - (Arg) `--delete`: Delete any files in the destination that are not present in the source.
+    - (Arg) `--info=progress2`: Show single progress bar (not one per file as for `--progress`).
     - If the source or destination is on a remote machine, specify it as `<user>@<addr>:<path>` to copy over SSH (default transport protocol).
     - Adding a trailing slash to the source (`rsync [...] <src>/ <dst>`) results in copying the source dir _to_ the destination dir (i.e. copying the source dir contents into the destination dir). Omitting it will copy the whole source dir _into_ the destination dir. (**TODO**: This is how it's supposed to work, but for some reason it always copies the _contents_ into the destination dir for me.)
     - The parent of the destination directory needs to exist, but the destination directory itself is automatically created.
-    - (Example) Move current dir to remote machine, overwrite and remove all old files: `rsync -az --delete --progress . "hon@minisummit:Projects/yolo"`
+    - (Example) Move current dir to remote machine, overwrite and remove all old files: `rsync -azs --delete --progress . "hon@minisummit:Projects/yolo"`
 
 ### Fun
 
