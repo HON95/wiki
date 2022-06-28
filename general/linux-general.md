@@ -5,13 +5,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Resources
-
-### Security
-
-- [Linux Hardening Checklist (trimstray)](https://github.com/trimstray/linux-hardening-checklist)
-- [The Practical Linux Hardening Guide (trimstray)](https://github.com/trimstray/the-practical-linux-hardening-guide)
-
 ## Information
 
 ### Distros
@@ -36,6 +29,11 @@ breadcrumbs:
 - Environment variables from `*/environment.d/*.conf` aren't visible for login sessions when using systemd. `*/environment.conf` works, though. See [systemd#7641](https://github.com/systemd/systemd/issues/7641).
 
 ## Commands
+
+### General
+
+- Sorting: `sort`
+    - Set `LC_ALL=C` to use byte-value sorting instead of locale-enabled sorting (which can be a bit unpredictable).
 
 ### AAA
 
@@ -112,7 +110,7 @@ breadcrumbs:
 - `cowsay`
 - `fortune`
 
-### Monitoring (General)
+### Monitoring
 
 - For more specific monitoring, see the other sections.
 - `htop`:
@@ -402,5 +400,12 @@ Using GPG (from package `gnupg2` on Debian).
 ### Burn Windows ISO (Ubuntu)
 
 1. Install the graphical application `woeusb` from `ppa:nilarimogard/webupd8`.
+
+## Resources
+
+### Security
+
+- [Linux Hardening Checklist (trimstray)](https://github.com/trimstray/linux-hardening-checklist)
+- [The Practical Linux Hardening Guide (trimstray)](https://github.com/trimstray/the-practical-linux-hardening-guide)
 
 {% include footer.md %}

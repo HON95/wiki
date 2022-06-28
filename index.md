@@ -57,7 +57,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Open MPI](/hpc/openmpi/)
 - [ROCm](/hpc/rocm/)
 - [Singularity](/hpc/singularity/)
-- [HPC Cluster](/hpc/slurm/)
+- [Slurm](/hpc/slurm/)
 - [Vilje (Supercomputer)](/hpc/vilje/)
 
 ## IoT & Home Automation

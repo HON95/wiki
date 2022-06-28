@@ -24,7 +24,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 EOF
 
 # Add categories and pages
-for dir in $(find . -mindepth 1 -type d | sort | sed 's|^\./||'); do
+for dir in $(find . -mindepth 1 -type d | LC_ALL=C sort | sed 's|^\./||'); do
     # Check if the dir contains a name file
     if [[ ! -f $dir/_name ]]; then
         continue
@@ -35,7 +35,7 @@ for dir in $(find . -mindepth 1 -type d | sort | sed 's|^\./||'); do
     echo "## $dir_name" >> "$index_file"
     echo >> "$index_file"
 
-    for file in $(find "$dir" -type f -name '*.md' | sort -t. -k1,1); do
+    for file in $(find "$dir" -type f -name '*.md' | LC_ALL=C sort -t. -k1,1); do
         link="$(echo $file | sed 's|^|/|' | sed 's|\.md$|/|')"
         name="$(grep -Po -m1 '(?<=^title: ).+$' $file | sed -e 's|^\"||' -e "s|^'||" -e 's|\"$||' -e "s|'$||" || true)"
         if [[ $name == "" ]]; then
