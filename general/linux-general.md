@@ -152,7 +152,7 @@ breadcrumbs:
         - `-d`: Storage throughput stats (by read, write) (bytes per second).
         - `-n`: Network throughput stats (by recv, send) (bytes per second).
         - `--socket`: Network socket stats (by total, tcp, udp, raw, ip-fragments)
-    - Useful plugins (metrics):
+    - Useful metrics from plugins:
         - `--net-packets`: Network request stats (by recv, send) (packets per second).
     - Examples:
         - General overview (CPU, RAM, ints/csws, disk, net): `dstat -tcmyrdn --net-packets 60`
