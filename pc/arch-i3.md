@@ -51,12 +51,13 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Load: `loadkeys <keymap>` (e.g. `loadkeys no`)
 1. Verify the (UEFI) boot mode:
     1. Check `efivar --list` or `ls /sys/firmware/efi/efivars`. If either exists, it's in UEFI mode.
-1. Setup networking:
+1. Setup live-OS networking:
     1. (Note) For cabled Ethernet with DHCP, it should already be working. For WLAN or exotic setups, check the wiki.
     1. (Optional) Test it somehow (e.g. with `ping` or `curl`).
-1. Setup time:
+1. Setup live-OS time:
     1. Enable NTP: `timedatectl set-ntp true`
     1. (Optional) Check the "synchronized" line from `timedatectl`.
+1. If your live-OS is outdated, update the keyring: `pacman -Sy && pacman -S archlinux-keyring`
 1. Partition the main disk (for LUKS encryption):
     1. Find the main disk: `lsblk`
     1. (Optional) Overwrite the full disk to get rid of all traces of the previous install: `dd if=/dev/zero of=/dev/<disk> bs=1M conv=fsync status=progress`
@@ -79,7 +80,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Create encrypted root volume (second partition):
     1. (Note) GRUB currently has limited support for LUKS2, so use LUKS1.
     1. Check which cryptohash and encryption algorithms are fastest on the system: `cryptsetup benchmark`
-    1. Create: `cryptsetup luksFormat --type=luks1 --use-random -h sha256 -i 2000 -c aes-xts-plain64 -s 256 /dev/<partition-2>` (example parameters)
+    1. Create: `cryptsetup luksFormat --type=luks1 --use-random -h sha256 -i 1000 -c aes-xts-plain64 -s 256 /dev/<partition-2>` (example parameters)
     1. Enter the password to unlock the system during boot.
     1. (Note) There is a later step for avoiding entering the password twice during boot.
 1. Unlock the encrypted root volume:
@@ -90,7 +91,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Mount root: `mount /dev/mapper/crypt_root /mnt`
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
-    - Base command and packages: `pacstrap /mnt base linux linux-firmware archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools zsh vim tar zip unzip htop git jq rsync openssh tmux screen reflector usbutils tcpdump nmap`
+    - Base command and packages: `pacstrap /mnt base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools lm_sensors zsh vim tar zip unzip htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap`
     - **TODO** Maybe for laptops: `wpa_supplicant networkmanager`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
@@ -102,6 +103,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Update the hardware clock (using UTC): `hwclock --systohc`
     1. Uncomment locales to generate: `vim /etc/locale.gen`
         - Always include `en_US.UTF-8 UTF-8`.
+        - Norway is `nb_NO.UTF-8 UTF-8`.
     1. Generate selected locales: `locale-gen`
     1. Set the locale: In `/etc/locale.conf`, set `LANG=<locale>` (e.g. `LANG=en_US.UTF-8`).
     1. Set the TTY keyboard layout: In `/etc/vconsole.conf`, set `KEYMAP=<keymap>` (e.g. `KEYMAP=no`).
@@ -114,7 +116,6 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Create the initial ramdisk: `mkinitcpio -P`
 1. Setup GRUB:
     1. Install bootloader: `pacman -S grub efibootmgr`
-    1. Install CPU microcode updates: `pacman -S <x>-ucode` (for `amd` or `intel`)
     1. Enable encrypted disk support: In `/etc/default/grub`, set `GRUB_ENABLE_CRYPTODISK=y`.
     1. Find the UUID of the encrypted root partition: `blkid`
     1. Add kernel parameters for the encrypted root (e.g. `/dev/sda2`): In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptdevice=UUID=<device-UUID>:crypt_root root=/dev/mapper/crypt_root`.
@@ -123,12 +124,12 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Exit the chroot and reboot:
     1. `exit`
     1. `reboot`
-1. Wait for the GRUB screen.
+1. Wait for the GRUB screen or decryption prompt.
 
 ### Post Install Setup
 
 1. Boot into the newly installed system:
-    1. Avoid broken display drivers: In the GRUB bootloader menu, press `E` on the main entry and add `nomodeset` at the end of the `linux` line. Press `Ctrl+X` to continue. After proper display drivers are installed, this is no longer required.
+    1. (Optional) Avoid broken display drivers (typically needed for NVIDIA cards): In the GRUB bootloader menu, press `E` on the main entry and add `nomodeset` at the end of the `linux` line. Press `Ctrl+X` to continue. After proper display drivers are installed, this is no longer required.
 1. (Optional) Disable the beeper:
     1. Unload the module: `rmmod pcspkr`
     1. Blacklist the module: `echo blacklist pcspkr > /etc/modprobe.d/nobeep.conf`
@@ -141,25 +142,27 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Don't wait for network during boot: `systemctl disable systemd-networkd-wait-online.service`
     1. Add a config for the main interface (or all interfaces): See the section with an example below.
     1. (Re)start: `systemctl restart systemd-networkd`
-    1. Wait for connectivity (see `ip a`).
+    1. Wait for connectivity.
+        - `networkctl` should show the interface as anything but "unmanaged".
+        - `ip a` should show a routable IP address after a few seconds if using DHCP/RA.
 1. Setup DNS server(s):
-    1. `echo nameserver 1.1.1.1 >> /etc/resolv.conf` (Cloudflare)
-    1. `echo nameserver 2606:4700:4700::1111 >> /etc/resolv.conf` (Cloudflare)
+    1. `echo "nameserver 1.1.1.1" >> /etc/resolv.conf` (Cloudflare)
+    1. `echo "nameserver 2606:4700:4700::1111" >> /etc/resolv.conf` (Cloudflare)
 1. Setup Pacman:
     1. Enable color: In `/etc/pacman.conf`, uncomment `Color`.
     1. Enable the multilib repo (for 32-bit apps): In `/etc/pacman.conf`, uncomment the `[multilib]` section.
 1. Update the system and install useful stuff:
     1. Upgrade: `pacman -Syu`
-1. Install display driver:
-    - (Note) For AMD GPUs, Intel GPUs, older NVIDIA GPUs etc., check the Arch wiki.
+1. Install display driver and utils:
     - For NVIDIA Maxwell and newer GPUs: `pacman -S nvidia nvidia-utils nvidia-settings`.
     - (Optional) For NVIDIA CUDA (in addition to driver): `pacman -S cuda`
+    - For newer AMD GPUs: `pacman -S mesa xf86-video-amdgpu vulkan-radeon libva-mesa-driver`
 1. Avoid having to enter the encryption password twice during boot:
     1. (Note) To avoid entering the password once for GRUB and then for the initramfs, we can create a keyfile and embed it into the initramfs. If the keyfile fails, it will fall back to asking for a password again.
-    1. Secure the boot dir (to protect the embedded key from user processes): `chmod 700 /boot`
+    1. Secure the boot dir (to protect the embedded key in the initramfs): `chmod 700 /boot`
     1. Generate keyfile:
         1. `mkdir -p /root/.keys/luks && chmod 700 /root/.keys`
-        1. `dd if=/dev/random of=/root/.keys/luks/luks/crypt_root bs=2048 count=1 iflag=fullblock && chmod 600 /root/.keys/luks/crypt_root`
+        1. `dd if=/dev/random of=/root/.keys/luks/crypt_root bs=2048 count=1 iflag=fullblock && chmod 600 /root/.keys/luks/crypt_root`
     1. Add key to LUKS: `cryptsetup luksAddKey /dev/<partition> /root/.keys/luks/crypt_root`
     1. Add key to initramfs: In `/etc/mkinitcpio.conf`, set `FILES=(/root/.keys/luks/crypt_root)`.
     1. Recreate initramfs: `mkinitcpio -P`
@@ -170,7 +173,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. (Note) Both the `wheel` and `sudo` groups are commonly used for giving sudo access, but I personally prefer `sudo` since `wheel` _may_ also be used by polkit rules, su (`pam_wheel`), etc.
     1. Install: `pacman -S sudo`
     1. Add the sudo group: `groupadd -r sudo`
-    1. Enter the config: `EDITOR=vim visudo`
+    1. Enter the config: `visudo`
     1. Add line to allow sudo group without password: `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`
     1. (Note) To give users sudo access through the group: `usermod -aG sudo <user>`
 1. Add a personal admin user:
@@ -223,7 +226,6 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 ### Setup the Xorg Display Server
 
 1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr`
-1. Fix the keyboard layout for X11: `sudo localectl set-x11-keymap <keymap>` (e.g. `no`)
 
 ### Setup the LightDM or Ly Display Manager
 
@@ -255,14 +257,59 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Install: `sudo pacman -S numlockx`
     1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
 
-### Setup the i3 Window Manager and Stuff
+### Setup the i3 Window Manager Basics
 
 1. (Note) Some notes about i3:
     1. Se [i3](../applications/#i3) for more personal notes about i3.
-    1. Use `Mod+Shift+R` to reload the i3 config. Note that `exec_always` statements will be run again during reload but `exec` will only run when starting i3.
+    1. Use `Mod+Shift+R` to reload the i3 config.
+    1. Use `Mod+Shift+E` to exit i3.
+    1. `exec_always` config statements will be run again during reload but `exec`statements will only run when starting i3.
+1. Setup fonts:
+    1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
 1. Install i3:
     1. Install: `sudo pacman -S i3-wm`
     1. (Note) Vital parts are missing in the i3 config, follow the remaining steps before attempting to use i3.
+1. Fix the keyboard layout for X11:
+    1. **TODO** (Note) You may need to have an X server running (e.g. i3 started). The server must be restarted before the new layout is used.
+    1. Set: `sudo localectl set-x11-keymap <keymap>` (e.g. `no`)
+1. Install temporary apps to get the remaining of the setup done:
+    1. Install terminal emulator: `sudo pacman -S alacritty`
+    1. Install web browser: `sudo pacman -S firefox`
+1. Test the display server, display manager and window manager and create i3 config:
+    1. (Re)start LightDM/Ly: `sudo systemctl restart lightdm` (or `ly`)
+        - This will pull you directly into the Ly/LightDM TTY (ish), use `Ctrl+Alt+F1` if you need to go back to the previous TTY where you're still logged in to do stuff.
+    1. Select the i3 WM and log in.
+    1. If prompted, follow the basic i3 setup wizard:
+        1. Generate a new config.
+        1. `Win` as default modifier.
+
+### Setup Post-Window Manager Stuff
+
+1. (Laptop) Fix display brightness buttons:
+    1. (Note) This method assumes you can change the brightness by writing a brightness value to `/sys/class/backlight/<something>/brightness` (initially only as root). Test that first.
+    1. Add udev rules to allow changing the brightness through the `video` group:
+        1. In `/etc/udev/rules.d/backlight.rules`, add the following:
+            ```
+            TODO
+            ```
+        1. Add your user to the group: `sudo usermod -aG video <user>`
+        1. Reboot and try writing to the file without root.
+    1. Add a script/program for changing the brightness:
+        1. (Note) Try using the `xorg-xbacklight` first. If that works, just use that instead of this script. On my AMD-GPU laptop it didn't.
+        1. Create a `.local/bin/backlight` script to control the backlight. See the snippet below for the content.
+    1. Add i3 keybinds:
+        1. In the i3 config, add:
+            ```
+            bindsym XF86MonBrightnessUp exec --no-startup-id $HOME/.local/bin/backlight +20%
+            bindsym XF86MonBrightnessDown exec --no-startup-id $HOME/.local/bin/backlight -20%
+            ```
+1. (Laptop) Setup touchpad (Synaptics):
+    1. Install driver: `sudo pacman -S libinput`
+    1. Add touchpad config to Xorg: In `/etc/X11/xorg.conf.d/70-synaptics.conf`, add the config snippet from below. **TODO** see wiki
+1. (Optional) Setup better console font:
+    1. (Note) Using the MesloLGS font. See [this](https://github.com/romkatv/powerlevel10k#fonts) for more info.
+    1. Create the TTF dir: `mkdir -p /usr/share/fonts/TTF`
+    1. Download fonts: `for x in Regular Bold Italic Bold\ Italic; do sudo curl -sSfL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20${x/ /%20}.ttf" -o "/usr/share/fonts/TTF/$x.ttf"; done`.
 1. Setup the Polybar system bar:
     1. (Note) i3bar, the default i3 system bar, shows workspaces and tray icons. It can include extra info like IP addresses and resource usage using i3status or i3blocks. Polybar is a replacement for i3bar.
     1. Disable i3bar: Comment the whole `bar` section of the i3 config.
@@ -275,7 +322,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         - For the bar, comment `radius` to disable rounded corners.
         - For the bar, comment `border-size` to disable the padding/border around the bar.
         - For the date module, customize how time should appear. "Alt" variants are swapped to when the module is clicked.
-        - For the network/"eth" module, use `%local_ip6%` for the IPv6 address (one of them). Maybe clone the module to have one for IPv4 and one for IPv6. Maybe change the color to purple (`#800080`), so it doesn't clash with the Spotify module (if added).
+        - For the network/"eth" module, use `%local_ip6%` for the IPv6 address (one of them). Maybe clone the module to have one for IPv4 and one for IPv6.
         - Update the panel modules in the `modules-{left,center,right}` variables.
     1. Create a startup script: See the section below to use the new "main" bar. Make it executable.
     1. Add to i3: In the i3 config, add `exec_always --no-startup-id $HOME/.config/polybar/launch.sh`.
@@ -296,18 +343,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Setup i3 drun shortcut: In the i3 config, set `bindsym $mod+d exec rofi -show drun`.
     1. Setup i3 window shortcut: In the i3 config, set `bindsym $mod+shift+d exec rofi -show window`.
     1. Setup i3 emoji shortcut: In the i3 config, set `bindsym $mod+mod1+d exec rofi -modi "emoji:rofimoji" -show emoji`.
-1. Setup fonts:
-    1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
-    1. (Optional) Download the MesloLGS font (used in examples here): Download the TTF font files from [here](https://github.com/romkatv/powerlevel10k#fonts) and move them into `/usr/share/fonts/TTF/`.
-1. (Optional) Test the display server, display manager and and window manager:
-    1. Restart LightDM/Ly and get pulled into it: `sudo systemctl restart lightdm` or `[...] ly`
-        - Note that you will not be logged out of the PTY, use `Ctrl+Alt+F1` to go back to it and log out.
-    1. Select the i3 WM and log in.
-    1. If prompted, follow the basic i3 setup wizard:
-        1. Generate a new config.
-        1. `Win` as default modifier.
-    1. Test i3: `Mod+Return` to open terminal, `Mod+D` to open app launcher, etc.
-    1. (Optional) Install Firefox to access the web ASAP: `sudo pacman -S firefox`
 1. Setup background image:
     1. Download a desktop image.
     1. Install the FEH image viewer: `sudo pacman -S feh`
@@ -492,6 +527,33 @@ UseDNS=yes
 UseDomains=yes
 ```
 
+#### Polybar Launch Script
+
+File: `~/.config/polybar/launch.sh`
+
+```bash
+#!/bin/bash
+
+killall -q polybar
+
+#polybar main &>>/tmp/polybar.log &
+polybar main &
+```
+
+#### Polybar Spotify Module
+
+File: `~/.config/polybar/config`
+
+```
+[module/spotify]
+type = custom/script
+interval = 1
+format = <label>
+#exec = python /usr/share/polybar/scripts/spotify_status.py -f '[{artist}] {song}' -t 50 -q
+exec = python /usr/share/polybar/scripts/spotify_status.py -f '{song}' -t 25 -q
+format-underline = #1db954
+```
+
 #### Alacritty Config
 
 File: `~/.config/alacritty/alacritty.yml`
@@ -509,35 +571,6 @@ env:
 import:
   # Theme
   - ~/.config/alacritty/dracula.yml
-```
-
-#### Polybar Launch Script
-
-File: `~/.config/polybar/launch.sh`
-
-```bash
-#!/bin/bash
-
-killall -q polybar
-
-#polybar main &>>/tmp/polybar.log
-polybar main
-
-echo "Polybar launched"
-```
-
-#### Polybar Spotify Module
-
-File: `~/.config/polybar/config`
-
-```
-[module/spotify]
-type = custom/script
-interval = 1
-format = <label>
-#exec = python /usr/share/polybar/scripts/spotify_status.py -f '[{artist}] {song}' -t 50 -q
-exec = python /usr/share/polybar/scripts/spotify_status.py -f '{song}' -t 25 -q
-format-underline = #1db954
 ```
 
 #### Rofi Config
