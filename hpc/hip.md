@@ -23,41 +23,36 @@ Compared to OpenCL (which is also supported by both NVIDIA and AMD), it's much m
 - HIP code can be compiled for AMD ROCm using the HIP-Clang compiler or for CUDA using the NVCC compiler.
 - If using both CUDA with an NVIDIA GPU and ROCm with an AMD GPU in the same system, HIP seems to prefer ROCm with the AMD GPU when building application. I found not way of changing the target platform (**TODO**).
 
-## Setup
+## Setup (Debian)
 
-### Linux Installation (Debian)
+### Install for AMD GPUs
 
-#### Common Steps Before
+1. Install ROCm: See [ROCm](../rocm/).
 
-1. Add the ROCm package repo (overlaps with ROCm installation):
-    1. Install requirements: `sudo apt install libnuma-dev wget gnupg2`
-    1. Add public key: `wget -q -O - https://repo.radeon.com/rocm/rocm.gpg.key | sudo apt-key add -`
-    1. Add repo: `echo 'deb [arch=amd64] https://repo.radeon.com/rocm/apt/debian/ ubuntu main' | sudo tee /etc/apt/sources.list.d/rocm.list`
-    1. Update cache: `sudo apt update`
-
-#### Steps for NVIDIA Paltforms
+### Install for NVIDIA GPUs
 
 1. Install the CUDA toolkit and the NVIDIA driver: See [CUDA](/config/hpc/cuda/).
+1. Add the ROCm package repo (same as ROCm installation):
+    1. Install requirements: `sudo apt install curl libnuma-dev wget gnupg2`
+    1. Add repo key: `curl -sSf https://repo.radeon.com/rocm/rocm.gpg.key | gpg --dearmor > /usr/share/keyrings/rocm.gpg`
+    1. Add repo: `echo 'deb [signed-by=/usr/share/keyrings/rocm.gpg arch=amd64] https://repo.radeon.com/rocm/apt/debian/ ubuntu main' | sudo tee /etc/apt/sources.list.d/rocm.list`
+    1. Update cache: `apt update`
 1. Install: `sudo apt install hip-nvcc`
+1. Add to PATH: See [ROCm](../rocm/).
 
-#### Steps for AMD Paltforms
+### Post-Install Verification
 
-1. Install stuff: `sudo apt install mesa-common-dev clang comgr`
-1. Install ROCm: See [ROCm](/config/hpc/rocm/).
-
-#### Common Steps After
-
-1. Fix symlinks and PATH:
-    - (NVIDIA platforms only) CUDA symlink (`/usr/local/cuda`): Should already point to the right thing.
-    - (AMD platforms only) ROCm symlink (`/opt/rocm`): `sudo ln -s /opt/rocm-4.2.0 /opt/rocm` (example)
-    - Add to PATH: `echo 'export PATH=$PATH:/opt/rocm/bin:/opt/rocm/rocprofiler/bin:/opt/rocm/opencl/bin' | sudo tee -a /etc/profile.d/rocm.sh`
-1. Verify installation: `/opt/rocm/bin/hipconfig --full`
-1. (Optional) Try to build the square example program: [square (ROCm HIP samples)](https://github.com/ROCm-Developer-Tools/HIP/tree/master/samples/0_Intro/square)
+1. Verify installation: `hipconfig --full`
+1. (Optional) Try to build a HIP sample program:
+    1. `git clone https://github.com/ROCm-Developer-Tools/HIP`
+    1. `cd HIP/samples/0_Intro/square`
+    1. `make`
+    1. `./square.out`
 
 ## Usage and Tools
 
 - Show system info:
-    - Show lots of HIP stuff: `hipconfig --config`
+    - Show HIP details: `hipconfig --full`
     - Show platform (`amd` or `nvidia`): `hipconfig --platform`
 - Convert CUDA program to HIP: `hipify-perl input.cu > output.cpp`
 
