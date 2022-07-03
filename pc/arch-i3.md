@@ -305,7 +305,8 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
             ```
 1. (Laptop) Setup touchpad (Synaptics):
     1. Install driver: `sudo pacman -S libinput`
-    1. Add touchpad config to Xorg: In `/etc/X11/xorg.conf.d/70-synaptics.conf`, add the config snippet from below. **TODO** see wiki
+    1. Add touchpad config to Xorg: In `/etc/X11/xorg.conf.d/70-synaptics.conf`, add the config snippet from below. **TODO**
+    1. **TODO** fix this
 1. (Optional) Setup better console font:
     1. (Note) Using the MesloLGS font. See [this](https://github.com/romkatv/powerlevel10k#fonts) for more info.
     1. Create the TTF dir: `mkdir -p /usr/share/fonts/TTF`
@@ -346,7 +347,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 1. Setup background image:
     1. Download a desktop image.
     1. Install the FEH image viewer: `sudo pacman -S feh`
-    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/background.jpg` (example).
+    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/background.png` (example).
 1. (Optional) Disable mouse hover window focus (you can still click windows to focus):
     1. In the i3 config, set `focus_follows_mouse no`.
 1. (Optional) Setup i3 gaps:
@@ -356,23 +357,16 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Add gaps around windows: In the i3 config, add `gaps inner 8`.
 1. Install clipboard manager:
     1. `sudo pacman -S xsel`
+    1. **TODO** Fix this. Basic copy-pase doesn't require xsel. Copying from a terminal and closing it erases the copy content, which is undesirable.
 1. Setup desktop notifications:
     1. Install the `dunst` server and the `libnotify` support library: `sudo pacman -S dunst libnotify`
     1. (Optional) Modify the config:
-        1. Check the default config: `vim /etc/dunst/dunstrc`
+        1. (Note) The global config is `/etc/dunst/dunstrc`.
         1. Create and open it: `mkdir -p ~/.config/dunst && vim ~/.config/dunst/dunstrc`
-        1. Fix scaling for high-res displays, if broken (doesn't affect text size): In the `global` section, set e.g. `scale = 2`.
-        1. Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 15`.
-    1. (Optional) Restart dunst: `systemctl --user restart dunst`
+        1. For high-res displays, fix scaling (doesn't affect text size): In the `global` section, set e.g. `scale = 2`.
+        1. Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 10` (or 15 for high-res).
+    1. Restart dunst (if any changes): `systemctl --user restart dunst`
     1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
-1. Setup media keys:
-    1. (Note) Install e.g. Spotify (`aur/spotify`) to test with.
-    1. Install the playerctl utility for easy control: `sudo pacman -S playerctl`
-    1. Add the following to the i3 config: See the i3 media keys config snippet below.
-1. Tweak audio volume keys:
-    1. Install `pamixer` (like ALSA's `amixer` but for PulseAudio): `sudo pacman -S pamixer`
-    1. Open the i3 config and find the `bindsym XF86AudioRaiseVolume` and similar lines.
-    1. See the config i3 volume keys snippet below.
 1. Setup screen locking:
     1. Install the `i3lock-color` screen locker: `yay -S i3lock-color`
     1. Install the the `xss-lock` automatic locker: `sudo pacman -S xss-lock`
@@ -380,9 +374,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. (Optional) Specify an i3lock background image: To the above command, add e.g. `--image Pictures/background.png`.
     1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id $i3lock`. This may conflict with some `focus` keybinds you probably don't need, so just remove those (i3 will tell you about it if you don't remove them).
     1. Update i3 for automatic locking: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- $i3lock`. (Test with `loginctl lock-session` after restarting or relogging.)
-1. Setup a Spotify module for Polybar:
-    1. Install: `yay -S polybar-spotify-git`
-    1. In the Polybar config (`~/.config/polybar/config`), add a module `spotify` (see config snipper below) and add it to some bar module section.
 1. Setup autostarting of desktop applications:
     1. (Note) Desktop applications are applications with `<name>.desktop` files. These applications may be autostarted using a tool like `dex`, following the XDG Autostart spec.
     1. (Note) To enable autostarting for a desktop application, find/create a `.desktop` entry file for it in `/etc/xdg/autostart` (system) `~/.config/autostart` (user). A simple method is to find the entry in e.g. `/usr/share/applications/` (system) or `~/.local/share/applications/` (user), then symlink it into the appropriate autostart directory (e.g. `ln -s /usr/share/applications/discord.desktop ~/.config/autostart`).
@@ -405,7 +396,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         - For each connected monitor, create a separate section.
         - Run `xrandr` to get display IDs.
         - Make sure to have exactly one display with `Option "Primary" "true"`.
-    1. Alternatively, create a script to set up displays using `xrandr` and call is from the i3 config.
+    1. Alternatively, create a script to set up displays using `xrandr` and call it from the i3 config.
 1. Setup display power management signaling (DPMS):
     1. See the example Xorg DPMS config below.
         - For non-CRT displays, the standby, suspend and off modes typically mean the same thing.
@@ -421,14 +412,25 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
     1. Install ALSA utils and firmware: `sudo pacman -S alsa-utils alsa-firmware`
 1. Install PipeWire (including WirePlumber and adapters):
     1. Install: `sudo pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack pipewire-v4l2 wireplumber pavucontrol`
-    1. Start the PulseAudio adapter (to avoid relogging): `systemctl start --user pipewire-pulse`
+    1. Start the PulseAudio adapter (to avoid relogging): `systemctl --user start pipewire-pulse`
 1. Configure inputs and outputs:
     1. Run `pavucontrol` to configure volumes, inputs, outputs and stuff.
-1. Test it:
+1. (Optional) Test it:
     1. Try playing something from the browser or whatever. It should work.
-1. Install useful audio applications:
+1. (Optional) Install useful audio applications:
     1. Install the Helvum patchbay to patch nodes and endpoints (inputs and outputs for all audio devices): `sudo pacman -S helvum`
     1. See the [PipeWire page (Arch Wiki)](https://wiki.archlinux.org/title/PipeWire).
+1. Setup media keys:
+    1. (Note) Install e.g. Spotify (`aur/spotify`, official) to test with.
+    1. Install the playerctl utility for easy control: `sudo pacman -S playerctl`
+    1. Add the following to the i3 config: See the i3 media keys config snippet below.
+1. Tweak audio volume keys:
+    1. Install `pamixer` (like ALSA's `amixer` but for PulseAudio): `sudo pacman -S pamixer`
+    1. Open the i3 config and find the `bindsym XF86AudioRaiseVolume` and similar lines.
+    1. See the config i3 volume keys snippet below.
+1. Setup a Spotify module for Polybar:
+    1. Install: `yay -S polybar-spotify-git`
+    1. In the Polybar config (`~/.config/polybar/config`), add a module `spotify` (see config snipper below) and add it to some bar module section.
 
 ### Setup Bluetooth
 
@@ -443,7 +445,7 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
     1. (Note) Using PipeWire and its PulseAudio adapter (`pipewire-pulse`), which should already have been set up and includes support for Bluetooth.
 1. Setup Blueman:
     1. (Note) Blueman is a Bluetooth manager with a practical tray icon.
-    1. Install: `pacman -S blueman`
+    1. Install: `sudo pacman -S blueman`
     1. (Optional) Try to run it. It's the "Bluetooth Manager" entry in e.g. Rofi.
 1. (Example) Connect a device using `bluetoothctl`:
     1. (Note) To avoid entering the interactive TUI and run single commands instead, use `bluetoothctl -- <cmd>`.
