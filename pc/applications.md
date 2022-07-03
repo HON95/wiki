@@ -377,23 +377,24 @@ This is my ZSH setup preference, using Oh-My-ZSH with the Powerlevel10k theme an
 1. Install Oh-My-ZSH:
     1. See [ohmyz.sh](https://ohmyz.sh/).
     1. When it asks, set it as your default shell. This won't take effect until the next login.
-1. Setup Powerlevel10k theme:
-    1. Download and install the suggested fonts: [Fonts (powerlevel10k)](https://github.com/romkatv/powerlevel10k#fonts)
-        - For KDE Plasma, download and open with the font installer.
+1. Setup fonts:
+    1. Download and install the suggested fonts (MesloLGS NF): [Fonts (powerlevel10k)](https://github.com/romkatv/powerlevel10k#fonts)
         - For manual installation, move the `.ttf` files to `/usr/share/fonts/TTF/`.
-    1. Open a new terminal window and set change the profile to use the new font.
+        - For KDE Plasma, download and open with the font installer.
+    1. Configure your terminal to use the font.
+1. Setup Powerlevel10k theme:
     1. Clone the theme: `git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.oh-my-zsh/themes/powerlevel10k`
     1. In `~/.zshrc`, set `ZSH_THEME="powerlevel10k/powerlevel10k"`.
     1. Open a new ZSH session (or restart your terminal).
     1. Configure the theme (if it didn't automatically start): `p10k configure`
 1. Make zprofile include profile (to avoid breaking certain things):
     1. In `~/.zprofile`, add: `emulate sh -c "source /etc/profile"`
-1. Setup plugins:
-    1. In `.zshrc`, set e.g. `plugins=(git docker docker-compose golang rust)`.
-1. Setup syntax highlighting plugin:
+1. (Optional) Setup syntax highlighting plugin:
     1. Clone it: `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
-    1. Add `zsh-syntax-highlighting` it to `plugins` in `.zshrc`.
-1. Configure `~/.zshrc`:
-    1. Example [zshrc](https://github.com/HON95/configs/blob/master/zsh/zshrc).
+    1. Add `zsh-syntax-highlighting` it to `plugins` in `~/.zshrc`.
+1. Setup plugins:
+    1. In `~/.zshrc`, set e.g. `plugins=(git docker docker-compose golang rust)`.
+1. Further customize `~/.zshrc`:
+    1. (**TODO** OUTDATED) Example [zshrc](https://github.com/HON95/configs/blob/master/zsh/zshrc).
 
 {% include footer.md %}
