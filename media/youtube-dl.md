@@ -44,7 +44,7 @@ A tool for downloading videos from a variety of site (not just YouTube).
 ## Examples
 
 - Docker: `docker run --rm -v//$PWD:/downloads wernight/youtube-dl <...>`
-- YouTube video: `youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s"`
+- YouTube video: `youtube-dl -iwc -f bestvideo+bestaudio -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s" <url>`
 - YouTube video/channel/playlist w/ cookie: `youtube-dl -iwc -f bestvideo+bestaudio --cookie ~/cookies.txt -o "%(uploader)s (%(upload_date)s) - %(title)s [%(id)s].%(ext)s" <url>`
 
 ## Troubleshooting
