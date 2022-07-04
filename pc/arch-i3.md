@@ -91,7 +91,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Mount root: `mount /dev/mapper/crypt_root /mnt`
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
-    - Base command and packages: `pacstrap /mnt base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools lm_sensors zsh vim tar zip unzip htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap`
+    - Base command and packages: `pacstrap /mnt base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools lm_sensors hwloc zsh vim tar zip unzip htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap`
     - **TODO** Maybe for laptops: `wpa_supplicant networkmanager`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
@@ -137,7 +137,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Create a new profile file: `/etc/profile.d/editor.sh`
     - Set the editor: `export EDITOR=vim`
     - Set the visual editor: `export VISUAL=vim`
-1. Setup wired networking:
+1. Setup basic, wired networking:
     1. Enable: `systemctl enable systemd-networkd`
     1. Don't wait for network during boot: `systemctl disable systemd-networkd-wait-online.service`
     1. Add a config for the main interface (or all interfaces): See the section with an example below.
@@ -145,6 +145,42 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Wait for connectivity.
         - `networkctl` should show the interface as anything but "unmanaged".
         - `ip a` should show a routable IP address after a few seconds if using DHCP/RA.
+1. (Optional) Setup wireless networking:
+    1. Make sure a driver is loaded for the WLAN device:
+        - `ip a` should show a `wlp*` interface for the device.
+        - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
+    1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
+    1. Create a systemd-network config similar to the one for the wired interface, but add `IgnoreCarrierLoss=5s` to the `Network` section to allow for roaming.
+    1. Install `iwd` to manage wireless connections: `sudo pacman -S iwd`
+    1. Create the `netdev` group and add yourself to it to control `iwd`:
+        1. `sudo groupadd -r netdev`
+        1. `sudo usermod -aG netdev <user>`
+        1. `newgrp netdev` (optional)
+        1. **TODO** This group doesn't work. Use `sudo iwctl` until fixed.
+    1. (Optional) Disable periodic scanning when disconnected:
+        1. In `/etc/iwd/main.conf`, in section `Scan`, set `DisablePeriodicScan=true`.
+    1. Enable `iwd`: `sudo systemctl enable --now iwd.service`
+        - **TODO** I think this renamed my WLAN interface. Make sure your systemd-network config is correct.
+    1. Install GUI: `yay -S iwgtk`
+    1. Start the GUI tray icon: `iwgtk -i`
+        - It should normally start automatically using XDG autostart.
+        - **TODO** This doesn't currently work since the group is broken.
+    1. (Example) Connect to WPA2/WPA3 personal network (using `iwctl`):
+        1. (Note) `iwctl` has extenside tab-complete support.
+        1. Enter `iwctl`: `[sudo] iwctl`
+        1. Show devices: `device list`
+        1. Show device info: `device <device> show`
+        1. Scan for networks: `station <device> scan`
+        1. Show networks: `station <device> get-networks`
+        1. Connect to network: `station <device> connect <SSID>`
+        1. Show connection info: `station <device> show`
+        1. Disconnect from the network: `station <device> disconnect`
+        1. Show known networks: `known-networks list`
+        1. Forget known network: `known-networks <SSID> forget`
+    1. (Example) Connect to eduroam:
+        1. (Note) See the [wiki](https://wiki.archlinux.org/title/Iwd#eduroam) for more info.
+        1. Go to the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) to download a config script for your organization. Don't run it, it doesn't support `iwd`.
+        1. Create the config file `/var/lib/iwd/eduroam.8021x` (name-sensitive), containing the template snippet below with values found in the eduroam script.
 1. Setup DNS server(s):
     1. `echo "nameserver 1.1.1.1" >> /etc/resolv.conf` (Cloudflare)
     1. `echo "nameserver 2606:4700:4700::1111" >> /etc/resolv.conf` (Cloudflare)
@@ -527,6 +563,43 @@ UseDomains=yes
 [IPv6AcceptRA]
 UseDNS=yes
 UseDomains=yes
+```
+
+For WLAN interfaces, add `IgnoreCarrierLoss=5s` to the `Network` section.
+
+#### iwd eduroam Config
+
+File: `/var/lib/iwd/eduroam.8021x` (for SSID `eduroam`)
+
+The following values from the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) are required (from Arch iwd wiki page):
+
+| iwd | eduroam | Comment |
+| - | - |
+| File name | `Config.ssids` (one) | Typically `eduroam`, with `8021x` file ending. |
+| `EAP-Method` | `Config.eap_outer` | |
+| `EAP-Identity` | `Config.anonymous_identity` | `anonymous@Config.user_realm` if missing. |
+| `EAP-PEAP-CACert` | `Config.CA` | Place the cert data in a file and specify the path. |
+| `EAP-PEAP-ServerDomainMask` | `Config.servers` (one) | Without `DNS:` prefix. |
+| `EAP-PEAP-Phase2-Method` | `Config.eap_inner` | |
+| `EAP-PEAP-Phase2-Identity` | `<username>@Config.user_realm`
+| `EAP-PEAP-Phase2-Password` | `<password>` | |
+
+Place the CA certificate in `/var/lib/iwd/eduroam.crt`.
+
+NTNU template:
+
+```
+[Security]
+EAP-Method=PEAP
+EAP-Identity=anonymous@ntnu.no
+EAP-PEAP-CACert=/var/lib/iwd/eduroam.crt
+EAP-PEAP-ServerDomainMask=radius.ntnu.no
+EAP-PEAP-Phase2-Method=MSCHAPV2
+EAP-PEAP-Phase2-Identity=<username>@ntnu.no
+EAP-PEAP-Phase2-Password=<password>
+
+[Settings]
+AutoConnect=true
 ```
 
 #### Polybar Launch Script

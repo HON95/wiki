@@ -40,6 +40,21 @@ breadcrumbs:
 - Sudo:
     - Show sudo permissions for current user: `sudo -l`
 
+### Devices
+
+- System topology (with `hwloc`):
+    - Show system topology: `lstopo`
+    - `lstopo` will try to output in GUI mode if supported. Use `lstopo-no-graphics` to force non-graphical output.
+    - Run as root for more info.
+    - Show more info (non-GUI): `-v`
+    - Output in image format: Check the manual.
+- USB:
+    - Show brief: `lsusb`
+    - Show verbose: `lsusb -v`
+- PCI/PCIe:
+    - Show brief: `lspci`
+    - Show with loaded kernel modules: `lspci -k`
+
 ### Executables
 
 - Show type and info: `file <executable>`
@@ -265,6 +280,7 @@ breadcrumbs:
     - Command: `ip neighbor`
 - Show routes:
     - Command: `ip route`
+    - Show route used for destination address: `ip route get <dst>`
 - Show multicast addresses:
     - Command: `ip maddress`
 - Show multicast routes:
