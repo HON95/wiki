@@ -11,8 +11,8 @@ Compared to OpenCL (which is also supported by both NVIDIA and AMD), it's much m
 ### Related Pages
 {:.no_toc}
 
-- [ROCm](/config/hpc/rocm/)
-- [CUDA](/config/hpc/cuda/)
+- [ROCm](../rocm/)
+- [CUDA](../cuda/)
 
 ## Resources
 

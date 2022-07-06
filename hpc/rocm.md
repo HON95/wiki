@@ -11,7 +11,7 @@ It uses the runtime API and kernel language HIP, which is compilable for both AM
 ### Related Pages
 {:.no_toc}
 
-- [HIP](/config/hpc/hip/)
+- [HIP](../hip/)
 
 ## Resources
 

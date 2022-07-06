@@ -10,7 +10,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 ### Related Pages
 {:.no_toc}
 
-- [HIP](/se/lang/hip/)
+- [HIP](../hip/)
 
 ## TODO
 
