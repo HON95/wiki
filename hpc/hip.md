@@ -27,18 +27,20 @@ Compared to OpenCL (which is also supported by both NVIDIA and AMD), it's much m
 
 ### Install for AMD GPUs
 
-1. Install ROCm: See [ROCm](../rocm/).
+1. Install the ROCm suite (contains HIP and other useful stuff): See [ROCm](../rocm/).
 
 ### Install for NVIDIA GPUs
 
-1. Install the CUDA toolkit and the NVIDIA driver: See [CUDA](/config/hpc/cuda/).
-1. Add the ROCm package repo (same as ROCm installation):
+Updated for ROCm 5.0.
+
+1. Install the CUDA toolkit and the NVIDIA driver: See [CUDA](../cuda/).
+1. Add the ROCm package repo:
     1. Install requirements: `sudo apt install curl libnuma-dev wget gnupg2`
-    1. Add repo key: `curl -sSf https://repo.radeon.com/rocm/rocm.gpg.key | gpg --dearmor > /usr/share/keyrings/rocm.gpg`
-    1. Add repo: `echo 'deb [signed-by=/usr/share/keyrings/rocm.gpg arch=amd64] https://repo.radeon.com/rocm/apt/debian/ ubuntu main' | sudo tee /etc/apt/sources.list.d/rocm.list`
-    1. Update cache: `apt update`
-1. Install: `sudo apt install hip-nvcc`
-1. Add to PATH: See [ROCm](../rocm/).
+    1. Add repo key: `curl -sSf https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor --output /usr/share/keyrings/rocm.gpg`
+    1. Add ROCm repo: `echo 'deb [signed-by=/usr/share/keyrings/rocm.gpg arch=amd64] https://repo.radeon.com/rocm/apt/debian/ ubuntu main' | sudo tee /etc/apt/sources.list.d/rocm.list`
+    1. Update cache: `sudo apt update`
+1. Install: `sudo apt install hip-dev hip-doc hip-runtime-nvidia`
+1. Add ROCm to PATH: `echo 'export PATH=$PATH:/opt/rocm/bin' | sudo tee /etc/profile.d/rocm.sh` (relog to reload)
 
 ### Post-Install Verification
 

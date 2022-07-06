@@ -19,13 +19,9 @@ It uses the runtime API and kernel language HIP, which is compilable for both AM
 - [ROCm Installation (AMD ROCm Docs)](https://rocmdocs.amd.com/en/latest/Installation_Guide/Installation-Guide.html)
 - [ROCm_Installation_Guidev5.0: How To Install ROCm](https://docs.amd.com/bundle/ROCm_Installation_Guidev5.0/page/How_To_Install_ROCm.html)
 
-## Setup
+## Setup (Debian/Ubuntu)
 
 Updated for ROCm 5.0.
-
-### Installation (Debian/Ubuntu)
-
-#### Steps
 
 1. If the `amdgpu-pro` driver is installed then uninstall it to avoid conflicts. **TODO**
 1. If using Mellanox ConnectX NICs then Mellanox OFED must be installed before ROCm.
@@ -44,7 +40,7 @@ Updated for ROCm 5.0.
     - For OpenMP: `rocm-openmp-sdk`
     - For ML: `rocm-ml-sdk rocm-ml-libraries`
     - Note: ROCm depends on `python`, which in Ubuntu installs `python-is-python2`.
-1. Add ROCm to PATH: `echo "export PATH=$PATH:/opt/rocm/bin:/opt/rocm/opencl/bin" | sudo tee -a /etc/profile.d/rocm.sh`
+1. Add ROCm to PATH: `echo 'export PATH=$PATH:/opt/rocm/bin:/opt/rocm/opencl/bin' | sudo tee /etc/profile.d/rocm.sh` (relog to reload)
 1. Add yourself to the relevant groups to use ROCm: `sudo usermod -aG video,render <username>`
 1. Reboot.
 1. Verify AMDGPU DKMS install: `sudo dkms status`
