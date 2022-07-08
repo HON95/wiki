@@ -400,7 +400,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         1. (Note) The global config is `/etc/dunst/dunstrc`.
         1. Create and open it: `mkdir -p ~/.config/dunst && vim ~/.config/dunst/dunstrc`
         1. For high-res displays, fix scaling (doesn't affect text size): In the `global` section, set e.g. `scale = 2`.
-        1. Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 10` (or 15 for high-res).
+        1. Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 8` (or 12 for high-res).
     1. Restart dunst (if any changes): `systemctl --user restart dunst`
     1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
 1. Setup screen locking:
