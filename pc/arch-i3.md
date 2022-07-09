@@ -486,17 +486,18 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
 1. (Example) Connect a device using `bluetoothctl`:
     1. (Note) To avoid entering the interactive TUI and run single commands instead, use `bluetoothctl -- <cmd>`.
     1. Enter the TUI: `bluetoothctl`
-    1. List controllers: `list`
+    1. (Optional) List controllers: `list`
     1. (Optional) Select a controller: `select <mac>`
     1. Enable the controller: `power on`
     1. Enable scanning: `scan on`
-    1. List available devices: `devices`'
-    1. Enable the pairing agent: `agent on`
-    1. Set the agent as default: `default-agent`
+    1. Wait for devices to appear in the terminal.
+    1. List available devices: `devices`
+    1. (Optional) Enable the pairing agent: `agent on`
+    1. (Optional) Set the agent as default: `default-agent`
     1. Pair with device: `pair <mac>`
-    1. Trust it, maybe (**TODO** required?): `trust <mac>`
-    1. Connect to device: `connect <mac>`
-    1. Disable scanning (**TODO** required?): `scan off`
+    1. Wait for pairing to complete.
+    1. (Optional) Trust it (sometimes required): `trust <mac>`
+    1. (Optional) Reconnect to device: `connect <mac>`
     1. Exit: `Ctrl+D`
 
 ### Setup Applications

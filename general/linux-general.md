@@ -229,6 +229,7 @@ breadcrumbs:
 - Remove package: `pacman -R <packages>`
     - Remove orphans too: `-s`
     - Purge configurations: `-n`
+- Autoremove packages: `pacman -R $(pacman -Qdtq)`
 
 ### Network
 

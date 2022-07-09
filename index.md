@@ -112,14 +112,13 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Linksys LGS Switches](/network/linksys-lgs/)
 - [Linux Switching & Routing](/network/linux/)
 - [pfSense](/network/pfsense/)
-- [Routing Theory](/network/routing/)
+- [Routing](/network/routing/)
 - [Network Security](/network/security/)
 - [Switching](/network/switching/)
 - [TP-Link JetStream Switches](/network/tplink-jetstream-switches/)
 - [Ubiquiti UniFi Access Points](/network/ubiquiti-unifi-aps/)
 - [Ubiquiti UniFi Controllers](/network/ubiquiti-unifi-controllers/)
 - [VyOS](/network/vyos/)
-- [Wireless Basics](/network/wireless-basics/)
 - [WLAN Theory](/network/wlan/)
 
 ## Personal Computers

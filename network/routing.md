@@ -1,5 +1,5 @@
 ---
-title: Routing Theory
+title: Routing
 breadcrumbs:
 - title: Network
 ---
