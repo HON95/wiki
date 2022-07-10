@@ -5,7 +5,11 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## GDB
+## General
+
+- Strip the symbol table and most debug info from an executable: `strip <executable>`
+
+## GNU Debugger (GDB)
 
 **TODO**
 

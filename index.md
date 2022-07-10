@@ -135,6 +135,8 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 
 ## Software Engineering
 
+- [C/C++ Tools](/se/ccpp-tools/)
+- [C++](/se/cpp/)
 - [Data Stuff](/se/data/)
 - [Database Management Systems (DBMSes)](/se/dbmses/)
 - [GNU Compiler Collection (GCC)](/se/gcc/)
