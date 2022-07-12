@@ -21,16 +21,16 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 
 ## Resources
 
-- [CUDA GPUs (NVIDIA)](https://developer.nvidia.com/cuda-gpus)
-- [CUDA Programming Guide (NVIDIA)](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
+- [NVIDIA: CUDA GPUs](https://developer.nvidia.com/cuda-gpus)
+- [NVIDIA: CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/)
 
 ## Setup
 
 ### Resources
 
-- [NVIDIA CUDA Installation Guide for Linux (NVIDIA)](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
-- [NVIDIA CUDA Installation Guide for Windows (NVIDIA)](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html)
-- [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-downloads)
+- [NVIDIA: CUDA Installation Guide for Linux](https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html)
+- [NVIDIA: CUDA Installation Guide for Windows](https://docs.nvidia.com/cuda/cuda-installation-guide-microsoft-windows/index.html)
+- [NVIDIA: CUDA Toolkit Download](https://developer.nvidia.com/cuda-downloads)
 
 ### Linux Installation
 

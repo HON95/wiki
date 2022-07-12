@@ -12,6 +12,7 @@ It uses the runtime API and kernel language HIP, which is compilable for both AM
 {:.no_toc}
 
 - [HIP](../hip/)
+- [Clang/LLVM](/se/clang-llvm/)
 
 ## Resources
 
@@ -51,6 +52,10 @@ Updated for ROCm 5.0.
 
 ## Usage and Tools
 
-- Show GPU info: `rocm-smi`
+### AMD GPUs
+
+- Show GPU stats: `rocm-smi`
+- Show CPU/GPU detauls: `rocminfo`
+- Get GPU arch: `rocminfo | grep gfx` (the shortest one)
 
 {% include footer.md %}

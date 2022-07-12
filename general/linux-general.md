@@ -190,9 +190,15 @@ breadcrumbs:
 
 #### APT (Debian)
 
-- Dependencies:
-    - Find packages which this package depends on: `apt depends <package>`
-    - Find packages which depend on this package: `apt rdepends [--installed] <package>`
+- Basics:
+    - Update database: `apt update`
+    - Install package: `apt install <package>`
+    - Normal upgrade: `apt upgrade`
+    - Full upgrade (may remove packages): `apt full-upgrade`
+    - Show available versions: `apt list -a <package>`
+    - Show dependencies: `apt depends <package>`
+    - Show reverse dependencies: `apt rdepends [--installed] <package>`
+    - Lock package version: `apt-mark hold <package>`
 - Add repo (simple, not recommended):
     1. Add key: Download and run `apt-key add <key-file>`.
     1. Add repo: `add-apt-repository <repo-line>`
@@ -211,6 +217,7 @@ breadcrumbs:
         - The 8-digit hex key ID may either be found on `pub` line or as the last 8 hex digits on the continuation line.
 - Preferences:
     - Used to override package priorities, to control which package version or origin is used (or not).
+    - Show policy for package: `apt-cache policy <package>`
     - Preferences are stored in `/etc/apt/preferences` and `/etc/apt/preferences.d/<name>`.
 - Log:
     - See `/var/log/dpkg.log`.
