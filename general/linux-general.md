@@ -149,10 +149,11 @@ breadcrumbs:
         - The first line is always a snapshot, i.e. all rate-based metrics are 0 or some absolute value.
         - If any column options are provided, they will replace the default ones and are displayed in the order specified.
     - Special options:
+        - `--bits`: Force usage of bits (e.g. to show network traffic as b/s instead of B/s).
+        - `-f`: Show stats for all devices (not aggregated).
         - `-C <>`: Comma-separated list of CPUs/cores to show for, including `total`.
         - `-D <>`: Same but for disks.
         - `-N <>`: Same but for NICs.
-        - `-f`: Show stats for all devices (not aggregated).
     - Useful metrics:
         - `-t`: Current time.
         - `-p`: Process stats (by runnable, uninterruptible, new) (changes per second).
@@ -170,9 +171,9 @@ breadcrumbs:
     - Useful metrics from plugins:
         - `--net-packets`: Network request stats (by recv, send) (packets per second).
     - Examples:
-        - General overview (CPU, RAM, ints/csws, disk, net): `dstat -tcmyrdn --net-packets 60`
-        - Network overview (CPU, ints/csws, net): `dstat -tcyn --net-packets 60`
-        - Process overview (CPU, RAM, ints/csws, paging, process, sockets): `dstat -tcmygp --socket 60`
+        - General overview (CPU, RAM, ints/csws, disk): `dstat -tcmyrd 5`
+        - Network overview (traffic [b/s], packets [p/s]): `dstat -tcyn --net-packets --bits 5`
+        - Process overview (CPU, RAM, ints/csws, paging, process, sockets): `dstat -tcmygp --socket 5`
 
 ### Hardware
 
