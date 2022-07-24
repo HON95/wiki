@@ -390,7 +390,7 @@ Note: I recommend [Chrony](#chrony) instead of ntpd. It's newer and by design mo
 
 ### Setup
 
-Instructions for both primary nodes (netserver mode) and secondary nodes (netclient mode). Exclusive steps are marked "(Primary)" or "(Secondary)".
+Instructions for both primary nodes (netserver mode) and secondary nodes (netclient mode). Exclusive steps are marked "(Primary)" or "(Secondary)". (Since "primary/secondary" was only recently introduced as a replacement, we're using "master/slave" in the configs to avoid silent errors.)
 
 1. Install: `apt install nut`
     - The service will fail to start since NUT is not configured yet.
@@ -400,13 +400,16 @@ Instructions for both primary nodes (netserver mode) and secondary nodes (netcli
     - For `usbhid-ups`, see the example below and [usbhid-ups(8)](https://networkupstools.org/docs/man/usbhid-ups.html).
     - You *may* need to modify some udev rules, but probably not.
 1. (Primary) Restart driver service: `systemctl restart nut-driver.service`
-1. (Primary) Set up local and remote access: Open `/etc/nut/upsd.conf` and set `LISTEN ::`.
-    - Alternatively add one or multiple `LISTEN` directives for only the endpoints you wish to listen on.
-    - Note that anonymous users (local or remote) have read-only access to everything, so remember you probably want to firewall this port.
+1. (Primary) Set up local and remote access: Open `/etc/nut/upsd.conf` and set `LISTEN :: 3493` and `LISTEN 0.0.0.0` (unrestricted access).
+    - To only listen on localhost instead, set `LISTEN ::1 3493` and `LISTEN 127.0.0.1`.
+    - Make sure the file is not world-readable.
+    - Note that anonymous users (local or remote) have read-only access to everything, so you probably want to firewall this port.
 1. (Primary) Set up users: Open `/etc/nut/upsd.users` and add users (see example below).
     - Each client should have a separate user.
+    - Make sure the file is not world-readable.
 1. (Primary) Restart the server service: `systemctl restart nut-server.service`
-1. Monitor the UPS: Open `/etc/nut/upsmon.conf` and add `MONITOR <ups>@<host>[:<port>] <powervalue> <user> <password> <primary|secondary>`.
+1. Monitor the UPS: Open `/etc/nut/upsmon.conf` and add `MONITOR <ups>@<host>[:<port>] <powervalue> <user> <password> <master|slave>`.
+    - Make sure the file is not world-readable.
     - `powervalue` is how many power supplies this system has which is supplied by the UPS. It's used to calculate how many supplies are allowed to go offline. For single-PSU systems, use `1.` For dual-PSU systems with both connected to this PSU, use `2`. If this system is not powered by the UPS but you want to monitor it without shutting down when it goes critical, set it to `0`.
 1. (Optional) Tweak upsmon:
     - Set `RBWARNTIME` (how often upsmon should complain about batteries needing replacement) to an appropriate value, e.g. 604800 (1 week).
@@ -416,6 +419,7 @@ Instructions for both primary nodes (netserver mode) and secondary nodes (netcli
     - Create the executable script. See an example below for sending email (if Postfix is set up).
 1. Restart monitoring service: `systemctl restart nut-monitor.service`
 1. Check the logs to make sure `nut-monitor` successfully connected to the server.
+    - Show systemd service log: `journalctl -u nut-monitor.service`
     - Note that `upsc` uses the driver directly, so it's not useful for debugging the server or monitoring services.
 1. Configure delays:
     1. Figure out how much time is needed to shut down the master and all slaves, with some buffer time.
@@ -453,17 +457,19 @@ Example `/etc/nut/upsd.users`:
 
 [upsmon_local]
     password = <password>
-    upsmon primary
+    upsmon master
 
 [upsmon_remote]
     password = <password>
-    upsmon secondary
+    upsmon slave
 ```
+
+(Notice the lack of `=` for `upsmon`.)
 
 Example `/etc/nut/upsmon.conf`:
 
 ```
-MONITOR alpha@localhost:3493 1 upsmon_local password1234 primary
+MONITOR alpha@localhost:3493 1 upsmon_local password1234 master
 MINSUPPLIES 1
 POLLFREQ 5
 POLLFREQALERT 5
@@ -490,6 +496,8 @@ echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
 
 - Show UPSes: `upsc -l`
 - Show UPS vars: `upsc <ups>`
+- Show shutdown steps (dry-run): `upsdrvctl -t shutdown`
+- Force shutdown (set FSD flag): `upsmon -c fsd`
 
 #### Query the Server
 
