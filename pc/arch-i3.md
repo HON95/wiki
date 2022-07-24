@@ -91,7 +91,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Mount root: `mount /dev/mapper/crypt_root /mnt`
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
-    - Base command and packages: `pacstrap /mnt base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools lm_sensors hwloc zsh vim tar zip unzip htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap`
+    - Base command and packages: `pacstrap /mnt base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools lm_sensors hwloc zsh vim tar zip unzip htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils`
     - **TODO** Maybe for laptops: `wpa_supplicant networkmanager`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`

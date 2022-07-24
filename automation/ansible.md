@@ -50,9 +50,10 @@ Config locations:
 
 Example config:
 
-```
+```ini
 [defaults]
 host_key_checking = false
+executable = /bin/bash
 #interpreter_python = auto
 interpreter_python = /usr/bin/python3
 #inventory = hosts.ini
