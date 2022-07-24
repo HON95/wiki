@@ -136,12 +136,14 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 ## Software Engineering
 
 - [C/C++ Tools](/se/ccpp-tools/)
+- [Clang/LLVM](/se/clang-llvm/)
 - [C++](/se/cpp/)
 - [Data Stuff](/se/data/)
 - [Database Management Systems (DBMSes)](/se/dbmses/)
 - [GNU Compiler Collection (GCC)](/se/gcc/)
 - [CUDA](/se/go/)
 - [Licensing](/se/licensing/)
+- [OpenMP](/se/openmp/)
 - [Web Security](/se/web-security/)
 
 ## Services

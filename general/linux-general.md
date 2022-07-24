@@ -406,9 +406,10 @@ Using GPG (from package `gnupg2` on Debian).
     - The nice value is inherited by child processes (meaning forking processes maintains the nice value it started with).
     - Use `renice` to change the value.
     - Use `ionice` to set the I/O scheduler and scheduler-specific priority.
-- Stress test with stress-ng:
+- Stress test with stress/stress-ng (see [Computer Testing](../computer-testing/)):
     - Install (Debian): `apt install stress-ng`
-    - Stress CPU: `stress-ng -c $(nproc) -t $((10*60))` (use all CPU threads for 10 minutes)
+    - Install (Arch): `apt install stress`
+    - Stress CPU: `stress(-ng) -c $(nproc) -t $((10*60))` (use all CPU threads for 10 minutes)
 - Chroot into other Linux installation:
     1. (Note) Used to e.g. fix a broken install or reset a user password from a USB live ISO.
     1. Mount the root partition: `mount /dev/sda2 /mnt` (example)

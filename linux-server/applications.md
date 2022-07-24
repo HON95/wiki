@@ -386,30 +386,28 @@ Note: I recommend [Chrony](#chrony) instead of ntpd. It's newer and by design mo
 1. Configure servers/pool in `/etc/ntp.conf`, with the `iburst` option.
 1. Test with `ntpq -pn` (it may take a minute to synchronize).
 
-## NUT
+## Network UPS Tools (NUT)
 
 ### Setup
 
-Instructions for both servers and clients. Exclusive steps are marked "(Server)" or "(Client)".
-
-Since SSL/TLS is not enabled by default for client-server communication, use only trusted networks for this communication.
+Instructions for both primary nodes (netserver mode) and secondary nodes (netclient mode). Exclusive steps are marked "(Primary)" or "(Secondary)".
 
 1. Install: `apt install nut`
     - The service will fail to start since NUT is not configured yet.
-1. Set the mode: Open `/etc/nut/nut.conf` and set `MODE=netserver` for server or `MODE=netclient` for client.
-1. (Server) Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSes (see example below).
+1. Set the mode: Open `/etc/nut/nut.conf` and set `MODE=netserver` for primaries or `MODE=netclient` for secondaries.
+1. (Primary) Add the UPS(s): Open `/etc/nut/ups.conf` and add a declaration for all UPSes (see example below).
     - Try using the `usbhid-ups` driver if using USB. Otherwise, check the [hardware compatibility list](https://networkupstools.org/stable-hcl.html) to find the correct driver. If the exact model isn't there, try a similar one.
     - For `usbhid-ups`, see the example below and [usbhid-ups(8)](https://networkupstools.org/docs/man/usbhid-ups.html).
     - You *may* need to modify some udev rules, but probably not.
-1. (Server) Restart driver service: `systemctl restart nut-driver.service`
-1. (Server) Set up local and remote access: Open `/etc/nut/upsd.conf` and set `LISTEN ::`.
+1. (Primary) Restart driver service: `systemctl restart nut-driver.service`
+1. (Primary) Set up local and remote access: Open `/etc/nut/upsd.conf` and set `LISTEN ::`.
     - Alternatively add one or multiple `LISTEN` directives for only the endpoints you wish to listen on.
-1. (Server) Set up users: Open `/etc/nut/upsd.users` and add users (see example below).
+    - Note that anonymous users (local or remote) have read-only access to everything, so remember you probably want to firewall this port.
+1. (Primary) Set up users: Open `/etc/nut/upsd.users` and add users (see example below).
     - Each client should have a separate user.
-1. (Server) Restart the server service: `systemctl restart nut-server.service`
-1. (Client) **TODO:** Something about `nut-client.service`.
-1. Monitor the UPS: Open `/etc/nut/upsmon.conf` and add `MONITOR <ups>@<host>[:<port>] <ups-count> <user> <password> <master|slave>`.
-    - `ups-count` is typically `1`. If this system is not powered by the UPS but you want to monitor it without shutting down, set it to `0`.
+1. (Primary) Restart the server service: `systemctl restart nut-server.service`
+1. Monitor the UPS: Open `/etc/nut/upsmon.conf` and add `MONITOR <ups>@<host>[:<port>] <powervalue> <user> <password> <primary|secondary>`.
+    - `powervalue` is how many power supplies this system has which is supplied by the UPS. It's used to calculate how many supplies are allowed to go offline. For single-PSU systems, use `1.` For dual-PSU systems with both connected to this PSU, use `2`. If this system is not powered by the UPS but you want to monitor it without shutting down when it goes critical, set it to `0`.
 1. (Optional) Tweak upsmon:
     - Set `RBWARNTIME` (how often upsmon should complain about batteries needing replacement) to an appropriate value, e.g. 604800 (1 week).
 1. (Optional) Add a notify script to run for certain events:
@@ -417,26 +415,26 @@ Since SSL/TLS is not enabled by default for client-server communication, use onl
     - In `/etc/nut/upsmon.conf`, set the script to run using format `NOTIFYCMD /opt/scripts/nut-notify.sh`.
     - Create the executable script. See an example below for sending email (if Postfix is set up).
 1. Restart monitoring service: `systemctl restart nut-monitor.service`
-1. Check the log to make sure `nut-monitor` successfully connected to the server.
-    - Note that `upsc` does not use a server user or the monitoring service, so it's not very useful for debugging that.
+1. Check the logs to make sure `nut-monitor` successfully connected to the server.
+    - Note that `upsc` uses the driver directly, so it's not useful for debugging the server or monitoring services.
 1. Configure delays:
     1. Figure out how much time is needed to shut down the master and all slaves, with some buffer time.
     1. Set the remaining runtime and remaining battery charge for when the UPS should send the "battery low" event (requires admin login): `upsrw -s battery.runtime.low=<seconds> <ups>` and `upsrw -s battery.charge.low=<percent> <ups>`
         - This may not work on all UPSes, even if the values appear to be modifiable. This means you're probably stuck with the defaults.
+        - **TODO** This resets when the driver or UPS is restarted, right?
     1. Set the delay from when the master issues the shutdown command to the UPS, to when the UPS powers off; and the delay from when the UPS receives power again to when it should turn on power: For `usbhid-ups`, this is set using `offdelay` and `ondelay`. Otherwise, it's set using `ups.delay.shutdown` and `ups.delay.start`. The start delay must be greater than the stop delay.
         - The shutdown command is issued from the master after it's done waiting for itself and slaves and is shutting itself down. The shutdown delay may be useful to increase if there are slaves that take much longer than the master to shut down.
     1. Restart the affected NUT services.
-1. Simulate a power loss, which should power off all monitoring clients and then the UPS: `upsmon -c fsd`
-    - If the client machines are not given enough time to power off before the UPS powers off, you need to modify the shutdown delay settings in the UPS.
+1. Simulate a power loss, which should shutdown the secondaries, the primary and then the UPS after a delay: `upsmon -c fsd`
 
-Example USB UPS declaration for `usbhid-ups` (`/etc/nut/ups.conf`):
+Example `/etc/nut/ups.conf` (uding `usbhid-ups` driver):
 
 ```
 [alpha]
     desc = "PowerWalker VI 3000 RLE"
     # usbhid-ups should work for most UPSes with
     driver = usbhid-ups
-    # If you have multiple UPSes connected, see usbhid-ups(8) for more specifying which USB device it should use
+    # Required but ignored by this driver
     port = auto
     # Sets "ups.delay.shutdown", the delay between the shutdown command and when the UPS powers off (default 20s)
     offdelay = 60
@@ -444,17 +442,41 @@ Example USB UPS declaration for `usbhid-ups` (`/etc/nut/ups.conf`):
     ondelay = 120
 ```
 
-Example server users (`/etc/nut/upsd.users`):
+Example `/etc/nut/upsd.users`:
 
 ```
 [admin]
     password = <password>
-    actions = SET
-    instcmds = ALL
+    actions = set
+    actions = fsd
+    instcmds = all
 
-[local]
+[upsmon_local]
     password = <password>
-    upsmon master
+    upsmon primary
+
+[upsmon_remote]
+    password = <password>
+    upsmon secondary
+```
+
+Example `/etc/nut/upsmon.conf`:
+
+```
+MONITOR alpha@localhost:3493 1 upsmon_local password1234 primary
+MINSUPPLIES 1
+POLLFREQ 5
+POLLFREQALERT 5
+DEADTIME 20
+HOSTSYNC 20
+FINALDELAY 5
+POWERDOWNFLAG /etc/killpower
+NOTIFYCMD "/usr/bin/true"
+SHUTDOWNCMD "/sbin/shutdown -h +0"
+NOCOMMWARNTIME 3600
+RBWARNTIME 604800
+
+# See the original for NOTIFYMSG and NOTIFYFLAG examples.
 ```
 
 Example notify script:
@@ -470,6 +492,8 @@ echo -e "Time: $(date)\nMessage: $@" | mail -s "NUT: $@" root
 - Show UPS vars: `upsc <ups>`
 
 #### Query the Server
+
+Note: Anonymous users have read-only access to everything.
 
 1. Telnet into it: `telnet localhost 3493`
 1. Show UPSes: `LIST UPS`

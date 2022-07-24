@@ -20,8 +20,10 @@ breadcrumbs:
 
 - Create a job (overview): Make a Slurm script, make it executable and submit it.
 - Using GPUs: See example Slurm-file, using `--gres=gpu[:<type>]:<n>`.
-- Submit batch/non-blocking job: `sbatch <slurm-file>`
-- Start interactive/blocking job: `srun <job options> [--pty] <bash|app>`
+- Submit batch job: `sbatch <slurm-file>`
+- Start interactive job: `srun <job options> [--pty] <bash|app>`
+- Create allocation (without connecting to it): `salloc <job options>`
+    - Use e.g. `srun --jobid=<id> --pty bash` to connect to it.
 - Cancel specific job: `scancel <jobid>`
 - Cancel set of jobs: `scancel [-t <state>] [-u <user>]`
 - Show job queue: `squeue [-u <user>] [-t <state>] [-p <partition>]`

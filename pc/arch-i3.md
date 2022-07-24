@@ -161,7 +161,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
         1. In `/etc/iwd/main.conf`, in section `Scan`, set `DisablePeriodicScan=true`.
     1. Enable `iwd`: `sudo systemctl enable --now iwd.service`
         - **TODO** I think this renamed my WLAN interface. Make sure your systemd-network config is correct.
-    1. Install GUI: `yay -S iwgtk`
+    1. Install GUI: `yay -S iwgtk snixembed-git`
     1. Start the GUI tray icon: `iwgtk -i`
         - It should normally start automatically using XDG autostart.
         - **TODO** This doesn't currently work since the group is broken.
