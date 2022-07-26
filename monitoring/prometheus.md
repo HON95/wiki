@@ -9,7 +9,10 @@ For metrics collection.
 
 ## Info
 
-**TODO:** Info about the pull model, OpenMetrics format, etc.
+- Prometheus is a metrics collection platform based mainly on pull-style metrics collection.
+- Metrics are generally exposed by applications in the Prometheus exposition format on some HTTP endpoint.
+- See [OpenMetrics](https://openmetrics.io/) \[[spec](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md)\] for a more standardized version of the Prometheus exposition format.
+- Metrics (typically?) contain a name, a label set and a numeric value (integer, floating-point or boolean).
 
 ## Setup (Docker)
 
