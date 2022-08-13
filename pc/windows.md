@@ -20,8 +20,9 @@ breadcrumbs:
 
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
-- Enable BitLocker drive encryption (requires Pro edition):
+- Enable BitLocker drive encryption (requires Windows Pro edition):
     - (Note) Using passwords and not TPM because I don't want my PC to decrypt itself without me and because I need to move disks between PCs.
+    - If you have a TPM module: Disable it in the BIOS settings.
     - Allow using it without a TPM module:
         - Open `gpedit.msc`.
         - Go to: `Local Computer Policy/Computer Configuration/Administrative Templates/Windows Components/Bitlocker Drive Encryption/Operating System Drives`
@@ -36,9 +37,9 @@ breadcrumbs:
         - Save the recovery keys somewhere safe, it's required sometimes to unlock the disk.
         - Enable auto-unlock for other encrypted disks.
 - Disable the lock screen:
-    - Because it's annoying.
+    - Because it's annoying to wait before I can start typing the password.
     - Open `regedit`.
-    - Set DWORD `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows/Personalization` to `1`.
+    - Set DWORD `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows/Personalization/NoLockScreen` to `1`.
 - Set hardware clock to use UTC:
     - Because Linux uses it, so the Windows time will be wrong if dual booting.
     - Open `regedit`.
