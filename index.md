@@ -137,13 +137,14 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 
 - [C/C++ Tools](/se/ccpp-tools/)
 - [Clang/LLVM](/se/clang-llvm/)
-- [C++](/se/cpp/)
+- [C++ (Language)](/se/cpp/)
 - [Data Stuff](/se/data/)
 - [Database Management Systems (DBMSes)](/se/dbmses/)
 - [GNU Compiler Collection (GCC)](/se/gcc/)
-- [CUDA](/se/go/)
+- [Go (Language)](/se/go/)
 - [Licensing](/se/licensing/)
 - [OpenMP](/se/openmp/)
+- [Rust (Language)](/se/rust/)
 - [Web Security](/se/web-security/)
 
 ## Services

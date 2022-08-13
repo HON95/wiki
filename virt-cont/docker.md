@@ -82,6 +82,10 @@ The toolkit is used for running CUDA applications within containers.
     - Publish network port on host: `-p <host-port>:<cont-port>[/udp]`
     - Mount volume: `-v <host-path>:<container-path>`
         - The host path must have a path prefix like `./` or `/` if it is a file/dir and not a named volume.
+- Images:
+    - Show manifest: `docker manifest inspect <name>:<tag>`
+        - This also shows which architectures the image supports, in a useful format.
+        - Images often support different architectures for different tags.
 - Cleanup:
     - Prune unused images: `docker image prune -a`
     - Prune unused volumes: `docker volume prune`
