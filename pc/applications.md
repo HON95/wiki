@@ -273,7 +273,9 @@ Snippets for `/etc/pipewire/media-session.d/media-session.conf`:
 
 ### Usage
 
-- New key (RSA): `ssh-keygen -t rsa -b 4096`
+- New key (RSA): `ssh-keygen -t rsa -b 2048`
+- New key (EdDSA): `ssh-keygen -t ed25519`
+- New key (RSA + comment + file + no-pass): `ssh-keygen -t rsa -b 2048 -C "yolo" -f ~/.ssh/id_rsa -N ""`
 
 ### Config
 
