@@ -83,7 +83,11 @@ breadcrumbs:
 
 ### Setup
 
-1. (Note) See: [Windows Subsystem for Linux Installation Guide for Windows 10 (Microsoft Docs)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+More info: [Windows Subsystem for Linux Installation Guide for Windows 10 (Microsoft Docs)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
+
+1. Prerequisites:
+    - Enable Intel VT-x or AMD SVM in the BIOS settings. Check that the "Virtualization" field in the Task Manager CPU page says "Enabled" afterwards.
+    - Enable the Hyper-V Windows feature. Search for "Windows Features" in the task bar.
 1. Install (Ubuntu, the default):
     1. Open the Windows command prompt or PowerShell in admin mode.
     1. Start installer: `wsl --install`
