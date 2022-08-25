@@ -47,6 +47,8 @@ Config locations:
 - Global: `/etc/ansible/ansible.cfg`
 - User: `~/.ansible.cfg`
 - Project: `ansible.cfg`
+- Override: `ANSIBLE_CONFIG=ansible.cfg`
+    - Required for Windows project configs due to "world-writable config".
 
 Example config:
 
