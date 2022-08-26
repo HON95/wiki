@@ -5,21 +5,29 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## TODO
+
+(Ignore this section.)
+
+- `-crf 23`: Constant rate factor. Defaults to 23. Set to 0 for lossless video.
+
 ## Resources
 
 - [steven2358: FFmpeg cheat sheet](https://gist.github.com/steven2358/ba153c642fe2bb1e47485962df07c730)
 - [NVIDIA Developer Blog: NVIDIA FFmpeg Transcoding Guide](https://developer.nvidia.com/blog/nvidia-ffmpeg-transcoding-guide/)
 
-## General
+## Installation
 
-- **TODO** Find my other FFmpeg notes.
-- Install:
-    - Linux (Ubuntu): `apt install ffmpeg`
-    - Windows: Download the binary.
+(Including V4L2 for Linux distros.)
+
+- Linux (Ubuntu/Debian): `sudo apt install ffmpeg v4l-utils`
+- Linux (Arch): `sudo pacman -S ffmpeg v4l-utils`
+- Windows: Download binaries from some FFmpeg mirror site.
+
+## View fTODO
+
 - View video feed: `ffplay <dev>`
     - For some reason this typically uses a limited framerate and resolution.
-- Options (**TODO** move this):
-    - `-crf 23`: Constant rate factor. Defaults to 23. Set to 0 for lossless video.
 
 ## Examples
 
