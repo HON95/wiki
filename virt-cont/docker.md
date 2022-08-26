@@ -28,8 +28,9 @@ breadcrumbs:
     - By default it uses the `overlay2` driver, which is recommended for most setups. (`aufs` was the default before that.)
     - The only other alternatives worth consideration are `btrfs` and `zfs`, if the system is configured for those file systems.
 1. (Recommended) Change IPv4 network pool:
-    - In `/etc/docker/daemon.json`, set `"default-address-pools": [{"base": "172.17.0.0/12", "size": 24}]`.
-    - For local networks (not Swarm overlays), it defaults to pool `172.17.0.0/12` with `/16` allocations, resulting in a maximum of `2^(16-12)=16` allocations.
+    - (Note) For local networks (not Swarm overlays), it defaults to pool `172.17.0.0/12` with `/16` allocations, resulting in a maximum of `2^(16-12)=16` allocations. No IPv6 pool is allocated by default.
+    - In `/etc/docker/daemon.json`, set `"default-address-pools": [{"base": "10.194.0.0/16", "size": 24}, {"base": "fd34:93c7:6fa8::/48", "size": 64}]` (example).
+    - Note: Address pools are currently broken for IPv6, see [moby/moby#41438](https://github.com/moby/moby/issues/41438).
 1. (Recommended) Change default DNS servers for containers:
     - In `/etc/docker/daemon.json`, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
     - It defaults to `8.8.8.8` and `8.8.4.4` (Google).
@@ -158,6 +159,7 @@ The toolkit is used for running CUDA applications within containers.
     - If you drop/reject forwarded traffic by default (in e.g. IPTables): The IPv6 subnet is completely closed and hosts on the Docker network can't even communicate between themselves (assuming your system filters bridge traffic). To allow intra-network traffic, you need to manually add something like `ip6tables -A FORWARD -i docker0 -o docker0 -j ACCEPT` for each Docker network. To allow for inter-network traffic, you need to manually add rules for that as well.
 - To enable IPv4-like IPTables support (with NAT-ing and firewalling), set `"ip6tables": true` in the daemon config (disabled by default) in the daemon config. If you want to disable NAT masquerading for both IPv4 and IPv6 (while still using the filtering rules provided by `"ip6tables": true`), set `enable_ip_masquerade=false` on individual networks. Disabling NAT masquerading for only IPv6 is not yet possible. MACVLANs with external routers will not get automatically NAT-ed.
 - IPv6-only networks (without IPv4) are not supported. (See [moby/moby #32675](https://github.com/moby/moby/issues/32675), [moby/libnetwork #826](https://github.com/moby/libnetwork/pull/826).)
+- Address pools are currently broken for IPv6, see [moby/moby#41438](https://github.com/moby/moby/issues/41438).
 - IPv6 communication between containers (ICC) on IPv6-enabled _internal_ bridges with IP6Tables enabled is broken, due to IPv6 ND being blocked by the applied IP6Tables rules. On non-internal bridges it works fine. One workaround is to not use IPv6 on internal bridges or to not use internal bridges. (See [libnetwork/issues #2626](https://github.com/moby/libnetwork/issues/2626).)
 - The userland proxy (enabled by default, can be disabled) accepts both IPv4 and IPv6 incoming traffic but uses only IPv4 toward containers, which replaces the IPv6 source address with an internal IPv4 address (I'm not sure which), effectively hiding the real address and may bypass certain defences as it's apparently coming from within the local network. It also has other non-IPv6-related problems. (See [moby/moby #11185](https://github.com/moby/moby/issues/11185), [moby/moby #14856](https://github.com/moby/moby/issues/14856), [moby/moby #17666](https://github.com/moby/moby/issues/17666).)
 
