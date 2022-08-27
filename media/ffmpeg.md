@@ -24,12 +24,26 @@ breadcrumbs:
 - Linux (Arch): `sudo pacman -S ffmpeg v4l-utils`
 - Windows: Download binaries from some FFmpeg mirror site.
 
-## View fTODO
+## General Usage
 
-- View video feed: `ffplay <dev>`
-    - For some reason this typically uses a limited framerate and resolution.
+### Devices
 
-## Examples
+#### Linux
+
+- See the the [Video4Linux 2 (V4L2) page](../v4l2/) for more info about managing devices.
+- List devices: `v4l2-ctl --list-devices`
+    - Cameras often provide multiple `/dev/video<n>` for the same device, only one of them provides the correct video feed.
+- Show current device info: `v4l2-ctl -<n> --all` (for `/dev/video<n>`)
+    - E.g. the pixel format and resolution is what is currently configured for the device.
+
+#### Windows
+
+- View devices: `ffmpeg -list_devices true -f dshow -i dummy`
+
+### View
+
+- View video feed: `ffplay <dev-or-url>`
+    - For some reason this often uses a limited framerate and resolution or high delay for me.
 
 ### Recording
 
@@ -38,7 +52,7 @@ breadcrumbs:
 - Record time lapse at 10x speed without audio:
     - Command: `ffmpeg -i http://localhost:5555/ -filter:v "setpts=0.1*PTS" -an out.mkv`
 
-## Tasks
+## Specific Usage
 
 ### Concatenate Video Files
 

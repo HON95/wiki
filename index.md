@@ -79,6 +79,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [DMX512](/media/dmx512/)
 - [FFmpeg](/media/ffmpeg/)
 - [Media: General](/media/general/)
+- [Network Device Interface (NDI)](/media/ndi/)
 - [Video4Linux 2 (V4L2)](/media/v4l2/)
 - [Video Processing](/media/video-processing/)
 - [Video Ripping](/media/video-ripping/)

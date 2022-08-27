@@ -12,6 +12,10 @@ breadcrumbs:
 - [Command line streaming examples (VideoLAN)](https://wiki.videolan.org/Documentation:Streaming_HowTo/Command_Line_Examples/)
 - [Streaming over IPv6 (VideoLAN)](https://wiki.videolan.org/Documentation:Streaming_HowTo/Streaming_over_IPv6/)
 
+## Installation
+
+- Arch: `sudo pacman -S vlc zvbi`
+
 ## General
 
 - Hide GUI:
@@ -55,11 +59,13 @@ breadcrumbs:
     - Duplicate the feed, e.g. to send it to different destinations.
 - Display (`display`):
     - Show the input stream locally. Can be used to verify that the input or previous parts chain is working as expected. Can be used with `duplicate` to monitor the stream.
-- RTP/RTSP (`rtp`):
-    - Stream as RTP, optionally with RTSP.
-    - Basic example: `rtp{mux=ts,dst=<addr>,port=<port>}`
-    - `dst` must be some destination unicast or multicast address. `port` may be omitted to use the default.
-    - Uses UDP by default.
+- RTP (`rtp`):
+    - Stream as raw RTP to a destination unicast or multicast address.
+    - Example: `rtp{mux=ts,dst=<addr>,port=<port>}`
+    - `dst` must be some destination unicast or multicast address. `port` may be omitted to use the default (typically UDP).
+- RTSP (also `rtp`):
+    - Run a RTSP server, allowing clients to stream over RTP.
+    - Example: `rtp{name=yolo,mux=ts,proto=udp,sdp=rtsp://127.0.0.1:5000/}`
 
 ## Video and Sub Filter Modules
 
@@ -102,15 +108,16 @@ breadcrumbs:
 
 ### Streaming
 
-- Stream webcam with RTP (no RTSP) (Linux):
-    - Command: `cvlc v4l2:///dev/video0:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:rtp{mux=ts,dst=localhost}'`
-    - `dst` is the destination unicast or multicast address to continuously stream to.
-- Stream webcam with HTTP (Linux):
-    - Command: `cvlc v4l2:///dev/video0:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:standard{access=http,mux=ts}' --http-host=localhost --http-port=5555`
+- Stream webcam to RTP (raw stream to target, no RTSP) (no sound) (Linux):
+    - Command: `cvlc v4l2:///dev/video0:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:rtp{mux=ts,dst=127.0.0.1}'`
+- Stream webcam to RTSP (no sound) (Linux):
+    - Command: `cvlc v4l2:///dev/video2:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:rtp{name=yolo,mux=ts,proto=tcp,sdp=rtsp://127.0.0.1:5000/}''`
+- Stream webcam to HTTP (no sound) (Linux):
+    - Command: `cvlc v4l2:///dev/video0:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:standard{access=http,mux=ts}' --http-host=127.0.0.1 --http-port=5555`
     - HTTP streams may be easily used as sources in e.g. OBS.
-- Stream capture card to display and HTTP stream (Windows):
-    - Command: `./vlc -I dummy --dummy-quiet dshow:// --dshow-vdev="Game Capture HD60 S (Video) (#01)" --dshow-adev=none  --dshow-size=1920x1080 --dshow-aspect-ratio=16:9 --dshow-fps=60  --live-caching=10 --sout='#transcode{vcodec=mp2v,acodec=none,sfilter=logo}:duplicate{dst=display,dst=standard{access=http,mux=ts}}' --http-host=localhost --http-port=5555`
-- Record network stream to file (Linux):
+- Stream capture card to display and HTTP stream (no sound) (Windows):
+    - Command: `./vlc -I dummy --dummy-quiet dshow:// --dshow-vdev="Game Capture HD60 S (Video) (#01)" --dshow-adev=none  --dshow-size=1920x1080 --dshow-aspect-ratio=16:9 --dshow-fps=60 --live-caching=10 --sout='#transcode{vcodec=mp2v,acodec=none,sfilter=logo}:duplicate{dst=display,dst=standard{access=http,mux=ts}}' --http-host=127.0.0.1 --http-port=5555`
+- Record network stream to file (no sound) (Linux):
     - Command: `cvlc <input> --sout='#transcode{vcodec=mp4v,acodec=none}:std{access=file,mux=ps,dst=test.mpg}'`
 
 {% include footer.md %}

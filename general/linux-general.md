@@ -400,6 +400,10 @@ Using GPG (from package `gnupg2` on Debian).
 - Monitor interrupts:
     - `irqtop`
     - `watch -n0.1 /proc/interrupts`
+- Monitor USB traffic:
+    - Install usbmon (Arch): `yay -S usbtop`
+    - Load module: `modprobe usbmon`
+    - View live traffic: `sudo usbtop`
 - Run command with high or low CPU priority:
     - Command: `nice -n<n> <cmd>` (`-20 <= n <= 19`)
     - The nice value goes from -20 (highest priority) to 19 (lowest priority), with 0 as the default priority.
