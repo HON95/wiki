@@ -111,7 +111,7 @@ breadcrumbs:
 - Stream webcam to RTP (raw stream to target, no RTSP) (no sound) (Linux):
     - Command: `cvlc v4l2:///dev/video0:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:rtp{mux=ts,dst=127.0.0.1}'`
 - Stream webcam to RTSP (no sound) (Linux):
-    - Command: `cvlc v4l2:///dev/video2:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:rtp{name=yolo,mux=ts,proto=tcp,sdp=rtsp://127.0.0.1:5000/}''`
+    - Command: `cvlc v4l2:///dev/video2:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:rtp{name=yolo,mux=ts,proto=tcp,sdp=rtsp://127.0.0.1:5000/}'`
 - Stream webcam to HTTP (no sound) (Linux):
     - Command: `cvlc v4l2:///dev/video0:width=1920:height=1080:fps=30:chroma=mjpg --live-caching=10 --sout='#transcode{vcodec=mp4v,acodec=none}:standard{access=http,mux=ts}' --http-host=127.0.0.1 --http-port=5555`
     - HTTP streams may be easily used as sources in e.g. OBS.
