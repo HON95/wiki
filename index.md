@@ -78,7 +78,6 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Audio Basics](/media/audio-basics/)
 - [DMX512](/media/dmx512/)
 - [FFmpeg](/media/ffmpeg/)
-- [Media: General](/media/general/)
 - [Image Basics](/media/image-basics/)
 - [Lighting Basics](/media/lighting-basics/)
 - [Network Device Interface (NDI)](/media/ndi/)
