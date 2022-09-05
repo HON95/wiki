@@ -82,6 +82,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Image Basics](/media/image-basics/)
 - [Lighting Basics](/media/lighting-basics/)
 - [Network Device Interface (NDI)](/media/ndi/)
+- [Open Broadcaster Software (OBS)](/media/obs/)
 - [Video4Linux 2 (V4L2)](/media/v4l2/)
 - [Video Basics](/media/video-basics/)
 - [Video Processing](/media/video-processing/)

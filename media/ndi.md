@@ -37,13 +37,32 @@ A network video protocol by NewTek.
 - While NDI supports using multiple NICs and may automatically distribute streams to different NICs, NIC teaming/aggregation is often preferred if possible.
 - The network should be optimized for multicast traffic with IGMP if multicast sending is enabled.
 - Maximum throughputs for streams:
-    - NDI 1920x1080 60P: 132Mb/s
-    - NDI 1920x1080 60P (with alpha): 165Mb/s
-    - NDI 3840*2160 60P: 249Mb/s
-    - NDI 3840*2160 60P (with alpha): 312Mb/s
-    - NDI|HX 1920x1080 60P: 15.9Mb/s
-    - NDI|HX 1920x1080 60P (with alpha): 10.9Mb/s
-    - NDI|HX 3840*2160 60P: 30.0Mb/s
-    - NDI|HX 3840*2160 60P (with alpha): 21.0Mb/s
+    - NDI 1920x1080 60Hz: 132Mb/s
+    - NDI 1920x1080 60Hz (with alpha): 165Mb/s
+    - NDI 3840x2160 60Hz: 249Mb/s
+    - NDI 3840x2160 60Hz (with alpha): 312Mb/s
+    - NDI|HX 1920x1080 60Hz: 15.9Mb/s
+    - NDI|HX 1920x1080 60Hz (H.264 & HEVC): 10.9Mb/s
+    - NDI|HX 3840x2160 60Hz: 30.0Mb/s
+    - NDI|HX 3840x2160 60Hz (H.264 & HEVC): 21.0Mb/s
+
+## Usage
+
+### NDI Tools
+
+- Contains tools for e.g. sending streams, receiving streams, sending test streams, routing streams, bridging streams etc.
+- Contains plugins/extensions to VLC, Premiere Pro and After Effects.
+- For Windows and Mac only.
+- [Download](https://ndi.tv/tools/)
+
+### NDI SDK
+
+- The NDI SDK is used to develop native NDI applications.
+- For targeting Apple, Android, Linux/ARM, Windows etc.
+- [Download](https://ndi.tv/sdk/)
+
+### OBS NDI Plugin
+
+See [OBS](../obs/).
 
 {% include footer.md %}

@@ -5,7 +5,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-- Bands:
+- Bands (typical):
     - Lows (ca. 20Hz-100Hz)
     - Low midrange (ca. 100Hz-1kHz)
     - High midrange (ca. 1kHz-10kHz)
@@ -14,10 +14,11 @@ breadcrumbs:
     - (Note) This is the voltage (and somewhat impedance) inside cables/equipment.
     - Mic level: Output from a microphone. Very weak, requires a preamp.
     - Instrument level: Output from e.g. a guitar. Like mic level but slightly stronger.
-    - Line level (+4dBu): Professional equipment.
-    - Line level (-10dBV): Consumer equipment. Lower than +4dBu. Not to be confused with dB**v**.
+    - Line level (+4dBu): Professional equipment. E.g. for professional audio mixers.
+    - Line level (-10dBV): Consumer equipment. Lower than +4dBu. Not to be confused with dB**v**. E.g. for consumer-grade sound cards in PCs.
     - Speaker level: High-power signal going from an amplifier to a (passive) speaker.
     - Phono: Old, for turntables etc. Much lower voltage than line level. Typically needs a phono preamp/stage with RIAA equalization.
+    - (Note) DI boxes may be used to convert unbalanced non-+4dBu input signals to balanced +4dBu signals.
 - Balance mode:
     - Unbalanced: Ground and signal.
     - Balanced: Ground and hot and cold signal with equal impedance. The cold signal is 0V but not (directly) connected to ground.
@@ -35,8 +36,12 @@ breadcrumbs:
         - Group the ground cables together so no currents get induced into the cables.
         - Use a resistor and/or a ferrite bead to limit AC current.
 - Phantom power:
-    - Applies 48V to XLR3 (or similar) inputs, for powering mics and similar.
-    - Applying this to devices which aren't made for it can break them.
+    - Applies 48V to XLR3 microphone inputs, for powering mics, DI boxes and similar.
+    - 48V is most common, typically labeled as "+48V".
+    - For XLR3 1/4" combo input jacks, typically only the XLR3 part will be applied phantom power to when enabled for the input.
+    - Applying this to devices which aren't made for it can break them (e.g. laptops sound cards and certain old microphone types).
+    - To make sure an input line isn't providing phantom power which would damage equipment on the other end, use the instrument (1/4") input jack (if present, since phantom power is typically only provided on the XLR jack), or a DI box or similar (which would consume the phantom power).
+    - 48V phantom power was first used in Norway in 1966 by NRK, as a hack to supply stable-voltage power from emergency lighting systems to a new type of Neumann-microphones. This was later standardized as the default phantom power voltage.
 - Impedance:
     - Basically resistance but for AC.
 - Proximity effect:
@@ -64,6 +69,13 @@ breadcrumbs:
 - White and pink noise:
     - White noise has equal energy per frequency. The frequency-SPL curve is flat.
     - Pink noise has equal energy per octave. Since each octave has double the frequency of the previous (`log2(freq) = octave`), the frequency-SPL curve is decreasing. This makes pink noise appropriate for equalization for human hearing.
-- Pan law: **TODO**
+- Pan rule (or pan law):
+    - Determines how much louder either side of a stereo channel should get when panned all the way to that side, so that the perceived loudness stays the same.
+    - For an ideal loudspeaker system and ideal room acoustics, the loudness increase from playing an identical signal in both stereo channels should be around 6.02dB SPL, although in reality it's typically closer to 3dB.
+    - Most mixers use a pan rule of 3dB, to account for most realistic situations.
+- Devices:
+    - DI boxes (direct input): Used to convert some unbalanced non-+4dBu input signal (e.g. microphone level, instrument level, consumer-grade line level, or speaker level) to a balanced +4dBu signal. Typically phantom powered, sometimes battery powered. Passive versions also exist, consisting mainly of a transformer to scale the output voltage.
+    - Ground lifts: Used to break ground loops (giving a distinct humming sound), by "lifting" (breaking) the ground in the cable/path and thus breaking the electrical ground loop. Often built into other devices like DI boxes. Often required when the devices are powered from different electrical outlets or similar which could create ground differentials. Should only be used when both sides are actually grounded to avoid risk of electric shock!
+    - Hum destroyers: Typically passive 1:1 transformers with isolated grounds. Basically fancy ground lifts, using transformers in addition to isolating/breaking the ground.
 
 {% include footer.md %}
