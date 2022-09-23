@@ -52,6 +52,7 @@ This applies to cluster using the Slurm workload manager.
 
 ## Miscellanea
 
+- Run `mpicc --show` or `mpic++ --show` show to see the underlying GCC command line including required MPI arguments.
 - `PMI_SIZE` and `PMI_RANK` for PMI2, or `PMIX_RANK` for PMIx (no `PMIX_SIZE`), may be used to get the MPI works size and rank.
 
 {% include footer.md %}
