@@ -11,7 +11,7 @@ breadcrumbs:
 
 - Show partitions: `scontrol show partition [-a]`
 - Show partition/node usage: `sinfo [-a]`
-- Show node capabilities: `sinfo -o "%20N    %8c    %10m    %25f    %25G"` (example)
+- Show node capabilities: `sinfo -o "%20N    %10A    %8c    %10m    %25f    %25G"` (example)
 - Show GUI (requires X11 session/forwarding): `sview`
 - Show accounts for user: `sacctmgr show assoc where user=<username> format=account`
 - Show default account for user: `sacctmgr show user <username> format=defaultaccount`
