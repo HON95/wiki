@@ -46,6 +46,9 @@ breadcrumbs:
     - Basically resistance but for AC.
 - Proximity effect:
     - Increase of low frequency response when an audio source is close to a directional or cardioid microphone.
+- Comb filtering effect:
+    - Caused by adding a delayed version of a signal onto itself, causing interference.
+    - In practice, this e.g. happens depending on spatial position and frequency when playing the same signal from left and right PA columns. The way to avoid this is to *not* play the same signal from both columns, e.g. by sending different mics or instruments to different sides (or different volumes to each side for different instruments/mics to reduce the nulls).
 - Optimal SPL for mixing and listening:
     - Optimal SPL for normal music mixing and listening is around 75 dB SPL (conversational level) for small rooms and 85 dB SPL for large rooms.
     - The reason a specific SPL is optimal is due to equal-loudness contours, where the music actually sounds different at different volumes.
@@ -69,9 +72,11 @@ breadcrumbs:
 - White and pink noise:
     - White noise has equal energy per frequency. The frequency-SPL curve is flat.
     - Pink noise has equal energy per octave. Since each octave has double the frequency of the previous (`log2(freq) = octave`), the frequency-SPL curve is decreasing. This makes pink noise appropriate for equalization for human hearing.
+- Haas panning:
+    - Unlike level panning, which changes the left-right level balance, Haas panning adds a few milliseconds of delay to either channel to give the sound a feeling of directionality.
 - Pan rule (or pan law):
     - Determines how much louder either side of a stereo channel should get when panned all the way to that side, so that the perceived loudness stays the same.
-    - For an ideal loudspeaker system and ideal room acoustics, the loudness increase from playing an identical signal in both stereo channels should be around 6.02dB SPL, although in reality it's typically closer to 3dB.
+    - For an ideal loudspeaker system and ideal room acoustics, the loudness increase from playing an identical signal in both stereo channels should be around 6.02dB SPL (why?), although in reality it's typically closer to 3dB.
     - Most mixers use a pan rule of 3dB, to account for most realistic situations.
 - Devices:
     - DI boxes (direct input): Used to convert some unbalanced non-+4dBu input signal (e.g. microphone level, instrument level, consumer-grade line level, or speaker level) to a balanced +4dBu signal. Typically phantom powered, sometimes battery powered. Passive versions also exist, consisting mainly of a transformer to scale the output voltage.
