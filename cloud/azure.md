@@ -13,17 +13,25 @@ Note: This sets up a simple VM (called `Yolo`) in its own resource group and its
 
 1. Create a resource group (`Yolo-RG`) in the desired region.
     - This will be used by all other resources for the VM.
+    - You may want to put *all* your VMs and resources in the same resource group, in which case you probably want to call it something else.
 1. Create a virtual network (`Yolo-VNet`).
-    - Press "add IPv6 address space" and add a valid and randomized /48 ULA prefix (e.g. from [here](https://simpledns.plus/private-ipv6)), so you'll get internal address spaces for both IPv4 (/16) and IPv6 (/48).
+    - Note: Remove any leading zeroes from IPv6 addresses and zero-compress everything. Azure doesn't like zeroes, apparently.
+    - Press "add IPv6 address space" and add a valid and randomized /48 ULA prefix (e.g. from [here](https://simpledns.plus/private-ipv6)), so you'll get internal address spaces for both IPv4 (/16) and IPv6 (/48). Remove any existing IPv6 prefixes.
     - Remove the "default" subnet and add a new "default" containing the first IPv4 /24 and IPv6 /64 subnets from the address spaces. No NAT gateways or service endpoints are needed.
     - No bastion host, DDoS protection or firewall is needed.
-1. Create public IP addresses (IPv4 and IPv6) (`Yolo-IPv{4,6}`).
+    - If you plan on using a outbound NAT gateway, this can be configured later.
+1. Create public IP addresses for the VM (IPv4 and IPv6) (`Yolo-IPv{4,6}`).
+    - Note: This can be done differently if using a NAT gateway.
     - Select "both IPv4 and IPv6".
     - Use the "standard" SKU.
     - Use static assignment.
     - Use "Microsoft network" routing preference.
     - Use the "zone-redundant" availability zone.
     - Take note of the allocated IPv4 and IPv6 addresses so you can add it to DNS records.
+1. (Optional) Create a NAT gateway for outbound connections (`Yolo-NATGW`):
+    - This is required when using multiple VMs behind a limited number of public IPv4 addresses, which may cause port exhaustion if the VMs create many outbound connections. This is not required if all VMs have dedicated public IPv4 addresses, however.
+    - Create the NAT gateway with TCP idle timeout 10 minutes (e.g.).
+    - **TODO** Add public IPv4/IPv6 addresess/prefixes and select the VNet. I haven't done this since all my VMs use public addresses.
 1. Create a network security group (`Yolo-NSG`).
     - The configuration of this one is _after_ its creation.
     - Add the following inbound rules (depending on the purpose of the VM):
