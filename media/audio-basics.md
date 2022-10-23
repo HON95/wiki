@@ -14,8 +14,8 @@ breadcrumbs:
     - (Note) This is the voltage (and somewhat impedance) inside cables/equipment.
     - Mic level: Output from a microphone. Very weak, requires a preamp.
     - Instrument level: Output from e.g. a guitar. Like mic level but slightly stronger.
-    - Line level (+4dBu): Professional equipment. E.g. for professional audio mixers.
-    - Line level (-10dBV): Consumer equipment. Lower than +4dBu. Not to be confused with dB**v**. E.g. for consumer-grade sound cards in PCs.
+    - "Professional" line level (+4dBu): E.g. for professional audio mixers.
+    - "Consumer" line level (-10dBV): E.g. for consumer-grade sound cards in PCs. Lower than +4dBu. Not to be confused with dB**v**.
     - Speaker level: High-power signal going from an amplifier to a (passive) speaker.
     - Phono: Old, for turntables etc. Much lower voltage than line level. Typically needs a phono preamp/stage with RIAA equalization.
     - (Note) DI boxes may be used to convert unbalanced non-+4dBu input signals to balanced +4dBu signals.
