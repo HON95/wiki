@@ -146,25 +146,31 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
         - `networkctl` should show the interface as anything but "unmanaged".
         - `ip a` should show a routable IP address after a few seconds if using DHCP/RA.
 1. (Optional) Setup wireless networking:
+    1. (Note) Using iwd and systemd-network instead of e.g. wpa_supplicant and Network Manager.
     1. Make sure a driver is loaded for the WLAN device:
         - `ip a` should show a `wlp*` interface for the device.
         - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
     1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
-    1. Create a systemd-network config similar to the one for the wired interface, but add `IgnoreCarrierLoss=5s` to the `Network` section to allow for roaming.
-    1. Install `iwd` to manage wireless connections: `sudo pacman -S iwd`
+    1. Install iwd to manage wireless connections: `sudo pacman -S iwd`
     1. Create the `netdev` group and add yourself to it to control `iwd`:
         1. `sudo groupadd -r netdev`
         1. `sudo usermod -aG netdev <user>`
-        1. `newgrp netdev` (optional)
-        1. **TODO** This group doesn't work. Use `sudo iwctl` until fixed.
-    1. (Optional) Disable periodic scanning when disconnected:
-        1. In `/etc/iwd/main.conf`, in section `Scan`, set `DisablePeriodicScan=true`.
-    1. Enable `iwd`: `sudo systemctl enable --now iwd.service`
-        - **TODO** I think this renamed my WLAN interface. Make sure your systemd-network config is correct.
-    1. Install GUI: `yay -S iwgtk snixembed-git`
-    1. Start the GUI tray icon: `iwgtk -i`
-        - It should normally start automatically using XDG autostart.
-        - **TODO** This doesn't currently work since the group is broken.
+        1. `newgrp netdev` (optional, to avoid relogging in the current shell)
+    1. Configure iwd:
+        - (Note) Config file: `/etc/iwd/main.conf` (INI)
+        - (Optional) Disable periodic scanning when disconnected: In section `[Scan]`, set `DisablePeriodicScan=true`.
+    1. Enable iwd: `sudo systemctl enable --now iwd.service`
+        - If this fails, you may need to reboot.
+    1. Setup GUI and tray icon:
+        1. Install (with snixembed compat library for Polybar): `yay -S iwgtk snixembed-git`
+        1. Start snixembed in i3 config: `exec --no-startup-id snixembed`
+        1. (Optional) Remove the XDG autostart file: `sudo rm /etc/xdg/autostart/iwgtk-indicator.desktop`
+        1. (Optional) Start tray icon in i3 config instead: `exec --no-startup-id iwgtk -i`
+    1. Setup the network config:
+        1. Create a systemd-network config similar to the one for the wired interface, but add `IgnoreCarrierLoss=5s` to the `Network` section to allow for roaming without disconnects.
+        1. Restart systemd-networkd.
+    1. (Example) Test the GUI: `iwgtk`
+        - Might fail until relog/reboot.
     1. (Example) Connect to WPA2/WPA3 personal network (using `iwctl`):
         1. (Note) `iwctl` has extenside tab-complete support.
         1. Enter `iwctl`: `[sudo] iwctl`
@@ -179,7 +185,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
         1. Forget known network: `known-networks <SSID> forget`
     1. (Example) Connect to eduroam:
         1. (Note) See the [wiki](https://wiki.archlinux.org/title/Iwd#eduroam) for more info.
-        1. Go to the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) to download a config script for your organization. Don't run it, it doesn't support `iwd`.
+        1. Go to the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) to download a config script for your organization. **Don't run it**, it doesn't support `iwd`.
         1. Create the config file `/var/lib/iwd/eduroam.8021x` (name-sensitive), containing the template snippet below with values found in the eduroam script.
 1. Setup DNS server(s):
     1. `echo "nameserver 1.1.1.1" >> /etc/resolv.conf` (Cloudflare)
