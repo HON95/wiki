@@ -23,12 +23,12 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [AWS](/cloud/aws/)
 - [Azure](/cloud/azure/)
 
-## Computers
+## Computer Hardware
 
-- [Dell OptiPlex Series](/computers/dell-optiplex/)
-- [Dell PowerEdge Series](/computers/dell-poweredge/)
-- [Dell PowerEdge Series](/computers/hp-proliant/)
-- [PCs](/computers/pcs/)
+- [Dell OptiPlex Series](/computer-hw/dell-optiplex/)
+- [Dell PowerEdge Series](/computer-hw/dell-poweredge/)
+- [Dell PowerEdge Series](/computer-hw/hp-proliant/)
+- [PCs](/computer-hw/pcs/)
 
 ## Crypto
 
@@ -126,13 +126,14 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [WLAN Theory](/networking/wlan/)
 - [Zero Trust Networking](/networking/zero-trust/)
 
-## Personal Computers
+## Personal Devieces
 
-- [PC Applications](/pc/applications/)
-- [Arch (i3)](/pc/arch-i3/)
-- [Kubuntu](/pc/kubuntu/)
-- [Manjaro (KDE)](/pc/manjaro-kde/)
-- [Windows](/pc/windows/)
+- [Android](/personal-device/android/)
+- [PC Applications](/personal-device/applications/)
+- [Arch (i3)](/personal-device/arch-i3/)
+- [Kubuntu](/personal-device/kubuntu/)
+- [Manjaro (KDE)](/personal-device/manjaro-kde/)
+- [Windows](/personal-device/windows/)
 
 ## Power
 

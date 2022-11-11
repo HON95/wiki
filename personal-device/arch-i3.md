@@ -1,7 +1,7 @@
 ---
 title: Arch (i3)
 breadcrumbs:
-- title: Personal Computers
+- title: Personal Devieces
 ---
 {% include header.md %}
 

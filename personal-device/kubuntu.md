@@ -1,7 +1,7 @@
 ---
 title: Kubuntu
 breadcrumbs:
-- title: Personal Computers
+- title: Personal Devieces
 ---
 {% include header.md %}
 
