@@ -10,11 +10,11 @@ breadcrumbs:
     - Low midrange (ca. 100Hz-1kHz)
     - High midrange (ca. 1kHz-10kHz)
     - Highs (ca. 10kHz-20kHz)
-- Desi-Bels (dBs):
-    - Formula: `S = 10 log(S_1 / S_2)`
+- Desibels (dBs):
+    - Formula: `S = 10 log_10(S_1 / S_2)`
     - For comparing signal levels.
     - The base formula and unit is purely for comparisons/changes.
-    - Volt is often used as the quantity measured. In such cases, +6dB represents roughly a doubling in signal, 3dB a doubling in power and 10dB a doubling in perceived loudness.
+    - Volt is often used as the quantity measured. In such cases, **6dB** represents roughly a doubling in signal, **3dB** a doubling in power and **10dB** a doubling in perceived loudness (and negatives achieve halvings instead of doublings).
     - Since a doubling in signal level results in a 6dB SPL change, a 16-bit digital sound representation gives 96dB of dynamic range.
 - Derivative dB-variants:
     - Specific dB-variants exist for measurements in specific use cases, e.g. dBu, dBFS, dB SPL etc.
