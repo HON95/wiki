@@ -91,8 +91,10 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Mount root: `mount /dev/mapper/crypt_root /mnt`
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
-    - Base command and packages: `pacstrap /mnt base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs smartmontools lm_sensors hwloc zsh vim tar zip unzip htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils`
-    - **TODO** Maybe for laptops: `wpa_supplicant networkmanager`
+    - Base command and packages: `pacstrap /mnt <packages>`
+    - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip`
+    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils`
+    - Wireless networking packages: `iwd`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
     1. Check it for errors or duplicates.
@@ -117,7 +119,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Setup GRUB:
     1. Install bootloader: `pacman -S grub efibootmgr`
     1. Enable encrypted disk support: In `/etc/default/grub`, set `GRUB_ENABLE_CRYPTODISK=y`.
-    1. Find the UUID of the encrypted root partition: `blkid`
+    1. Find the `UUID` of the encrypted root partition: `blkid`
     1. Add kernel parameters for the encrypted root (e.g. `/dev/sda2`): In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptdevice=UUID=<device-UUID>:crypt_root root=/dev/mapper/crypt_root`.
     1. Install GRUB to ESP: `grub-install --target=x86_64-efi --efi-directory=/boot/efi`
     1. Generate GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
@@ -242,7 +244,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. (Note) The systemd-resolve config is `/etc/systemd/resolved.conf`.
     1. (Optional) Configure static upstream DNS servers (don't use any provided by DHCP/SLAAC): In the confug, set `DNS=1.1.1.1 2606:4700:4700::1111`.
     1. (Optional) Set the domain/search string: In the config, set `Domains=<domain>`.
-    1. Enable or disable DNSSEC validation (do if the upstream servers don't): In the config, set `DNSSEC=<yes|no>`.
+    1. Enable DNSSEC validation (disable if it causes problems): In the config, set `DNSSEC=yes`.
     1. Enable and start it: `systemctl enable --now systemd-resolved`
     1. Setup `resolv.conf`: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
     1. Check: `curl google.com`
