@@ -92,7 +92,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt <packages>`
-    - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip`
+    - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip`
     - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils`
     - Wireless networking packages: `iwd`
 1. Generate the fstab file:
@@ -147,35 +147,25 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Wait for connectivity.
         - `networkctl` should show the interface as anything but "unmanaged".
         - `ip a` should show a routable IP address after a few seconds if using DHCP/RA.
-1. (Optional) Setup wireless networking:
+1. (Optional) Setup wireless networking (excluding tray icon and GUI):
     1. (Note) Using iwd and systemd-network instead of e.g. wpa_supplicant and Network Manager.
     1. Make sure a driver is loaded for the WLAN device:
         - `ip a` should show a `wlp*` interface for the device.
         - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
     1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
-    1. Install iwd to manage wireless connections: `sudo pacman -S iwd`
-    1. Create the `netdev` group and add yourself to it to control `iwd`:
-        1. `sudo groupadd -r netdev`
-        1. `sudo usermod -aG netdev <user>`
-        1. `newgrp netdev` (optional, to avoid relogging in the current shell)
+    1. Install iwd to manage wireless connections: `pacman -S iwd`
+    1. Create the `netdev` group to allow users to control `iwd`: `groupadd -r netdev`
     1. Configure iwd:
         - (Note) Config file: `/etc/iwd/main.conf` (INI)
-        - (Optional) Disable periodic scanning when disconnected: In section `[Scan]`, set `DisablePeriodicScan=true`.
-    1. Enable iwd: `sudo systemctl enable --now iwd.service`
+        - (Optional) Disable periodic scanning when disconnected: In section `[Scan]`, set `DisablePeriodicScan=yes`.
+    1. Enable iwd: `systemctl enable --now iwd.service`
         - If this fails, you may need to reboot.
-    1. Setup GUI and tray icon:
-        1. Install (with snixembed compat library for Polybar): `yay -S iwgtk snixembed-git`
-        1. Start snixembed in i3 config: `exec --no-startup-id snixembed`
-        1. (Optional) Remove the XDG autostart file: `sudo rm /etc/xdg/autostart/iwgtk-indicator.desktop`
-        1. (Optional) Start tray icon in i3 config instead: `exec --no-startup-id iwgtk -i`
     1. Setup the network config:
         1. Create a systemd-network config similar to the one for the wired interface, but add `IgnoreCarrierLoss=5s` to the `Network` section to allow for roaming without disconnects.
         1. Restart systemd-networkd.
-    1. (Example) Test the GUI: `iwgtk`
-        - Might fail until relog/reboot.
     1. (Example) Connect to WPA2/WPA3 personal network (using `iwctl`):
         1. (Note) `iwctl` has extenside tab-complete support.
-        1. Enter `iwctl`: `[sudo] iwctl`
+        1. Enter `iwctl`: `iwctl`
         1. Show devices: `device list`
         1. Show device info: `device <device> show`
         1. Scan for networks: `station <device> scan`
@@ -195,35 +185,35 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Setup Pacman:
     1. Enable color: In `/etc/pacman.conf`, uncomment `Color`.
     1. Enable the multilib repo (for 32-bit apps): In `/etc/pacman.conf`, uncomment the `[multilib]` section.
-1. Update the system and install useful stuff:
-    1. Upgrade: `pacman -Syu`
+    1. Update/upgrade: `pacman -Syu`
 1. Install display driver and utils:
     - For NVIDIA Maxwell and newer GPUs: `pacman -S nvidia nvidia-utils nvidia-settings`.
-    - (Optional) For NVIDIA CUDA (in addition to driver): `pacman -S cuda`
+        - (Optional) For CUDA: `pacman -S cuda`
     - For newer AMD GPUs: `pacman -S mesa xf86-video-amdgpu vulkan-radeon libva-mesa-driver`
+    - For newer Intel integrated GPUs: `pacman -S mesa lib32-mesa vulkan-intel intel-media-driver`
 1. Avoid having to enter the encryption password twice during boot:
     1. (Note) To avoid entering the password once for GRUB and then for the initramfs, we can create a keyfile and embed it into the initramfs. If the keyfile fails, it will fall back to asking for a password again.
     1. Secure the boot dir (to protect the embedded key in the initramfs): `chmod 700 /boot`
     1. Generate keyfile:
-        1. `mkdir -p /root/.keys/luks && chmod 700 /root/.keys`
-        1. `dd if=/dev/random of=/root/.keys/luks/crypt_root bs=2048 count=1 iflag=fullblock && chmod 600 /root/.keys/luks/crypt_root`
-    1. Add key to LUKS: `cryptsetup luksAddKey /dev/<partition> /root/.keys/luks/crypt_root`
-    1. Add key to initramfs: In `/etc/mkinitcpio.conf`, set `FILES=(/root/.keys/luks/crypt_root)`.
+        1. `(umask 0077; mkdir -p /var/lib/keys/luks)`
+        1. `dd if=/dev/random of=/var/lib/keys/luks/crypt_root bs=2048 count=1 iflag=fullblock`
+    1. Add key to LUKS: `cryptsetup luksAddKey /dev/<partition> /var/lib/keys/luks/crypt_root`
+    1. Add key to initramfs: In `/etc/mkinitcpio.conf`, set `FILES=(/var/lib/keys/luks/crypt_root)`.
     1. Recreate initramfs: `mkinitcpio -P`
-    1. Add extra kernel parameters for the keyfile: In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptkey=rootfs:/root/.keys/luks/crypt_root`.
+    1. Add extra kernel parameters for the keyfile: In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptkey=rootfs:/var/lib/keys/luks/crypt_root`.
     1. Update GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
-    1. Reboot to make sure it works. If not, it should fall back to the extra password prompt.
+    1. (Optional) Reboot to make sure it works. If not, it should fall back to the extra password prompt.
 1. Setup sudo:
     1. (Note) Both the `wheel` and `sudo` groups are commonly used for giving sudo access, but I personally prefer `sudo` since `wheel` _may_ also be used by polkit rules, su (`pam_wheel`), etc.
     1. Install: `pacman -S sudo`
     1. Add the sudo group: `groupadd -r sudo`
-    1. Enter the config: `visudo`
+    1. Enter the config: `EDITOR=vim visudo`
     1. Add line to allow sudo group without password: `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`
-    1. (Note) To give users sudo access through the group: `usermod -aG sudo <user>`
 1. Add a personal admin user:
-    1. Create the user and add it to relevant groups: `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video <user>`
+    1. Create the user and add it to relevant groups: `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video,netdev <user>`
     1. Set its password: `passwd <user>`
-    1. Relog as the new user, both to make sure that it's working and because some next steps require a non-root user.
+    1. (Optional) Relog to test the user.
+1. (Optional) Reboot.
 1. Install yay to access the AUR (as non-root):
     1. (Note) This needs to be done as non-root.
     1. Install requirements: `sudo pacman -S --needed base-devel git`
@@ -235,7 +225,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Enable early numlock (initramfs phase):
     1. Install package: `yay -S mkinitcpio-numlock`
     1. Add `numlock` to the `HOOKS` list in `/etc/mkinitcpio.conf` somewhere before `encrypt` (assuming the system is encrypted) (e.g. before `modconf`).
-    1. Regenerate the initramfs: `mkinitcpio -P`
+    1. Regenerate the initramfs: `sudo mkinitcpio -P`
 1. Tweak the PAM login faillock:
     1. (Note) It applies to password logins only, not SSH keys.
     1. (Note) To unlock a user, run `faillock --reset --user <user>`.
@@ -247,25 +237,24 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Enable DNSSEC validation (disable if it causes problems): In the config, set `DNSSEC=yes`.
     1. Enable and start it: `systemctl enable --now systemd-resolved`
     1. Setup `resolv.conf`: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
-    1. Check: `curl google.com`
+    1. Check: `resolvectl query vg.no` and `curl google.com`
 1. Setup the NTP client (systemd):
     1. (Note) The default server pool is fine.
-    1. Enable: `timedatectl set-ntp true`
+    1. Enable: `sudo timedatectl set-ntp true`
     1. Check: `timedatectl` (see the "synchronized" field)
 1. Setup firewall (IPTables):
     1. Install IPTables: `sudo pacman -S iptables`
     1. Enable the IPTables services: `sudo systemctl enable --now iptables.service ip6tables.service`
-    1. Download my IPTables script (or do it yourself): `curl https://raw.githubusercontent.com/HON95/scripts/master/iptables/iptables.sh -o /etc/iptables/config.sh`
-    1. Make it executable: `chmod +x /etc/iptables/config.sh`
+    1. Download my IPTables script (or do it yourself): `sudo curl https://raw.githubusercontent.com/HON95/scripts/master/iptables/iptables.sh -o /etc/iptables/config.sh`
+    1. Make it executable: `sudo chmod +x /etc/iptables/config.sh`
     1. Modify it.
         - It currently defaults to Debian-specific stuff, so remove those lines and uncomment the Arch-specific lines.
-    1. Run it: `/etc/iptables/config.sh`
+    1. Run it: `sudo /etc/iptables/config.sh`
 1. (Optional) Setup colored man pages:
     1. (Note) Most breaks on wide displays (e.g. UHD), so don't use it if that may be a problem.
     1. Install the most pager: `sudo pacman -S most`
     1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export PAGER=most`
-1. Reboot to reload stuff and make sure nothing broke:
-    1. `sudo reboot`
+1. (Optional) Reboot.
 
 ### Setup the Xorg Display Server
 
@@ -304,10 +293,12 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 ### Setup the i3 Window Manager Basics
 
 1. (Note) Some notes about i3:
-    1. Se [i3](../applications/#i3) for more personal notes about i3.
-    1. Use `Mod+Shift+R` to reload the i3 config.
-    1. Use `Mod+Shift+E` to exit i3.
-    1. `exec_always` config statements will be run again during reload but `exec`statements will only run when starting i3.
+    - Se [i3](../applications/#i3) for more personal notes about i3.
+    - Use `Mod+Shift+R` to reload the i3 config.
+    - Use `Mod+Shift+E` to exit i3.
+    - Use `Mod+Enter` to open a terminal.
+    - Use the terminal to open the web browser, since launchers aren't set up yet.
+    - `exec_always` config statements will be run again during reload but `exec`statements will only run when starting i3.
 1. Setup fonts:
     1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
 1. Install i3:
@@ -317,11 +308,12 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. **TODO** (Note) You may need to have an X server running (e.g. i3 started). The server must be restarted before the new layout is used.
     1. Set: `sudo localectl set-x11-keymap <keymap>` (e.g. `no`)
 1. Install temporary apps to get the remaining of the setup done:
-    1. Install terminal emulator: `sudo pacman -S alacritty`
-    1. Install web browser: `sudo pacman -S firefox`
-1. Test the display server, display manager and window manager and create i3 config:
-    1. (Re)start LightDM/Ly: `sudo systemctl restart lightdm` (or `ly`)
-        - This will pull you directly into the Ly/LightDM TTY (ish), use `Ctrl+Alt+F1` if you need to go back to the previous TTY where you're still logged in to do stuff.
+    1. Install terminal emulator and web browser: `sudo pacman -S alacritty firefox`
+        - If asked, select `pipewire-jack` and `wireplumber`.
+1. Test:
+    1. Reboot.
+    1. Arrive at window manager (LightDM/Ly).
+        - Use `Ctrl+Alt+F1` if you need to enter a terminal TTY (TTY1). Ly/LightDM uses one of the first TTYs, the rest are terminal TTYs.
     1. Select the i3 WM and log in.
     1. If prompted, follow the basic i3 setup wizard:
         1. Generate a new config.
@@ -402,6 +394,14 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 1. Install clipboard manager:
     1. `sudo pacman -S xsel`
     1. **TODO** Fix this. Basic copy-pase doesn't require xsel. Copying from a terminal and closing it erases the copy content, which is undesirable.
+1. (Optional) Setup wireless networking tray icon and GUI:
+    1. (Note) Make sure your user is a member of the `netdev` group to allow controling iwd.
+    1. Install (with snixembed compat library for Polybar): `yay -S iwgtk snixembed-git`
+    1. Start snixembed in i3 config: `exec --no-startup-id snixembed`
+    1. (Optional) Remove the XDG autostart file: `rm /etc/xdg/autostart/iwgtk-indicator.desktop`
+    1. (Optional) Start tray icon in i3 config instead: `exec --no-startup-id iwgtk -i`
+    1. (Example) Test: `iwgtk` (GUI) or `iwgtk -i` (tray icon)
+        - Might fail until relog/reboot.
 1. Setup desktop notifications:
     1. Install the `dunst` server and the `libnotify` support library: `sudo pacman -S dunst libnotify`
     1. (Optional) Modify the config:
