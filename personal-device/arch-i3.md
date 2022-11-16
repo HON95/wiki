@@ -258,7 +258,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 
 ### Setup the Xorg Display Server
 
-1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr`
+1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr xorg-xinput`
 
 ### Setup the LightDM or Ly Display Manager
 
@@ -321,32 +321,48 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 
 ### Setup Post-Window Manager Stuff
 
-1. (Laptop) Fix display brightness buttons:
-    1. (Note) This method assumes you can change the brightness by writing a brightness value to `/sys/class/backlight/<something>/brightness` (initially only as root). Test that first.
-    1. Add udev rules to allow changing the brightness through the `video` group:
-        1. In `/etc/udev/rules.d/backlight.rules`, add the following:
-            ```
-            TODO
-            ```
-        1. Add your user to the group: `sudo usermod -aG video <user>`
-        1. Reboot and try writing to the file without root.
-    1. Add a script/program for changing the brightness:
-        1. (Note) Try using the `xorg-xbacklight` first. If that works, just use that instead of this script. On my AMD-GPU laptop it didn't.
-        1. Create a `.local/bin/backlight` script to control the backlight. See the snippet below for the content.
-    1. Add i3 keybinds:
-        1. In the i3 config, add:
-            ```
-            bindsym XF86MonBrightnessUp exec --no-startup-id $HOME/.local/bin/backlight +20%
-            bindsym XF86MonBrightnessDown exec --no-startup-id $HOME/.local/bin/backlight -20%
-            ```
-1. (Laptop) Setup touchpad (Synaptics):
+1. Setup displays:
+    1. (Note) Using an xrandr script instead of Xorg config due to problems with 144Hz displays and reduced flexibility.
+    1. (Note) DPMS (Display Power Management Signaling) is automatically enabled for all displays.
+    1. Show displays: `xrandr`
+    1. (Example) Temporarily configure displays:
+        1. Main display example: `xrandr --output eDP --auto`
+        1. Rotated right display example: `xrandr --output HDMI-A-0 --right-of eDP --rotate left --auto`
+    1. Create an executable script `$HOME/.config/xrandr.sh` containing the configure commands for all displays. Call it from the i3 config.
+1. (Touchpad) Setup touchpad (Synaptics):
     1. Install driver: `sudo pacman -S libinput`
     1. Add touchpad config to Xorg: In `/etc/X11/xorg.conf.d/70-synaptics.conf`, add the config snippet from below. **TODO**
     1. **TODO** fix this
+1. (Touchscreen) Setup touchscreen:
+    1. (Note) The touchscreen should be mostly plug-and-play, but the mapping might be wrong when using multiple displays.
+    1. Show input devices (should list the touchscreen): `xinput --list`
+    1. (Example) Map the touchscreen to the main display: `xinput --map-to-output 'x' eDP` (for touchscreen `x`)
+1. (Laptop) Fix display brightness buttons:
+    1. (Note) This is an alternative to using the `xorg-xbacklight` package, which didn't work for me neither on AMD nor Intel laptops.
+    1. Try manually changing the backlight:
+        1. Find the backlight controller in `/sys/class/backlight`.
+        1. Find the maximum brightness in `/sys/class/backlight/<x>/max_brightnes`.
+        1. Set a new brightness: `echo 10 | sudo tee /sys/class/backlight/<x>/brightness`
+        1. Verify that it actually changed. If not, this won't work.
+    1. Add udev rules to allow changing the brightness through the `video` group:
+        1. In `/etc/udev/rules.d/backlight.rules`, add the following (template, using `<x>` from above):
+            ```
+            ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="<x>", RUN+="/bin/chgrp video /sys/class/backlight/<x>/brightness"
+            ACTION=="add", SUBSYSTEM=="backlight", KERNEL=="<x>", RUN+="/bin/chmod g+w /sys/class/backlight/<x>/brightness"
+            ```
+        1. (Optional) Reboot and try writing to the file without root.
+    1. Add a script/program for changing the brightness:
+        1. Create a `/usr/local/bin/backlight` script to control the backlight. See the snippet below for the content.
+    1. Add i3 keybinds:
+        1. In the i3 config, add:
+            ```
+            bindsym XF86MonBrightnessUp exec --no-startup-id /usr/local/bin/backlight +20%
+            bindsym XF86MonBrightnessDown exec --no-startup-id /usr/local/bin/backlight -20%
+            ```
 1. (Optional) Setup better console font:
     1. (Note) Using the MesloLGS font. See [this](https://github.com/romkatv/powerlevel10k#fonts) for more info.
-    1. Create the TTF dir: `mkdir -p /usr/share/fonts/TTF`
-    1. Download fonts: `for x in Regular Bold Italic Bold\ Italic; do sudo curl -sSfL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20${x/ /%20}.ttf" -o "/usr/share/fonts/TTF/$x.ttf"; done`.
+    1. Create the TTF dir: `sudo mkdir -p /usr/share/fonts/TTF`
+    1. Download fonts: `for x in Regular Bold Italic Bold\ Italic; do sudo curl -sSfL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20${x/ /%20}.ttf" -o "/usr/share/fonts/TTF/$x.ttf"; done`
 1. Setup the Polybar system bar:
     1. (Note) i3bar, the default i3 system bar, shows workspaces and tray icons. It can include extra info like IP addresses and resource usage using i3status or i3blocks. Polybar is a replacement for i3bar.
     1. Disable i3bar: Comment the whole `bar` section of the i3 config.
@@ -424,27 +440,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Install dex: `sudo pacman -S dex`
     1. Add this to your i3 config: `exec --no-startup-id dex --autostart --environment i3`
     1. (Optional) Test it: `dex --autostart --environment i3 &>/dev/null`
-
-### Setup Xorg Multi-Display and Stuff
-
-1. (Note) The Xorg configs are only read when the server is started, meaning you practically need to restart the system (or relog if using a non-X11 display manager) to apply new configuration.
-1. (Note) Query current Xorg settings: `xset q`
-1. (Optional) Try `xrandr` to get try display layouts and stuff:
-    1. (Note) Changes made using the command line are not persistent.
-    1. Show current config: `xrandr`
-    1. (Note) The resolution with `+` is the oreferred and the one with `*` is the active one.
-    1. Activate/update a display: `xrandr --output <display> [--primary] [--right-of <other-display>] [--rotate left] --auto` (auto selects the preferred resolution and frame rate)
-    1. Deactivate a display: `xrandr --output <display> --off`
-1. Setup persistent layout config:
-    1. See the example Xorg displays config below.
-        - For each connected monitor, create a separate section.
-        - Run `xrandr` to get display IDs.
-        - Make sure to have exactly one display with `Option "Primary" "true"`.
-    1. Alternatively, create a script to set up displays using `xrandr` and call it from the i3 config.
-1. Setup display power management signaling (DPMS):
-    1. See the example Xorg DPMS config below.
-        - For non-CRT displays, the standby, suspend and off modes typically mean the same thing.
-        - DPMS is enabled by default in recent Xorg, but it can be explicitly enabled by setting `Option "DPMS" "true"` in a monitor section.
 
 ### Setup Audio
 
@@ -562,6 +557,7 @@ Name=eno1
 
 [Network]
 DHCP=yes
+IPv6AcceptRA=yes
 
 [DHCP]
 UseDNS=yes
