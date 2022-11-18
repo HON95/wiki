@@ -105,6 +105,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Cisco IOS General](/networking/cisco-ios-general/)
 - [Cisco IOS Routers](/networking/cisco-ios-routers/)
 - [Cisco IOS Switches](/networking/cisco-ios-switches/)
+- [802.1X/dot1x & EAP](/networking/dot1x-eap/)
 - [FS FSOS Switches](/networking/fs-fsos-switches/)
 - [General](/networking/general/)
 - [IPv4 Theory](/networking/ipv4/)
@@ -124,6 +125,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Ubiquiti UniFi Controllers](/networking/ubiquiti-unifi-controllers/)
 - [VyOS](/networking/vyos/)
 - [WLAN Theory](/networking/wlan/)
+- [Wi-Fi Protected Access (WPA)](/networking/wpa/)
 - [Zero Trust Networking](/networking/zero-trust/)
 
 ## Personal Devieces
