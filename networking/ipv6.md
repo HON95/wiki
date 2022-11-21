@@ -7,8 +7,10 @@ breadcrumbs:
 
 ## Resources
 
-- [IETF RFC 8200, STD 86: Internet Protocol, Version 6 (IPv6) Specification](https://datatracker.ietf.org/doc/html/rfc8200)
-- [IETF BCP 204: Host Address Availability Recommendations](https://datatracker.ietf.org/doc/html/rfc7934)
+- [IETF RFC 7381: Enterprise IPv6 Deployment Guidelines](https://datatracker.ietf.org/doc/html/rfc7381)
+- [IETF RFC 7755: SIIT-DC: Stateless IP/ICMP Translation for IPv6 Data Center Environments](https://www.rfc-editor.org/rfc/rfc7755.html)
+- [IETF RFC 7934 (BCP 204): Host Address Availability Recommendations](https://datatracker.ietf.org/doc/html/rfc7934)
+- [IETF RFC 8200 (STD 86): Internet Protocol, Version 6 (IPv6) Specification](https://datatracker.ietf.org/doc/html/rfc8200)
 
 ## Special Prefixes
 
@@ -49,7 +51,7 @@ breadcrumbs:
     - While still needed for the full internet, internal networks may be IPv6-only.
 - Larger address space.
     - Simpler and more structured address plans.
-    - All subnets are /64 regardless of the number of hosts/interfaces.
+    - All subnets are /64 regardless of the number of hosts/interfaces (excluding e.g. /127 linknets).
     - Extra information can be embedded in the address.
 - No need for NAT.
     - Restores end-to-end princible.

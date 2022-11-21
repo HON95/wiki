@@ -1,5 +1,5 @@
 ---
-title: 802.1X/dot1x & EAP
+title: 802.1X & EAP
 breadcrumbs:
 - title: Network
 ---
@@ -13,5 +13,9 @@ breadcrumbs:
 - Both PEAP and MS-CHAPv2 provide mutual authentication and don't transmit the password in plaintext.
 - EAP-TLS requires the client device to have both the provider cert and a provider-provided client cert (with private key).
 - PEAPv0 with EAP-MSCHAPv2 without CA cert validation = bad and crackable.
+
+## 802.1X General
+
+- Aka dot1x.
 
 {% include footer.md %}

@@ -400,5 +400,6 @@ This is my ZSH setup preference, using Oh-My-ZSH with the Powerlevel10k theme an
     1. In `~/.zshrc`, set e.g. `plugins=(git docker docker-compose golang rust)`.
 1. Further customize `~/.zshrc`:
     1. (**TODO** OUTDATED) Example [zshrc](https://github.com/HON95/configs/blob/master/zsh/zshrc).
+    1. Prevent removing trailing slashes from auto-complete: `setopt no_auto_remove_slash`
 
 {% include footer.md %}
