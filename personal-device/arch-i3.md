@@ -450,7 +450,7 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
     1. (Note) ALSA itself is already provided as built-in kernel modules and ALSA drivers will just work.
     1. Install ALSA utils and firmware: `sudo pacman -S alsa-utils alsa-firmware`
 1. Install PipeWire (including WirePlumber and adapters):
-    1. Install: `sudo pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack pipewire-v4l2 wireplumber pavucontrol`
+    1. Install: `sudo pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack pipewire-v4l2 pipewire-x11-bell wireplumber pavucontrol`
     1. Start the PulseAudio adapter (to avoid relogging): `systemctl --user start pipewire-pulse`
 1. Configure inputs and outputs:
     1. Run `pavucontrol` to configure volumes, inputs, outputs and stuff.
