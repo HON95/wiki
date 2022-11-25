@@ -32,9 +32,9 @@ A container technology for HPC.
 
 ### Images
 
-- Pull image from repo:
-    - Will place the image as a SIF file (`<image>_<tag>.sif`) in the current directory.
-    - Docker Hub: `singularity pull docker://<img>:<tag>`
+- Pull image from Docker repo: `singularity pull docker://<img>:<tag>`
+    - Will place the image as a SIF file (`<image>_<tag>.sif`) in the current directory. It seems like this file can be safely deleted without affecting the "cached" version actually used.
+    - If it gives a "'nodev' mount option set on /tmp" warning and then a "No space left on device" error, try this instead: `mkdir yolo && SINGULARITY_TMPDIR="$PWD/yolo" singularity pull docker://<img>:<tag> && rm -rf yolo`
 
 ### GPUs
 
