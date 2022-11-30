@@ -60,18 +60,21 @@ Reserved:
 
 ### Variants
 
-| Names | Supporting Devices\* | Description |
+**TODO**: This needs updating and more compat info.
+
+| Names | Supporting Devices | Description |
 | :--- | :--- | :--- |
-| 802.1D, STP | Cisco IOS, Linksys LGS | Single instance, slow |
-| PVST/PVST+ | Cisco IOS | Like STP, one instance per VLAN |
-| VSTP | Juniper | Compatible with Cisco's PVST |
-| 802.1w, RSTP | Brocade ICX, Linksys LGS | Single instance, fast, backwards-compatible with STP. |
-| Rapid-PVST+ | Cisco IOS | Like PVST+ but based on RSTP |
-| VSTP | Juniper | Based on RSTP, compatible with STP and Cisco's PVST |
-| 802.1s, MSTP, MST | Cisco IOS | Multiple instances with configurable VLAN members |
+| 802.1D, STP | Cisco IOS, Juniper Junos, Linksys LGS | Single instance, slow. |
+| 802.1w, RSTP | Brocade ICX, Linksys LGS | Rapid STP. Single instance, but fast. Backwards-compatible with STP. |
+| 802.1s, MSTP | *TBD* | Multiple STP. Similar to RSTP, but allows creating multiple instances and assigning one or multiple VLANs to them. |
+| PVST | Cisco IOS | Like STP, but one instance per VLAN. |
+| PVST+ | Cisco IOS | Like PVST, but compatible with classical/single-instance STP. |
+| Rapid PVST/PVST+ | Cisco IOS | Like PVST or PVST+, but with rapid convergence times (like RSTP). |
+| RSTP | Juniper Junos | **TODO** |
+| VSTP | Juniper Junos | Based on RSTP, compatible with STP and Cisco's PVST. |
 | 802.1Q |  | ??? |
 
-(\*) Very incomplete list.
+**Note**: Very incomplete list, does not include most MSTP variants.
 
 ### General
 
