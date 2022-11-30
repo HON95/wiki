@@ -105,7 +105,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Cisco IOS General](/networking/cisco-ios-general/)
 - [Cisco IOS Routers](/networking/cisco-ios-routers/)
 - [Cisco IOS Switches](/networking/cisco-ios-switches/)
-- [802.1X/dot1x & EAP](/networking/dot1x-eap/)
+- [802.1X & EAP](/networking/dot1x-eap/)
 - [FS FSOS Switches](/networking/fs-fsos-switches/)
 - [General](/networking/general/)
 - [IPv4 Theory](/networking/ipv4/)
@@ -141,24 +141,24 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 
 - [APC PDUs](/power/apc-pdus/)
 
-## Software Engineering
-
-- [C/C++ Tools](/se/ccpp-tools/)
-- [Clang/LLVM](/se/clang-llvm/)
-- [C++ (Language)](/se/cpp/)
-- [Data Stuff](/se/data/)
-- [Database Management Systems (DBMSes)](/se/dbmses/)
-- [GNU Compiler Collection (GCC)](/se/gcc/)
-- [Go (Language)](/se/go/)
-- [Licensing](/se/licensing/)
-- [OpenMP](/se/openmp/)
-- [Rust (Language)](/se/rust/)
-- [Web Security](/se/web-security/)
-
 ## Services
 
 - [DNS Theory](/services/dns/)
 - [Email Theory](/services/email/)
+
+## Software Engineering
+
+- [C/C++ Tools](/soft-eng/ccpp-tools/)
+- [Clang/LLVM](/soft-eng/clang-llvm/)
+- [C++ (Language)](/soft-eng/cpp/)
+- [Data Stuff](/soft-eng/data/)
+- [Database Management Systems (DBMSes)](/soft-eng/dbmses/)
+- [GNU Compiler Collection (GCC)](/soft-eng/gcc/)
+- [Go (Language)](/soft-eng/go/)
+- [Licensing](/soft-eng/licensing/)
+- [OpenMP](/soft-eng/openmp/)
+- [Rust (Language)](/soft-eng/rust/)
+- [Web Security](/soft-eng/web-security/)
 
 ## Virtualization, Containerization and Orchestration
 
