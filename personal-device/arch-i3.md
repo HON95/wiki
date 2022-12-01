@@ -328,6 +328,9 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. (Example) Temporarily configure displays:
         1. Main display example: `xrandr --output eDP --auto`
         1. Rotated right display example: `xrandr --output HDMI-A-0 --right-of eDP --rotate left --auto`
+        1. Set full RGB range:
+            - Intel GPUs: `xrandr --output DP-1 --set "Broadcast RGB" "Full"`
+            - AMD GPUs: `xrandr --output DP-1 --set "output_csc" "bypass"`
     1. Create an executable script `$HOME/.config/xrandr.sh` containing the configure commands for all displays. Call it from the i3 config.
 1. (Touchpad) Setup touchpad (Synaptics):
     1. Install driver: `sudo pacman -S libinput`
