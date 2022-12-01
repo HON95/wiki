@@ -7,13 +7,6 @@ breadcrumbs:
 
 Hardware and special configuration for Cisco equipment.
 
-### Related Pages
-{:.no_toc}
-
-- [Cisco IOS General](/config/network/cisco-ios-general/)
-- [Cisco IOS Routers](/config/network/cisco-ios-routers/)
-- [Cisco IOS Switches](/config/network/cisco-ios-switches/)
-
 ## ASR General
 
 - The ASR series runs IOS-XE, a more modern and less monolithic version of IOS running on top of Linux. The commands and configurations are mostly the same, but with some significant changes.

@@ -7,17 +7,6 @@ breadcrumbs:
 
 Software configuration for Cisco switches and routers running IOS or derivatives.
 
-### Related Pages
-{:.no_toc}
-
-- [Cisco Hardware](/config/network/cisco-hardware/)
-- [Cisco IOS Routers](/config/network/cisco-ios-routers/)
-- [Cisco IOS Switches](/config/network/cisco-ios-switches/)
-
-## Resources
-
-- [Cisco Config Analysis Tool (CCAT)](https://github.com/cisco-config-analysis-tool/ccat)
-
 ## General Configuration
 
 ### CLI Usage
@@ -132,57 +121,5 @@ Note: Copying to the running config will merge it into it instead of overwriting
     - Entered when loggin into a factory reset unit or when running `setup`.
     - Completely useless, never use it.
 - ROM monitor mode (aka ROMMON).
-
-### Features
-
-#### Port Aggregation Protocol (PAgP)
-
-- Cisco-proprietary protocol for link aggregation.
-- Use LACP instead.
-
-#### Link Aggregation Control Protocol (LACP)
-
-- An IEEE protocol (aka 802.3ad) for link aggregation.
-
-#### UniDirectional Link Detection (UDLD)
-
-- A Cisco-proprietary protocol for detecting unidirectional links.
-- Disabled by default.
-- This can happen when one fiber strand has been damaged but the other one works, which would make it hard to know that the link is down and it could cause STP loops.
-- It's mostly used for fiber ports, but can also be used for copper ports.
-- Use aggressive mode to err-disable the port when it stops receiving periodic UDLD messages.
-- A partial alternative is to use single member LACP.
-- Configuration:
-    - Set message interval: `udld message time <seconds>`
-    - Enable in normal og aggressive mode globally on all fiber ports: `udld <enable|aggressive>`
-    - Enable per-interface: `udld port <enable|aggressive>`
-
-#### Cisco Discovery Protocol (CDP)
-
-- A Cisco-proprietary protocol for interchanging device information to neighbor devices.
-- Use LLDP instead.
-- Disable globally: `no cdp run`
-
-#### Link Layer Discovery Protocol (LLDP)
-
-- An IEEE protocol (defined in IEEE 802.1AB) for interchanging device information to neighbor devices.
-- **TODO** LLDP and LLDP-MED
-
-### Version and Image String Notations
-
-- Version 12 notation (e.g. `12.4(24a)T1`):
-    - Major release (`12`).
-    - Minor release (`4`).
-    - Maintenance number (`24`).
-    - Rebuild number (alt. 1) (`a`).
-    - Train identifier (`T`).
-    - Rebuild number (alt. 2) (`1`).
-- Version 15 notation (e.g. `15.0(1)M1`):
-    - Major release (`15`).
-    - Minor release (`0`).
-    - Feature release (`1`).
-    - Release type (`M`).
-    - Rebuild number (`1`).
-- If it has `K9` in the image name, it has cryptographic features included. Some images don't because of US export laws.
 
 {% include footer.md %}

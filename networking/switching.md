@@ -9,11 +9,13 @@ Layer 2 stuff.
 
 ## Terms
 
-| Cisco IOS | Brocade ICX |
-| - | - |
-| Access port | Untagged port |
-| Trunk port | Tagged port |
-| Native VLAN | Dual mode |
+| Cisco IOS | HP Aruba | Brocade ICX |
+| - | - | - |
+| EtherChannel/Port-channel | Trunk | Link aggregation |
+| Access port | Untgged port | Untagged port |
+| Trunk port | Tagged port | Tagged port |
+| Native VLAN | Primary VLAN | Untagged VLAN (dual mode) |
+| Default VLAN | | Default VLAN
 
 ## Virtual LAN (VLAN)
 
@@ -22,13 +24,14 @@ Layer 2 stuff.
 Valid VID range (802.1Q): 1-4095
 
 Reserved:
-- 0: Special/none.
-- 1: Default native VLAN.
-- 1002: FDDI default (Cisco).
-- 1003: Token ring default (Cisco).
-- 1004: FDDI-Net (Cisco).
-- 1005: TRNET (Cisco).
-- 4095: Implementation use.
+- 0: Null/none (802.1Q).
+- 1: Default (802.1Q).
+- 1002: FDDI default (Cisco, old).
+- 1003: Token ring default (Cisco, old).
+- 1004: FDDI-Net (Cisco, old).
+- 1005: TRNET (Cisco, old).
+- 3968–4047: Internally allocated (Cisco Nexus).
+- 4095: Reserved for implementation use (802.1Q).
 
 ### Q-in-Q
 
