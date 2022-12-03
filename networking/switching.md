@@ -41,8 +41,10 @@ Reserved:
 ### Virtual Extensible LAN (VXLAN)
 
 - RFC 7348.
-- For tunneling VLANs using a UDP overlay network (defauylt port 4789).
-- VXLAN network identifiers (VNIs) (24-bit) identify bridge domains.
+- For tunneling VLANs using a UDP overlay network (default port 4789).
+- Often used in L3 spine-leaf topologies or distant locations.
+- Often paired with BGP EVPN (VXLAN MP-BGP EVPN for short) as the data plane, to manage tunnels and improve BUM handling.
+- 24-bit VXLAN network identifiers (VNIs) identify bridge domains.
 - VXLAN tunnel endpoints (VTEPs) encapsulate/decapsulate the traffic.
 - VTEPs may be either on hosts or on switches/routers as gateways.
 - Address learning:
@@ -53,11 +55,11 @@ Reserved:
     - VNI are mapped to multicast groups (N:1).
     - VTEPs joins the groups for its VNIs using IGMP.
     - BUM traffic is only sent to the relevant groups.
-- BUM handlign using head end replication:
+- BUM handling using head end replication:
     - Requires BGP EVPN.
     - Doesn't scale as well as when using multicast.
     - BUM traffic is replicated and sent as unicast to each VTEP that supports the VNI.
-- Consider using jumbo frames to avoid fragmentation.
+- Consider using jumbo frames on the underlay to avoid fragmentation.
 
 ## Spanning Tree Protocol (STP)
 

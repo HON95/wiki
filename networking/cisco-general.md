@@ -41,14 +41,20 @@ General Cisco networking equipment stuff.
 - Uses conventional network ports.
 - Architecture:
     - A *vPC domain* consists of a *pair* of switches. A switch can only be in a single domain.
-    - A domain must have a unique domain ID, to avoid accidental peerings caused by cabling or configuration errors.
+    - A domain must have a unique domain ID, to avoid accidental vPC/peer-link peerings or vPC/LACP associations caused by cabling or configuration errors.
     - A pair consists of a primary and standby switch, connected with a *keep-alive* link and a high-speed *peer* link.
-        - The keep-alive link is a separate link with a dedicated VRF to isolate it from user traffic and reduce the possibility of a split-brain scenario. It may use the management interface, which already uses its own VRF.
+        - The keep-alive link is a separate link with a dedicated VRF to isolate it from user traffic and reduce the possibility of a split-brain scenario. It may use normal ports (single or LAG), the management interface (which already uses its own VRF) or some OOB L3 network.
         - The peer link forms a backplane for sharing state and vPC forwarding traffic. It may be of a port channel consisting of multiple physical links for redundancy.
     - Important L2 state information such as MAC address tables are shared within the domain.
     - *Member ports* are ports using vPC, i.e. for servers connected to both peers. VLANs on these ports must also be allowed on the peer link. *Orphan ports* are ports not using vPC.
 - Loop avoidance:
     - To prevent duplicate packets, packets received on the peer link destined to a member port will be dropped. Packets destined to orphan ports will however be allowed.
+- L3 considerations:
+    - For when the vPC peers use routed uplinks, e.g. for VXLAN spile-leaf networks.
+    - Both peers must have a separate loopback interface with one primary, unique address and one secondary, shared address. The unique addresses are used for the VXLAN VTEPs. The shared address allows both peers to act as the gateway for the member device, as well as allowing ECMP for the upstream network. This interface will go down if the peer link goes down, together with member ports, to prevent member traffic from being routed through it and to make the VXLAN VTEP go down.
+    - The peers should have a routed VLAN on the peer-link, for local L3 communication. PIM might be required for this SVI. Use `system nve infra-vlans <VID>` (global) to inform VXLAN that this VLAN is local. This allows L3 traffic to pass between peers in case one of the peers has failed uplinks. The L3 peer linknet must be announced into the routing protocol.
+    `peer-gateway` (domain) must be used.
+    - The upstream network might work as a substitute for the dedicated keep-alive link.
 - Protocols:
     - The peers are running dual-active FHRP by default, such that both peers may directly route packets.
     - The LACP systemd ID is based on the domain ID, to make sure it's the same for both peers. The LACP system priority must also match.
@@ -64,10 +70,10 @@ General Cisco networking equipment stuff.
     - `role priority <pri>` (domain) sets the primary priority for the local peer (0 is highest).
     - `peer-keepalive destination <dst-ip> source <src-ip> vrf <vrf>` configures the keep-alive link for some interface with the given linknet IP address within the given VRF.
     - `vpc peer-link` (interface) configures the peer link for the current interface (e.g. a trunk LAG).
-    - `peer-switch` (domain) may be used to share the STP virtual bridge ID and send BPDUs from both peers. This should only be used if the peers together are the roots of all VLAN STP trees.
+    - `peer-switch` (domain) should be used to share the STP virtual bridge ID and send BPDUs from both peers. This should only be used if the peers together are the roots of all VLAN STP trees.
     - `peer-gateway` (domain) may be used to allow one peer to forward packets on behalf of the other peer, in cases where the destination MAC address of a packet targets one peer but the packet is actually received on the other peer (e.g. caused by a bad host implementation). This avoids connectivity issues caused by packets arriving at the wrong peer and the loop avoidance causing them to be dropped by the other peer (when transferred over the peer link). If the peers are meant to participate in routing protocol adjacencies, then `layer3 peer-router` must be enabled immediately afterwards to avoid flapping.
-    - `layer3 peer-router ` (domain) may be used to enable routing protocol adjacencies over vPCs with both peers. On a technical level, this allows forwarding routing packets with a TTL of 1 across the peer link without decrementing it. PIM adjacencies are not supported while using this. Requires `peer-gateway` to be active. `no layer3 peer-router syslog` (domain) may be set to prevent certain pointless `VPC-2-L3_VPC_UNEQUAL_WEIGHT` syslog messages.
-    - `ip arp synchronize` (domain) enables ARP synchronization, to reduce convergence times after faults.
+    - `layer3 peer-router` (domain) may be used to enable routing protocol adjacencies over vPCs with both peers. On a technical level, this allows forwarding routing packets with a TTL of 1 across the peer link without decrementing it. PIM adjacencies are not supported while using this. Requires `peer-gateway` to be active. `no layer3 peer-router syslog` (domain) may be set to prevent certain pointless `VPC-2-L3_VPC_UNEQUAL_WEIGHT` syslog messages.
+    - `ip arp synchronize` and `ipv6 nd synchronize` (domain) enable ARP and ND synchronization, to reduce convergence times after faults.
 - Member port configuration:
     - `vpc <n>` (interface) configures the port-cannel as a member. It must use the same vPC number on both peers. The port-channel ID may be used as the vPC ID for consistency.
 - Operation:

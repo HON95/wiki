@@ -5,7 +5,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Models
+## Topologies
 
 ### Flat
 
@@ -50,7 +50,7 @@ breadcrumbs:
 - Similar to the three-layer hierarchical model, but with the distribution and access layers collapsed.
 - Generally not very useful.
 
-### Spine Leaf
+### Spine-Leaf
 
 - A type of Clos network (non-hierarchical).
 - Two or three layers: Leaf layer, spine layer and an optional super-spine layer (for larger networks).
