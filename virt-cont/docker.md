@@ -7,20 +7,24 @@ breadcrumbs:
 
 ## Setup (Debian)
 
+Main config: `/etc/docker/daemon.json`
+
 1. Install: [Install Docker Engine on Debian (Docker Documentation)](https://docs.docker.com/engine/install/debian/).
 1. (Optional) Setup swap limit:
     - If `docker info` contains `WARNING: No swap limit support`, it's not working properly and should maybe be fixed.
     - Enabling/fixing it incurs a small performance degredation and is optional but recommended.
     - In `/etc/default/grub`, add `cgroup_enable=memory swapaccount=1` to `GRUB_CMDLINE_LINUX`.
     - Run `update-grub` and reboot the system.
+1. Enable experimental features:
+    1. In the config, set `"experimental": true`.
 1. (Recommended) Setup IPv6 firewall and NAT:
     - (Info) By default, Docker does not enable IPv6 for containers and does not add any IP(6)Tables rules for the NAT or filter tables, which you need to take into consideration if you plan to use IPv6 (with or without automatic IPTables rules). See the miscellaneous not below on IPv6 support for more info about its brokenness and the implications of that. Docker _does_ however recently support handling IPv6 subnets similar to IPv4, meaning using NAT masquerading and appropriate firewalling. It doesn't work properly for internal networks, though, as it breaks IPv6 ND. The following steps describe how to set that up, as it is the only working solution IMO. MACVLANs with external routers will not be NAT-ed.
-    - Open `/etc/docker/daemon.json`.
+    - Open the main config.
     - Set `"ipv6": true` to enable IPv6 support at all.
-    - Set `"fixed-cidr-v6": "<prefix/64>"` to some [random](https://simpledns.plus/private-ipv6) (ULA) (if using NAT masq.) or routable (GUA or ULA) (if not using NAT masq.) /64 prefix, to be used by the default bridge.
+    - Set `"fixed-cidr-v6": "fd8c:0c98:8726:3a42::/64"` (example) to some [random](https://simpledns.plus/private-ipv6) (ULA) (if using NAT masq.) or routable (GUA or ULA) (if not using NAT masq.) /64 prefix, to be used by the default bridge.
     - Set `"ip6tables": true` to enable automatic filter and NAT rules through IP6Tables (required for both security and NAT).
 1. (Recommended) Change the cgroup manager to systemd:
-    - In `/etc/docker/daemon.json`, set `"exec-opts": ["native.cgroupdriver=systemd"]`.
+    - In the main config, set `"exec-opts": ["native.cgroupdriver=systemd"]`.
     - It defaults to Docker's own cgroup manager/driver called cgroupfs.
     - systemd (as the init system for most modern Linux systems) also functions as a cgroup manager, and using multiple cgroup managers may cause the system to become unstable under resource pressure.
     - If the system already has existing containers, they should be completely recreated after changing the cgroup manager.
@@ -29,31 +33,54 @@ breadcrumbs:
     - The only other alternatives worth consideration are `btrfs` and `zfs`, if the system is configured for those file systems.
 1. (Recommended) Change IPv4 network pool:
     - (Note) For local networks (not Swarm overlays), it defaults to pool `172.17.0.0/12` with `/16` allocations, resulting in a maximum of `2^(16-12)=16` allocations. No IPv6 pool is allocated by default.
-    - In `/etc/docker/daemon.json`, set `"default-address-pools": [{"base": "10.194.0.0/16", "size": 24}, {"base": "fd34:93c7:6fa8::/48", "size": 64}]` (example).
+    - In the main config, set `"default-address-pools": [{"base": "10.194.0.0/16", "size": 24}, {"base": "fd34:93c7:6fa8::/48", "size": 64}]` (example).
     - Note: Address pools are currently broken for IPv6, see [moby/moby#41438](https://github.com/moby/moby/issues/41438).
 1. (Recommended) Change default DNS servers for containers:
-    - In `/etc/docker/daemon.json`, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
+    - In the main config, set `"dns": ["1.1.1.1", "2606:4700:4700::1111"]` (example using Cloudflare) (3 servers max).
     - It defaults to `8.8.8.8` and `8.8.4.4` (Google).
 1. (Optional) Change the logging options (JSON file driver):
     - It defaults to the JSON file driver with a single file of unlimited size.
-    - Configured globally in `/etc/docker/daemon.json`.
+    - Configured globally in the main config.
     - Set the driver (explicitly): `"log-driver": "json-file"`
-    - Set the max file size: `"log-opts": { "max-size": "10m" }`
-    - Set the max number of files (for log rotation): `"log-opts": { "max-file": "5" }`
-    - Set the compression for rotated files: `"log-opts": { "compress": "enabled" }`
+    - Set the max file size: `"log-opts": {"max-size": "10m"}`
+    - Set the max number of files (for log rotation): `"log-opts": {"max-file": "5"}`
+    - Set the compression for rotated files: `"log-opts": {"compress": "enabled"}`
 1. (Recommended) Disable the userland proxy:
     - It's no longer recommended to keep this enabled, future Docker versions will brobably disable it by default.
     - Disabling it _may_ break your published IPv6 ports, so you may want to test that.
-    - In `/etc/docker/daemon.json`, set `"userland-proxy": false`.
+    - In the main config, set `"userland-proxy": false`.
 1. (Optional) Change the container network MTU:
     - Path MTU discovery seems to be broken in Docker networks, causing connection problems when the upstream network is using an MTU lower than 1500.
-    - In `/etc/docker/daemon.json`, set `"mtu": 1280` (for the minimum for IPv6) or similar.
+    - In the main config, set `"mtu": 1280` (for the minimum for IPv6) or similar.
 1. (Optional) Enable Prometheus metrics endpoint:
     - This only exports internal Docker metrics, not anything about the containers (use cAdvisor for that).
-    - In `/etc/docker/daemon.json`, set `"experimental": true` and `"metrics-addr": "[::]:9323"`.
+    - In the main config, set `"metrics-addr": "[::]:9323"`.
 1. (Optional) Allow non-root users to use Docker:
     - This is not recommended on servers as it effectively grants them root access without sudo.
     - Add them to the `docker` group.
+
+Full main config example:
+
+```json
+{
+    "experimental": true,
+    "exec-opts": ["native.cgroupdriver=systemd"],
+    "ipv6": true,
+    "fixed-cidr-v6": "fd8c:0c98:8726:3a42::/64",
+    "ip6tables": true,
+    "default-address-pools": [
+        {"base": "10.194.0.0/16", "size": 24},
+        {"base": "fd34:93c7:6fa8::/48", "size": 64}
+    ],
+    "dns": ["1.1.1.1", "2606:4700:4700::1111"],
+    "log-driver": "json-file",
+    "log-opts": {"max-size": "10m"},
+    "log-opts": {"compress": "enabled"},
+    "userland-proxy": false,
+    "mtu": 1280,
+    "metrics-addr": "[::]:9323"
+}
+```
 
 ### Docker Compose
 

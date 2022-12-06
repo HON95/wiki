@@ -550,30 +550,40 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
 
 #### systemd-networkd Network Config
 
-File: `/etc/systemd/network/eno1.network` (example)
+File: `/etc/systemd/network/en.network` (example)
 
-This example sets up interface `eno1` (the main interface, see `ip a`) to use DHCPv4 and SLAAC/DHCPv6. The `DHCP` and `IPV6ACCEPTRA` sections are optional, the default values are typically fine.
+This example sets up any interface starting with `en` (i.e. wired Ethernet interfaces) to use DHCPv4 and SLAAC/DHCPv6. The `DHCP` and `IPv6AcceptRA` sections are optional, the default values are typically fine. Use `RouteMetric=2048` for WLAN interfaces to prefer LAN when both are connected. For WLAN interfaces, add `IgnoreCarrierLoss=5s` to the `Network` section to prevent it from going down during short connection issues. Add `LLDP=yes` to capture LLDP info (but not emit it), if you're into that. Use `Anonymize` for DHCPv4 to hide client info and emulate a Windows client (DHCPv6 doesn't send any too revealing info).
 
 ```
 [Match]
-Name=eno1
+Name=en*
 
 [Network]
 DHCP=yes
 IPv6AcceptRA=yes
+IPv6PrivacyExtensions=yes
+#LLDP=yes
 
-[DHCP]
+[DHCPv4]
+RouteMetric=1024
+UseDNS=yes
+UseNTP=no
+UseHostname=no
+UseDomains=yes
+Anonymize=yes
+
+[DHCPv6]
+RouteMetric=1024
 UseDNS=yes
 UseNTP=no
 UseHostname=no
 UseDomains=yes
 
 [IPv6AcceptRA]
+RouteMetric=1024
 UseDNS=yes
 UseDomains=yes
 ```
-
-For WLAN interfaces, add `IgnoreCarrierLoss=5s` to the `Network` section.
 
 #### iwd eduroam Config
 
