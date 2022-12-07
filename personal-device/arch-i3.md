@@ -135,6 +135,16 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. (Optional) Disable the beeper:
     1. Unload the module: `rmmod pcspkr`
     1. Blacklist the module: `echo blacklist pcspkr > /etc/modprobe.d/nobeep.conf`
+1. Setup swap file:
+    1. (Note) You should have enough memory installed to never need swapping, but it's a nice backup to prevent the system from potentially crashing if anything bugs out and eats up too much memory.
+    1. Show if swap is already enabled: `swapon --show`
+    1. Allocate the swap file: `sudo fallocate -l <size> /swapfile` (e.g. 16G)
+    1. Fix the permissions: `sudo chmod 600 /swapfile`
+    1. Setup the swap file: `sudo mkswap /swapfile`
+    1. Activate the swap file: `sudo swapon /swapfile`
+        - Check: `swapon --show`
+    1. Add it to `/etc/fstab` using this line: `/swapfile swap swap defaults 0 0`
+        - Check: `sudo mount -a`
 1. Setup default editor:
     - Create a new profile file: `/etc/profile.d/editor.sh`
     - Set the editor: `export EDITOR=vim`
