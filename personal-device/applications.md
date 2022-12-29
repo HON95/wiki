@@ -7,6 +7,47 @@ breadcrumbs:
 
 *Note: Unless specified, Debian/Ubuntu is assumed.*
 
+## Companion (for Streamdeck) (Linux)
+
+Installed such that its run by logged in users (no system service).
+
+*Using v3 beta.*
+
+### Install
+
+1. Download:
+    1. Download: [Bitfocus downloads](https://user.bitfocus.io/download)
+        - Requires Bitfocus user.
+    1. Unzip: `tar xvf companion-linux-x64*`
+    1. Move to permanent dir: `sudo mv companion-64* /opt/companion`
+    1. Fix owner: `sudo chown -R root:root /opt/companion`
+1. Add group:
+    1. Create group: `sudo groupadd -r companion`
+    1. Add youtself to it: `sudo usermod -aG companion $USER`
+    1. Update your groups for the current shell: `newgrp companion`
+1. Setup udev rules:
+    1. Find your USB vendor and product ID: `lsusb | grep -i elgato` (look for `ID <idVendor>:<idProduct>`)
+    1. Create `/etc/udev/rules.d/50-companion.rules`, containing the udev rules snippet below, with updated `idVendor` and `idProduct` values.
+    1. Reload the udev rules: `sudo udevadm control --reload-rules`
+    1. Connect/reconnect the device.
+    1. Make sure at least one of the `hidraw` devices has the `companion` group: `ls -l /dev/hidraw*`
+1. Manually start the application to make sure it's working:
+    1. Run (as your user): `/opt/companion/companion-launcher`
+    1. A taskbar icon and GUI should appear.
+    1. Make sure it's running on `127.0.0.1` only.
+    1. Open the webpage (`localhost:8000`).
+    1. Go to "surfaces" and check that the device has appeared. Press "rescan USB" if not. Check the output if nothing appears.
+1. Run on login (using i3 WM in my case):
+    1. Add the app to your i3 config: `exec --no-startup-id /opt/companion/companion-launcher >>$HOME/.log/companion.txt 2>>$HOME/.log/companion.err` (create `$HOME/.log`)
+    1. Relog and make sure it started correctly.
+
+**Udev rules (`50-companion.rules`):
+
+```udev
+SUBSYSTEM=="usb", ATTRS{idVendor}=="0fd9", ATTRS{idProduct}=="008f", MODE="0660", GROUP="companion"
+KERNEL=="hidraw*", ATTRS{idVendor}=="0fd9", ATTRS{idProduct}=="008f", MODE="0660", GROUP="companion"
+```
+
 ## Fancontrol (Linux)
 
 **Warning:** Don't use this. The fan controller IDs may change on every reboot which breaks the config.
