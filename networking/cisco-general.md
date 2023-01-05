@@ -123,6 +123,29 @@ General Cisco networking equipment stuff.
 - An IEEE protocol (defined in IEEE 802.1AB) for interchanging device information to neighbor devices.
 - **TODO** LLDP and LLDP-MED
 
+## Other Features
+
+### ACL Based Forwarding (ABF)
+
+- Supported by ASR9000 (certain line cards) (Cisco IOS XR).
+- Basically policy-based ruting (PBR), implemented using ACLs.
+- Supports ingress ACLs only.
+- Nexthops:
+    - Up to 3 alternative nexthops can be specified for a rule using the `nexthop<n> [vrf <vrf>] [{ipv4|ipv6} <nexthop-ip>]` clause.
+    - If multiple nexthops are specified then the first one with an up interface with a connected subnet will be used.
+    - If none of the nexthops are "up" then the normal default route is used instead.
+    - If the `default` clause is specified then the nexthops will only be used in place of a default route and not if any specific routes in the routing table match.
+- VRFs:
+    - Egress VRFs can be specified as part of the nexthop clause.
+    - If no IP address is specified for the nexthop then the routing table of the VRF is used.
+    - If no VRF is specified for a nexthop clause then the default VRF is used.
+- If traffic should be dropped if the first next hops are down, then create a `DROP_VRF` VRF with a null default route and use that as the last nexthop.
+- **TODO** If all nexthops are down, does ut use the normal routing table or specifically the normal default route? Something about null route not working mentioned.
+- An example usage for ABFs is to route RFC 1918 networks heading through a GW toward the Internet into a NAT VRF or separate NAT router.
+- Examples:
+    - Some rule: `10 permit ipv4 any 100.100.100.0/24 nexthop1 VRF RED ipv4 1.1.1.1 nexthop2 VRF BLUE ipv4 2.2.2.2 nexthop3 ipv4 3.3.3.3`
+    - Show that the ABF id programmed correctly in HW: `show access-lists ipv4 abf-1 hardware ingress location 0/1/cpu0`
+
 ## Miscellanea
 
 ### Version and Image String Notations

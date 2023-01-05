@@ -109,6 +109,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [802.1X & EAP](/networking/dot1x-eap/)
 - [FS FSOS Switches](/networking/fs-fsos-switches/)
 - [General](/networking/general/)
+- [HPE/Aruba General](/networking/hpe-aruba-general/)
 - [IPv4 Theory](/networking/ipv4/)
 - [IPv6 Theory](/networking/ipv6/)
 - [Juniper EX3300 Fan Mod](/networking/juniper-ex3300-fanmod/)
