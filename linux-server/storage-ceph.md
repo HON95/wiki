@@ -48,14 +48,25 @@ breadcrumbs:
 
 ## Guidelines
 
-- Use at least 3 nodes.
-- CPU: Metadata servers and partially OSDs are somewhat CPU intensive. Monitors are not.
-- RAM: OSDs should have ~1GB per 1TB storage, even though it typically doesn't use much.
-- Use a replication factor of at least 3/2.
-- Run OSes, OSD data and OSD journals on separate drives.
+- Nodes:
+    - 3+ required (1 can fail), 4+ recommended (2 can fail).
+- CPU:
+    - MDSes an somewhat OSDs are CPU intensive, but managers and monitors are not.
+- RAM:
+    - Depends, check the docs. More is better.
+    - The recommended target for each OSD is 4GB. 2GB may work, but any less may cause extremely low performance.
+- Disks:
+    - Recommended minimum disk size is 1TB.
+    - Behcnmark the drives before using them. See the docs.
 - Network:
     - Use an isolated separete physical network for internal cluster traffic between nodes.
     - Consider using 10G or higher with a spine-leaf topology.
+- Disk setup:
+    - SAS/SATA drives should have 1 OSD each, but NVMe drives may yield better performance if using multiple.
+    - Use a replication factor of at least 3/2.
+    - Run OSes, OSD data and OSD journals on separate drives.
+    - Local, fast SSDs may be used for CephFS metadata pools, while keeping the file contents on the "main pool".
+    - Consider disabling drive HW write caches, it might increase performance with Ceph.
 - Pool PG count:
     - \<5 OSDs: 128
     - 5-10 OSDs: 512
