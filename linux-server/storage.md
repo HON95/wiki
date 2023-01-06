@@ -79,7 +79,7 @@ This is just a suggestion for how to partition your main system drive. Since LVM
 
 For a much simpler setup, just use a big root partition with a separate EFI partition. This complex setup is mainly targeted for old-fashioned, "monolithic" servers.
 
-Note: Hidepid is no longer recommended, but still kept here for reference.
+**Note:** Hidepid is no longer recommended, but still kept here for reference.
 
 | Volume/Mount | Type | Minimal Size (GB) | Mount Options |
 | :--- | :--- | :--- | :--- |
@@ -217,5 +217,10 @@ See [Linux Server Storage: Ceph](../storage-ceph/).
 ### ZFS
 
 See [Linux Server Storage: ZFS](../storage-zfs/).
+
+## Miscellanea
+
+- Check if HW write cache is enabled for disks: `for x in /dev/sd[a-z]; do echo -n "$x: "; sudo smartctl -g wcache $x | grep 'Write cache is:'; done`
+    - While HW write caches typically increase the performance of using the drive, it may reduce it when used with e.g. Ceph.
 
 {% include footer.md %}
