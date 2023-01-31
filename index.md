@@ -107,6 +107,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Cisco IOS Routers](/networking/cisco-ios-routers/)
 - [Cisco IOS Switches](/networking/cisco-ios-switches/)
 - [802.1X & EAP](/networking/dot1x-eap/)
+- [Fibers & Fiber Optics](/networking/fiber/)
 - [FS FSOS Switches](/networking/fs-fsos-switches/)
 - [General](/networking/general/)
 - [IPv4 Theory](/networking/ipv4/)
