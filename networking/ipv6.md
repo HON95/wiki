@@ -35,10 +35,10 @@ breadcrumbs:
 | `fe80::/10` | Link-scoped unicast (non-routable) |
 | `ff00::/8` | Multicast |
 
-### Special addresses
+### Special Addresses
 
-- Subnet-router anycast: The first interface ID in every subnet. (Does not apply to /127 and /128 addresses.)
-- Reserved: The last 128 interface IDs in every subnet. (Does not apply to /127 and /128 addresses.)
+- Subnet-router anycast address: The first interface ID in every subnet (RFC 4291). (Does not apply to /127 and /128 addresses.)
+- Subnet anycast addresses: The last 128 interface IDs in every subnet (RFC 2526). (Does not apply to /127 and /128 addresses.)
 
 ## Advantages over IPv4
 
@@ -51,7 +51,7 @@ breadcrumbs:
     - While still needed for the full internet, internal networks may be IPv6-only.
 - Larger address space.
     - Simpler and more structured address plans.
-    - All subnets are /64 regardless of the number of hosts/interfaces (excluding e.g. /127 linknets).
+    - All subnets are (shoul be) /64 regardless of the number of hosts/interfaces (excluding e.g. /127 linknets).
     - Extra information can be embedded in the address.
 - No need for NAT.
     - Restores end-to-end princible.
@@ -407,10 +407,11 @@ breadcrumbs:
     - Find out how much space you need before requesting it.
     - If you didn't get enough, ask for more.
 - All subnets should be /64.
-    - Event point-to-point links.
-    - Does not focus on address conservation.
-    - Does not require any VLSM.
-    - Required by SLAAC and many other mechanisms and protocols.
+    - Convention where all networks are of the same length, making "/64" synonymous with "network" and makes all networks addressable with exactly 64 bits or 16 hexadecimals (ignoring zero compression).
+    - Address conservation should not be taken into account, there's enough /64 prefixes.
+    - Avoids pointless VLSM, a thing of the past.
+    - Required by e.g. SLAAC and unicast-prefix-based IPv6 multicast addresses (RFC 3306).
+    - Even for point-to-point links (/127) and loopbacks (/128), such that uplinks always use ":0", downlinks always use ":1" and loopbacks always use in ":0".
 - Topology aggregation VS policy/service aggregation.
 - Suggested information to include in the prefix:
     - Region.

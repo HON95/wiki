@@ -41,10 +41,11 @@ Main config: `/etc/docker/daemon.json`
 1. (Optional) Change the logging options (JSON file driver):
     - It defaults to the JSON file driver with a single file of unlimited size.
     - Configured globally in the main config.
-    - Set the driver (explicitly): `"log-driver": "json-file"`
-    - Set the max file size: `"log-opts": {"max-size": "10m"}`
-    - Set the max number of files (for log rotation): `"log-opts": {"max-file": "5"}`
-    - Set the compression for rotated files: `"log-opts": {"compress": "enabled"}`
+    - Set the driver (explicitly): `"log-driver": "json-file"` (default `local`)
+    - Set log options in `"log-opts": {}`:
+        - Set the max number of files (for log rotation): `"max-file": "5"` (default 5)
+        - Set the max file size: `"max-size": "10m"` (default 20m)
+        - Set the compression for rotated files: `"compress": "true"` (default true)
 1. (Recommended) Disable the userland proxy:
     - It's no longer recommended to keep this enabled, future Docker versions will brobably disable it by default.
     - Disabling it _may_ break your published IPv6 ports, so you may want to test that.
