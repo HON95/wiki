@@ -33,7 +33,6 @@ breadcrumbs:
     - When adding new system certs, the upper CA cert should be added as trusted for appropriate services.
     - When adding new nodes with self-signed certs, their certs are automatically added to trusted certs to allow for trusted communication. This does not happen if a cert signed by a trusted cert is already present on the new node.
 - Issued certs:
-    - Should use a CA cert signed by a trusted enterprise or public CA. Uses a trusted CA cert by default.
-
+    - Should use a CA cert signed by a corporate or public CA. (Why not a private CA?) Uses a self-signed CA cert by default.
 
 {% include footer.md %}
