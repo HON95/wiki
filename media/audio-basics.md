@@ -109,7 +109,10 @@ breadcrumbs:
     - Determines how much louder either side of a stereo channel should get when panned all the way to that side, so that the perceived loudness stays the same.
     - For an ideal loudspeaker system and ideal room acoustics, the loudness increase from playing an identical signal in both stereo channels should be around 6dB SPL, although in reality it's typically closer to 3dB to account for more realistic room acoustics.
     - Most mixers use a pan rule of 3dB, to account for most realistic situations.
-- Devices:
+- Aux-fed subs:
+    - **TODO** Find old, general notes.
+    - Allows more control over which instruments/sources are sent to the subs. E.g. vocals and hi-hats should maybe not be sent to subs to avoid sending "junk" like wind and mechanical noise not meant to be heard.
+- Special devices:
     - DI boxes (direct input): Used to convert some unbalanced non-+4dBu input signal (e.g. microphone level, instrument level, consumer-grade line level, or speaker level) to a balanced +4dBu signal. Typically phantom powered, sometimes battery powered. Passive versions also exist, consisting mainly of a transformer to scale the output voltage.
     - Ground lifts: Used to break ground loops (giving a distinct humming sound), by "lifting" (breaking) the ground in the cable/path and thus breaking the electrical ground loop. Often built into other devices like DI boxes. Often required when the devices are powered from different electrical outlets or similar which could create ground differentials. Should only be used when both sides are actually grounded to avoid risk of electric shock!
     - Hum destroyers: Typically passive 1:1 transformers with isolated grounds. Basically fancy ground lifts, using transformers in addition to isolating/breaking the ground.
