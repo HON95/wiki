@@ -77,20 +77,20 @@ iface ens18 inet6 static
 
 ### Manual Configuration
 
-The first steps may be skipped if already configured during installation (i.e. not cloning a template VM).
+The first steps (`(Skip)`) may be skipped if already configured during installation (i.e. not cloning a template VM).
 
-1. Check the system status:
+1. (Skip) Check the system status:
     - Check for failed services: `systemctl --failed`
     - Check that AppArmor is operational: `apparmor_status`
-1. Update the root password: `passwd`
-1. Localization:
+1. (Skip) Update the root password: `passwd`
+1. (Skip) Localization:
     - Check current locale:
         - `locale` should return `en_US.UTF-8`.
         - Update if wrong: `update-locale LANG=en_US.UTF-8`
     - Check the keymap:
         - Try typing characters specific to your keyboard.
         - Update if wrong: `dpkg-reconfigure keyboard-configuration`
-1. Set the hostname:
+1. (Skip) Set the hostname:
     - Set the shortname: `hostnamectl set-hostname <shortname>`
     - Set both the shortname and FQDN in `/etc/hosts` using the following format: `127.0.0.1 <fqdn> <shortname>`
         - If the server has a static IP address, use that instead of 127.0.0.1.
@@ -99,7 +99,7 @@ The first steps may be skipped if already configured during installation (i.e. n
     - (Optional) Enable the `contrib` and `non-free` repo areas: `add-apt-repository <area>`
         - Or by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
     - Update, upgrade and auto-remove.
-    - Install: `sudo ca-certificates software-properties-common man-db tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
+    - Install: `sudo apt install ca-certificates software-properties-common man-db tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
     - (Optional) Install per-user tmpdirs: `libpam-tmpdir`
 1. (Optional) Configure editor (Vim):
     - Update the default editor: `update-alternatives --config editor`
