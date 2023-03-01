@@ -102,7 +102,7 @@ The first steps (`(Skip)`) may be skipped if already configured during installat
     - Install: `sudo apt install ca-certificates software-properties-common man-db tree vim screen curl net-tools dnsutils moreutils htop iotop irqtop nmap`
     - (Optional) Install per-user tmpdirs: `libpam-tmpdir`
 1. (Optional) Configure editor (Vim):
-    - Update the default editor: `update-alternatives --config editor`
+    - Update the default editor: `sudo update-alternatives --config editor`
     - Disable mouse globally: In `/etc/vim/vimrc.local`, add `set mouse=` and `set ttymouse=`.
     - Fix YAML formatting globally: In `/etc/vim/vimrc.local`, add `autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab`.
 1. Add mount options:
@@ -139,7 +139,7 @@ The first steps (`(Skip)`) may be skipped if already configured during installat
 1. Update MOTD:
     - Clear `/etc/motd`, `/etc/issue` and `/etc/issue.net`.
     - (Optional) Add a MOTD script (see below).
-1. (Optional) (Buster) Enable persistent logging:
+1. (10/Buster and older) (Optional) Enable persistent logging:
     - (Note) Persistent logging is the default for Debian 11/Bullseye, but not Debian 10/Buster.
     - In `/etc/systemd/journald.conf`, under `[Journal]`, set `Storage=persistent`.
     - (Note) `auto` (the default) is like `persistent`, but does not automatically create the log directory.
@@ -157,10 +157,10 @@ The first steps (`(Skip)`) may be skipped if already configured during installat
     - Install firmware from other sources (e.g. for some Intel NICs).
     - (Optional) To install all common common firmware and microcode, install `firmware-linux` (or `firmware-linux-free`) (includes e.g. microcode packages).
 1. Setup smartmontools to monitor S.M.A.R.T. disks:
-    1. Install: `apt install smartmontools`
-    1. (Optional) Monitor disk: `smartctl -s on <dev>`.
+    1. Install `smartmontools`.
+    1. (Optional) Monitor disk: `sudo smartctl -s on <dev>`.
 1. Setup lm_sensors to monitor sensors:
-    1. Install: `apt install lm-sensors`
+    1. Install `lm-sensors`.
     1. Run `sensors` to make sure it runs without errors and shows some (default-ish) sensors.
     1. For further configuration (more sensors) and more info, see [Linux Server Applications: lm_sensors](/config/linux-server/applications/#lm_sensors).
 1. Check the performance governor and other frequency settings:
@@ -170,7 +170,7 @@ The first steps (`(Skip)`) may be skipped if already configured during installat
         - Check the current performance governor (e.g. "powersave", "ondemand" or "performance").
     1. (Optional) Temporarily change performance governor: `cpupower frequency-set -g <governor>`
     1. (Optional) Permanently change performance governor: **TODO**
-1. (Optional) Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
+1. (Not recommended) Mask `ctrl-alt-del.target` to disable CTRL+ALT+DEL reboot at the login screen.
 
 #### QEMU Virtual Host
 
@@ -206,8 +206,8 @@ This is the systemd way of doing it and is recommended for more advanced setups 
 Prevent enabled (and potentially untrusted) interfaces from accepting router advertisements and autoconfiguring themselves, unless autoconfiguration is what you intended.
 
 - Using ifupdown: Set `accept_ra 0` for all `inet6` interface sections.
-- Using systemd-networked **TODO**
-- Using firewall: If the network manager can't be set to ignore RAs, just block them. Alternatively, block all ICMPv6 in/out if IPv6 shouldn't be used on this interface at all.
+- Using systemd-networkd: See example config above.
+- Using firewall: If the network manager can't be set to ignore RAs, just block them. Alternatively, block all ICMPv6 in/out if IPv6 shouldn't be used on this interface at all. This is not needed with ifupdown or systemd-networkd.
 
 #### Firewall
 
@@ -219,7 +219,7 @@ Prevent enabled (and potentially untrusted) interfaces from accepting router adv
 
 #### DNS
 
-**TODO** Setup `resolvconf` to prevent automatic `resolv.conf` changes.
+**TODO** Setup `resolvconf` to prevent automatic `resolv.conf` changes?
 
 ##### Using systemd-resolved (Alternative 1)
 
@@ -243,13 +243,13 @@ The simplest alternative, without any local system caching.
 
 #### NTP
 
-This is typically correct by default.
+This is typically correct by default. Note that systemd-timesyncd uses SNTP, where only one NTP server is used.
 
 1. Check the timezome and network time status: `timedatectl`
 1. (Optional) Fix the timezone: `timedatectl set-timezone Europe/Oslo`
 1. (Optional) Fix enable network time: `timedatectl set-ntp true`
 1. Configure `/etc/systemd/timesyncd.conf`:
-    - `NTP` (optional): A space-separated list of NTP servers. The defaults are fine.
+    - `NTP` (optional): A space-separated list of NTP servers. The defaults are fine. Only one is used.
 1. Restart `systemd-timesyncd`.
 1. Check status works: `timedatectl` and `timedatectl timesync-status` (check which servers are used)
 
@@ -266,7 +266,7 @@ Everything here is optional.
 
 - Setup BASH auto-completion:
     - This is typically installed by default.
-    - Install it: `apt install bash-completion`
+    - Install it: `sudo apt install bash-completion`
     - Enable it globally: Find the commented `bash-completion` block in `/etc/bash.bashrc` and uncomment it.
 - Setup Fail2Ban:
     - Recommended for public-facing servers.
@@ -298,7 +298,7 @@ Everything here is optional.
     - Install `debsecan` to get automatically alerted when new vulnerabilities are discovered and security updates are available.
 - Google Authenticator 2FA:
     - Potentially useful for public-facing servers.
-    - **TODO**
+    - **TODO** See old notes.
 - Install and run Lynis security auditor:
     - Install: `apt install lynis`
     - Run: `lynis audit system`
