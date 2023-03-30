@@ -22,7 +22,7 @@ breadcrumbs:
     - L2 switches.
     - Connected to clients.
     - Typically one access-layer VLAN spans one or a few access switches.
-    - Should implement first-hop security.
+    - Should implement first-hop security (MAC, IPv4, IPv6).
     - Connected upstream to distribution switches.
 - Distribution layer:
     - Aka "distro" layer.

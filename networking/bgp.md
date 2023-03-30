@@ -1,5 +1,5 @@
 ---
-title: BGP
+title: Border Gateway Protocol (BGP)
 breadcrumbs:
 - title: Network
 ---
@@ -34,7 +34,7 @@ breadcrumbs:
 - Letter of Agency (aka Letter of Authorization) (LOA) required in certain countries to be allowed to announce a prefix.
 - The "default-free zone" (DFZ) is the set of ASes which have full-ish BGP tables instead of default routes.
 - Communities are used to exchange arbitrary policy information for announcements between peers. See [BGP Well-known Communities (IANA)](https://www.iana.org/assignments/bgp-well-known-communities/bgp-well-known-communities.xhtml).
-- "Soft reconfiguration" is a feature to cache all incoming raw announcements from peers, such that the BGP table can be quickly rebuilt if it needs to be cleared. This reduces the impact of clearing the table and is recommended, but does increase memory usage.
+- "Soft reconfiguration" (IOS: `neighbor <ip> soft-reconfiguration inbound`) is a feature to cache all incoming raw announcements from peers, such that the BGP table can be quickly rebuilt if it needs to be cleared. This reduces the impact of clearing the table and is recommended, but does increase memory usage.
 
 ## Attributes
 
@@ -130,5 +130,9 @@ The path selection algorithm is used to select a single best path for a prefix. 
 - Use and support the graceful shutdown community: The well-known community GRACEFUL_SHUTDOWN (65535:0) is used to signal graceful shutdown of announced routes. Peers should support this community by adding a policy matching the community, which reduces the LOCAL_PREF to 0 or similar such that other paths are preferred and installed in the routing table, to eliminate the impact when the router finally shuts down the session. See RFC 8326.
 - Use and support the blackhole community: The well-known community BLACKHOLE (65535:666) is used to signal that the peer should discard traffic destined toward the prefix. This is mainly intended to stop DDoS attacks targeting the certain prefix before reaching the router advertising it, such that other non-targeted traffic may continue to use the link. While announced prefixes should generally avoid exceeding a certain max length, announcements with the blackhole community are typically allowed to be as specific as possible to narrow down the blackhole addresses (e.g. /32 for IPv4 and /128 for IPv6). See RFC 7999.
 - Add reject-by-default policies to avoid leaking routes when no policies have been explicitly defined.
+- Use Soft reconfiguration (IOS: `neighbor <ip> soft-reconfiguration inbound`) to avoid temporary downtime if the BGP process is restarted or the table is cleared.
+- Which neighbor IP address to normally use:
+    - eBGP: Use the linknet address to avoid having to setup routing for the neighbor loopback address, except for special HA/LB setups.
+    - iBGP: Use the loopback address, which should be learned from an IGP. Set `neighbor <ip> update-source Loopback0` (IOS) to use the loopback address for routing.
 
 {% include footer.md %}

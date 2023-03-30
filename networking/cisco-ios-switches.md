@@ -182,6 +182,16 @@ An example of a full configuration.
 - Show blocked VLANS: `sh span summary`
 - Show STP neighbors: `` **TODO**
 
+### IPv4 First-Hop Security
+
+**TODO**: DHCP snooping, MAC checking etc.
+
+### IPv6 First-Hop Security
+
+- Binding table:
+    - Built by ND and DHCP snooping/gleaning and used by guard features.
+- Destination guard: **TODO**
+
 ## Features
 
 ### VLAN Trunking Protocol (VTP)
@@ -215,7 +225,7 @@ An example of a full configuration.
 
 Hold the "mode" button for 30 seconds or until it says in the console that it's restarting and clearing the configuration.
 
-## Information
+## Miscellanea
 
 ### Ports and VLANs
 

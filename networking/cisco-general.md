@@ -95,13 +95,13 @@ General Cisco networking equipment stuff.
     - `peer-keepalive destination <dst-ip> source <src-ip> vrf <vrf>` configures the keep-alive link for some interface with the given linknet IP address within the given VRF.
     - `vpc peer link` (interface) configures the peer link for the current interface (e.g. a trunk LAG).
     - `auto-recovery` (domain) allows the secondary peer to become primary after the peer link and then the and keep-alive link has gone down (e.g. if the previous primary has gone down, in that degredation order).
-    - `auto-recovery reload-delay <240-3600>` (domain) allows any peer to become primary of the keep-alive link does not come up after a delay (e.g. when booting both devices).
+    - `auto-recovery reload-delay <60-3600>` (domain) allows any peer to become primary of the keep-alive link does not come up after a delay (e.g. when booting both devices).
     - `peer-switch` (domain) should be used to share the STP virtual bridge ID and send BPDUs from both peers. This should only be used if the peers together are the roots of all VLAN STP trees.
     - `peer-gateway` (domain) may be used to allow one peer to forward packets on behalf of the other peer, in cases where the destination MAC address of a packet targets one peer but the packet is actually received on the other peer (e.g. caused by a bad host implementation). This avoids connectivity issues caused by packets arriving at the wrong peer and the loop avoidance causing them to be dropped by the other peer (when transferred over the peer link). If the peers are meant to participate in routing protocol adjacencies, then `layer3 peer-router` must be enabled immediately afterwards to avoid flapping.
     - `layer3 peer-router` (domain) may be used to enable routing protocol adjacencies over vPCs with both peers. On a technical level, this allows forwarding routing packets with a TTL of 1 across the peer link without decrementing it. PIM adjacencies are not supported while using this. Requires `peer-gateway` to be active. `no layer3 peer-router syslog` (domain) may be set to prevent certain pointless `VPC-2-L3_VPC_UNEQUAL_WEIGHT` syslog messages.
     - `ip arp synchronize` and `ipv6 nd synchronize` (domain) enable ARP and ND synchronization, to reduce convergence times after faults.
 - Member port configuration:
-    - `vpc <n>` (interface) configures the port-cannel as a member. It must use the same vPC number on both peers. The port-channel ID may be used as the vPC ID for consistency.
+    - `vpc <n>` (pc-interface) configures the port-cannel as a member. It must use the same vPC number on both peers. The port-channel ID may be used as the vPC ID for consistency. The port must be configured as switchport.
 - Orphan port configuration:
     - `vpc orphan-ports suspend` (interface) brings down the orphan port if the peer link goes down, similar to member ports. Useful e.g. for devices with active-passive uplinks to both peers.
 - Operation:

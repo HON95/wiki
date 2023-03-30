@@ -99,7 +99,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 ## Network
 
 - [Network Architecture](/networking/architecture/)
-- [BGP](/networking/bgp/)
+- [Border Gateway Protocol (BGP)](/networking/bgp/)
 - [Brocade FastIron Switches](/networking/brocade-fastiron-switches/)
 - [Cisco Application Centric Infrastructure (ACI)](/networking/cisco-aci/)
 - [Cisco Digital Network Architecture (DNA)](/networking/cisco-dna/)
@@ -123,6 +123,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Juniper EX Series Switches](/networking/juniper-junos-switches/)
 - [Linksys LGS Switches](/networking/linksys-lgs/)
 - [Linux Switching & Routing](/networking/linux/)
+- [Open Shortest Path First (OSPF)](/networking/ospf/)
 - [pfSense](/networking/pfsense/)
 - [Routing](/networking/routing/)
 - [Network Security](/networking/security/)

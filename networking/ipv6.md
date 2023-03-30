@@ -11,6 +11,7 @@ breadcrumbs:
 - [IETF RFC 7755: SIIT-DC: Stateless IP/ICMP Translation for IPv6 Data Center Environments](https://www.rfc-editor.org/rfc/rfc7755.html)
 - [IETF RFC 7934 (BCP 204): Host Address Availability Recommendations](https://datatracker.ietf.org/doc/html/rfc7934)
 - [IETF RFC 8200 (STD 86): Internet Protocol, Version 6 (IPv6) Specification](https://datatracker.ietf.org/doc/html/rfc8200)
+- [APNIC: IPv6 Best Current Practices](https://www.apnic.net/community/ipv6-program/ipv6-bcp/)
 
 ## Special Prefixes
 
@@ -386,6 +387,8 @@ breadcrumbs:
 
 ## Address Planning and Implementation
 
+***OUTDATED***
+
 - It should support both IPv4 and IPv6.
 - IPv6 should be native.
 - IPv4 may be provided through dual stack or as a service using translation or tunneling mechanisms.
@@ -423,7 +426,12 @@ breadcrumbs:
 - Use provisioning tools (IPAM).
 - Don't mirror the IPv4 address plan with all of its legacy problems.
 - Plan both for now and for the future.
-- Try to subnet on nibble boundaries since a nibble is one hex digit.
+- Subnet on nibble boundaries.
+    - Makes the address plan clearer since one nibble is one hexadecimal digit, so you avoid ranges within a digit and so you probably won't need a subnet calculator with a little bit of practice.
+    - Can *roughly* be compared with subnetting on bit boundaries for IPv4, since the address space is four times larger.
+    - Makes the address plan much more uniform while only sacrificing a small bit of granularity.
+    - Allows for DNS reverse zones that match exactly the prefixes.
+- Leave space for future expansion within prefixes. Avoid having to create multiple prefixes for the same purpose due to lack of space.
 - GUA VS ULA.
 - SLAAC VS DHCP.
     - Android and Chrome OS does not support SLAAC, by design.
@@ -440,5 +448,21 @@ breadcrumbs:
     - Redundancy and load balancing.
     - Potentally lower costs if the ISPs offer different prices for different services.
     - IPv6 supports native multihoming since interfaces can be assigned multiple prefixes from different routers.
+
+### Philip Smith: IPv6 Address Planning (2012)
+
+*IPv6 BCP according to APNIC.*
+
+- Focus on scalability and ease of use/application of security policies and network management.
+- IPv6 allows creating a more flexible address plan.
+- Always segment on nibble boundaries. Makes it simpler.
+- Allocate:
+    - One /48 for the infrastructure and other "units". Allocate separate ones for customer links at each PoP.
+    - Use the first /48 for infrastructure, to keep important addresses short.
+    - Within each /48, allocate all loopbacks within the first /64.
+    - Allocate linknets as separate /64s but address as /127.
+    - Allocate /64s for each LAN.
+- Customers generally get a /48.
+- Design a scheme to keep some structure.
 
 {% include footer.md %}
