@@ -94,7 +94,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Set firewall:
     1. Enter `firewall` section.
     1. Set options:
-        1. `set all-ping enable` (default) (still recommended to add ping rules)
+        1. `set all-ping false` (or keep it if you want to allow all pings)
         1. `set broadcast-ping disable`
         1. `set receive-redirects disable`
         1. `set ipv6-receive-redirects disable`
