@@ -58,7 +58,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. (Alternative) Set to get IPv4 address from DHCPv4: `set address dhcp`
     1. (Alternative) Set to get IPv6 address from DHCPv6: `set address dhcpv6`
     1. (Alternative) Set to get IPv6 address from SLAAC: `set ipv6 address autoconf`
-    1. (Optional) Set firewall policies: `set firewall {local | in | out} <...>`
+    1. (Optional) Apply firewall policies (from global): `set firewall interface {local|in|out} {name|ipv6-name} <...>`
 1. Set default routes: `set protocols static route[6] <0.0.0.0/0|::/0> next-hop <next-hop>` (for IPv4 and IPv6)
 1. (Optional) Setup basic SSHD:
     1. Enable server: `set service ssh`
@@ -102,6 +102,8 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
         1. `set ipv6-src-route disable`
         1. `set log-martians disable`
         1. `set send-redirects disable`
+        1. `set syn-cookies enable`
+        1. `set twa-hazards-protection disable`
     1. Set default policies:
         - `set firewall state-policy established action accept`
         - `set firewall state-policy related action accept`
