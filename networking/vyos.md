@@ -5,14 +5,15 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+A Debian-based router OS, forked from Vyatta. Junos-like CLI.
+
 ## Resources
 
 - [VyOS User Guide](https://docs.vyos.io/)
 
-## Info
+## TODO
 
-- Debian-based.
-- Forked from Vyatta.
+- System optimization: https://support.vyos.io/en/support/solutions/articles/103000096273-system-optimization
 
 ## Installation
 
@@ -80,6 +81,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. Enter interface config: `edit interfaces bonding bond<n>`
     1. Set member interfaces: `set member interface <if>`
     1. Enable LACP: `set mode 802.3ad`
+    1. Set fast: `lacp-rate fast`
     1. Set hashing policy: `set hash-policy layer2+3`
     1. Configure as a normal interface.
 1. (Optional) Set up a VLAN interface:
@@ -109,14 +111,14 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Set banners:
     1. (Note) Newlines must be escaped with `\n`.
     1. Set pre-login banner: `set system login banner pre-login ""` (disable)
-    1. Set post-login banner: `set system logim banner post-login ""`
+    1. Set post-login banner: `set system login banner post-login ""`
 1. (Optional) Tuning (bare metal):
-    - **TODO** This can be done in the interface ethernet configs instead.
-    - See the Linux router notes.
-    - Enable GRO (example): `ethtool -K <if> gro on`
-    - Increase RX/TX buffer sizes (example): `ethtool -G <if> tx 4096 rx 4096`
-    - Enable scatter/gather aka vectored I/O (example): `ethtool -K <if> sg on`
-    - Make any ethtool (e.g.) commands permanent by adding them to `/config/scripts/vyos-postconfig-bootup.script`.
+    - **TODO** This can be done in the interface ethernet configs instead. Except RX/TX buffer sizes? Does VyOS automatically maximize now?
+    - (Old) See the Linux router notes.
+    - (Old) Enable GRO (example): `ethtool -K <if> gro on`
+    - (Old) Increase RX/TX buffer sizes (example): `ethtool -G <if> tx 4096 rx 4096`
+    - (Old) Enable scatter/gather aka vectored I/O (example): `ethtool -K <if> sg on`
+    - (Old) Make any ethtool (e.g.) commands permanent by adding them to `/config/scripts/vyos-postconfig-bootup.script`.
 1. Commit and save: `commit` and `save`.
 
 ## General Configuration
@@ -196,6 +198,6 @@ fi
 
 ## Random Notes
 
-- The DHCPv4 relay requires the interface towards the upstream DHCP server to be included in the relay interfaces. Otherwise the responses from the upstream server will be dropped. The relay is also very bugged at the moment so I'd recommend not using it until it gets fixed. See [T377](https://phabricator.vyos.net/T377) and [T1276](https://phabricator.vyos.net/T1276).
+- The DHCPv4 relay requires the interface towards the upstream DHCP server to be included in the relay interfaces. Otherwise the responses from the upstream server will be dropped. The relay is also very bugged at the moment so I'd almost recommend not using it until it gets fixed. See [T377](https://phabricator.vyos.net/T377) and [T1276](https://phabricator.vyos.net/T1276).
 
 {% include footer.md %}
