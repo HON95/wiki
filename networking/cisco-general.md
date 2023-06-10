@@ -56,7 +56,7 @@ General Cisco networking equipment stuff.
     - The LACP systemd ID is based on the domain ID, to make sure it's the same for both peers. The LACP system priority must also match.
     - STP state is shared. By default, only the primary transmits BPDUs. The `peer-switch` vPC domain option may be used to share the virtual bridge ID and send BPDUs from both peers.
 - Failure scenarios:
-    - If the physical vPC link to one of the peers fails, the other link will handle all traffic (**TODO**: it becomes an orphan?).
+    - If the physical vPC link to one of the peers fails, the other link will handle all traffic (loop avoidance rule no longer applies).
     - If a peer fails, all member traffic will be handled by the other peer. All orphan links on the failed peer will go down. The remaining peer will be the new peimary. If the failed peer comes back online, it will become the secondary.
     - If the peer link fails, all member ports of the secondary peer will be suspended and the other peer will handle all member traffic. Orphan ports are kept up. If then the primary fails, the standby takes over as primary and opens the suspended member ports.
     - If the keep-alive link fails, nothing will happen if roles are already decided and no further failures happen. Peers can sense that the peer link is up, such that forwarding can continue to happen. If then the peer link fails (_after_ the keep-alive link), a split brain scenario will happen where both switches become primaries.
