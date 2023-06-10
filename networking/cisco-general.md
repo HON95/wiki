@@ -49,7 +49,8 @@ General Cisco networking equipment stuff.
     - *Member ports* are ports using vPC, i.e. for servers connected to both peers. VLANs on these ports must also be allowed on the peer link. *Orphan ports* are ports not using vPC.
 - Loop avoidance rule:
     - To prevent duplicate packets, packets received on the peer link destined to a member port will be dropped.
-    - Packets destined to orphan ports will however be allowed.
+    - Packets destined to orphan ports will is not affected and allowed.
+    - If a member port in a vPC on one peer goes down, the member port on the other peer will no longer count as a member port wrt. the loop avoidance rule and traffic from another port will be allowed through the peer-link and the remaining member port.
 - Protocols:
     - The peers are running dual-active FHRP by default, such that both peers may directly route packets.
     - The LACP systemd ID is based on the domain ID, to make sure it's the same for both peers. The LACP system priority must also match.
