@@ -50,16 +50,17 @@ General Cisco networking equipment stuff.
 - Loop avoidance rule:
     - To prevent duplicate packets, packets received on the peer link destined to a member port will be dropped.
     - Packets destined to orphan ports will is not affected and allowed.
-    - If a member port in a vPC on one peer goes down, the member port on the other peer will no longer count as a member port wrt. the loop avoidance rule and traffic from another port will be allowed through the peer-link and the remaining member port.
+    - If a member port in a vPC on one peer goes down, the member port on the other peer will no longer count as a member port wrt. the loop avoidance rule and traffic from another port will be allowed through the peer link and the remaining member port.
 - Protocols:
     - The peers are running dual-active FHRP by default, such that both peers may directly route packets.
     - The LACP systemd ID is based on the domain ID, to make sure it's the same for both peers. The LACP system priority must also match.
     - STP state is shared. By default, only the primary transmits BPDUs. The `peer-switch` vPC domain option may be used to share the virtual bridge ID and send BPDUs from both peers.
 - Failure scenarios:
     - If the physical vPC link to one of the peers fails, the other link will handle all traffic (loop avoidance rule no longer applies).
-    - If a peer fails, all member traffic will be handled by the other peer. All orphan links on the failed peer will go down. The remaining peer will be the new peimary. If the failed peer comes back online, it will become the secondary.
+    - If a peer fails, all member traffic will be handled by the other peer. All orphan links on the failed peer will go down. The remaining peer will become the new primary. If the failed peer comes back online, it will become the secondary.
     - If the peer link fails, all member ports of the secondary peer will be suspended and the other peer will handle all member traffic. Orphan ports are kept up. If then the primary fails, the standby takes over as primary and opens the suspended member ports.
     - If the keep-alive link fails, nothing will happen if roles are already decided and no further failures happen. Peers can sense that the peer link is up, such that forwarding can continue to happen. If then the peer link fails (_after_ the keep-alive link), a split brain scenario will happen where both switches become primaries.
+    - If both peer link and keep-alive link fail at the same time but both peers are still up, a split-brain scenario will form. This might cause loops and other problems and must be avoided, so make sure to have proper redundancy for the peer and keep-alive links.
 - VXLAN considerations:
     - Both peers must have a separate loopback interface with one primary, unique address and one secondary, shared address. The unique addresses are used for the VXLAN VTEPs. The shared address allows both peers to act as the gateway for the member device, as well as allowing ECMP for the upstream network. This interface will go down if the peer link goes down, together with member ports, to prevent member traffic from being routed through it and to make the VXLAN VTEP go down.
     - The peers should have a routed VLAN on the peer link, for local L3 communication. PIM might be required for this SVI. Use `system nve infra-vlans <VID>` (global) to inform VXLAN that this VLAN is local. This allows L3 traffic to pass between peers in case one of the peers has failed uplinks. The L3 peer linknet must be announced into the routing protocol.
