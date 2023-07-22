@@ -37,13 +37,13 @@ Approximate distances for commonly used transceivers/technologies. Actual distan
 
 | Type | Diameter (core/cladding) | Distance (1Gb/s) | Distance (10Gb/s) | Distance (25Gb/s) | Distance (40–100Gb/s) | Distance (400Gb/s) | Cable color (typical) |
 | -   | -          | - | - | - | - | - | - |
-| OS1 | 9/125μm    | 5km (1000BASE‑LX) | - | - | - | - | <span style="background-color: yellow; color: #000;">Yellow</span> |
-| OS2 | 9/125μm    | 5km (1000BASE‑LX) | 10km (10GBASE-LR) | 10km (25GBASE-LR) <br/> 40km (25GBASE-ER) | 10km (100GBASE-LR4) <br/> 40km (100GBASE-ER4) <br/> 80km (100GBASE-ZR) | 500m (400GBASE-DR4) <br/> 2km (400GBASE-FR4) | <span style="background-color: yellow; color: #000;">Yellow</span> |
-| OM1 | 62.5/125μm | 275m (1000BASE‑SX) | 33m (10GBASE-SR) | - | - | - | <span style="background-color: orange; color: #000;">Orange</span>/<span style="background-color: gray; color: #000;">slate</span> |
-| OM2 | 50/125μm   | 550m (1000BASE‑SX) | 82m (10GBASE‑SR) | - | - | - | <span style="background-color: orange; color: #000;">Orange</span> |
-| OM3 | 50/125μm   | - | 300m (10GBASE‑SR) | 70m (25GBASE-SR) | 70 (100GBASE-SR4) | 70m (400GBASE-SR8) | <span style="background-color: #7DF9FF; color: #000;">Aqua</span> |
-| OM4 | 50/125μm   | - | 400m (10GBASE‑SR) | 100m (25GBASE-SR) | 200 (100GBASE-SR4) | 100m (400GBASE-SR8) | <span style="background-color: #7DF9FF; color: #000;">Aqua</span>/<span style="background-color: #FF69B4; color: #000;">violet</span> |
-| OM5 | 50/125μm   | ? | ? | ? | ? | 100m (400GBASE-SR8) | <span style="background-color: #8AE87A; color: #000;">Lime green</span> |
+| OS1 | 9/125μm    | **5km** (1000BASE‑LX) | - | - | - | - | <span style="background-color: yellow; color: #000;">Yellow</span> |
+| OS2 | 9/125μm    | **5km** (1000BASE‑LX) | **10km** (10GBASE-LR) | **10km** (25GBASE-LR) <br/> **40km** (25GBASE-ER) | **2km** (100GBASE-FR1) <br/> **10km** (100GBASE-LR1) <br/> **10km** (100GBASE-LR4) <br/> **40km** (100GBASE-ER4) <br/> **80km** (100GBASE-ZR) | **500m** (400GBASE-DR4) <br/> **2km** (400GBASE-FR4) | <span style="background-color: yellow; color: #000;">Yellow</span> |
+| OM1 | 62.5/125μm | **275m** (1000BASE‑SX) | **33m** (10GBASE-SR) | - | - | - | <span style="background-color: orange; color: #000;">Orange</span>/<span style="background-color: gray; color: #000;">slate</span> |
+| OM2 | 50/125μm   | **550m** (1000BASE‑SX) | **82m** (10GBASE‑SR) | - | - | - | <span style="background-color: orange; color: #000;">Orange</span> |
+| OM3 | 50/125μm   | - | **300m** (10GBASE‑SR) | **70m** (25GBASE-SR) | **70m** (100GBASE-SR4) | **70m** (400GBASE-SR8) | <span style="background-color: #7DF9FF; color: #000;">Aqua</span> |
+| OM4 | 50/125μm   | - | **400m** (10GBASE‑SR) | **100m** (25GBASE-SR) | **200m** (100GBASE-SR4) | **100m** (400GBASE-SR8) | <span style="background-color: #7DF9FF; color: #000;">Aqua</span>/<span style="background-color: #FF69B4; color: #000;">violet</span> |
+| OM5 | 50/125μm   | ? | ? | ? | ? | **100m** (400GBASE-SR8) | <span style="background-color: #8AE87A; color: #000;">Lime green</span> |
 
 ### Trunks
 
