@@ -63,8 +63,8 @@ Approximate distances for commonly used transceivers/technologies. Actual distan
 
 | Cable type | Polish style | Color |
 | - | - | - |
-| SMF | UPC | <span style="background-color: #F5F5DC; color: #000;">Beige</span> |
-| MMF | UPC | <span style="background-color: #3792cb; color: #000;">Blue</span> |
+| MMF | UPC | <span style="background-color: #F5F5DC; color: #000;">Beige</span> |
+| SMF | UPC | <span style="background-color: #3792cb; color: #000;">Blue</span> |
 | SMF | APC | <span style="background-color: #3bb143; color: #000;">Green</span> |
 
 ## Wavelengths
