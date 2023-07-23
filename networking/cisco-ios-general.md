@@ -1,11 +1,15 @@
 ---
-title: Cisco IOS General
+title: Cisco General (IOS/IOS XE)
 breadcrumbs:
 - title: Network
 ---
 {% include header.md %}
 
-Software configuration for Cisco switches and routers running IOS or derivatives.
+### Related Pages
+{:.no_toc}
+
+- [Cisco Routers (IOS/IOS XE)](../cisco-ios-routers/)
+- [Cisco Catalyst Switches (IOS/IOS XE)](../cisco-ios-switches/)
 
 ## General Configuration
 
@@ -64,7 +68,15 @@ Software configuration for Cisco switches and routers running IOS or derivatives
 
 ## Tasks
 
-### Reset Password
+### Safe Shutdown (IOS XE)
+
+This is the recommended way to shut the device down, instead of just pulling the power. It allows the system to clean up file systems and such.
+
+1. Issue the `reload` command in privileged exec mode and confirm.
+1. Wait for the system bootstrap messages.
+1. Remove power.
+
+### Reset Password (Old)
 
 1. Power off the device.
 1. Connect using serial.
@@ -78,7 +90,7 @@ Software configuration for Cisco switches and routers running IOS or derivatives
 1. Enter config mode and run `config-register 0x2102` to re-enable loading the startup config.
 1. Reboot: `reload`
 
-### Copy Config to Device Using SCP
+### Copy Config to Device Using SCP (Old)
 
 Note: Copying to the running config will merge it into it instead of overwriting it. Copying it to the startup config instead and restarting is one way around that.
 
@@ -98,7 +110,7 @@ Note: Copying to the running config will merge it into it instead of overwriting
     - NVRAM: For startup configuration files.
     - RAM: For running config, tables, etc.
 
-### Boot
+### Boot (Old)
 
 - IOS image sources (in default order): Flash, TFTP, ROM.
 - Startup config sources (in default order): NVRAM, TFTP, system configuration dialog.

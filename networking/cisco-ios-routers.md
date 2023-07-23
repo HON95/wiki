@@ -1,20 +1,18 @@
 ---
-title: Cisco IOS Routers
+title: Cisco Routers (IOS/IOS XE)
 breadcrumbs:
 - title: Network
 ---
 {% include header.md %}
 
-Software configuration for Cisco routers running IOS or derivatives.
-
-### Using
+### Related Pages
 {:.no_toc}
 
-- ASR 920 (IOS XE 16.9)
+- [Cisco IOS/IOS XE General](../cisco-ios-general/)
 
 ## Initial Configuration
 
-An example of a full configuration.
+An example of a full configuration for ASR 920 (IOS XE 16.9).
 
 1. Connect using serial.
 1. Don't enter initial configuration (it's useless).

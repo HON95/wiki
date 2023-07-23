@@ -64,6 +64,10 @@ breadcrumbs:
     - Set the minimum processor state to 0% (for power saving with DVFS).
 - Device settings:
     - Disable AutoPlay.
+- Keyboard settings:
+    - Disable the layout change shortcut:
+        1. Go to "Advanced keyboard settings" (settings), "Input language hot keys" (window), "Advanced key settings" (tab).
+        1. Press "change key sequence" for the "between input languages" entry and set both options to "no assigned".
 - Personalisation settings:
     - Enable dark mode.
     - Remove lock screen apps.

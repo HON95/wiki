@@ -1,22 +1,18 @@
 ---
-title: Cisco IOS Switches
+title: Cisco Catalyst Switches (IOS/IOS XE)
 breadcrumbs:
 - title: Network
 ---
 {% include header.md %}
 
-Software configuration for Cisco switches running IOS or derivatives.
-
-### Using
+### Related Pages
 {:.no_toc}
 
-- Catalyst 2950
-- Catalyst 2960G
-- Catalyst 3750G
+- [Cisco IOS/IOS XE General](../cisco-ios-general/)
 
 ## Initial Configuration
 
-An example of a full configuration.
+An example of a full configuration for Catalyst 3750G.
 
 1. Connect using serial.
 1. Don't enter initial configuration (it's useless).
@@ -205,6 +201,18 @@ An example of a full configuration.
 - Cisco-proprietary.
 - It may facilitate switch spoofing and VLAN hopping.
 - Disable it for each switch port: `switchport nonegotiate`
+
+### StackWise
+
+- For switch stacking, creating a single, logical switch.
+- Supported by certain Catalyst switches.
+- Uses special ports and proprietary cables.
+
+### Virtual Switching System (VSS) (aka StackWise Virtual)
+
+- Also called *Stackwise Virtual* as it is an evolution of StackWise.
+- Supported by certain Catalyst switches.
+- Uses conventional network ports.
 
 ## Tasks
 
