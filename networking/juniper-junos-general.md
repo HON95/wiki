@@ -265,10 +265,10 @@ Wait for the "The operating system has halted." text before pulling the power, s
 Note: USB3 drives may not work properly. Use USB2 drives.
 
 1. Make sure the drive is formatted as FAT32 (MS-DOS) (or something else supported).
-1. Don't insert it in the Juniper device yet.
+1. To make it easier to find the device path in Junos, don't insert the USB drive just yet.
 1. Show current storage devices: `ls -l /dev/da*`
 1. Insert the drive. It should print a few lines to the console.
-1. Show current storage devices again and find the new device.
+1. Show current storage devices again and find the new device. (`df -h` may also be used to see which one is in use.)
 1. Mount it: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0` (arbitrary path)
 1. Check that it's mounted properly: `ls -l /var/tmp/usb0`
 1. Do stuff with it.
@@ -302,10 +302,11 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 
 1. Format the USB drive using FAT32.
 1. Copy the software file to the drive.
+1. Enter shell mode on the device (`root@:RE:0%`).
 1. Mount the USB drive:
     - TL;DR: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0`
     - See [mount a USB drive](#mount-a-usb-drive).
-1. Check the contents: `ls -l /var/tmp/usb0`
+1. Check the contents (copy the filename for later): `ls -l /var/tmp/usb0`
 1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
 1. Unmount and remove the USB drive: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
 1. Enter op CLI: `cli`
@@ -313,18 +314,19 @@ Note: USB3 drives may not work properly. Use USB2 drives.
     - If it complains about certificate problems, consider disabling verification using `no-validate`.
     - It will reboot before and after.
     - It may produce some insignificant errors in the process (commands not found etc.).
-1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions`
-1. Verify that the current Junos version for the primary partition is correct: `show system snapshot media internal`
+1. Log into the CLI.
+1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions` (should show `Currently booted from: active`)
+1. Verify that the current Junos version for the *primary* partition is correct: `show system snapshot media internal`
 1. Copy to the alternate root partition (may take several minutes): `request system snapshot slice alternate`
 1. Verify that the primary and backup partitions have the same Junos version: `show system snapshot media internal`
     - If it fails, wait a bit and try again. The copy may still be happening.
 
-If the method above did not work, try this instead to completely format and flash the device.
+If the method above did not work, try this instead to completely format and flash the device:
 
 1. Prepare the USB drive like above.
 1. Connect using a serial cable.
 1. When the device is booting, press space at the right time.
-1. Format and flash: `install --format file:///jinstall-whatever.tgz`
+1. Format and flash: `install --format file:///jinstall-whatever.tgz` (where you placed it previously)
 
 ### Copy the Active Root Partition
 
