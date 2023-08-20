@@ -283,8 +283,8 @@ Note: USB3 drives may not work properly. Use USB2 drives.
     1. Create a system backup first (unless virtualized boxes like EX4600 and QFX5100): `request system snapshot` (maybe with `slice alternate`, depending on the box)
     1. Show system backups: `show system snapshot [media internal]`
 1. Get the file: `file copy <remote-url> /var/tmp/`
-        - If it says it ran out of space, add `staging-directory /var/tmp`. By defaults it's buffered on the root partition, which may be tiny.
-        - Alternatively, copy the file _into_ the device from the remote device.
+    - If it says it ran out of space, add `staging-directory /var/tmp`. By defaults it's buffered on the root partition, which may be tiny.
+    - Alternatively, copy the file _into_ the device from the remote device.
 1. Prepare upgrade: `request system software add <file>`
     - Add `no-copy unlink` to remove the file afterwards, typically for systems with little free space.
     - Add `reboot` to automatically reboot and begin upgrade.
@@ -300,8 +300,7 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 
 #### Using a USB Drive
 
-1. Format the USB drive using FAT32.
-1. Copy the software file to the drive.
+1. Format the USB drive using FAT32 and copy the software file to the drive.
 1. Enter shell mode on the device (`root@:RE:0%`).
 1. Mount the USB drive:
     - TL;DR: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0`
