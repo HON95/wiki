@@ -5,7 +5,7 @@
 
 set -eu -o pipefail
 
-index_file="index.md"
+index_file="${1:-index.md}"
 
 # Create/clean the current index file
 > "$index_file"

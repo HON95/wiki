@@ -7,16 +7,55 @@ breadcrumbs:
 
 ## General
 
-- A zero-trust network fabric for "user networks" (not DC), part of Cisco DNA (often called DNA/SDA).
-- Uses mainly Catalyst switches (plus WLCs and APs).
-- Managed by DNA Center (DNAC), depends heavily on Identity Services Engine (ISE).
+- A full zero-trust network solution for campus/enterprise networks (not DC), part of Cisco DNA (often called DNA/SDA).
+- Relation to Cisco Application Centric Infrastructure (ACI): [Cisco ACI: Relation to SDA](../cisco-aci/#relation-to-sda)
 
-### Relation to ACI
+## Links
 
-See [Cisco ACI: Relation to SDA](../cisco-aci/#relation-to-sda).
+- [Cisco: Cisco SD-Access Solution Design Guide (CVD)](https://www.cisco.com/c/en/us/td/docs/solutions/CVD/Campus/cisco-sda-design-guide.html)
+- [Cisco: Cisco SD-Access Multicast](https://community.cisco.com/t5/networking-knowledge-base/cisco-sd-access-multicast/ta-p/4068110)
 
-## Theory
+## Architecture
 
-**TODO**
+- SDA consists of Cisco DNA Center (DNAC) and a campus fabric of DNAC-managed switches. Cisco ISE is also used for policy design and operation.
+- Segmentation:
+    - Virtual networks (VNs) (using VRFs) are used for macro-segmentation and secure/scalable group tags (SGTs) (using VXLAN tagging) are used for micro-segmentation.
+    - SGACLs are used to control traffic flows between SGTs. By default, all SGTs within a VN are allowed to communicate with eachother.
+    - Traffic flows between VNs, as well as to/from external services, should go through a firewall appliance for greater visibility and control. Alternatively, a core *fusion router* may be used to leak select traffic between VNs and to/from external services.
+- Underlay:
+    - Mainly Catalyst 9000 series switches running standard IOS-XE, managed by DNAC.
+    - Catalyst WLCs and APs are integrated for wireless access, with direct traffic handoff from APs to switches for unified wired and wireless access.
+    - Uses IS-IS routing and PaGP port channels.
+    - Only fully supports IPv4, IPv6 support is still lacking.
+- Overlay:
+    - Planes:
+        - Control plane: Uses LISP for locating client MAC and IPv4/IPv6 addresses, with control nodes as LISP map servers.
+        - Data plane: Uses VXLAN for tunneling overlay traffic between fabric nodes.
+        - Policy plane: Uses Cisco TrustSec (CTS) for policy decisions, like SGTs and SGACLs (using Cisco ISE).
+    - Supports IPv4-only, dual-stack and (partially?) IPv6-only.
+    - Anycast gateways are used at all edge nodes for all VNs.
+- Multicast:
+    - For IPv4, it supports head-end replication and native multicast.
+    - For IPv6, it only supports head-end replication. (TODO: Does enabling native multicast for a site kill IPv6 multicast or will it continue to use head-end replication?)
+    - *Head-end replication* runs completely in the overlay and makes edge devices duplicate multicast streams into unicast streams to each edge device with subscribers. This causes increased overhead.
+    - *Native multicast* tunnels multicast streams inside underlay multicast packets and avoids head-end replication.
+    - Supports sources both inside and outside the fabric.
+    - Protocol Independent Multicast (PIM) with both any-source multicast (ASM) and any-source multicast (ASM) is supported in both the underlay and overlay.
+    - For details around rendezvous points (RPs) and stuff, see the design guide.
+- Layer 2 flooding:
+    - Traffic that is normally flooded in traditionally networks, like ARP, is often handled differently and more efficiently in overlay technologies like SDA.
+    - For ARP, the edge looks up the RLOC/address for the edge the target resides at and then the ARP is unicasted to that edge.
+    - Certain applications and protocols requires layer 2 flooding to work. To address this, *layer 2 flooding* may be enabled for a VN/site (if really needed).
+    - Examples of applications/protocols/devices requiring layer 2 flooding:
+        - Dumb clients requiring broadcast ARP to wake up.
+        - Local Wake-on-LAN (WoL).
+        - Certain building management systems.
+        - ???
+    - This will reduce scalability of the VN/site, so it should only be used for /24 subnets and smaller.
+    - The L2 flooding is mapped to a dedicated multicast group in the underlay, using PIM-ASM. All edge nodes active for the VN must listen to this group.
+- mDNS/Bonjour:
+    - **TODO**
+    - https://www.cisco.com/c/en/us/solutions/collateral/enterprise-networks/sd-access-wired-wireless-dg.html
+    - https://www.cisco.com/c/en/us/td/docs/cloud-systems-management/network-automation-and-management/dna-center/1-3-1-0/user_guide/cisco_dna_service_for_bonjour/b_cisco-dna-service-for-bonjour_user_guide_2-1-2/m_deploying-wide-area-bonjour-for-cisco-sd-access-network.html
 
 {% include footer.md %}
