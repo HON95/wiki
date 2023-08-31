@@ -516,7 +516,6 @@ Note: Anonymous users have read-only access to everything.
     - Specifying `-noout -text` prints the data as formatted text instead of raw Base64.
 - Inspect certificate file: `openssl x509 -in <cert-file> [-inform der] -noout -text`
 - Inspect online certificate: `openssl s_client -connect <site>:443 </dev/null | openssl x509 -noout -text`
-- Inspect encrypted PKCS: TODO
 - Decrypt and unpack PKCS:
     - Extract the cert chain (specify enc. pass. again): `openssl pkcs12 -in hon.wtf.pfx -clcerts -nokeys -out hon.wtf.key-2023`
     - Extract key file (specify the enc. pass. and a new tmp. key pass.): `openssl pkcs12 -in hon.wtf.pfx -nocerts -out hon.wtf.key.enc-2023`
