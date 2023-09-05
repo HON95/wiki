@@ -15,6 +15,12 @@ breadcrumbs:
 - [Cisco: Cisco SD-Access Solution Design Guide (CVD)](https://www.cisco.com/c/en/us/td/docs/solutions/CVD/Campus/cisco-sda-design-guide.html)
 - [Cisco: Cisco SD-Access Multicast](https://community.cisco.com/t5/networking-knowledge-base/cisco-sd-access-multicast/ta-p/4068110)
 
+## Useful Commands
+
+### Wireless
+
+- Show AP tunnels for edge: `show access-tunnel summary`
+
 ## Architecture
 
 - SDA consists of Cisco DNA Center (DNAC) and a campus fabric of DNAC-managed switches. Cisco ISE is also used for policy design and operation.
@@ -74,11 +80,25 @@ breadcrumbs:
 - ARP:
     - When a client sends an ARP request, the edge looks up the RLOC/address for the edge the target resides at and then the ARP is unicasted to that edge.
 - DHCP relays:
-    - Edge nodes use anycast gateways for all VLANs active on the switch. DHCP relays with option 82 are used to serve DHCP, using an external DHCP server.
-    - **TODO**
+    - Edge nodes function as DHCP relays for all their active VLANs.
+    - The anycast gateway address is used as source/giaddr withing the overlay.
+    - Option 82 is used to identify the specific edge switch and port.
+    - For the reply to reach the correct edge switch (as the anycast gateway may be active on multiple edges), the site border uses the option 82 value to find the correct edge node.
 - mDNS and Bonjour:
     - **TODO**
     - https://www.cisco.com/c/en/us/solutions/collateral/enterprise-networks/sd-access-wired-wireless-dg.html
     - https://www.cisco.com/c/en/us/td/docs/cloud-systems-management/network-automation-and-management/dna-center/1-3-1-0/user_guide/cisco_dna_service_for_bonjour/b_cisco-dna-service-for-bonjour_user_guide_2-1-2/m_deploying-wide-area-bonjour-for-cisco-sd-access-network.html
+
+### Locator ID Separation Protocol (LISP)
+
+- LISP is used for overlay routing in SDA, mapping overlay host overlay addresses (*endpoint identifiers* (EIDs) or informally "IDs") to underlay edge addresses (*record locator* (RLOC) or informally "locations").
+- LISP is also an encapsulation protocol, however, SDA uses VXLAN instead for that purpose.
+- The *control plane node* within a site is one or more nodes running a LISP mapping server, which the other site fabric nodes update and query. It may e.g. be colocated with the border node(s).
+- It uses on-demand mapping for when a node needs to know where an ID is located, which works well for roaming hosts while keeping routing tables just as big as needed.
+
+### Virtual Extensible LAN (VXLAN)
+
+- VXLAN is used as the overlay encapsulation method in SDA, with LISP as the control plane.
+- A VXLAN extension called *Group Policy Option* (VXLAN-GPO) is used to carry the SGT within the VXLAN header, thus allowing inline VN and SGT tagging of all traffic within the fabric.
 
 {% include footer.md %}

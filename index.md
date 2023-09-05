@@ -102,7 +102,6 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Border Gateway Protocol (BGP)](/networking/bgp/)
 - [Brocade FastIron Switches](/networking/brocade-fastiron-switches/)
 - [Cisco Application Centric Infrastructure (ACI)](/networking/cisco-aci/)
-- [Cisco Digital Network Architecture (DNA)](/networking/cisco-dna/)
 - [Cisco General](/networking/cisco-general/)
 - [Cisco General (IOS/IOS XE)](/networking/cisco-ios-general/)
 - [Cisco Routers (IOS/IOS XE)](/networking/cisco-ios-routers/)
