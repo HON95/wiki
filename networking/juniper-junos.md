@@ -1,5 +1,5 @@
 ---
-title: Juniper Junos General
+title: Juniper Junos OS
 breadcrumbs:
 - title: Network
 ---
@@ -7,27 +7,13 @@ breadcrumbs:
 
 **TODO** Clean up, reorganize and add remaining stuff.
 
-### Related Pages
-{:.no_toc}
-
-- [Juniper Hardware](/config/network/juniper-hardware/)
-- [Juniper Junos Switches](/config/network/juniper-junos-switches/)
-
 ## Resources
 
 - [Day One Books (Juniper)](https://www.juniper.net/documentation/jnbooks/us/en/day-one-books)
 - [Introduction to Junos – Part 1 (Packet Pushers)](https://packetpushers.net/introduction-to-junos-part-1/)
 - [Introduction to Junos – Part 2 (Packet Pushers)](https://packetpushers.net/introduction-to-junos-part-2/)
 
-## Info
-
-### Junos OS
-
-- Based on FreeBSD.
-- Used on all Juniper devices.
-- Juniper's next-generation OS "Junos OS evolved" (not "Junos OS") is based on Linux.
-
-## General
+## Commands
 
 **TODO** Cleanup.
 
@@ -192,17 +178,20 @@ Change active partition and reboot: `request system reboot slice alternate media
 The devices should be shut down gracefully instead of just pulling the power.
 This will prevent corrupting the file system.
 
+- Oper CLI: `request system <halt|power-off> [local|all-members|member <member-id>]`
 - Shell: `shutdown -h now` or `halt`
-- Op mode: `request system <halt|power-off> [local|all-members|member <member-id>]`
 
 Wait for the "The operating system has halted." text before pulling the power, so that system processess are stopped and disks are synchronized. The system LED turning off and the LCD saying "HALTING..." does *not* mean that the halting process is finished yet.
 
 ### Basics
 
+**TODO** Move this.
+
 - Shut down or reboot: `request system <halt|reboot> [local|all-members]`
     - For `halt`, it will print "please press any key to reboot" when halted.
-- Erase all configuration and data: `request system zeroize`
-- Show alarms: `show chassis alarms`
+- Erase all data and reboot fresh: `request system zeroize`
+- Show system alarms: `show system alarms`
+- Show chassis alarms: `show chassis alarms`
 - Show temperatures and fan speeds: `show chassis environment`
 - Show routing engine usage: `show chassis routing-engine`
 - Show effective configuration (with inheritance): `show <configuration> | display inheritance`
@@ -231,18 +220,24 @@ Wait for the "The operating system has halted." text before pulling the power, s
 - Show event type info: `help syslog SNMP_TRAP_LINK_DOWN` (op mode) (example)
 - Show available event attributes: Use ?-completion.
 - Show log: `run show log escript.log | last`
+- From docs: "Do not use the change-configuration statement to modify the configuration on dual Routing Engine devices that have nonstop active routing (NSR) enabled, because both Routing Engines might attempt to acquire a lock on the configuration database, which can cause the commit to fail."
 
-#### Info
+### Rescue Configuration
 
-- "Do not use the change-configuration statement to modify the configuration on dual Routing Engine devices that have nonstop active routing (NSR) enabled, because both Routing Engines might attempt to acquire a lock on the configuration database, which can cause the commit to fail." (From docs.)
+- The rescue config is a copy of the config, which the system attempts to use if it detects that the main config is corrupted.
+- Show rescue config: `show system configuration rescue`
+- Save current committed config to rescue config: `request system configuration rescue save`
+- Delete rescue config: `request system configuration rescue delete`
+- Rollback to rescue config (config CLI): `rollback rescue`
 
-### Version Names
+### Autorecovery
 
-- Example: `20.4R3-S1.3`
-- Format: `<year>.<quarter>[R1-3][-S...]`
-- There is one main release for each quarter of the year. They may be a bit delayed such that they don't perfectly match the quarter.
-- There are zero to three extra cumulative bug patches `R1` to `R3` (no suffix for the initial release).
-- Each release is supported for exactly three years.
+- Only supported in some dual-partitioned with newer software.
+- Shows an alarm about autorecovery information that needs to be saved if you're configuring a factory reset device.
+- Autorecovery stores disk partitioning, configuration and license information, then validates and attempts to recover corruption during bootup.
+- Show autorecovery status: `show system autorecovery state`
+- Save autorecovery info: `request system autorecovery state save`
+- Delete autorecovery info: `request system autorecovery state clear`
 
 ### Miscellanea
 
@@ -276,56 +271,65 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 
 ### Upgrade Junos
 
-#### Normal Method
+#### Preparations
 
-1. Backup and clean system:
-    1. Remove old files: `request system storage cleanup [dry-run]` (`dry-run` to show only)
-    1. Create a system backup first (unless virtualized boxes like EX4600 and QFX5100): `request system snapshot` (maybe with `slice alternate`, depending on the box)
-    1. Show system backups: `show system snapshot [media internal]`
-1. Get the file: `file copy <remote-url> /var/tmp/`
-    - If it says it ran out of space, add `staging-directory /var/tmp`. By defaults it's buffered on the root partition, which may be tiny.
-    - Alternatively, copy the file _into_ the device from the remote device.
-1. Prepare upgrade: `request system software add <file>`
-    - Add `no-copy unlink` to remove the file afterwards, typically for systems with little free space.
-    - Add `reboot` to automatically reboot and begin upgrade.
-1. Reboot and start upgrade (may take around 5 minutes): `request system reboot`
-1. **TODO** See further instructions in USB drive method section for verification and copying to alternate partition.
-
+1. (Info) For virtualized boxes like EX4600 and QFX5100, skip the `request system snapshot` parts as these boxes are built differently wrt. Junos.
+1. Cleanup old files: `request system storage cleanup`
+1. Make sure the alternate partition contains a working copy of the current version: See [Validate the Upgrade](#validate-the-upgrade).
 
 #### ISSU and NSSU
+
+Just info, no instructions here yet.
 
 - ISSU and NSSU may be used for upgrade without downtime, if the hardware supports it.
 - If using redundant hardware (multiple REs), ISSU may be use for upgrades without downtime. It may blow up. One RE is upgraded first, then state is transferred to it. Normal upgrade with reboot is more reliable if short downtime is acceptable.
 - If using virtual chassis, NSSU is similar to ISSU but doesn't require the same kind of state sync.
 
-#### Using a USB Drive
+#### Normal Method
 
-1. Format the USB drive using FAT32 and copy the software file to the drive.
-1. Enter shell mode on the device (`root@:RE:0%`).
-1. Mount the USB drive:
-    - TL;DR: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0`
-    - See [mount a USB drive](#mount-a-usb-drive).
-1. Check the contents (copy the filename for later): `ls -l /var/tmp/usb0`
-1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
-1. Unmount and remove the USB drive: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
-1. Enter op CLI: `cli`
-1. Install: `request system software add <file> no-copy reboot`
+This should work in most cases and is the most streamlined version, but may not work for major version hops and stuff.
+
+1. If downloading from a remote location:
+    1. Get the file: `file copy <remote-url> /var/tmp/`
+        - If it says it ran out of space, add `staging-directory /var/tmp`. By defaults it's buffered on the root partition, which may be tiny.
+        - Alternatively, copy the file _into_ the device from the remote device, using SCP.
+1. If copying from a USB drive:
+    1. Format the USB drive using FAT32 and copy the software file to the drive.
+    1. Enter shell mode on the device: `start shell user root`
+    1. Mount the USB drive:
+        - See [mount a USB drive](#mount-a-usb-drive).
+        - TL;DR: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0`
+    1. Check the contents (copy the filename for later): `ls -l /var/tmp/usb0`
+    1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
+    1. Unmount and remove the USB drive: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
+    1. Enter operational CLI again: `exit` (or `cli`)
+1. Prepare upgrade: `request system software add <file> no-copy unlink reboot`
+    - `no-copy` prevents copying the file first (in this case it's pointless).
+    - `unlink` removes the file afterwards.
+    - `reboot` reboots the device, so the upgrade can begin when booting.
     - If it complains about certificate problems, consider disabling verification using `no-validate`.
-    - It will reboot before and after.
     - It may produce some insignificant errors in the process (commands not found etc.).
+1. See [Validate the Upgrade](#validate-the-upgrade).
+
+#### From the Loader
+
+If the normal method did not work, try this instead.
+
+1. Copy the file to the device disk using the "normal" USB method.
+1. Connect using a serial cable.
+1. Reboot the device and press space at the right time to enter the loader.
+    - The message to wait for should look like this: `Hit [Enter] to boot immediately, or space bar for command prompt.`
+1. Format and flash: `install --format file:///jinstall-whatever.tgz` (where you placed it previously)
+1. See [Validate the Upgrade](#validate-the-upgrade).
+
+#### Validate the Upgrade
+
 1. Log into the CLI.
 1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions` (should show `Currently booted from: active`)
 1. Verify that the current Junos version for the *primary* partition is correct: `show system snapshot media internal`
 1. Copy to the alternate root partition (may take several minutes): `request system snapshot slice alternate`
 1. Verify that the primary and backup partitions have the same Junos version: `show system snapshot media internal`
-    - If it fails, wait a bit and try again. The copy may still be happening.
-
-If the method above did not work, try this instead to completely format and flash the device:
-
-1. Prepare the USB drive like above.
-1. Connect using a serial cable.
-1. When the device is booting, press space at the right time.
-1. Format and flash: `install --format file:///jinstall-whatever.tgz` (where you placed it previously)
+    - If the command fails, wait a bit and try again. The copy may still be happening in the background.
 
 ### Copy the Active Root Partition
 
@@ -348,18 +352,82 @@ This can be fixed by cloning the new active partition to the alternate, corrupt 
 
 See [Copy the Active Root Partition](#copy-the-active-root-partition) or [[EX] Switch boots from backup root partition after file system corruption occurred on the primary root partition (Juniper)](https://kb.juniper.net/InfoCenter/index?page=content&id=KB23180).
 
-## Miscellanea
+## Info
 
-### Interface Names
+### Junos OS
 
-- `lo`: Loopback.
-- `ge`: Gigabit Ethernet.
-- `xe`: 10G Ethernet.
-- `et`: 40G Ethernet.
-- `em` and `fxp`: Management, possibly OOB.
+- Based on FreeBSD.
+- Used on all Juniper devices.
+- Juniper's next-generation OS "Junos OS evolved" (not "Junos OS") is based on Linux.
 
-## Fusion
+### Versions
 
-**TODO**
+- Example: `20.4R3-S1.3`
+- Format: `<year>.<quarter>[R1-3][-S...]`
+- There is one main release for each quarter of the year. They may be a bit delayed such that they don't perfectly match the quarter.
+- There are zero to three extra cumulative bug patches `R1` to `R3` (no suffix for the initial release).
+- Each release is supported for exactly three years.
+
+### Interfaces
+
+Interface name structure:
+
+- Physical interfaces:
+    - Format: `<type>-<fpc>/<pic>/<port>`
+    - Example: `ge-0/0/0`
+    - See the table for interface types.
+    - The Flexible PIC Concentrator (FPC) is typically 0 for single devices or equal to the member ID if using VC.
+    - The Physical Interface Card (PIC) refers to the line card within a physical chassis, and is typically always 0 for fixed-format devices.
+- Logical interfaces:
+    - Format: `<phys-if>.<unit>`
+    - Example: `ge-0/0/0.0`
+    - The unit number is a non-negative number, often just 0 for physical interfaces that just need one logical interface, or corresponding to subinterface numbers for VLAN trunks.
+- Channelized interfaces (aka breakout interfaces):
+    - Format: `<phys-if>:<channel>`
+    - Example parent: `et-0/0/0`
+    - Example channel: `xe-0/0/0:0` (0-3)
+    - Channelized interfaces allows for splitting e.g. a 40G interface into four 10G interfaces using a breakout cable.
+
+Physical interfaces:
+
+| Prefix | Type | Example |
+| - | - | - |
+| fe | 100M Ethernet | `fe-0/0/0` |
+| ge | 1G Ethernet | `ge-0/0/0` |
+| xe | 10G Ethernet | `xe-0/0/0` |
+| et | 25G/40G/100G Ethernet | `et-0/0/0` |
+| mge | Multi-rate Ethernet | |
+| fxp | Mgmt. interface on RE (0-1) (SRX) | |
+| me | Management Ethernet | |
+| em | Management Ethernet | |
+| fc | Fibre Channel (FC) | |
+| at | ATM | |
+| pt | VDSL2 | |
+| cl | 3G/LTE | |
+| dl | Dialer for LTE (cl) | `dl0.0` |
+| se | Serial | |
+| e1 | E1 | |
+| e3 | E3 | |
+| t1 | T1 | |
+| t2 | T2 | |
+| wx | WXC ISM | |
+| reth | Chassis cluster traffic | |
+
+Special interfaces:
+
+| Prefix | Type | Example |
+| - | - | - |
+| lo | Loopback (some are internal) | `lo0` |
+| ae | Aggregated Ethernet (LAG) | `ae0` |
+| irb | IRB | `irb.0` |
+| dsc | Discard (internal) | `dsc` |
+| tap | Tap (internal) | `tap` |
+| fti | Flexible Tunnel Interface (FTI) | `fti0` |
+| gr | GRE tunnel | `gr-0/0/0` |
+| ip | IP-over-IP tunnel | `ip-0/0/0` |
+| lsq | Link services queueing interface (MLPPP, MLFR, CRTP) | `lsq-0/0/0` |
+| lt | Logical tunnel (SRX) | `lt-0/0/0` |
+| mt | Multicast tunnel | `mt-0/0/0` |
+| sp | Adaptive services (unit 16383 is internal) | `sp-0/0/0` |
 
 {% include footer.md %}

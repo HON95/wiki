@@ -11,7 +11,7 @@ breadcrumbs:
 {:.no_toc}
 
 - [Juniper Hardware](/config/network/juniper-hardware/)
-- [Juniper Junos General](/config/network/juniper-junos-general/)
+- [Juniper Junos OS](/config/network/juniper-junos/)
 
 ### Using
 {:.no_toc}
@@ -49,11 +49,6 @@ breadcrumbs:
     - Locally defined users are not required if RADIUS/TACACS is setup. Class etc. is fetched from RADIUS.
 - Config archival:
     - See `system archival` with `transfer-on-commit` and nLogic slides.
-- LAG:
-    - `aggregated-ether-options minimum-links 1`
-    - `aggregated-ether-options lacp active`
-    - `aggregated-ether-options lacp periodic fast`
-- Loopback address for consistent address if multiple routed interfaces.
 - `default-address-selection` to use loopback address for the source address of e.g. pinging.
 - OSPF:
     - Area, router ID, interfaces (with unit).
@@ -165,16 +160,18 @@ breadcrumbs:
     - Add member ports: `member-range <begin-if> to <end-if>`
     - Configure it as a normal interface, which will be applied to all members.
 1. Setup LACP:
-    1. (Note) Make sure you allocate enough LACP interfaces and that the interface numbers are below 512 (empirically discovered on EX3300).
-    1. Set number of available LACP interfaces: `set chassis aggregated-devices ethernet device-count <0-64>` (just set it to some standard large size)
-    1. Add individual Ethernet interfaces (not using interface range):
-        1. Delete logical units (or the whole interfaces): `wildcard range delete interfaces ge-0/0/[0-1] unit 0` (example)
-        1. Set as members: `wildcard range set ge-0/0/[0-1] ether-options 802.3ad ae<n>` (for LACP interface `ae<n>`)
-    1. Enter LACP interface: `edit interface ae<n>`
-    1. Set description: `set desc <desc>`
-    1. Set LACP options: `set aggregated-ether-options lacp active`
-    1. Setup default logical unit: `edit unit 0`
-    1. Setup VLAN/address/etc.
+    1. (Info) Make sure you allocate enough LAG interfaces and that the interface numbers are below some arbitrary power-of-2-limit for the device model. Maybe the CLI auto-complete shows a hint toward the max.
+    1. Set number of available LAG interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
+    1. Delete old configs for member interface: `wildcard range delete interfaces ge-0/0/[0-1]` (example)
+    1. Add member interfaces: `wildcard range set interfaces ge-0/0/[0-1] ether-options 802.3ad ae<n>`
+    1. Add some description to member interfaces: `wildcard range set interfaces ge-0/0/[0-1] description link:switch`
+    1. Enter LAG interface: `edit interface ae<n>`
+    1. Set description: `set desc link:switch`
+    1. Set LACP active: `set aggregated-ether-options lacp active`
+    1. Set LACP fast: `set aggregated-ether-options lacp periodic fast`
+    1. (Optional) Set minimum links: `aggregated-ether-options minimum-links 1`
+    1. Enter logical unit: `edit unit 0`
+    1. Setup VLAN/address/etc. (see other examples).
 1. Setup VLAN interfaces:
     1. Setup trunk ports:
         1. (Note) `vlan members` supports both numbers and names. Use the `[VLAN1 VLAN2 <...>]` syntax to specify multiple VLANs.

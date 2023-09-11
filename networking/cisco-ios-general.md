@@ -5,12 +5,6 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-### Related Pages
-{:.no_toc}
-
-- [Cisco Routers (IOS/IOS XE)](../cisco-ios-routers/)
-- [Cisco Catalyst Switches (IOS/IOS XE)](../cisco-ios-switches/)
-
 ## General Configuration
 
 ### CLI Usage
