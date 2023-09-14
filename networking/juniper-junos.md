@@ -15,7 +15,7 @@ breadcrumbs:
 
 ## Commands
 
-**TODO** Cleanup.
+**TODO** Cleanup. Combine with SRX- and QFX-setup?
 
 ### Usage
 
@@ -164,6 +164,11 @@ breadcrumbs:
     - Supports XML scripting. And Python for newer devices.
     - Supports commit scripts to e.g. require descriptions on interfaces.
 
+### Port Mirroring (SPAN)
+
+- SRX: [How to do port mirroring on J-series and SRX branch devices](https://supportportal.juniper.net/s/article/How-to-do-port-mirroring-on-J-series-and-SRX-branch-devices?language=en_US)
+- EX: [Configuring Port Mirroring and Analyzers](https://www.juniper.net/documentation/us/en/software/junos/network-mgmt/topics/topic-map/port-mirroring-and-analyzers-configuring.html#id-configuring-port-mirroring-to-analyze-traffic-cli-procedure#id-configuring-port-mirroring-to-analyze-traffic-cli-procedure)
+
 ### Booting
 
 The devices have two partitions; the primary and the backup.
@@ -275,7 +280,7 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 
 1. (Info) For virtualized boxes like EX4600 and QFX5100, skip the `request system snapshot` parts as these boxes are built differently wrt. Junos.
 1. Cleanup old files: `request system storage cleanup`
-1. Make sure the alternate partition contains a working copy of the current version: See [Validate the Upgrade](#validate-the-upgrade).
+1. Make sure the alternate partition contains a working copy of the current version: See [Validate the Partitions](#validate-the-partitions).
 
 #### ISSU and NSSU
 
@@ -309,7 +314,7 @@ This should work in most cases and is the most streamlined version, but may not 
     - `reboot` reboots the device, so the upgrade can begin when booting.
     - If it complains about certificate problems, consider disabling verification using `no-validate`.
     - It may produce some insignificant errors in the process (commands not found etc.).
-1. See [Validate the Upgrade](#validate-the-upgrade).
+1. See [Validate the Partitions](#validate-the-partitions).
 
 #### From the Loader
 
@@ -320,9 +325,9 @@ If the normal method did not work, try this instead.
 1. Reboot the device and press space at the right time to enter the loader.
     - The message to wait for should look like this: `Hit [Enter] to boot immediately, or space bar for command prompt.`
 1. Format and flash: `install --format file:///jinstall-whatever.tgz` (where you placed it previously)
-1. See [Validate the Upgrade](#validate-the-upgrade).
+1. See [Validate the Partitions](#validate-the-partitions).
 
-#### Validate the Upgrade
+#### Validate the Partitions
 
 1. Log into the CLI.
 1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions` (should show `Currently booted from: active`)
@@ -330,19 +335,7 @@ If the normal method did not work, try this instead.
 1. Copy to the alternate root partition (may take several minutes): `request system snapshot slice alternate`
 1. Verify that the primary and backup partitions have the same Junos version: `show system snapshot media internal`
     - If the command fails, wait a bit and try again. The copy may still be happening in the background.
-
-### Copy the Active Root Partition
-
-This procedure clones the active partition to the alternate partition.
-This is also how you would clone to and boot from a USB device, but with `media external` instead of both `media internal` and `slice alternate`.
-
-1. Clone the active partition to the alternate partition: `request system snapshot slice alternate`
-    - This may not be completely finished when the command returns. If the below commands fail, wait and try again.
-1. Validate it:
-    - `show system storage partitions`
-    - `show system snapshot media internal`
-
-To boot to the alternate partition, use `request system reboot slice alternate media internal`.
+1. (Info) To boot from the alternative partition: `request system reboot slice alternate media internal`
 
 ### Fix a Corrupt Root Partition
 
@@ -350,7 +343,7 @@ If one of the root partitions get corrupted (e.g. due to sudden power loss),
 the device will boot to the alternate root partition.
 This can be fixed by cloning the new active partition to the alternate, corrupt partition.
 
-See [Copy the Active Root Partition](#copy-the-active-root-partition) or [[EX] Switch boots from backup root partition after file system corruption occurred on the primary root partition (Juniper)](https://kb.juniper.net/InfoCenter/index?page=content&id=KB23180).
+See [Validate the Partitions](#validate-the-partitions) or [[EX] Switch boots from backup root partition after file system corruption occurred on the primary root partition (Juniper)](https://kb.juniper.net/InfoCenter/index?page=content&id=KB23180).
 
 ## Info
 

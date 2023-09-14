@@ -98,6 +98,7 @@ breadcrumbs:
 1. Exit config CLI: `exit`
 1. Save the rescue config: `request system configuration rescue save`
 1. Save the autorecovery info: `request system autorecovery state save`
+1. Reboot the device to change forwarding mode and stuff (if changed): `request system reboot`
 
 ### Interface Setup
 
@@ -110,7 +111,35 @@ See [Juniper EX](/config/network/juniper-ex/).
 
 ## Theory
 
-### Zone-based Firewalling (SRX)
+SRX-specific information, see the Junos page for general information.
+
+### Packet Forwarding Mode (Packet-based and Flow-based)
+
+- *Packet-based forwarding* handles packets one by one, also called stateless forwarding (similar to router ACLs). This does not handle connection tracking and other advanced features.
+- *Flow-based forwarding* handles packets as streams, also called stateful forwarding. This is the default for IPv4 (IPv6 forwarding is disabled by default).
+- Commands:
+    - Configured using `set security forwarding-options family inet6 mode flow-based` (example).
+    - Run `show security flow status` to show forwarding modes.
+
+### L2 Forwarding Mode (Transparent and Switching)
+
+- The default mode on most newer devices/versions is switching mode.
+- Switching mode:
+    - Basically L3 mode. Pretty similar to L3 switches, with VLANs and RVIs.
+    - Uses IRB interfaces in security zones.
+    - Does not enforce policy on intra-VLAN traffic.
+    - Supports LACP.
+- Transparent mode:
+    - Basically L2 mode.
+    - The firewall acts like an L2 switch connected inline in the infrastructure, allowing simple integration without modifying routing and protocols.
+    - Does not support STP, IGMP snooping, Q-in-Q, NAT and VPNs.
+    - Uses physical interfaces in security zones.
+    - Also called L2 transparent mode (L2TM).
+- Commands:
+    - Configured using `set protocols l2-learning global-mode {transparent-bridge|switching}`.
+    - Show using `show ethernet-switching global-information`.
+
+### Security Zones
 
 - On SRX firewalls, you assign interfaces to security zones. **TODO** All interfaces must be assigned a zone and a zone may have zero or multiple interfaces?
 - *Security zones* are the main type of zone.

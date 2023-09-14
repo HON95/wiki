@@ -103,6 +103,8 @@ breadcrumbs:
 
 ## Initial Setup
 
+Example for setting up base system for a simple L2 switch.
+
 1. Connect to the switch using serial:
     - RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow control.
 1. Login:
@@ -130,13 +132,10 @@ breadcrumbs:
 1. Setup SSH:
     - Enable server: `set system services ssh`
     - Disable root login from SSH: `set system services ssh root-login deny`
-1. Set loopback addresses:
-    1. `set interfaces lo0.0 family inet address 127.0.0.1/32`
-    1. `set interfaces lo0.0 family inet6 address ::1/128`
 1. Set DNS servers:
     - `set system name-server <addr>` (once for each address)
 1. Set time:
-    1. (Optional) Set time locally: `set date <YYYYMMDDhhmm.ss>`
+    1. (Optional) Set time locally: `run set date <YYYYMMDDhhmm.ss>`
     1. Set server to use while booting (forces initial time): `set system ntp boot-server <address>`
     1. Set server to use periodically (for tiny, incremental changes): `set system ntp server <address>`
     1. Set time zone: `set system time-zone Europe/Oslo` (example)
@@ -144,8 +143,6 @@ breadcrumbs:
     1. (Note) After committing, use `set date ntp` to force it to update. This may be required if the delta is too large and the NTP client refuses to update.
 1. Delete default interfaces configs:
     - `wildcard range delete interface ge-0/0/[0-47]` (example, repeat for all FPCs/PICs)
-1. Disable unused interfaces:
-    - `wildcard range set interface ge-0/0/[0-47] disable` (example, repeat for all FPCs/PICs)
 1. Disable dedicated management port and alarm:
     1. Disable: `set int me0 disable`
     1. Delete logical interface: `delete int me0.0`
@@ -155,11 +152,11 @@ breadcrumbs:
     1. Disable logical interface: `set int vlan.0 disable`
 1. Create VLANs:
     - `set vlans <name> vlan-id <VID>`
-1. Setup interface-ranges (apply config to multiple configured interfaces):
+1. (Optional) Setup interface-ranges (apply config to multiple configured interfaces):
     - Declare range: `edit interfaces interface-range <name>`
     - Add member ports: `member-range <begin-if> to <end-if>`
     - Configure it as a normal interface, which will be applied to all members.
-1. Setup LACP:
+1. (Optional) Setup LACP:
     1. (Info) Make sure you allocate enough LAG interfaces and that the interface numbers are below some arbitrary power-of-2-limit for the device model. Maybe the CLI auto-complete shows a hint toward the max.
     1. Set number of available LAG interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
     1. Delete old configs for member interface: `wildcard range delete interfaces ge-0/0/[0-1]` (example)
@@ -172,7 +169,7 @@ breadcrumbs:
     1. (Optional) Set minimum links: `aggregated-ether-options minimum-links 1`
     1. Enter logical unit: `edit unit 0`
     1. Setup VLAN/address/etc. (see other examples).
-1. Setup VLAN interfaces:
+1. (Optional) Setup VLAN interfaces:
     1. Setup trunk ports:
         1. (Note) `vlan members` supports both numbers and names. Use the `[VLAN1 VLAN2 <...>]` syntax to specify multiple VLANs.
         1. (Note) Instead of specifying which VLANs to add, specify `vlan members all` and `vlan except <excluded-VLANs>`.
@@ -184,22 +181,22 @@ breadcrumbs:
     1. Setup access ports:
         1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
         1. Set access VLAN: `set vlan members <VLAN-name>`
-1. Setup L3 interfaces:
+1. (Optional) Setup L3 interfaces:
     1. (VLAN) Set L3-interface: `set vlans <name> l3-interface vlan.<VID>`
     1. Enter unit 0 of physical/LACP interface or `vlan.<VID>` for VLAN interfaces.
     1. Set IPv4 address: `set family inet address <address>/<prefix-length>`
     1. Set IPv6 address: `set family inet6 address <address>/<prefix-length>`
-1. Setup static IP routes:
+1. (Optional) Setup static IP routes:
     1. IPv4 default gateway: `set routing-options rib inet.0 static route 0.0.0.0/0 next-hop <next-hop>`
     1. IPv6 default gateway: `set routing-options rib inet6.0 static route ::/0 next-hop <next-hop>`
-1. Disable/enable Ethernet flow control:
+1. (Optional) Disable/enable Ethernet flow control:
     - (Note) Junos uses the symmetric/bidirectional PAUSE variant of flow control.
     - (Note) This simple PAUSE variant does not take traffic classes (for QoS) into account and will pause _all_ traffic for a short period (no random early detection (RED)) if the receiver detects that it's running out of buffer space, but it will prevent dropping packets _within_ the flow control-enabled section of the L2 network. Enabling it or disabling it boils down to if you prefer to pause (all) traffic or drop (some) traffic during congestion. As a guideline, keep it disabled generally (and use QoS or more sophisticated variants instead), but use it e.g. for dedicated iSCSI networks (which handle delays better than drops). Note that Ethernet and IP don't require guaranteed packet delivery.
     - (Note) It _may_ be enabled by default, so you should probably enable/disable it explicitly (the docs aren't consistent with my observations).
     - (Note) Simple/PAUSE flow control (`flow-control`) is mutually exclusive with priority-based flow control (PFC) and asymmetric flow control (`configured-flow-control`).
     - Disable on Ethernet interface (explicit): `set interface <if> [aggregated-]ether-options no-flow-control`
     - Enable (explicit): `... flow-control`
-1. Enable EEE (Energy-Efficient Ethernet, IEEE 802.3az):
+1. (Optional) Enable EEE (Energy-Efficient Ethernet, IEEE 802.3az):
     - (Note) For reducing power consumption during idle periods. Supported on RJ45 copper ports.
     - (Note) There generally is no reason to not enable this on all ports, however, there may be certain devices or protocols which don't play nice with EEE (due to poor implementations).
     - Enable on RJ45 Ethernet interface: `set interface <if> ether-options ieee-802-3az-eee`
@@ -220,6 +217,7 @@ breadcrumbs:
 1. Configure sFlow:
     - **TODO**
 1. Commit configuration: `commit [confirmed]`
+1. Exit config mode: `exit`
 1. Backup config to rescue config: `request system configuration rescue save`
 
 ## Commands
