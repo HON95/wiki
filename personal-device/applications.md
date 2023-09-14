@@ -437,6 +437,8 @@ This is my ZSH setup preference, using Oh-My-ZSH with the Powerlevel10k theme an
 1. (Optional) Setup syntax highlighting plugin:
     1. Clone it: `git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ~/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting`
     1. Add `zsh-syntax-highlighting` it to `plugins` in `~/.zshrc`.
+1. (Optional) Setup fuzzy search plugin:
+    1. Install: `yay -S fzf-git`
 1. Setup plugins:
     1. In `~/.zshrc`, set e.g. `plugins=(git docker docker-compose golang rust)`.
 1. Further customize `~/.zshrc`:
