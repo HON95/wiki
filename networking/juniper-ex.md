@@ -127,8 +127,9 @@ Example for setting up base system for a simple L2 switch.
     - `delete chassis auto-image-upgrade`
 1. Set new root password:
     - `set system root-authentication plain-text-password` (prompts for password)
+1. (Optional) Commit (stop the auto-upgrade spam etc.).
 1. Setup a non-root user:
-    - `set system login user <user> [full-name <full-name>] class super-user authentication plain-text-password` (prompts for password)
+    - `set system login user <user> [full-name "<full-name>"] class super-user authentication plain-text-password` (prompts for password)
 1. Setup SSH:
     - Enable server: `set system services ssh`
     - Disable root login from SSH: `set system services ssh root-login deny`
@@ -201,16 +202,15 @@ Example for setting up base system for a simple L2 switch.
     - (Note) There generally is no reason to not enable this on all ports, however, there may be certain devices or protocols which don't play nice with EEE (due to poor implementations).
     - Enable on RJ45 Ethernet interface: `set interface <if> ether-options ieee-802-3az-eee`
 1. (Optional) Configure RSTP:
-    - (Note) RSTP is the default STP variant for Junos.
+    - (Note) RSTP is enabled for all interfaces by default.
     - Enter config section: `edit protocols rstp`
-    - (ELS) Set interfaces: `set interfaces all` (or specific)
-    - Set priority: `set bridge-priority <priority>` (default 32768, should be a multiple of 4096, use e.g. 32768 for access, 16384 for distro and 8192 for core)
-    - Set hello time: `set hello-time <seconds>` (default 2s)
-    - Set maximum age: `set max-age <seconds>` (default 20s)
-    - Set forward delay: `set forward-delay <seconds>` (default 15s)
-    - **TODO** `edge` for access ports?
-    - **TODO** Guards, e.g. `bpdu-block-on-edge` or something.
-    - **TODO** Enabled on all interfaces and VLANs by default?
+    - Set interfaces: `set interfaces all` (example)
+    - (Optional) Set priority: `set bridge-priority <priority>` (default 32768, should be a multiple of 4096, use e.g. 32768 for access, 16384 for distro and 8192 for core)
+    - (Optional) Set hello time: `set hello-time <seconds>` (default 2s)
+    - (Optional) Set maximum age: `set max-age <seconds>` (default 20s)
+    - (Optional) Set forward delay: `set forward-delay <seconds>` (default 15s)
+    - Set edge ports: `wildcard range set protocols rstp interface ge-0/0/[2-5] edge` (example)
+    - Enable BPDU guard on all edge ports: `set protocols rstp bpdu-block-on-edge`
 1. Configure SNMP:
     - (Note) SNMP is extremely slow on the Juniper switches I've tested it on.
     - Enable public RO access: `set snmp community public authorization read-only`

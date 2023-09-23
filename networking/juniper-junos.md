@@ -218,7 +218,22 @@ Wait for the "The operating system has halted." text before pulling the power, s
     - Statistics: `show interfaces statistics`
     - All details: `show interfaces detail`
     - Physical details: `show interfaces media`
+- Show switching/VLAN details for interface: `show ethernet-switching interface`
 - Show LLDP neighbors: `show lldp neighbors`
+- Show DHCP client:
+    - Show binding: `show dhcp client binding`
+    - Show stats: `show dhcp client statistics`
+
+### IPv6 Neighbor Discovery (ND)
+
+- Disallow solicitations from remote prefixes (config): `set protocols neighbor-discovery onlink-subnet-only`
+
+### DHCPv4 Server
+
+- Note that newer Junos versions use a different DHCP setup (JDHCP), with pool settings inside `access address-asignment`.
+- Show clients: `show dhcp server binding`
+- Show client detauls: `show dhcp server binding <address> detail`
+- Show stats: `show dhcp server statistics`
 
 ### Events
 
@@ -282,14 +297,6 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 1. Cleanup old files: `request system storage cleanup`
 1. Make sure the alternate partition contains a working copy of the current version: See [Validate the Partitions](#validate-the-partitions).
 
-#### ISSU and NSSU
-
-Just info, no instructions here yet.
-
-- ISSU and NSSU may be used for upgrade without downtime, if the hardware supports it.
-- If using redundant hardware (multiple REs), ISSU may be use for upgrades without downtime. It may blow up. One RE is upgraded first, then state is transferred to it. Normal upgrade with reboot is more reliable if short downtime is acceptable.
-- If using virtual chassis, NSSU is similar to ISSU but doesn't require the same kind of state sync.
-
 #### Normal Method
 
 This should work in most cases and is the most streamlined version, but may not work for major version hops and stuff.
@@ -301,18 +308,19 @@ This should work in most cases and is the most streamlined version, but may not 
 1. If copying from a USB drive:
     1. Format the USB drive using FAT32 and copy the software file to the drive.
     1. Enter shell mode on the device: `start shell user root`
-    1. Mount the USB drive:
-        - See [mount a USB drive](#mount-a-usb-drive).
-        - TL;DR: `mkdir /var/tmp/usb0 && mount_msdosfs <device> /var/tmp/usb0`
+    1. Mount the USB drive: `mkdir /var/tmp/usb0 && mount_msdosfs /dev/da1s1 /var/tmp/usb0`
+        - See [mount a USB drive](#mount-a-usb-drive) for details.
     1. Check the contents (copy the filename for later): `ls -l /var/tmp/usb0`
     1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
     1. Unmount and remove the USB drive: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
     1. Enter operational CLI again: `exit` (or `cli`)
-1. Prepare upgrade: `request system software add <file> no-copy unlink reboot`
+1. Prepare upgrade: `request system software add /var/tmp/<file> no-copy unlink reboot [force-host]` (supports auto-complete)
     - `no-copy` prevents copying the file first (in this case it's pointless).
     - `unlink` removes the file afterwards.
     - `reboot` reboots the device, so the upgrade can begin when booting.
     - If it complains about certificate problems, consider disabling verification using `no-validate`.
+    - For virtualized devices, add `force-host` to upgrade the host too.
+    - If the date is significantly wrong on the device and NTP isn't used/synced, set it manually with `set date <YYYYMMDDhhmm>` first so validation doesn't fail.
     - It may produce some insignificant errors in the process (commands not found etc.).
 1. See [Validate the Partitions](#validate-the-partitions).
 
@@ -324,10 +332,12 @@ If the normal method did not work, try this instead.
 1. Connect using a serial cable.
 1. Reboot the device and press space at the right time to enter the loader.
     - The message to wait for should look like this: `Hit [Enter] to boot immediately, or space bar for command prompt.`
-1. Format and flash: `install --format file:///jinstall-whatever.tgz` (where you placed it previously)
+1. Format and flash: `install --format file:///jinstall-whatever.tgz` (with correct name, no `/var/tmp/`)
 1. See [Validate the Partitions](#validate-the-partitions).
 
 #### Validate the Partitions
+
+Do this before as a check and after to make sure the new image is working and copied to both partitions.
 
 1. Log into the CLI.
 1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions` (should show `Currently booted from: active`)
@@ -336,6 +346,14 @@ If the normal method did not work, try this instead.
 1. Verify that the primary and backup partitions have the same Junos version: `show system snapshot media internal`
     - If the command fails, wait a bit and try again. The copy may still be happening in the background.
 1. (Info) To boot from the alternative partition: `request system reboot slice alternate media internal`
+
+#### ISSU and NSSU
+
+Just info, no instructions here yet.
+
+- ISSU and NSSU may be used for upgrade without downtime, if the hardware supports it.
+- If using redundant hardware (multiple REs), ISSU may be use for upgrades without downtime. It may blow up. One RE is upgraded first, then state is transferred to it. Normal upgrade with reboot is more reliable if short downtime is acceptable.
+- If using virtual chassis, NSSU is similar to ISSU but doesn't require the same kind of state sync.
 
 ### Fix a Corrupt Root Partition
 

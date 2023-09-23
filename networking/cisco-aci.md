@@ -14,6 +14,7 @@ breadcrumbs:
 
 ### Relation to SDA
 
+- ACI is for DC while SDA is for campus/enterprise.
 - Both are zero-trust platforms/fabrics with VXLAN-based overlays.
 - SDA is part of Cisco DNA, ACI is its own thing.
 - SDA is managed by DNA Center, ACI is managed by APIC.
@@ -21,5 +22,7 @@ breadcrumbs:
 - ACI uses mainly Nexus switches while SDA used mainly Catalyst switches.
 
 ## Theory
+
+
 
 {% include footer.md %}

@@ -126,9 +126,10 @@ SRX-specific information, see the Junos page for general information.
 - The default mode on most newer devices/versions is switching mode.
 - Switching mode:
     - Basically L3 mode. Pretty similar to L3 switches, with VLANs and RVIs.
-    - Uses IRB interfaces in security zones.
-    - Does not enforce policy on intra-VLAN traffic.
+    - Uses IRB/routed interfaces in security zones, forwarding the flow through the flow architecture.
+    - Does not enforce policy on intra-VLAN traffic. Intra-VLAN traffic is forwarded directly on the Ethernet chip.
     - Supports LACP.
+    - The number of VLANS is limited by hardware. SRX300 supports 1000 VLANs.
 - Transparent mode:
     - Basically L2 mode.
     - The firewall acts like an L2 switch connected inline in the infrastructure, allowing simple integration without modifying routing and protocols.
@@ -141,9 +142,40 @@ SRX-specific information, see the Junos page for general information.
 
 ### Security Zones
 
-- On SRX firewalls, you assign interfaces to security zones. **TODO** All interfaces must be assigned a zone and a zone may have zero or multiple interfaces?
-- *Security zones* are the main type of zone.
-- *Function zones* are for special purposes. Only the management zone ("MGT") is currently supported and does not allow exchanging traffic with other zones.
-- The default policy is to deny traffic both intra-zone and inter-zone.
+- On SRX firewalls, you must assign interfaces to a security zone.
+- *Security zones* are the main type of zone, whereas *function zones* are for special purposes. Only the management zone ("MGT") is currently supported and does not allow exchanging traffic with other zones.
+- The default policy is to deny traffic both intra-zone and inter-zone. Interfaces not assigned to a zone are part of the *null zone*, where no traffic may pass.
+- To allow traffic between zones, you must define a security policy between the zones.
+- To allow traffic to the firewall itself (e.g. ICMP, DHCP, SSH), you must configure it under `host-inbound-traffic` for the zone. NDP is enabled by default.
+- Commands:
+    - Show security zones: `show security zones`
+
+### Security Policies
+
+- Policies are handled using first-match.
+    - Reorder existing policies (example): `insert security policies from-zone trust to-zone untrust policy permit-mail before policy permit-all`
+
+### Security Screens
+
+- Used to screen traffic and drop suspicious stuff.
+
+### Address Books
+
+- Address book may be defined globally or within a zone, containing entries as groups of network prefixes.
+- The global book (`global`) is used for all security zones, for NAT configs and for global policies.
+- Default entries: `any`, `any-ipv4`, `any-ipv6`
+- Address sets may contain both IPv4 and IPv6 addresses from the same zone. Sets may also contain other sets.
+- Limitations:
+    - Address sets may contain at maximum 16384 entries and 256 sets.
+    - The harware model limits how many address objects a security policy can reference. For SRX300, this is 2048.
+    - Limit-wise, an IPv6 address is counted as 4 IPv4 addresses.
+- Examples:
+    - Define single address: `set security address-book global address HOST4_DNS_srv 10.0.0.10/32`
+    - Define range: `set security address-book global address RNG4_DNS_srv range-address 10.0.0.10 to 10.0.0.11`
+    - Define DNS name: `set security address-book global address FQDN4_yolo dns-name example.net`
+
+### Security Policies
+
+- Source and destination addresses may be negated using `source-address-excluded` and `destination-address-excluded`.
 
 {% include footer.md %}

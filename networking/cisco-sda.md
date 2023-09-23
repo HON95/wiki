@@ -21,7 +21,7 @@ breadcrumbs:
 
 - Show AP tunnels for edge: `show access-tunnel summary`
 
-## Architecture
+## Theory
 
 - SDA consists of Cisco DNA Center (DNAC) and a campus fabric of DNAC-managed switches. Cisco ISE is also used for policy design and operation.
 - Segmentation:
