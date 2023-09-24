@@ -67,7 +67,9 @@ breadcrumbs:
     - As I don't know which hashing algorithm `password-encryption` (or `password 7`) uses, I trust it even less than MD5.
 1. Disable old admin user: `no user name admin`
     - You need to re-log as the new admin first.
-1. (Optional) Disable HTTP server: **TODO**
+1. (Optional) Disable HTTP server:
+    1. `no ip http server`
+    1. `no ip http secure-server`
 1. Enable SSH and disable Telnet:
     1. Set version: `no ip ssh version v1`
     1. Enable server: `ip ssh server`
