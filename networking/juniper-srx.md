@@ -39,6 +39,8 @@ breadcrumbs:
     1. `delete chassis auto-image-upgrade`
 1. Set new root password:
     1. `set system root-authentication plain-text-password` (prompts for password)
+1. Set idle timeout:
+    1. `set system login idle-timeout 60` (60 minutes)
 1. (Optional) Commit new config:
     1. `commit`
 1. Setup a non-root user:
