@@ -65,7 +65,7 @@ breadcrumbs:
     - `secret 0` will automatically hash the password using MD5.
     - The `password-encryption` service is not used for `secret`, only `password`.
     - As I don't know which hashing algorithm `password-encryption` (or `password 7`) uses, I trust it even less than MD5.
-1. Disable old admin user: `no user name admin`
+1. (Optional) Disable old admin user: `no user name admin`
     - You need to re-log as the new admin first.
 1. (Optional) Disable HTTP server:
     1. `no ip http server`
@@ -146,9 +146,9 @@ breadcrumbs:
     1. Enter an interface range.
     1. Set to drop on exceed: `storm-control exceed drop`
     1. Set rate mode: `storm-control rate-mode {kbps|ratio|pps}` (e.g. ratio)
-    1. Enable for broadcast: `storm-control broadcast <threshold>` (e.g. 1%)
-    1. Enable for multicast: `storm-control multicast <threshold>` (e.g. 1%)
-    1. Enable for unknown unicast: `storm-control unicast <threshold>` (e.g. 1%)
+    1. Enable for broadcast: `storm-control broadcast <threshold>` (e.g. 5%)
+    1. Enable for multicast: `storm-control multicast <threshold>` (e.g. 5%)
+    1. Enable for unknown unicast: `storm-control unicast <threshold>` (e.g. 5%)
 1. Enable DHCPv4/DHCPv6/ND snooping:
     1. (Note) Snooping by itself doesn't do anything but is used by other protection mechanisms.
     1. Enable globally (global): `{ip|ipv6} {dhcp|nd} snooping`
@@ -182,6 +182,7 @@ breadcrumbs:
     1. **TODO** Fix, enabling for IPv6 drops all traffic for both IPv4 and IPv6.
     1. **WARNING**: These switches don't have enough resources to run _both_ IPv4 and IPv6 source guard. On one switch I tested, it caused it to drop all traffic for both protocols. On another switch, it simply denied me from activating IPv4 source guard when using the "enterpriseV6" SDM template.
 1. Enable DoS prevention:
+    1. (Note) Make sure everything still works as normal afterwards. Maybe don't use this, for stability.
     1. Enable globally: `ip dos-prevent`
     1. Prevent scan-synfin: `ip dos-prevent type scan-synfin`
     1. Prevent xma-scan: `ip dos-prevent type xma-scan`
