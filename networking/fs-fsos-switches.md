@@ -16,6 +16,7 @@ breadcrumbs:
 - Default credentials: Username `admin` and password `admin`.
 - Default mgmt. IP address: `192.168.1.1/24`
 - By default, SSH, Telnet and HTTP servers are accessible using the default mgmt. address and credentials.
+- For SSH you might need to specify `-o HostKeyAlgorithms=+ssh-rsa`.
 - Serial config: RS-232 w/ RJ45, baud 115200, 8 data bits, no parity bits, 1 stop bit, no flow control.
 - The default VLAN is VLAN1.
 

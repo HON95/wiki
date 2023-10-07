@@ -11,6 +11,8 @@ Using **Proxmox VE 7** (based on Debian 11).
 
 ### Installation
 
+#### PVE Installer Method
+
 1. Make sure UEFI and virtualization extensions are enabled in the BIOS settings.
 1. (Optional) Find a mouse.
     - The GUI installer doesn't require it any more, but it's still somewhat practical.
@@ -28,6 +30,27 @@ Using **Proxmox VE 7** (based on Debian 11).
 1. Miscellanea:
     - Make sure you set the correct FQDN during the install. This is a bit messy to change afterwards.
 
+#### Debian Manual Method
+
+Using Debian 12 (Bookwork).
+
+1. Install Debian as normal: See [Debian Server](/linux-server/debian/).
+1. Install PVE on top: See [Install Proxmox VE on Debian 12 Bookworm](https://pve.proxmox.com/wiki/Install_Proxmox_VE_on_Debian_12_Bookworm).
+
+Tips:
+
+- Set the hostname:
+    - Set the shortname: `hostnamectl set-hostname <shortname>` (no domain)
+    - Set both the shortname and FQDN in `/etc/hosts` using the following format, one line for IPv4 and one for IPv6: `<ip-addr> <fqdn> <shortname>`
+    - Check the hostname info:
+        - Shortname: `hostname`
+        - FQDN: `hostname --fqdn`
+        - IP addresses: `hostname --ip-address`
+
+#### Ansible Method
+
+See [lae.proxmox](https://github.com/lae/ansible-role-proxmox).
+
 ### Initial Configuration
 
 Follow the instructions for [Debian server](/config/linux-server/debian/) in addition to the notes and instructions below (read them first).
@@ -41,37 +64,41 @@ PVE-specific instructions:
     1. Comment out all content from `/etc/apt/sources.list.d/pve-enterprise.list` to disable the enterprise repo.
     1. Create `/etc/apt/sources.list.d/pve-no-subscription.list` containing `deb http://download.proxmox.com/debian/pve bullseye pve-no-subscription` to enable the no-subscription repo.
     1. Run a full upgrade: `apt update && apt full-upgrade`
+1. Install basics:
+    1. `apt install sudo vim`
 1. Update network config:
     1. (Note) Do NOT manually modify the configs for DNS, NTP, IPTables, etc. The network config (`/etc/network/interfaces`) and PVE configs _may_ however be manually modified, but the GUI or API is still recommended.
     1. (Note) Consider using Open vSwitch (OVS):
         - Plain Linux stuff (the way PVE uses it at least) may break for certain setups where e.g. PVE has a VLAN L3 interface on the same bridge as a VM has one.
-        - If using VLANs and an LACP link:
-            1. Create the OVS bridge (`vmbr<N>`). When adding tagged or untagged VM interfaces later, use this bridge.
-            1. Create the OVS bond (LACP) (`bond<N>`). Use the created bridge as the "OVS bridge" and the physical interfaces as the "slaves". Use mode "LACP (balance-tcp)" and add the OVS option `other_config:lacp-time=fast`.
+        - Install Open VSwitch: `apt install openvswitch-switch`
+        - If using VLANs and an optionally an LACP link:
+            1. (Note) Do this in a way to avoid taking the node offline, e.g. by only adding IPv6 to the new uplink and making sure it works before moving IPv4. Preferably use a separate link for the temporary uplink during install.
+            1. Create the OVS bridge (`vmbr<N>`). If *not* using LAG/LACP then add the physical interface. When adding tagged or untagged VM interfaces later, use this bridge.
+            1. If using LAG/LACP: Create the OVS bond (LACP) (`bond<N>`). Use the created bridge as the "OVS bridge" and the physical interfaces as the "slaves". Use mode "LACP (balance-tcp)" and add the OVS option `other_config:lacp-time=fast`.
             1. Create the OVS IntPort (VLAN interface) (`vlan<VID>`), which PVE will use to access the network. Use the OVS bridge and specify the VLAN ID. Set the IP addresses for PVE here.
-    1. Update network config: Use the web GUI. 
+
+    1. Update network config: Use the web GUI.
 1. Update MOTD:
     1. Disable the special PVE banner: `systemctl disable --now pvebanner.service`
     1. Clear or update `/etc/issue` and `/etc/motd`.
     1. (Optional) Set up dynamic MOTD: See the Debian guide.
 1. Setup firewall:
-    1. Open an SSH session, as this will prevent full lock-out.
-    1. Go to the datacenter firewall page.
-    1. Enable the datacenter firewall.
-    1. Add incoming rules on the management network for NDP (ipv6-icmp), ping (macro ping), SSH (tcp 22) and the web GUI (tcp 8006).
-    1. Go to the host firewall page.
-    1. Enable the host firewall (TODO disable and re-enable to make sure).
+    1. (Note) While you should probably put PVE management in a protected network separated from the VMs, you still ned to protect PVE *from* the VMs.
+    1. Open an SSH session, as this will prevent full lock-out. If you manage to lock yourself out, open the `/etc/pve/firewall/cluster.fw` config and set `enable: 0` to disable the global firewall.
+    1. Under the datacenter firewall top page, add incoming rules on the management network for ICMPv4 (ipv6-icmp), ICMPv6 (icmp), SSH (tcp 22) and the web GUI (tcp 8006), for the chosen management VLAN.
+    1. Go to the datacenter firewall options page and enable "firewall" and "ebtables". Make sure the input policy is "DROP" and the output policy is "ACCEPT".
+    1. Go to the host firewall options page and enable it.
     1. Disable NDP on the nodes. (This is because of a vulnerability in Proxmox where it autoconfigures itself on all bridges.)
     1. Enable TCP flags filter to block illegal TCP flag combinations.
     1. Make sure ping, SSH and the web GUI is working both for IPv4 and IPv6.
 1. Set up storage:
     1. Docs: [Storage (Proxmox VE)](https://pve.proxmox.com/wiki/Storage)
-    1. Create a ZFS pool or something and add it to `/etc/pve/storage.cfg`.
+    1. Create a ZFS pool or something and add it to `/etc/pve/storage.cfg`. This can also be done in the GUI now, but you may want to to it manually if you want to tweak stuff. See [Linux Server Storage: ZFS](/linux-server/storage-zfs/).
     1. Setup backup pruning:
         - [Backup and Restore (Proxmox VE)](https://pve.proxmox.com/wiki/Backup_and_Restore)
         - [Prune Simulator (Proxmox BS)](https://pbs.proxmox.com/docs/prune-simulator/)
 1. Setup users (PAM realm):
-    1. Add a Linux user: `adduser <username>` etc.
+    1. Add a Linux user: `adduser <username>` etc. (see some Linux for adding Linux admin users).
     1. Create a PVE group: In the "groups" menu, create e.g. an admin group.
     1. Give the group permissions: In the "permissions" menu, add a group permission. E.g. path `/` and role `Administrator` for full admin access.
     1. Add the user to PVE: In the "users" menu, add the PAM user and add it to the group.
@@ -224,11 +251,11 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
 - System tab:
     - Graphics card: Use the default. If you want SPICE, you can change to that later.
     - Qemu Agent: It provides more information about the guest and allows PVE to perform some actions more intelligently, but requires the guest to run the agent.
-    - BIOS/UEFI: BIOS w/ SeaBIOS is generally fine, but I prefer UEFI w/ OVMF (for PCIe pass-through support and stuff), assuming your OS/setup doesn't require one or the other.
+    - BIOS/UEFI: BIOS w/ SeaBIOS is generally fine, but I (sometimes) prefer UEFI w/ OVMF (for PCIe pass-through support and stuff), assuming your OS/setup doesn't require one or the other.
         - (Cloud-Init) Prepared Cloud-Init images may be using UEFI (and containing an EFI partition), so you probably need to use UEFI. With an added "EFI disk".
         - About the EFI disk: Using UEFI in PVE typically requires a "EFI disk" (in the hardware tab). This is not the EFI system partition (ESP) and is not visible to the VM, but is used by PVE/OVMF to store the EFIVARS, which contains the boot order. (If a UEFI VM fails to boot, you may need to enter the UEFI/OVMF menu through the remote console to fix the boot entries.)
     - Machine: Intel 440FX is generally fine, but Q35 supports more advanced features like PCIe pass-through support and stuff.
-    - SCSI controller: VirtIO SCSI.
+    - SCSI controller: VirtIO SCSI single.
     - Pre-enroll keys and TPM: **TODO** The docs don't mention pre-enrolled keys yet, so just use the defaults, I guess.
 - Hard disk tab:
     - (Cloud-Init) This doesn't matter, you're going to replace it afterwards with the imported Cloud-Init-ready qcow2 image. Just add something temporary since it can't be skipped.
@@ -257,6 +284,7 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
     - Ballooning: Enable it. It allows the guest OS to release memory back to the host when the host is running low on it. For Linux, it uses the "balloon" kernel driver in the guest, which will swap out processes or start the OOM killer if needed. For Windows, it must be added manually and may incur a slowdown of the guest.
 - Network tab:
     - Model: Use VirtIO.
+    - Bridge and VLAN: If your bridge uses VLANs, then omit the VLAN tag to pass all VLANs or set a specific tag for untagged access.
     - Firewall: Enable if the guest does not provide one itself, or if you don't want it to immediately become accessible from the network during/after installation (i.e. before you've provisioned it properly).
     - Multiqueue: When using VirtUO, it can be set to the total CPU cores of the VM for increased performance. It will increase the CPU load, so only use it for VMs that need to handle a high amount of connections.
 - Start the VM:

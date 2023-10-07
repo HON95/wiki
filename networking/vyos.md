@@ -25,7 +25,7 @@ See [Installation (VyOS)](https://docs.vyos.io/en/latest/install.html).
 1. Log in using user `vyos` and password `vyos`.
 1. Run `install image` to run the permanent installation wizard.
     - Keep the suggested image name to keep track of versions.
-    - If asked about which config to copy, any one is fine.
+    - If asked about which config to copy, either one is fine.
 1. Remove the live image and reboot.
 
 ## Initial Configuration
@@ -46,8 +46,8 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Set the DNS servers: `set system name-server <ip-address>` (for each server)
 1. Set the time zone: `set system time-zone Europe/Oslo` (example)
 1. (Optional) Replace the NTP servers:
-    1. Remove default NTP servers: `delete system ntp <server>` (for each server)
-    1. Add new NTP servers: `set system ntp server ntp.justervesenet.no` (example)
+    1. Remove default NTP servers: `delete service ntp server`
+    1. Add new NTP servers: `set service ntp server ntp.justervesenet.no` (example)
 1. (Optional) Enable Ctrl+Alt+Del reboot: `set system options ctrl-alt-del-action reboot` (or `ignore`)
 1. Set up a plain WAN-facing interface with an IP address (without LAG or VLAN):
     1. Show all Ethernet interfaces: `run show interfaces ethernet detail`
@@ -62,6 +62,7 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Set default routes: `set protocols static route[6] <0.0.0.0/0|::/0> next-hop <next-hop>` (for IPv4 and IPv6)
 1. (Optional) Setup basic SSHD:
     1. Enable server: `set service ssh`
+    1. (Optional) Disable password login (pubkeys only): `set service ssh disable-password-authentication`
     1. (Optional) Commit and log in through SSH instead of the console.
 1. Replace default user:
     1. (Note) You may want to skip ahead to the SSHD step so you can paste stuff vis SSH instead of manually writing it into the console.
@@ -74,9 +75,6 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
         1. Set key (only the Base64-encoded part): `set authentication public-keys <name> key <key>`
     1. Commit and log into the new user.
     1. Delete the default user: `delete system login user vyos`
-1. Setup SSHD:
-    1. Enable server: `set service ssh`
-    1. (Optional) Disable password login (pubkeys only): `set service ssh disable-password-authentication`
 1. (Optional) Set up a LAG interface:
     1. Enter interface config: `edit interfaces bonding bond<n>`
     1. Set member interfaces: `set member interface <if>`
@@ -90,11 +88,12 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. Configure as a normal interface.
 1. (Optional) Set black hole route: `set protocols static route[6] <prefix> blackhole` (for IPv4 and IPv6)
 1. Enable LLDP: `set service lldp interface all`
-1. Enable unicast reverse path forwarding (uRPF) globally: `set firewall source-validation strict`
 1. Set firewall:
-    1. Enter `firewall` section.
-    1. Set options:
-        1. `set all-ping false` (or keep it if you want to allow all pings)
+    1. (Note) VyOS 1.4.xxx changed to a new firewall structure.
+    1. Set options and default policies:
+        1. `edit firewall global-options`
+        1. `set source-validation strict` (uRPF)
+        1. `set all-ping enable`
         1. `set broadcast-ping disable`
         1. `set receive-redirects disable`
         1. `set ipv6-receive-redirects disable`
@@ -104,12 +103,8 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
         1. `set send-redirects disable`
         1. `set syn-cookies enable`
         1. `set twa-hazards-protection disable`
-    1. Set default policies:
-        - `set firewall state-policy established action accept`
-        - `set firewall state-policy related action accept`
-        - `set firewall state-policy invalid action drop`
-    1. Create IPv4 and IPv6 rule sets. Note that IPv4 and IPv6 rule sets can't share names, so you can suffix the names with `-4` and `-6` to avoid conflict.
-    1. Attach rule sets to interfaces (typically "local" and "out").
+    1. (**OUTDATED**) Create IPv4 and IPv6 rule sets. Note that IPv4 and IPv6 rule sets can't share names, so you can suffix the names with `-4` and `-6` to avoid conflict.
+    1. (**OUTDATED**) Attach rule sets to interfaces (typically "local" and "out").
 1. Set banners:
     1. (Note) Newlines must be escaped with `\n`.
     1. Set pre-login banner: `set system login banner pre-login ""` (disable)

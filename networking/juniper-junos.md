@@ -13,6 +13,167 @@ breadcrumbs:
 - [Introduction to Junos – Part 1 (Packet Pushers)](https://packetpushers.net/introduction-to-junos-part-1/)
 - [Introduction to Junos – Part 2 (Packet Pushers)](https://packetpushers.net/introduction-to-junos-part-2/)
 
+### Initial Setup
+
+Common setup for MX, SRX, QFX, EX.
+
+1. Connect to the switch using serial:
+    - RS-232 w/ RJ45, baud 9600, 8 data bits, no parity, 1 stop bits, no flow control.
+1. Log in:
+    1. It should say "Amnesiac" above the login prompt as the name of the switch, to show that it's factory reset.
+    1. Login as `root` with no password to enter the shell.
+    1. Enter the Junos operational CLI by typing `cli`.
+1. (EX) (Optional) Free virtual chassis ports (VCPs) for normal use:
+    1. Enter op mode.
+    1. Show VCPs: `show virtual-chassis vc-port`
+    1. Remove VCPs: `request virtual-chassis vc-port delete pic-slot <pic-slot> port <port-number>`
+    1. Show again to make sure they disappear. This may take a few seconds.
+1. (Note) Enter configuration mode:
+    - Enter: `configure`
+    - Commit: `commit`
+    - Exit: `exit`
+1. Set host name:
+    1. `set system host-name <host-name>`
+    1. `set system domain-name <domain-name>`
+1. (Not MX) Enable auto snapshotting and restoration on corruption:
+    1. `set system auto-snapshot`
+1. Disable DHCP auto image upgrade:
+    1. `delete chassis auto-image-upgrade`
+1. Set new root password:
+    1. `set system root-authentication plain-text-password` (prompts for password)
+1. Set idle timeout:
+    1. `set system login idle-timeout 60` (60 minutes)
+1. (Optional) Commit new config:
+    1. `commit`
+1. Setup a non-root user:
+    1. `set system login user <user> [full-name <full-name>] class super-user authentication plain-text-password` (prompts for password)
+1. (SRX) Enable IPv6 forwarding (SRX):
+    1. Enable: `set security forwarding-options family inet6 mode flow-based`
+    1. (Info) Verify (after commit): `show security flow status`
+1. Setup SSH:
+    1. Enable server: `set system services ssh`
+    1. Disable root login from SSH: `set system services ssh root-login deny-password`
+    1. (Note) Do *not* use `ssh root-login deny`, it may cause FPCs to go unresponsive and offline for Junos v21 and later ([link](https://prsearch.juniper.net/problemreport/PR1629943)).
+1. (Maybe) Disable licensing and phone-home (for grey-market devices):
+    1. `delete system license`
+    1. `delete system phone-home`
+1. Set DNS servers:
+    1. Delete default: `delete system name-server`
+    1. Set new (for each one): `set system name-server <addr>`
+1. Set time:
+    1. Set time zone: `set system time-zone Europe/Oslo` (example)
+    1. (Optional) Set time manually (UTC): `run set date <YYYYMMDDhhmm.ss>`
+    1. (Deprecated) Set server to use while booting (forces initial time): `set system ntp boot-server <address>`
+    1. Set server to use periodically (for tiny, incremental changes): `set system ntp server <address>`
+    1. (Info) After committing, use `show ntp associations` to verify NTP.
+    1. (Info) After committing, use `set date ntp` to force it to update. This may be required if the delta is too large and the NTP client refuses to update.
+1. Set misc system options:
+    1. Setup loopback as default address: `set system default-address-selection`
+    1. Enable PMTUD: `set system internet-options path-mtu-discovery`
+1. Configure LLDP:
+    1. (Optional) Enable for all interfaces: `set protocols lldp interface all`
+    1. (Optional) Enable for specific interfaces: `set protocols lldp interface xe-0/1/0`
+    1. (Optional) Disable for specific interfaces: `set protocols lldp interface xe-0/1/0 disable`
+1. Configure SNMP:
+    1. (Info) SNMP is extremely slow on the Juniper devices I've tested it on.
+    1. Enable public RO access (or generate a secret community string): `set snmp community public authorization read-only`
+1. (Optional) Set loopback addresses (if using routing):
+    1. `set interfaces lo0.0 family inet address <address>/32`
+    1. `set interfaces lo0.0 family inet6 address <address>/32`
+1. (Optional) Setup static IP routes (if not using dynamic routing):
+    1. IPv4 default gateway: `set routing-options rib inet.0 static route 0.0.0.0/0 next-hop <next-hop>`
+    1. IPv6 default gateway: `set routing-options rib inet6.0 static route ::/0 next-hop <next-hop>`
+    1. (Optional) Setup null routes for site prefixes.
+1. Disable management port link-down alarm:
+    1. Disable alarm: `set chassis alarm management-ethernet link-down ignore`
+1. Disable management port:
+    1. (Note) This port goes by many names: `fxp0`, `me0`, `em0`, `em1`, `vme`, ...
+    1. Delete interface: `delete int <port>`
+    1. Disable interface: `set int <port> disable`
+    1. (If exists) Disable RA: `delete protocols router-advertisement interface <port>.0`
+1. (Optional) Set PIC interface speed/mode (if applicable):
+    1. (Info) E.g. the device has 40G/100G ports and you need to configure the ports for them to show up in `sh int terse`.
+    1. (Info) Some devices have a maximum capacity that can't be oversubscribes, e.g. 400G for the MX204.
+    1. Show FPCs and PICs: `run show chassis fpc pic-status`
+    1. Set speed (example): `set chassis fpc 0 pic 0 port 0 40g`
+1. (EX/QFX/SRX) Create VLANs:
+    1. Create: `set vlans <name> vlan-id <VID>`
+    1. (Optional) Set RVI: `set vlans <name> l3-interface irb.<VID>`
+1. Setup interfaces: See section below.
+1. (EX/QFX/SRX) Configure RSTP:
+    - (Note) RSTP is enabled for all interfaces by default.
+    - Enter config section: `edit protocols rstp`
+    - Set interfaces: `set interfaces all` (example)
+    - Set priority: `set bridge-priority <priority>` (default 32768/32k, should be a multiple of 4k, use e.g. 32k for access, 8k for distro and 4k for core)
+    - (Optional) Set hello time: `set hello-time <seconds>` (default 2s)
+    - (Optional) Set maximum age: `set max-age <seconds>` (default 20s)
+    - (Optional) Set forward delay: `set forward-delay <seconds>` (default 15s)
+    - Set edge ports: `wildcard range set protocols rstp interface ge-0/0/[2-5] edge` (example)
+    - Enable BPDU guard on all edge ports: `set protocols rstp bpdu-block-on-edge`
+1. (SRX) Setup security stuff (zones, policies, NAT, screens).
+    1. `delete security`
+    1. Setup as desired.
+1. Commit configuration: `commit [confirmed]`
+1. Exit config CLI: `exit`
+1. Save the rescue config: `request system configuration rescue save`
+1. (SRX) Save the autorecovery info: `request system autorecovery state save`
+1. (SRX) Reboot the device to change forwarding mode and stuff (if changed): `request system reboot`
+
+#### Interfaces
+
+1. (Optional) Delete default interfaces configs (example):
+    1. `wildcard range delete interface ge-0/0/[0-7]`
+1. (EX/QFX/SRX) (Optional) Disable default VLAN RVI:
+    1. (Note) The interface is called `vlan` for older devices and `irb` for newer ones.
+    1. Delete config: `delete int irb.0`
+    1. Disable: `set int irb.0 disable`
+1. (Optional) Disable unused interfaces (example):
+    1. `wildcard range set interface ge-0/0/[0-7] disable`
+    1. `set interface cl-1/0/0 disable`
+    1. `set interface dl0 disable`
+1. (Optional) Setup interface-ranges (apply config to multiple configured interfaces):
+    - Declare range: `edit interfaces interface-range <name>`
+    - Add member ports: `member-range <begin-if> to <end-if>`
+    - Configure it as a normal interface, which will be applied to all members.
+1. (Optional) Setup LACP toward upstream/downstream switch:
+    1. (Info) Make sure you allocate enough LAG interfaces and that the interface numbers are below some arbitrary power-of-2-limit for the device model. Maybe the CLI auto-complete shows a hint toward the max.
+    1. Set number of available LAG interfaces: `set chassis aggregated-devices ethernet device-count <0-64>`
+    1. Delete old configs for member interface: `wildcard range delete interfaces ge-0/0/[0-1]` (example)
+    1. Add member interfaces: `wildcard range set interfaces ge-0/0/[0-1] ether-options 802.3ad ae<n>`
+    1. Add some description to member interfaces: `wildcard range set interfaces ge-0/0/[0-1] description link:switch`
+    1. Enter LAG interface: `edit interface ae<n>`
+    1. Set description: `set desc link:switch`
+    1. Set LACP active: `set aggregated-ether-options lacp active`
+    1. Set LACP fast: `set aggregated-ether-options lacp periodic fast`
+    1. (Optional) Set minimum links: `aggregated-ether-options minimum-links 1`
+1. (EX/QFX/SRX) Setup switch trunk ports:
+    1. (Note) `vlan members` supports both numbers and names. Use the `[VLAN1 VLAN2 <...>]` syntax to specify multiple VLANs.
+    1. (Note) Instead of specifying which VLANs to add, specify `vlan members all` and `vlan except <excluded-VLANs>`.
+    1. (Note) `vlan members` should not include the native VLAN (if any).
+    1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
+    1. Set mode: `set port-mode trunk`
+    1. Set VLANs: `set vlan members <VLANs>`
+    1. (Optional) Set native VLAN: `set native-vlan-id <VID>`
+1. (EX/QFX/SRX) Setup access ports:
+    1. Enter unit 0 and `family ethernet-switching` of the physical/LACP interface.
+    1. Set access VLAN: `set vlan members <VLAN-name>`
+1. (EX/QFX/SRX) Setup VLAN L3 interfaces:
+    1. (VLAN) Set L3-interface: `set vlans <name> l3-interface irb.<VID>`
+    1. Enter unit 0 of physical/LACP interface or `irb.<VID>` for VLAN interfaces.
+    1. Set IPv4 address: `set family inet address <address>/<prefix-length>`
+    1. Set IPv6 address: `set family inet6 address <address>/<prefix-length>`
+1. (Optional) Disable/enable Ethernet flow control:
+    - (Note) Junos uses the symmetric/bidirectional PAUSE variant of flow control.
+    - (Note) This simple PAUSE variant does not take traffic classes (for QoS) into account and will pause _all_ traffic for a short period (no random early detection (RED)) if the receiver detects that it's running out of buffer space, but it will prevent dropping packets _within_ the flow control-enabled section of the L2 network. Enabling it or disabling it boils down to if you prefer to pause (all) traffic or drop (some) traffic during congestion. As a guideline, keep it disabled generally (and use QoS or more sophisticated variants instead), but use it e.g. for dedicated iSCSI networks (which handle delays better than drops). Note that Ethernet and IP don't require guaranteed packet delivery.
+    - (Note) It _may_ be enabled by default, so you should probably enable/disable it explicitly (the docs aren't consistent with my observations).
+    - (Note) Simple/PAUSE flow control (`flow-control`) is mutually exclusive with priority-based flow control (PFC) and asymmetric flow control (`configured-flow-control`).
+    - Disable on Ethernet interface (explicit): `set interface <if> [aggregated-]ether-options no-flow-control`
+    - Enable (explicit): `... flow-control`
+1. (Optional) Enable EEE (Energy-Efficient Ethernet, IEEE 802.3az):
+    - (Note) For reducing power consumption during idle periods. Supported on RJ45 copper ports.
+    - (Note) There generally is no reason to not enable this on all ports, however, there may be certain devices or protocols which don't play nice with EEE (due to poor implementations).
+    - Enable on RJ45 Ethernet interface: `set interface <if> ether-options ieee-802-3az-eee`
+
 ## Commands
 
 **TODO** Cleanup. Combine with SRX- and QFX-setup?

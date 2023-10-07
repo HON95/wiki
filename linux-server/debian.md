@@ -91,10 +91,12 @@ The first steps (`(Skip)`) may be skipped if already configured during installat
         - Try typing characters specific to your keyboard.
         - Update if wrong: `dpkg-reconfigure keyboard-configuration`
 1. (Skip) Set the hostname:
-    - Set the shortname: `hostnamectl set-hostname <shortname>`
-    - Set both the shortname and FQDN in `/etc/hosts` using the following format: `127.0.0.1 <fqdn> <shortname>`
-        - If the server has a static IP address, use that instead of 127.0.0.1.
-    - Check the hostnames with `hostname` (shortname) and `hostname --fqdn` (FQDN).
+    - Set the shortname: `hostnamectl set-hostname <shortname>` (no domain)
+    - Set both the shortname and FQDN in `/etc/hosts` using the following format, one line for IPv4 and one for IPv6: `<ip-addr> <fqdn> <shortname>`
+    - Check the hostname info:
+        - Shortname: `hostname`
+        - FQDN: `hostname --fqdn`
+        - IP addresses: `hostname --ip-address`
 1. Packages:
     - (Optional) Enable the `contrib` and `non-free` repo areas: `add-apt-repository <area>`
         - Or by setting `main contrib non-free` for every `deb`/`deb-src` in `/etc/apt/sources.list`.
