@@ -28,7 +28,7 @@ breadcrumbs:
     1. If you haven't installed NDI or NDI Tools, a warning should appear with a download link. Install it and restart OBS.
     1. Make sure NDI sources are available from the "new source" list.
 - Info:
-    - It uses "raw" NDI, not NDI|HX (compressed), meaning a 1920x1080 60Hz stream could use up to 132Mb/s (throughput from an NDI whitepaper).
+    - It uses "raw" NDI, not NDI\|HX (compressed), meaning a 1920x1080 60Hz stream could use up to 132Mb/s (throughput from an NDI whitepaper).
 - Issues (the ones I've faced):
     - Growing latency over time (1s delay after ~30m): https://github.com/Palakis/obs-ndi/issues/667
         - Maybe low latency mode (async OBS output) fixes this? Might introduce stutter tho.
