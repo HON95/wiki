@@ -1,6 +1,6 @@
 ---
 no_breadcrumbs: true
-no_toc: true
+no_toc: false
 ---
 {% include header.md %}
 
@@ -175,5 +175,6 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [libvirt & KVM](/virt-cont/libvirt-kvm/)
 - [Podman](/virt-cont/podman/)
 - [Proxmox VE](/virt-cont/proxmox-ve/)
+- [VirtualBox](/virt-cont/virtualbox/)
 
 {% include footer.md %}
