@@ -14,7 +14,7 @@ index_file="${1:-index.md}"
 cat >> "$index_file" <<EOF
 ---
 no_breadcrumbs: true
-no_toc: true
+no_toc: false
 ---
 {% include header.md %}
 
