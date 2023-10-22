@@ -19,7 +19,7 @@ A network video protocol by NewTek.
 - The normal, high-bandwidth encoder is simply called "NDI".
 - NDI provides multi-generational stability, meaning repeated encodings don't degrade quality.
 - Has a technical latency of 16 video scan lines, although typically lower in implementations.
-- "NDI|HX", meaning "NDI High Efficiency", uses much lower bitrate and is appropriate when bandwidth is limited.
+- "NDI\|HX", meaning "NDI High Efficiency", uses much lower bitrate and is appropriate when bandwidth is limited.
 
 ### Transport Protocols
 
@@ -41,10 +41,10 @@ A network video protocol by NewTek.
     - NDI 1920x1080 60Hz (with alpha): 165Mb/s
     - NDI 3840x2160 60Hz: 249Mb/s
     - NDI 3840x2160 60Hz (with alpha): 312Mb/s
-    - NDI|HX 1920x1080 60Hz: 15.9Mb/s
-    - NDI|HX 1920x1080 60Hz (H.264 & HEVC): 10.9Mb/s
-    - NDI|HX 3840x2160 60Hz: 30.0Mb/s
-    - NDI|HX 3840x2160 60Hz (H.264 & HEVC): 21.0Mb/s
+    - NDI\|HX 1920x1080 60Hz: 15.9Mb/s
+    - NDI\|HX 1920x1080 60Hz (H.264 & HEVC): 10.9Mb/s
+    - NDI\|HX 3840x2160 60Hz: 30.0Mb/s
+    - NDI\|HX 3840x2160 60Hz (H.264 & HEVC): 21.0Mb/s
 
 ## Usage
 
