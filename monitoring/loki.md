@@ -18,4 +18,14 @@ For log collection.
 - Typically uses Promtail for log collection from servers, sometimes with syslog-ng for log format conversion.
 - Good integration with e.g. Kubernetes, Grafana and Prometheus.
 
+### Logging Challenges
+
+- Privacy:
+    - Access control.
+    - Masking/de-identification of sensitive data.
+    - Re-identification of sensitive data, if required.
+    - Right to be forgotten.
+    - Right of access.
+    - Retention period.
+
 {% include footer.md %}

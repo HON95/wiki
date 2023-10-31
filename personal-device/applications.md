@@ -150,6 +150,17 @@ Assuming default keybinds.
     - Change workspace: `Mod+<1-9>`
     - Move window to another workspace: `Mod+Shift+<1-9>`
 
+## Kdenlive (Linux)
+
+### Setup
+
+Arch Linux:
+
+1. Install: `sudo pacman -S kdenlive breeze`
+1. Open Kdenlive.
+1. Fix theme:
+    1. "Settings" > "Color Scheme" > "Breeze Dark".
+
 ## Piper (Linux)
 
 GUI for configuring gaming mice.
@@ -159,6 +170,18 @@ GUI for configuring gaming mice.
 1. Install the piper [PPA](https://launchpad.net/~libratbag-piper/+archive/ubuntu/piper-libratbag-git).
 1. Install `piper`.
 1. Configure the mouse using the GUI application.
+
+### Project
+
+1. Press "new project".
+1. Select a profile (e.g. "4K UHD 2160p 30fps").
+1. Import media to use.
+1. Add image:
+    1. Import as "clip".
+    1. Add to video track.
+    1. Add transform effect to scale and move it (make sure to "show edit mode" in the video preview).
+1. Etc.
+1. Export to video file.
 
 ## PipeWire (Linux)
 
