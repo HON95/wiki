@@ -1,7 +1,7 @@
 ---
 title: Lighting Basics
 breadcrumbs:
-- title: Media
+- title: Lighting
 ---
 {% include header.md %}
 

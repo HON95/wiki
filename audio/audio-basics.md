@@ -1,7 +1,7 @@
 ---
 title: Audio Basics
 breadcrumbs:
-- title: Media
+- title: Audio
 ---
 {% include header.md %}
 

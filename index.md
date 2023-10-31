@@ -13,6 +13,11 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [FreeIPA](/aaa/freeipa/)
 - [Kerberos](/aaa/kerberos/)
 
+## Audio
+
+- [Audio Basics](/audio/audio-basics/)
+- [Behringer X32](/audio/behringer-x32/)
+
 ## Automation
 
 - [Ansible](/automation/ansible/)
@@ -65,6 +70,12 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [Home Assistant](/iot-ha/home-assistant/)
 - [Raspberry Pi](/iot-ha/raspberry-pi/)
 
+## Lighting
+
+- [DMX512](/lighting/dmx512/)
+- [Lighting Basics](/lighting/lighting-basics/)
+- [Obsidian Onyx](/lighting/obsidian-onyx/)
+
 ## Linux Server
 
 - [Linux Server Applications](/linux-server/applications/)
@@ -75,11 +86,8 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 
 ## Media
 
-- [Audio Basics](/media/audio-basics/)
-- [DMX512](/media/dmx512/)
 - [FFmpeg](/media/ffmpeg/)
 - [Image Basics](/media/image-basics/)
-- [Lighting Basics](/media/lighting-basics/)
 - [Network Device Interface (NDI)](/media/ndi/)
 - [Open Broadcaster Software (OBS)](/media/obs/)
 - [Video4Linux 2 (V4L2)](/media/v4l2/)
