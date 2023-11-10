@@ -89,10 +89,10 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. `mkfs.ext4 /dev/mapper/crypt_root`
 1. Mount the volumes:
     - Mount root: `mount /dev/mapper/crypt_root /mnt`
-    - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition> /mnt/boot/efi`
+    - Mount ESP: `mkdir -p /mnt/boot/efi && mount /dev/<partition-1> /mnt/boot/efi`
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt <packages>`
-    - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip`
+    - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip curl`
     - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils`
     - Wireless networking packages: `iwd`
 1. Generate the fstab file:
@@ -119,13 +119,14 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Setup GRUB:
     1. Install bootloader: `pacman -S grub efibootmgr`
     1. Enable encrypted disk support: In `/etc/default/grub`, set `GRUB_ENABLE_CRYPTODISK=y`.
-    1. Find the `UUID` of the encrypted root partition: `blkid`
+    1. Find the `UUID` of the encrypted root _physical_ partition: `blkid`
     1. Add kernel parameters for the encrypted root (e.g. `/dev/sda2`): In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptdevice=UUID=<device-UUID>:crypt_root root=/dev/mapper/crypt_root`.
     1. Install GRUB to ESP: `grub-install --target=x86_64-efi --efi-directory=/boot/efi`
     1. Generate GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
 1. Exit the chroot and reboot:
     1. `exit`
     1. `reboot`
+1. Remove the installation media.
 1. Wait for the GRUB screen or decryption prompt.
 
 ### Post Install Setup
@@ -138,13 +139,13 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Setup swap file:
     1. (Note) You should have enough memory installed to never need swapping, but it's a nice backup to prevent the system from potentially crashing if anything bugs out and eats up too much memory.
     1. Show if swap is already enabled: `swapon --show`
-    1. Allocate the swap file: `sudo fallocate -l <size> /swapfile` (e.g. 16G)
-    1. Fix the permissions: `sudo chmod 600 /swapfile`
-    1. Setup the swap file: `sudo mkswap /swapfile`
-    1. Activate the swap file: `sudo swapon /swapfile`
+    1. Allocate the swap file: `fallocate -l <size> /swapfile` (e.g. 16G)
+    1. Fix the permissions: `chmod 600 /swapfile`
+    1. Setup the swap file: `mkswap /swapfile`
+    1. Activate the swap file: `swapon /swapfile`
         - Check: `swapon --show`
     1. Add it to `/etc/fstab` using this line: `/swapfile swap swap defaults 0 0`
-        - Check: `sudo mount -a`
+        - Check: `mount -a`
 1. Setup default editor:
     - Create a new profile file: `/etc/profile.d/editor.sh`
     - Set the editor: `export EDITOR=vim`
@@ -220,7 +221,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Enter the config: `EDITOR=vim visudo`
     1. Add line to allow sudo group without password: `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`
 1. Add a personal admin user:
-    1. Create the user and add it to relevant groups: `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video,netdev <user>`
+    1. Create the user and add it to relevant groups (remove missing groups): `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video,netdev <user>`
     1. Set its password: `passwd <user>`
     1. (Optional) Relog to test the user.
 1. (Optional) Reboot.
@@ -243,8 +244,8 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Setup the local DNS resolver (systemd):
     1. (Note) The systemd-resolve config is `/etc/systemd/resolved.conf`.
     1. (Optional) Configure static upstream DNS servers (don't use any provided by DHCP/SLAAC): In the confug, set `DNS=1.1.1.1 2606:4700:4700::1111`.
-    1. (Optional) Set the domain/search string: In the config, set `Domains=<domain>`.
-    1. Enable DNSSEC validation (disable if it causes problems): In the config, set `DNSSEC=yes`.
+    1. (Optional) Set the domain/search string: In the config, set `Domains=<domains>`.
+    1. Disable DNSSEC validation (enabling it may cause NTP problems): In the config, set `DNSSEC=no`.
     1. Enable and start it: `systemctl enable --now systemd-resolved`
     1. Setup `resolv.conf`: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
     1. Check: `resolvectl query vg.no` and `curl google.com`
@@ -315,19 +316,18 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Install: `sudo pacman -S i3-wm`
     1. (Note) Vital parts are missing in the i3 config, follow the remaining steps before attempting to use i3.
 1. Fix the keyboard layout for X11:
-    1. **TODO** (Note) You may need to have an X server running (e.g. i3 started). The server must be restarted before the new layout is used.
     1. Set: `sudo localectl set-x11-keymap <keymap>` (e.g. `no`)
 1. Install temporary apps to get the remaining of the setup done:
     1. Install terminal emulator and web browser: `sudo pacman -S alacritty firefox`
         - If asked, select `pipewire-jack` and `wireplumber`.
-1. Test:
-    1. Reboot.
-    1. Arrive at window manager (LightDM/Ly).
-        - Use `Ctrl+Alt+F1` if you need to enter a terminal TTY (TTY1). Ly/LightDM uses one of the first TTYs, the rest are terminal TTYs.
-    1. Select the i3 WM and log in.
-    1. If prompted, follow the basic i3 setup wizard:
-        1. Generate a new config.
-        1. `Win` as default modifier.
+1. Reboot.
+1. Arrive at window manager (LightDM/Ly).
+    - Use `Ctrl+Alt+F1` if you need to enter a terminal TTY (TTY1). Ly/LightDM uses one of the first TTYs, the rest are terminal TTYs.
+1. Select the i3 WM and log in.
+1. If prompted, follow the basic i3 setup wizard:
+    1. Generate a new config.
+    1. `Win` as default modifier.
+1. Press `Mod+Enter` to open a terminal.
 
 ### Setup Post-Window Manager Stuff
 
@@ -640,7 +640,7 @@ File: `~/.config/polybar/launch.sh`
 killall -q polybar
 
 #polybar main &>>/tmp/polybar.log &
-polybar main &
+polybar main >/dev/null 2>&1 &
 ```
 
 #### Polybar Spotify Module
