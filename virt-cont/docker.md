@@ -41,14 +41,17 @@ Main config: `/etc/docker/daemon.json`
 1. (Optional) Change the logging options (JSON file driver):
     - It defaults to the JSON file driver with a single file of unlimited size.
     - Configured globally in the main config.
-    - Set the driver (explicitly): `"log-driver": "json-file"` (default `local`)
+    - Set the driver: `"log-driver": "json-file"` (default `json-file`)
+    - Set non-blocking logging to avoid logging back-pressure from the logging driver, see the log options below. This might cause messages to be dropped if the logging buffer overflows.
     - Set log options in `"log-opts": {}`:
+        - Set non-blocking logging: `"mode": "non-blocking"`
+        - Set logging buffer size: `"max-buffer-size": "5m"`
         - Set the max number of files (for log rotation): `"max-file": "5"` (default 5)
         - Set the max file size: `"max-size": "10m"` (default 20m)
-        - Set the compression for rotated files: `"compress": "true"` (default true)
+        - Set the compression for rotated files (for `json-file`): `"compress": "true"` (default true)
 1. (Recommended) Disable the userland proxy:
     - It's no longer recommended to keep this enabled, future Docker versions will brobably disable it by default.
-    - Disabling it _may_ break your published IPv6 ports, so you may want to test that.
+    - Disabling it _may_ break your published IPv6 ports, so you may want to test that. As of late 2023, only IPv6 localhost port forwarding seems to be affected, any "real" address seems to work as intended.
     - In the main config, set `"userland-proxy": false`.
 1. (Optional) Change the container network MTU:
     - Path MTU discovery seems to be broken in Docker networks, causing connection problems when the upstream network is using an MTU lower than 1500.
@@ -75,10 +78,15 @@ Full main config example:
     ],
     "dns": ["1.1.1.1", "2606:4700:4700::1111"],
     "log-driver": "json-file",
-    "log-opts": {"max-size": "10m"},
-    "log-opts": {"compress": "enabled"},
+    "log-opts": {
+        "mode": "non-blocking",
+        "max-buffer-size": "5m",
+        "max-size": "10m",
+        "max-file": "3",
+        "compress": "true"
+    },
     "userland-proxy": false,
-    "mtu": 1280,
+    "mtu": 1500,
     "metrics-addr": "[::]:9323"
 }
 ```
@@ -179,22 +187,21 @@ The toolkit is used for running CUDA applications within containers.
 
 ### IPv6 Support
 
-- TL;DR: Docker doesn't properly support IPv6.
-- While IPv6 base support may be enabled by setting `"ipv6": true` in the daemon config (disabled by default), it does not add any IP(6)Tables rules for the filter and NAT tables, as it does for IPv4/IPTables. (See [moby/moby #13481](https://github.com/moby/moby/issues/13481), [moby/moby #21951](https://github.com/moby/moby/issues/21951), [moby/moby #25407](https://github.com/moby/moby/issues/25407), [moby/libnetwork #2557](https://github.com/moby/libnetwork/issues/2557).)
+- TL;DR: Docker doesn't properly support IPv6. But it's slowly improving.
+- While IPv6 base support may be enabled by setting `"ipv6": true` in the daemon config, it does not add any IP(6)Tables rules for the filter and NAT tables, as it does for IPv4/IPTables. (See [moby/moby #13481](https://github.com/moby/moby/issues/13481), [moby/moby #21951](https://github.com/moby/moby/issues/21951), [moby/moby #25407](https://github.com/moby/moby/issues/25407), [moby/libnetwork #2557](https://github.com/moby/libnetwork/issues/2557).)
 - Using `"ipv6": true` without `"ip6tables": true` means the following for IPv6 subnets on Docker bridge networks (and probably other network types):
     - The IPv6 subnet must use a routable prefix which is actually routed to the Docker host (unlike IPv4 which uses NAT masquerading by default). While this is more appropriate for typical infrastructures, this may be quite impractical for e.g. typical home networks.
-    - If you accept forwarded traffic by default (in e.g. IPTables): The IPv6 subnet is not firewalled in any way, leaving it completely open to other networks "on" or "connected to" the Docker host, meaning you need to manually add IPTables rules to limit access to each Docker network.
+    - If you accept forwarded traffic by default (in e.g. IPTables): The IPv6 subnet is not firewalled in any way, leaving it completely open to other networks, meaning you need to manually add IPTables rules to limit access to each Docker network.
     - If you drop/reject forwarded traffic by default (in e.g. IPTables): The IPv6 subnet is completely closed and hosts on the Docker network can't even communicate between themselves (assuming your system filters bridge traffic). To allow intra-network traffic, you need to manually add something like `ip6tables -A FORWARD -i docker0 -o docker0 -j ACCEPT` for each Docker network. To allow for inter-network traffic, you need to manually add rules for that as well.
-- To enable IPv4-like IPTables support (with NAT-ing and firewalling), set `"ip6tables": true` in the daemon config (disabled by default) in the daemon config. If you want to disable NAT masquerading for both IPv4 and IPv6 (while still using the filtering rules provided by `"ip6tables": true`), set `enable_ip_masquerade=false` on individual networks. Disabling NAT masquerading for only IPv6 is not yet possible. MACVLANs with external routers will not get automatically NAT-ed.
+- To enable IPv4-like IPTables support (with NAT-ing and firewalling), set `"ip6tables": true` in the daemon config in the daemon config. If you want to disable NAT masquerading for both IPv4 and IPv6 (while still using the filtering rules provided by `"ip6tables": true`), set `enable_ip_masquerade=false` on individual networks. However, disabling NAT masquerading for _only_ IPv6 is not yet possible. MACVLANs with external routers will not get automatically NAT-ed, as a workaround.
 - IPv6-only networks (without IPv4) are not supported. (See [moby/moby #32675](https://github.com/moby/moby/issues/32675), [moby/libnetwork #826](https://github.com/moby/libnetwork/pull/826).)
 - Address pools are currently broken for IPv6, see [moby/moby#41438](https://github.com/moby/moby/issues/41438).
-- IPv6 communication between containers (ICC) on IPv6-enabled _internal_ bridges with IP6Tables enabled is broken, due to IPv6 ND being blocked by the applied IP6Tables rules. On non-internal bridges it works fine. One workaround is to not use IPv6 on internal bridges or to not use internal bridges. (See [libnetwork/issues #2626](https://github.com/moby/libnetwork/issues/2626).)
-- The userland proxy (enabled by default, can be disabled) accepts both IPv4 and IPv6 incoming traffic but uses only IPv4 toward containers, which replaces the IPv6 source address with an internal IPv4 address (I'm not sure which), effectively hiding the real address and may bypass certain defences as it's apparently coming from within the local network. It also has other non-IPv6-related problems. (See [moby/moby #11185](https://github.com/moby/moby/issues/11185), [moby/moby #14856](https://github.com/moby/moby/issues/14856), [moby/moby #17666](https://github.com/moby/moby/issues/17666).)
+- ~~IPv6 communication between containers (ICC) on IPv6-enabled _internal_ bridges with IP6Tables enabled is broken, due to IPv6 ND being blocked by the applied IP6Tables rules. On non-internal bridges it works fine. One workaround is to not use IPv6 on internal bridges or to not use internal bridges. (See [libnetwork/issues #2626](https://github.com/moby/libnetwork/issues/2626).)~~ Fixed in [moby/moby#45649](https://github.com/moby/moby/pull/45649).
+- The userland proxy (enabled by default, can be disabled) accepts both IPv4 and IPv6 incoming traffic but uses only IPv4 toward containers, which replaces the IPv6 source address with an internal IPv4 address, effectively hiding the real address and may bypass certain defences as it's apparently coming from within the local network. It also has other non-IPv6-related problems. Disabling it is recommended, but that breaks IPv6 localhost port forwarding (which is usually fine). (See [moby/moby #11185](https://github.com/moby/moby/issues/11185), [moby/moby #14856](https://github.com/moby/moby/issues/14856), [moby/moby #17666](https://github.com/moby/moby/issues/17666).)
 
 ### Other Problems
 
-- Path MTU discovery seems to be broken in Docker networks, causing connection problems when the upstream network is using an MTU lower than 1500. Set the MTU to 1280 (the IPv6 minimum) to solve this.
-- Docker seems to forget static addresses of containers when changing network properties (**TODO** at least when using the Ansible module, maybe that's what's causing the problem). Re-up everything to fix it.
+- Path MTU discovery seems to be broken in Docker networks, causing connection problems when the upstream network is using an MTU lower than 1500. Set the MTU to 1280 (the IPv6 minimum) to solve this. Tested on Azure VMs.
 
 ## Troubleshooting
 
