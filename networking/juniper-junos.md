@@ -440,7 +440,7 @@ Wait for the "The operating system has halted." text before pulling the power, s
 
 Note: USB3 drives may not work properly. Use USB2 drives.
 
-1. Make sure the drive is formatted as FAT32 (MS-DOS) (or something else supported).
+1. Make sure the drive is MBR-partitioned and that the partition is formatted as FAT32 (`mkfs.fat -F32`).
 1. To make it easier to find the device path in Junos, don't insert the USB drive just yet.
 1. Show current storage devices: `ls -l /dev/da*`
 1. Insert the drive. It should print a few lines to the console.
@@ -452,16 +452,13 @@ Note: USB3 drives may not work properly. Use USB2 drives.
 
 ### Upgrade Junos
 
-#### Preparations
-
-1. (Info) For virtualized boxes like EX4600 and QFX5100, skip the `request system snapshot` parts as these boxes are built differently wrt. Junos.
-1. Cleanup old files: `request system storage cleanup`
-1. Make sure the alternate partition contains a working copy of the current version: See [Validate the Partitions](#validate-the-partitions).
-
 #### Normal Method
 
 This should work in most cases and is the most streamlined version, but may not work for major version hops and stuff.
 
+1. (Info) For virtualized boxes like EX4600 and QFX5100, skip the `request system snapshot` parts as these boxes are built differently wrt. Junos.
+1. Cleanup old files: `request system storage cleanup`
+1. Make sure the alternate partition contains a working copy of the current version: See [Validate the Partitions](#validate-the-partitions).
 1. If downloading from a remote location:
     1. Get the file: `file copy <remote-url> /var/tmp/`
         - If it says it ran out of space, add `staging-directory /var/tmp`. By defaults it's buffered on the root partition, which may be tiny.
@@ -475,7 +472,7 @@ This should work in most cases and is the most streamlined version, but may not 
     1. Copy the file to internal storage: `cp /var/tmp/usb0/jinstall* /var/tmp/`
     1. Unmount and remove the USB drive: `umount /var/tmp/usb0 && rmdir /var/tmp/usb0`
     1. Enter operational CLI again: `exit` (or `cli`)
-1. Prepare upgrade: `request system software add /var/tmp/<file> no-copy unlink reboot [force-host]` (supports auto-complete)
+1. Prepare upgrade: `request system software add /var/tmp/<file> no-copy unlink reboot [no-validate] [force-host]` (supports auto-complete)
     - `no-copy` prevents copying the file first (in this case it's pointless).
     - `unlink` removes the file afterwards.
     - `reboot` reboots the device, so the upgrade can begin when booting.

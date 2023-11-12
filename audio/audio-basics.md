@@ -94,12 +94,16 @@ breadcrumbs:
     - Type C has flatter response than type A and is often used for audio calibration.
 - Feedback:
     - Happens when sound is fed from speakers back into a microphone (accidentally), at a high enough "loop gain" that the feedback noise level quickly escalates to annoying/damaging levels.
-    - Generally only happens at certain resonating frequencies, depending on the venue/room.
+    - Happens at certain resonating frequencies, depending on the micropone characteristics and venue acoustics.
+    - Keep in mind that room acoustics changes when the audience fills the room.
+    - Reverberations from e.g. untreated walls will contribute to causing feedback.
     - Preventing feedback:
-        - Avoid placing microphones in front of speakers.
-        - Use appropriate microphones, e.g. dynamic microphones pointing away from any (loud)speakers.
-        - Use an equalizer to reduce the level for feedback-inducing frequencies. To find the frequencies, test the setup at loud levels to try to induce it, then measure which frequency it's happening at.
+        - Avoid placing microphones in front of speakers. Place speakers in front of the stage instead of behind it. For stage mics in front of monitors, use cardoid mics pointed directly away from the monitor speakers.
+        - Use appropriate microphones. Use directional/cardioid mics (i.e. dynamic mics) whenever possible.
+        - Use gating and low cut on vocals to avoid contribution from silent/inactive microphones.
+        - Use an parametric equalizer to cut feedback-inducing frequencies. To find the frequencies, test the setup at loud levels to try to induce it, then measure which frequency it's happening at (called "ringing out the microhpone/feedback").
         - Don't use "feedback destroyers", they're crap.
+        - As a more permanent approach, find reflecting surfaces (walls, ceiling beams etc.) and cover them with acoustic treatment.
 - White and pink noise:
     - White noise has equal energy per frequency. The frequency-SPL curve is flat.
     - Pink noise has equal energy per octave. Since each octave has double the frequency of the previous (`log2(freq) = octave`), the frequency-SPL curve is decreasing. This makes pink noise appropriate for equalization for human hearing.

@@ -19,7 +19,9 @@ A Debian-based router OS, forked from Vyatta. Junos-like CLI.
 
 See [Installation (VyOS)](https://docs.vyos.io/en/latest/install.html).
 
-1. (Recommended) Disable Intel Hyper-Threading.
+1. For physical instances, consider disabling Intel Hyper-Threading (it does little for memory-intensive applications like packet routing).
+1. If running as VM inside a hypervisor like Proxmox, disable memory ballooning/memory sharing.
+    - VyOS does not use swapping so accidental overprovisioning that could starve the VyOS VM could cause errors.
 1. Download the latest rolling release (free) or LTS release (paid) ISO.
 1. Burn and boot from it (it's a live image).
 1. Log in using user `vyos` and password `vyos`.
@@ -109,13 +111,9 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
     1. (Note) Newlines must be escaped with `\n`.
     1. Set pre-login banner: `set system login banner pre-login ""` (disable)
     1. Set post-login banner: `set system login banner post-login ""`
-1. (Optional) Tuning (bare metal):
-    - **TODO** This can be done in the interface ethernet configs instead. Except RX/TX buffer sizes? Does VyOS automatically maximize now?
-    - (Old) See the Linux router notes.
-    - (Old) Enable GRO (example): `ethtool -K <if> gro on`
-    - (Old) Increase RX/TX buffer sizes (example): `ethtool -G <if> tx 4096 rx 4096`
-    - (Old) Enable scatter/gather aka vectored I/O (example): `ethtool -K <if> sg on`
-    - (Old) Make any ethtool (e.g.) commands permanent by adding them to `/config/scripts/vyos-postconfig-bootup.script`.
+1. Hardware tuning (bare metal):
+    - (Note) VyOS automatically sets large RX/TX buffers (always?) and provides a config interface for other options now, so no need to add `ethtool` stuff to `vyos-postconfig-bootup.script` anymore.
+    - (Note) For background info
 1. Commit and save: `commit` and `save`.
 
 ## General Configuration
