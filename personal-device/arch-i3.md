@@ -93,7 +93,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt <packages>`
     - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip curl`
-    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils`
+    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind sipcalc`
     - Wireless networking packages: `iwd`
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
