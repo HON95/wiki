@@ -17,12 +17,14 @@ breadcrumbs:
     - DCA groups: Doesn't carry audio but instead remote controls the level of a set of inputs.
 - Tap points:
     - Tap points are used for both mixbuses (typically pre-fader) and outputs (typically post-fader).
+    - Tap points are wrt. each input channel-output bus-pair, but each two mixbuses must share the tap point (even when not linked).
     - The "+M" tap variant mutes the tap too when the channel/bus is muted.
     - In/LC (1): After preamp gain and low cut.
     - Pre-EQ (2): Before EQ.
     - Post-EQ (3): After EQ, before compressor if using post-EQ compressor.
     - Pre-fader (4): Before fader.
     - Post-fader (5): After fader.
+    - Sub group (6): After fader, with no level control for channel send.
 - The sampling rate (44.1k or 48k) must be set equally for everything connected, including AES50, USB and USB recordings.
 - Use the "L/R + Mono" panning mode, where you manually assign sources to LR and/or mono outputs and pan only applies to LR. If you have a center speaker/cluster, this allows you to assign vocals/talks to only the center to avoid combing filter effects and such which might be especially noticable for certain audio types. The "LCR" mode sets left, center, right side-by-side panning-wise, so that the source is only sent to the center when the pan knob is centered. LCR mode may appropriate for more "immersive" sound images.
 - Use "M/C depends on Main L/R" if you want the mono level to follow (depend on) the LR level.
@@ -89,10 +91,6 @@ breadcrumbs:
     - The "assign" knobs (4) and buttons (8) allow you to assign functions or links to them, e.g. to modify FX stuff, mute channels or go to a certain view.
     - Three sets can be configured (A, B and C).
     - The X32 Compact doesn't have the strip displays, four knobs or the three buttons to select sets. Switching sets can be done via the view display instead.
-
-## Presets
-
-- **TODO**
 
 ## Remote Control
 
