@@ -13,7 +13,7 @@ A Debian-based router OS, forked from Vyatta. Junos-like CLI.
 
 ## TODO
 
-- System optimization: https://support.vyos.io/en/support/solutions/articles/103000096273-system-optimization
+- Add notes from system optimization: https://support.vyos.io/en/support/solutions/articles/103000096273-system-optimization
 
 ## Installation
 
@@ -42,14 +42,13 @@ An example of a full configuration. Except intuitive stuff I forgot to mention.
 1. Enter configuration mode: `configure`
     - This changes the prompt from `$` to `#`.
 1. Set hostname:
-    1. (Note) `<host-name>.<domain-name>` should be an FQDN.
     1. Hostname: `set system host-name <hostname>`
     1. Domain name: `set system domain-name <domain-name>`
 1. Set the DNS servers: `set system name-server <ip-address>` (for each server)
 1. Set the time zone: `set system time-zone Europe/Oslo` (example)
 1. (Optional) Replace the NTP servers:
     1. Remove default NTP servers: `delete service ntp server`
-    1. Add new NTP servers: `set service ntp server ntp.justervesenet.no` (example)
+    1. Add new NTP servers: `set service ntp server <server>` (e.g. `{0..3}.no.pool.ntp.org`)
 1. (Optional) Enable Ctrl+Alt+Del reboot: `set system options ctrl-alt-del-action reboot` (or `ignore`)
 1. Set up a plain WAN-facing interface with an IP address (without LAG or VLAN):
     1. Show all Ethernet interfaces: `run show interfaces ethernet detail`
@@ -190,9 +189,5 @@ if [[ -f /usr/lib/live/mount/persistence/opt/systemd/node-exporter.service ]]; t
     systemctl enable --now node-exporter.service
 fi
 ```
-
-## Random Notes
-
-- The DHCPv4 relay requires the interface towards the upstream DHCP server to be included in the relay interfaces. Otherwise the responses from the upstream server will be dropped. The relay is also very bugged at the moment so I'd almost recommend not using it until it gets fixed. See [T377](https://phabricator.vyos.net/T377) and [T1276](https://phabricator.vyos.net/T1276).
 
 {% include footer.md %}
