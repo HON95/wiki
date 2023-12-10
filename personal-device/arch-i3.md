@@ -136,6 +136,8 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. (Optional) Disable the beeper:
     1. Unload the module: `rmmod pcspkr`
     1. Blacklist the module: `echo blacklist pcspkr > /etc/modprobe.d/nobeep.conf`
+1. Enable SSD periodic TRIM:
+    1. Enable timer: `systemctl enable fstrim.timer`
 1. Setup swap file:
     1. (Note) You should have enough memory installed to never need swapping, but it's a nice backup to prevent the system from potentially crashing if anything bugs out and eats up too much memory.
     1. Show if swap is already enabled: `swapon --show`
