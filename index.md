@@ -121,6 +121,7 @@ _(Alphabetically sorted, so the ordering might seem a bit strange.)_
 - [FS FSOS Switches](/networking/fs-fsos-switches/)
 - [General](/networking/general/)
 - [HPE/Aruba General](/networking/hpe-aruba-general/)
+- [Internet Registry](/networking/internet-registry/)
 - [IPv4 Theory](/networking/ipv4/)
 - [IPv6 Theory](/networking/ipv6/)
 - [Juniper EX Series Switches](/networking/juniper-ex/)

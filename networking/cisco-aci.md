@@ -21,8 +21,4 @@ breadcrumbs:
 - They're compatible for traffic going to/from datacenters (i.e. they share/translate zero trust info).
 - ACI uses mainly Nexus switches while SDA used mainly Catalyst switches.
 
-## Theory
-
-
-
 {% include footer.md %}

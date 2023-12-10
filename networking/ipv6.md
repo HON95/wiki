@@ -5,7 +5,8 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Resources
+### Resources
+{:.no_toc}
 
 - [IETF RFC 7381: Enterprise IPv6 Deployment Guidelines](https://datatracker.ietf.org/doc/html/rfc7381)
 - [IETF RFC 7755: SIIT-DC: Stateless IP/ICMP Translation for IPv6 Data Center Environments](https://www.rfc-editor.org/rfc/rfc7755.html)
@@ -15,28 +16,45 @@ breadcrumbs:
 
 ## Special Prefixes
 
-| Prefix | Description |
-| - | - |
-| `::/0` | Default route |
-| `::/128` | Unspecified |
-| `::1/128` | Localhost |
-| `::/96` | IPv4-compatible IPv6 address (deprecated) |
-| `::ffff:0:0/96` | IPv4-mapped IPv6 address |
-| `::ffff:0:0:0/96` | IPv4-translated IPv6 address |
-| `64:ff9b::/96` | IPv4-IPv6 translation |
-| `100::/64` | Discard |
-| `2000::/3` | Global unicast address (GUA) |
-| `2001::/32` | Teredo |
-| `2001:20::/28` | ORCHIDv2 |
-| `2001:db8::/32` | Documentation (non-routable) |
-| `2002::/16` | 6to4 (deprecated) |
-| `3ffe::/16` | IPv6 Testing Address Allocation (6bone) (reverted) |
-| `fc00::/7` | Unique local address (ULA) |
-| `fd00::/8` | Locally administered ULA |
-| `fe80::/10` | Link-scoped unicast (non-routable) |
-| `ff00::/8` | Multicast |
+| Prefix | Scope | Description |
+| - | - | - |
+| `::/0` | | Default route |
+| `::/128` | | Unspecified |
+| `::1/128` | Host | Localhost |
+| `::/96` | | IPv4-compatible IPv6 address (deprecated) |
+| `::ffff:0:0/96` | | IPv4-mapped IPv6 address |
+| `::ffff:0:0:0/96` | | IPv4-translated IPv6 address |
+| `64:ff9b::/96` | | IPv4-embedded (e.g. NAT64) |
+| `100::/64` | | Discard-only (RTBH) |
+| `2000::/3` | Global | Global unicast address (GUA) |
+| `2001::/32` | | Teredo |
+| `2001:20::/28` | | ORCHIDv2 |
+| `2001:db8::/32` | | Documentation (non-routable) |
+| `2002::/16` | | 6to4 (deprecated) |
+| `3ffe::/16` | | IPv6 Testing Address Allocation (6bone) (reverted) |
+| `fc00::/7` | Global | Unique local address (ULA) |
+| `fd00::/8` | Site | Locally administered ULA |
+| `fe80::/10` | Link-local | Link-local unicast (non-routable) |
+| `ff00::/8` | Variable | Multicast |
 
-### Special Addresses
+### Multicasst addresses
+
+| Prefix | Scope | Description |
+| - | - | - |
+| `ffx2::/16` | Link | Link-local scope |
+| `ffx5::/16` | Site | Site-local scope |
+| `ffxe::/16` | Global | Global scope |
+| `ff02::1` | Link | All-nodes |
+| `ff02::2` | Link | All-routers |
+| `ff02::6a` | Link | All-snoopers (multicast router discovery) |
+| `ff02::fb` | Link | mDNSv6 (link-local) |
+| `ff05::fb` | Site | mDNSv6 (site-local) |
+| `ff02::1:2` | Link | All-DHCP-relay-agents-and-servers |
+| `ff05::1:3` | Site | All-DHCP-servers |
+| `ff02::6b` | Link | PTPv2 messages |
+| `ff02:0:0:0:0:1:ff00::/104` | Link | Solicited-node |
+
+### Special Subnet Addresses
 
 - Subnet-router anycast address: The first interface ID in every subnet (RFC 4291). (Does not apply to /127 and /128 addresses.)
 - Subnet anycast addresses: The last 128 interface IDs in every subnet (RFC 2526). (Does not apply to /127 and /128 addresses.)
@@ -119,19 +137,22 @@ breadcrumbs:
     - Similar to DHCPv6, but with some important changes.
     - Generally used when indicated by router advertisements that DHCP should be used (stateful or stateless).
     - Stateless DHCP instructs devices to use address autoconfiguration, but get additional data (e.g. DNS servers) from the DHCP server.
-- SLAAC:
-    - It's expected to have up to multiple addresses concurrently, in addition to the link-local address.
-    - EUI-64 addresses:
-        - The first method of autoconfiguring an address, giving a single interface ID deterministically based on the MAC address (i.e. expanding EUI-48 to a EUI-64 as the interface ID).
-        - Typically no longer in use due to privacy concerns (MAC address indirectly visible when accessing remote services).
+- SLAAC interface ID generation methods:
+    - Modified EUI-64 addresses:
+        - The first method of autoconfiguring an address, giving a single interface ID deterministically based on the MAC address (using the modified EUI-64 method).
         - Useful for servers with autoconfigured addresses due to its stability, unlike temporary addresses that change over time.
-    - Privacy extensions (RFCs 3041, 4841, 8981):
-        - A set of extensions adding temporary, randomized addresses in order to preserve privacy by not revealing the MAC address (visble from the EUI-64) and to periodically change the address.
-        - Mainly used for outbound connections. Rather useless for inbound connections due to its volatility.
-    - **TODO**
-- The unspecified address: `::`
-- The loopback address: `::1`
-- The first and last addresses in a subnet are not reserved and can be assigned to hosts, unlike IPv4.
+    - Privacy/temporary addresses (RFCs 3041, 4941, 8981):
+        - A set of extensions adding temporary, randomized addresses in order to preserve privacy by not revealing the MAC address (visble from the EUI-64) and also to periodically change the address.
+        - When a new address is generated, the existing ones are marked as deprecated and not used for new connections, but are kept to keep existing connections alive.
+        - While earlier RFCs called this "privacy extensions", newer RFCs refer to this as "temporary address extensions".
+    - Stable and Opaque addresses (RFCs 7217 and 8064):
+        - Uses a single, deterministic address based on the host and the subnet.
+        - This avoids having to change the address as in temporary address extensions and avoids MAC-trackable addresses as in modified EUI-64 addressing.
+        - This is now the default in RFC-compliant IPv6 stacks.
+    - ... and other methods.
+- Reserved subnet addresses:
+    - The first and last addresses in a subnet are not reserved and it's *possible* be assigned to hosts, unlike IPv4 (i.e. the network and broadcast addresses).
+    - However, address zero is reserved for the subnet-router anycast address and the last 128 addresses are reserved for other subnet anycast addresses.
 - Neighbor cache.
     - States:
         - Incomplete.
@@ -148,25 +169,39 @@ breadcrumbs:
     - Invalid: Expired valid.
     - Optimistic: Like tenative but for Optimistic DAD. Can be used.
 
-## Packet and Transit
+## Packet
 
-- Streamlined header.
-    - 40 bytes base.
+- Overall, IPv6 replaced the variable-length IPv4 header with options and stuff (20 bytes or more) with a streamlined, constant-length bases header (40 bytes) and an optional chain of extension headers.
+- Changes in header fields from IPv4 to IPv6:
+    - Changed the value of the "version" field from 4 to 6.
+    - Removed the "internet header length" (IHL) field, the base header is constant-length now.
+    - Removed the "identification", "flags" and "fragment offset" fields, fragmentation is handled by the fragmentation header now.
+    - Removed the "header checksum" field, since checksumming is often done by both lower-level and higher-level protocols.
+    - Removed the "options" field and its padding, options are now replaced by extension headers.
+    - Replaced the "type of service" (ToS) with the "traffic class", used for the same purpose. Actually split into a DiffServ field and an ECN field for both protocols.
+    - Replaced the "total length" field (size of header and payload) with the "payload length" field (size of payload, including extension headers).
+    - Replaced the "time to live" (TTL) field with the "hop limit" field. Whereas the IPv4 TTL was meant to represent time in seconds, the IPv6 hop limit now specifies the number of hops instead, which is generally how TTL was implementet anyways.
+    - Replaced the "protocol" field with "next header" field, giving the type of the next extension header or the upper-layer protocol if no extension headers (like the last extension header).
+    - Added the "flow label" field, allowing the use of explicit flows instead of the implicit 5-tuple flow definition. A zero value means no flow classification. The flow label indicates to intermediate hops that the packets in the flow should travel along the same path, preventing reordering and stuff.
 - Extension headers:
-    - Hop-by-hop options header.
-    - Routing header.
-    - Fragment header.
-    - Destination options header.
-    - Authentication header.
-    - Encapsulating security payload header.
-- No checksum.
-- Fragmentation.
-    - Routers don't fragment.
+    - Each extension header, as well as the base header, specifies the protocol of the next header. The very last header (base or extension) specifies the protocol of the upper-layer PDU.
+    - IPv6 allows an arbitrary amount of extension headers, unlike the limited size of the IPv4 options field.
+    - Extension headers should appear in a certain order, see RFC 8200.
+    - While the base header was made more "streamlined" by making it constant-length, it can maybe be argued that the chain of extension headers makes the whole IPv6 packet less streamlined as each header must be examined to find the start of the upper-layer PDU, where e.g. the TCP/UDP port numbers may be found (e.g. for filtering or NAT/PAT purposes).
+- Current extension headers (in recommended order):
+    - Hop-by-hop options: For intermediate nodes, containing suboptions in the TLV format. Should be immediately after the base header.
+    - Routing: For source routing.
+    - Fragment: For fragmentation, which must be done by the sender.
+    - Authentication header (AH): For IPsec.
+    - Encapsulating security payload (ESP): For IPsec. May be followed by either a destination options header or the upper-layer PDU.
+    - Destination options: Similar to hop-by-hop options, but for the destination. May be used twice if used together with a routing header, in which the first one should be immediately before the routing header.
+- Fragmentation:
+    - Routers no longer fragment, is't not its job.
     - Path MTU discovery.
     - Not allowed for some NDP messages.
     - The first fragment must contain all headers.
 
-## Protocols
+## Protocols and Techniques
 
 ### Neighbor Discovery (ND)
 
@@ -178,7 +213,11 @@ breadcrumbs:
     - Opportunistic DAD allows using the address before DAD finishes.
 - Redirect.
 - Router advertisements.
-    - SLAAC.
+    - SLAAC or DHCPv6.
+    - M-bit (managed address configuration flag): If DHCPv6 is used to assign host addresses.
+    - O-bit (other configuration flag): If DHCPv6 can be used to obtain more information (e.g. DNS servers). Ignored if M-bit is set.
+    - L-bit (on-link flag) (for prefix): If the prefixes are directly reachable on the link, so the host can reach them without going through the router.
+    - A-bit (address configuration flag) (for prefix): If the host can generate a SLAAC address using this prefix. Can be set together with M-bit for fun results.
 - Neighbor advertisements.
 - Uses a hop limit of 255 and received request with lower hop limits are ignored.
 - Suggests using IPsec for ND messages.
@@ -204,10 +243,17 @@ breadcrumbs:
 - Version 1:
     - Based on IGMPv2.
     - Any-source multicast (ASM).
+    - Messages:
+        - Query: Sent by routers to query the subnet for listeners for all groups (general) or a specific group (specific).
+        - Report: Sent by hosts to join a group or to respond to queries.
+        - Done: Sent by hosts to leave a group.
 - Version 2:
     - Based on IGMPv3.
     - Source-specific multicast (SSM).
-- PIM can be used for routing.
+    - Messages:
+        - Query: Same as MLDv1, but adds the source-specific query type.
+        - Report: Same as MLDv1, but also takes the role of MLDv1 Done for hosts leaving a group.
+- PIM can be used for routing between subnet.
 - MLD snooping can be used by switches.
 - Multicast router discovery (MRD):
     - Based on MLD.
@@ -247,7 +293,14 @@ breadcrumbs:
     - Every name server from the root (for a certain domain name) must be accessable by the resolver.
     - IPv4 should always be supported.
 
-### Routing Protocols Summary
+### Path MTU Discovery (PMTUD)
+
+- Since IPv6 does not fragment along the path, knowing the path MTU is important.
+- ICMPv6 error type 2 ("packet too big") are send by routers along the path if the packet is too big, so the host can retry using a smaller packet.
+- The minimum MTU for IPv6 is 1280 octets. 1500 octets is generally the default.
+- `tracepath` on Linux can be used to troubleshoot path MTUs.
+
+### Routing Protocols (Summary)
 
 - Using one shared instance VS two instances (ships in the night).
 - RIPng:
@@ -387,7 +440,7 @@ breadcrumbs:
 
 ## Address Planning and Implementation
 
-***OUTDATED***
+*Might be outdated, best practices change over time ...*
 
 - It should support both IPv4 and IPv6.
 - IPv6 should be native.
@@ -401,7 +454,7 @@ breadcrumbs:
     - May use either GUAs or ULAs.
     - Interfaces with ULAs which need internet access may:
         - Be assigned a GUA in addition to the ULA.
-        - Use NPTv6 to translate the ULA prefix to a GUA prefix.
+        - Use NPTv6 to translate the ULA prefix to a GUA prefix (avoid if possible, use GUA instead).
     - NAT66 is not required for ULAs and should not be used.
     - ULAs provide global address independence.
     - ULAs without NPTv6 provide an extra layer of protection for systems that should not be accessible externally.

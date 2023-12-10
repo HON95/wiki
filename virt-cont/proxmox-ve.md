@@ -67,14 +67,14 @@ PVE-specific instructions:
 1. Install basics:
     1. `apt install sudo vim`
 1. (Optional) Update network config using Open vSwitch (OVS):
-    1. (Note) Do NOT manually modify the configs for DNS, NTP, IPTables, etc. The network config (`/etc/network/interfaces`) and PVE configs _may_ however be manually modified, but the GUI or API is still recommended.
-    1. (Note) Plain Linux stuff (the way PVE uses it at least) may break for certain setups where e.g. PVE has a VLAN L3 interface on the same bridge as a VM has one.
+    - (Note) Do NOT manually modify the configs for DNS, NTP, IPTables, etc. The network config (`/etc/network/interfaces`) and PVE configs _may_ however be manually modified, but the GUI or API is still recommended.
+    - (Note) Plain Linux stuff (the way PVE uses it at least) may break for certain setups where e.g. PVE has a VLAN L3 interface on the same bridge as a VM has one.
     - Install Open VSwitch: `apt install openvswitch-switch`
     - If using VLANs and an optionally an LACP link:
         1. (Note) Do this in a way to avoid taking the node offline, e.g. by only adding IPv6 to the new uplink and making sure it works before moving IPv4. Preferably use a separate link for the temporary uplink during install.
-        1. Create the OVS bridge (`vmbr<N>`). If *not* using LAG/LACP then add the physical interface. When adding tagged or untagged VM interfaces later, use this bridge.
+        1. Create the OVS bridge (`vmbr<N>`). If *not* using LAG/LACP then add the physical interface. If *not* using tagged PVE-mgmt, then add the PVE IP addresses here. When adding tagged or untagged VM interfaces later, use this bridge.
         1. If using LAG/LACP: Create the OVS bond (LACP) (`bond<N>`). Use the created bridge as the "OVS bridge" and the physical interfaces as the "slaves". Use mode "LACP (balance-tcp)" and add the OVS option `other_config:lacp-time=fast`.
-        1. Create the OVS IntPort (VLAN interface) (`vlan<VID>`), which PVE will use to access the network. Use the OVS bridge and specify the VLAN ID. Set the IP addresses for PVE here.
+        1. If using a VLAN for PVE-mgmt, create the OVS IntPort (VLAN interface) (`vlan<VID>`), which PVE will use to access the network. Use the OVS bridge and specify the VLAN ID. Set the IP addresses for PVE here.
 1. Update MOTD:
     1. Disable the special PVE banner: `systemctl disable --now pvebanner.service`
     1. Clear or update `/etc/issue` and `/etc/motd`.
