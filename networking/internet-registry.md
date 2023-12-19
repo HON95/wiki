@@ -20,13 +20,15 @@ breadcrumbs:
 
 ## Statuses for IPv4 and IPv6 Objects
 
-| Status | IPv4 | IPv6 | Description |
-| - | - | - | - |
-| Allocation | `ALLOCATED PA` | `ALLOCATED-BY-RIR` | |
-| Assignment | `ASSIGNED PA` | `ASSIGNED` | |
-| Assignment (multiple) | | `AGGREGATED-BY-LIR` | For multiple assignments of the same size. |
-| Sub-allocation | `SUB-ALLOCATED PA` | `ALLOCATED-BY-LIR` | |
-| PI assignment | `ASSIGNED PI` | `ASSIGNED PI` | |
+| Status | IPv4 | IPv6 |
+| - | - | - |
+| Allocation | `ALLOCATED PA` | `ALLOCATED-BY-RIR` |
+| Sub-allocation | `SUB-ALLOCATED PA` | `ALLOCATED-BY-LIR` |
+| PA assignment | `ASSIGNED PA` | `ASSIGNED` |
+| PA assignment (aggregate)\* | n/a | `AGGREGATED-BY-LIR` |
+| PI assignment | `ASSIGNED PI` | `ASSIGNED PI` |
+
+(\*) Requires the `assignment-size` attribute.
 
 ## Legacy Space
 

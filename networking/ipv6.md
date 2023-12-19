@@ -440,9 +440,9 @@ breadcrumbs:
 
 ## Address Planning and Implementation
 
-*Might be outdated, best practices change over time ...*
+*Might be outdated ...*
 
-- It should support both IPv4 and IPv6.
+- It should support both IPv4 and IPv6, potentially IPv6-only if appropriate.
 - IPv6 should be native.
 - IPv4 may be provided through dual stack or as a service using translation or tunneling mechanisms.
     - IPv4 may can be tunneled both over internal core networks and through the internet edge.
@@ -467,8 +467,9 @@ breadcrumbs:
     - Address conservation should not be taken into account, there's enough /64 prefixes.
     - Avoids pointless VLSM, a thing of the past.
     - Required by e.g. SLAAC and unicast-prefix-based IPv6 multicast addresses (RFC 3306).
-    - Even for point-to-point links (/127) and loopbacks (/128), such that uplinks always use ":0", downlinks always use ":1" and loopbacks always use in ":0".
+    - Even point-to-point links (/127) should get their own /64 reservation.
 - Topology aggregation VS policy/service aggregation.
+- For LIRs, separate LIR infrastructure space from end user space (a few non-contiguous IP addresses should however be in LIR space).
 - Suggested information to include in the prefix:
     - Region.
     - Location.
@@ -476,6 +477,7 @@ breadcrumbs:
     - Application.
     - Subnet.
     - VLAN ID (12 bits) (if the address plan is closely tied to the VLAN plan).
+- Assign a /48 to each POP.
 - Use provisioning tools (IPAM).
 - Don't mirror the IPv4 address plan with all of its legacy problems.
 - Plan both for now and for the future.
