@@ -169,8 +169,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Install iwd to manage wireless connections: `pacman -S iwd`
     1. Create the `netdev` group to allow users to control `iwd`: `groupadd -r netdev`
     1. Configure iwd:
-        - (Note) Config file: `/etc/iwd/main.conf` (INI)
-        - (Optional) Disable periodic scanning when disconnected: In section `[Scan]`, set `DisablePeriodicScan=yes`.
+        - See example config below for config `/etc/iwd/main.conf`.
     1. Enable iwd: `systemctl enable --now iwd.service`
         - If this fails, you may need to reboot.
     1. Setup the network config:
@@ -558,9 +557,9 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
 
 - Setup secure boot using your own keys.
 
-### Notes and Snippets
+## Config Snippets
 
-#### systemd-networkd Network Config
+### systemd-networkd Network Config
 
 File: `/etc/systemd/network/en.network` (example)
 
@@ -597,7 +596,22 @@ UseDNS=yes
 UseDomains=yes
 ```
 
-#### iwd eduroam Config
+### iwd Config
+
+File: `/etc/iwd/main.conf`
+
+```ini
+[General]
+AddressRandomization=network
+
+[Settings]
+AutoConnect=true
+
+[Scan]
+DisablePeriodicScan=no
+```
+
+### iwd eduroam Config
 
 File: `/var/lib/iwd/eduroam.8021x` (for SSID `eduroam`)
 
@@ -618,7 +632,7 @@ Place the CA certificate in `/var/lib/iwd/eduroam.crt`.
 
 NTNU template:
 
-```
+```ini
 [Security]
 EAP-Method=PEAP
 EAP-Identity=anonymous@ntnu.no
@@ -632,7 +646,7 @@ EAP-PEAP-Phase2-Password=<password>
 AutoConnect=true
 ```
 
-#### Polybar Launch Script
+### Polybar Launch Script
 
 File: `~/.config/polybar/launch.sh`
 
@@ -645,7 +659,7 @@ killall -q polybar
 polybar main >/dev/null 2>&1 &
 ```
 
-#### Polybar Spotify Module
+### Polybar Spotify Module
 
 File: `~/.config/polybar/config`
 
@@ -659,7 +673,7 @@ exec = python /usr/share/polybar/scripts/spotify_status.py -f '{song}' -t 25 -q
 format-underline = #1db954
 ```
 
-#### Alacritty Config
+### Alacritty Config
 
 File: `~/.config/alacritty/alacritty.yml`
 
@@ -678,7 +692,7 @@ import:
   - ~/.config/alacritty/dracula.yml
 ```
 
-#### Rofi Config
+### Rofi Config
 
 file: `~/.config/rofi/config.rasi`
 
@@ -689,7 +703,7 @@ configuration {
 @theme "glue_pro_blue"
 ```
 
-#### Xorg Monitors
+### Xorg Monitors
 
 File: `/etc/X11/xorg.conf.d/10-monitor.conf`
 
@@ -706,7 +720,7 @@ Section "Monitor"
 EndSection
 ```
 
-#### Xorg DPMS
+### Xorg DPMS
 
 File: `/etc/X11/xorg.conf.d/20-dpms.conf`
 
@@ -728,7 +742,7 @@ Section "Extensions"
 EndSection
 ```
 
-#### i3 Media Keys
+### i3 Media Keys
 
 File: `~/.config/i3/config`
 
@@ -743,7 +757,7 @@ bindsym XF86AudioPrev exec --no-startup-id playerctl previous
 bindsym XF86AudioNext exec --no-startup-id playerctl next
 ```
 
-#### i3 Volume Keys
+### i3 Volume Keys
 
 File: `~/.config/i3/config`
 
@@ -757,7 +771,7 @@ bindsym XF86AudioMute exec --no-startup-id pamixer -t
 bindsym XF86AudioMicMute exec --no-startup-id pamixer --default-source -t
 ```
 
-#### i3 Maim Screenshot Keys
+### i3 Maim Screenshot Keys
 
 File: `~/.config/i3/config`
 

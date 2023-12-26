@@ -14,7 +14,9 @@ breadcrumbs:
 - [IETF RFC 8200 (STD 86): Internet Protocol, Version 6 (IPv6) Specification](https://datatracker.ietf.org/doc/html/rfc8200)
 - [APNIC: IPv6 Best Current Practices](https://www.apnic.net/community/ipv6-program/ipv6-bcp/)
 
-## Special Prefixes
+## Special Prefixes and Addresses
+
+### Prefixes
 
 | Prefix | Scope | Description |
 | - | - | - |
@@ -54,7 +56,7 @@ breadcrumbs:
 | `ff02::6b` | Link | PTPv2 messages |
 | `ff02:0:0:0:0:1:ff00::/104` | Link | Solicited-node |
 
-### Special Subnet Addresses
+### Subnet Addresses
 
 - Subnet-router anycast address: The first interface ID in every subnet (RFC 4291). (Does not apply to /127 and /128 addresses.)
 - Subnet anycast addresses: The last 128 interface IDs in every subnet (RFC 2526). (Does not apply to /127 and /128 addresses.)
@@ -201,7 +203,7 @@ breadcrumbs:
     - Not allowed for some NDP messages.
     - The first fragment must contain all headers.
 
-## Protocols and Techniques
+## Protocols
 
 ### Neighbor Discovery (ND)
 
@@ -372,7 +374,7 @@ breadcrumbs:
     - Allows nodes behind NAT to connect to tunnel servers on the internet.
 - SSH.
 
-### Tanslation Mechanisms
+### Translation Mechanisms
 
 - IP masquerading aka NAT44 (IPv4 only).
     - Limitations (apply to many other NAT approaches as well):
@@ -440,7 +442,7 @@ breadcrumbs:
 
 ## Address Planning and Implementation
 
-*Might be outdated ...*
+### Random Notes
 
 - It should support both IPv4 and IPv6, potentially IPv6-only if appropriate.
 - IPv6 should be native.
@@ -503,6 +505,14 @@ breadcrumbs:
     - Redundancy and load balancing.
     - Potentally lower costs if the ISPs offer different prices for different services.
     - IPv6 supports native multihoming since interfaces can be assigned multiple prefixes from different routers.
+
+### RIPE: IPv6 Fundamentals course
+
+- A subnet in IPv6 is a /64.
+- The recommended prefix length for a loopback interface is a /128.
+- It is recommended to reserve a /64 for each P2P link, even if you end up configuring a /127 on the router interface.
+- It is common to see POPs with a /48 address space as a minimum.
+It is common practice to assign to an End User a prefix size between /48 and /56.
 
 ### Philip Smith: IPv6 Address Planning (2012)
 

@@ -30,17 +30,41 @@ See [Installation (VyOS)](https://docs.vyos.io/en/latest/install.html).
     - If asked about which config to copy, either one is fine.
 1. Remove the live image and reboot.
 
+## Minimum Configuration for Remote Access (Optional)
+
+Steps to get SSH up ASAP so you can avoid the console. Assumes you already know how to configure VyOS, jump directly to "initial configuration" if not.
+
+1. Log in as `vyos` with the password you set during installation.
+1. Set an IPv4/IPv6 address for the interface you intend to connect through.
+    1. Add address: `set int eth eth0 address 10.0.0.10/24` (example)
+    1. Add DHCP address (alternative): `set int eth eth0 address dhcp` (example)
+1. Set the default route as a static route, if you don't connect from the connected network configured above and are not using DHCP.
+    1. Add route: `set protocols static route 0.0.0.0/0 next-hop 10.0.0.1`
+1. (Optional) Set DNS servers.
+    1. Add server: `set system name-server <ip-address>`
+1. Set the time zone. NTP servers are already configured, but might not be syncing yet.
+    1. Set time zone: `set system time-zone Europe/Oslo` (example)
+    1. Commit.
+    1. Check time: `run show date`
+1. Add proper user, remove default user:
+    1. Add new user: `set system login <user> authentication plaintext-password "<password>"`
+    1. Commit, log out, log in as new user.
+    1. Delete old user: `delete system login user vyos`
+1. Enable SSH, without root auth:
+    1. Enable: `set service ssh`
+1. Commit, save and try to connect through SSH.
+
 ## Initial Configuration
 
-An example of a full configuration. Except intuitive stuff I forgot to mention.
+An example of a full-ish configuration. Skip any steps already done in "minimum configuartion for remote access".
 
 1. Log in as user `vyos` and password as set in the installation (or `vyos` if using the live media).
     - It'll drop you directly into operational mode.
-1. Fix the keyboard layout:
-    - Run config TUI: `set console keymap`
-    - **FIXME**: This doesn't seem to work. Relogging or restarting doesn't help either.
 1. Enter configuration mode: `configure`
     - This changes the prompt from `$` to `#`.
+1. Set the keyboard layout:
+    1. Set: `set system option keyboard-layout no` (Norwegian)
+    1. Apply: `commit`
 1. Set hostname:
     1. Hostname: `set system host-name <hostname>`
     1. Domain name: `set system domain-name <domain-name>`
