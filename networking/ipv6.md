@@ -27,17 +27,19 @@ breadcrumbs:
 | `::ffff:0:0/96` | | IPv4-mapped IPv6 address |
 | `::ffff:0:0:0/96` | | IPv4-translated IPv6 address |
 | `64:ff9b::/96` | | IPv4-embedded (e.g. NAT64) |
-| `100::/64` | | Discard-only (RTBH) |
+| `100::/64` | | Discard-only (RTBH) (RFC 6666) |
 | `2000::/3` | Global | Global unicast address (GUA) |
 | `2001::/32` | | Teredo |
 | `2001:20::/28` | | ORCHIDv2 |
 | `2001:db8::/32` | | Documentation (non-routable) |
 | `2002::/16` | | 6to4 (deprecated) |
 | `3ffe::/16` | | IPv6 Testing Address Allocation (6bone) (reverted) |
-| `fc00::/7` | Global | Unique local address (ULA) |
+| `fc00::/7` | Site | Unique local address (ULA) |
 | `fd00::/8` | Site | Locally administered ULA |
 | `fe80::/10` | Link-local | Link-local unicast (non-routable) |
 | `ff00::/8` | Variable | Multicast |
+
+See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml) for an updated table.
 
 ### Multicasst addresses
 
@@ -151,7 +153,7 @@ breadcrumbs:
         - Uses a single, deterministic address based on the host and the subnet.
         - This avoids having to change the address as in temporary address extensions and avoids MAC-trackable addresses as in modified EUI-64 addressing.
         - This is now the default in RFC-compliant IPv6 stacks.
-    - ... and other methods.
+    - ... and other methods like Cryptographically Generated Address (CGA) and Hasb-Hased address (HBA).
 - Reserved subnet addresses:
     - The first and last addresses in a subnet are not reserved and it's *possible* be assigned to hosts, unlike IPv4 (i.e. the network and broadcast addresses).
     - However, address zero is reserved for the subnet-router anycast address and the last 128 addresses are reserved for other subnet anycast addresses.
@@ -171,37 +173,58 @@ breadcrumbs:
     - Invalid: Expired valid.
     - Optimistic: Like tenative but for Optimistic DAD. Can be used.
 
-## Packet
+## Packet Structure
+
+![Packet header differences between IPv4 and IPv6](../files/ripe-ipv6-header-changes.png)
+
+*Figure: Packet header differences between IPv4 and IPv6. (Source: RIPE)*
 
 - Overall, IPv6 replaced the variable-length IPv4 header with options and stuff (20 bytes or more) with a streamlined, constant-length bases header (40 bytes) and an optional chain of extension headers.
-- Changes in header fields from IPv4 to IPv6:
-    - Changed the value of the "version" field from 4 to 6.
-    - Removed the "internet header length" (IHL) field, the base header is constant-length now.
-    - Removed the "identification", "flags" and "fragment offset" fields, fragmentation is handled by the fragmentation header now.
-    - Removed the "header checksum" field, since checksumming is often done by both lower-level and higher-level protocols.
-    - Removed the "options" field and its padding, options are now replaced by extension headers.
-    - Replaced the "type of service" (ToS) with the "traffic class", used for the same purpose. Actually split into a DiffServ field and an ECN field for both protocols.
-    - Replaced the "total length" field (size of header and payload) with the "payload length" field (size of payload, including extension headers).
-    - Replaced the "time to live" (TTL) field with the "hop limit" field. Whereas the IPv4 TTL was meant to represent time in seconds, the IPv6 hop limit now specifies the number of hops instead, which is generally how TTL was implementet anyways.
-    - Replaced the "protocol" field with "next header" field, giving the type of the next extension header or the upper-layer protocol if no extension headers (like the last extension header).
-    - Added the "flow label" field, allowing the use of explicit flows instead of the implicit 5-tuple flow definition. A zero value means no flow classification. The flow label indicates to intermediate hops that the packets in the flow should travel along the same path, preventing reordering and stuff.
-- Extension headers:
-    - Each extension header, as well as the base header, specifies the protocol of the next header. The very last header (base or extension) specifies the protocol of the upper-layer PDU.
-    - IPv6 allows an arbitrary amount of extension headers, unlike the limited size of the IPv4 options field.
-    - Extension headers should appear in a certain order, see RFC 8200.
-    - While the base header was made more "streamlined" by making it constant-length, it can maybe be argued that the chain of extension headers makes the whole IPv6 packet less streamlined as each header must be examined to find the start of the upper-layer PDU, where e.g. the TCP/UDP port numbers may be found (e.g. for filtering or NAT/PAT purposes).
-- Current extension headers (in recommended order):
+- List of "next header" protocols: [IANA: Protocol Numbers](https://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml)
+
+### Changes from IPv4
+
+- Changed the value of the "version" field from 4 to 6.
+- Removed the "internet header length" (IHL) field, the base header is constant-length now.
+- Removed the "identification", "flags" and "fragment offset" fields, fragmentation is handled by the fragmentation header now.
+- Removed the "header checksum" field, since checksumming is often done by both lower-level and higher-level protocols.
+- Removed the "options" field and its padding, options are now replaced by EHs.
+- Replaced the "type of service" (ToS) with the "traffic class", used for the same purpose. Actually split into a DiffServ field and an ECN field for both protocols.
+- Replaced the "total length" field (size of header and payload) with the "payload length" field (size of payload, including EHs).
+- Replaced the "time to live" (TTL) field with the "hop limit" field. Whereas the IPv4 TTL was meant to represent time in seconds, the IPv6 hop limit now specifies the number of hops instead, which is generally how TTL was implementet anyways.
+- Replaced the "protocol" field with "next header" field, giving the type of the next EH or the upper-layer protocol if no EHs (like the last EH).
+- Added the "flow label" field, allowing the use of explicit flows instead of the implicit 5-tuple flow definition. A zero value means no flow classification. The flow label indicates to intermediate hops that the packets in the flow should travel along the same path, preventing reordering and stuff.
+
+
+### Extension Headers (EHs)
+
+- IPv6 in theory allows an arbitrary amount of EHs chained together (the "header chain"), but normally there are none for simple traffic.
+- There currently exists a limited number of standardized EHs, some listed below. They can only appear once in the header chain (excluding the destination options header, which might appear twice) and must appear in the correct order. New EHs can be created and standardized, but not without a good reason why an existing one can't be used. For simple options, the destination options header can probably carry them instead of creating a new EH type.
+- Some EHs may contain multiple options inside, for instance the destination options header, which may be used for carrying new/non-standard options.
+- Most EHs are only processed by endpoints, except the hop-by-hop and routing headers.
+- Each EH, as well as the base header, specifies the protocol number of the next header. The very last header (base or extension) specifies the protocol of the upper-layer PDU.
+- While the base header was made more "streamlined" by making it constant-length, it can maybe be argued that the chain of EHs makes the whole IPv6 packet less streamlined as each header must be examined to find the start of the upper-layer PDU, where e.g. the TCP/UDP port numbers may be found (e.g. for filtering or NAT/PAT purposes).
+- Current EHs as of RFC8200 (in recommended order):
     - Hop-by-hop options: For intermediate nodes, containing suboptions in the TLV format. Should be immediately after the base header.
     - Routing: For source routing.
     - Fragment: For fragmentation, which must be done by the sender.
     - Authentication header (AH): For IPsec.
     - Encapsulating security payload (ESP): For IPsec. May be followed by either a destination options header or the upper-layer PDU.
     - Destination options: Similar to hop-by-hop options, but for the destination. May be used twice if used together with a routing header, in which the first one should be immediately before the routing header.
-- Fragmentation:
-    - Routers no longer fragment, is't not its job.
-    - Path MTU discovery.
-    - Not allowed for some NDP messages.
-    - The first fragment must contain all headers.
+- Fragmentation header:
+    - Routers no longer fragment, it's now the sole responsibility of the source endpoint. Only the destination endpoint is allowed to reassemble fragments. This avoids wasting processing power of intermediate routers and might prevent certain fragmentation attacks.
+    - All fragmentation options are now contained within the fragment EH. Its main fields are the fragment offset (13 bits, in 8-octets), an M flag ("more fragments follows") and an identification number (32 bits).
+    - Fragment reassembly should use a reassembly timer and must be able to handle fragmentation attacks (e.g. small or overlapping fragments).
+    - Path MTU discovery is used to discover the path MTU, i.e. the minimum link MTU in the path.
+    - RFC 6980 forbids fragmented NDP packets, as it can be used in attacks against e.g. RA guard. This forces hosts to discard fragmented NDP packets.
+    - The first fragment must contain all EHs.
+- Routing header:
+    - It describes one or more IP addresses that should be visited on the path toward the final destination, containing options that are processed by the visited nodes.
+    - The header fields describe the header length, the routing type, the number of segments left on the path and data specific to the routing type (i.e. options).
+    - See IANA for the [supported and deprecated routing types](https://www.iana.org/assignments/ipv6-parameters/ipv6-parameters.xhtml#ipv6-parameters-3).
+    - Routing header type 0 (RH0) was previously found to be dangerous to the Internet and has been deprecated (see RFC 5095). It could be used to flood a remote path/link using 127 addresses, such that the packet bounces between the two path endpoints around 126 times, giving roughly a 63x traffic amplification in both directions on the path. To mitigate, avoid using RH0.
+- RFC 7872 describes real-world observations of packet drops caused by EHs.
+- Draft "draft-ietf-opsec-ipv6-eh-filtering-10" presents recommendations for filtering IPv6 traffic with EHs.
 
 ## Protocols
 
@@ -220,6 +243,8 @@ breadcrumbs:
     - O-bit (other configuration flag): If DHCPv6 can be used to obtain more information (e.g. DNS servers). Ignored if M-bit is set.
     - L-bit (on-link flag) (for prefix): If the prefixes are directly reachable on the link, so the host can reach them without going through the router.
     - A-bit (address configuration flag) (for prefix): If the host can generate a SLAAC address using this prefix. Can be set together with M-bit for fun results.
+    - RA messages are required to originate on-link, have a link-local source address, and have a hop limit value of 255 (RFC 4861).
+    - See RFC 7113 for RA guard security details.
 - Neighbor advertisements.
 - Uses a hop limit of 255 and received request with lower hop limits are ignored.
 - Suggests using IPsec for ND messages.
@@ -301,6 +326,36 @@ breadcrumbs:
 - ICMPv6 error type 2 ("packet too big") are send by routers along the path if the packet is too big, so the host can retry using a smaller packet.
 - The minimum MTU for IPv6 is 1280 octets. 1500 octets is generally the default.
 - `tracepath` on Linux can be used to troubleshoot path MTUs.
+
+### IPSec
+
+- IPsec provides **TODO**.
+- Baked into IPv6 using the AH and ESP extension headers.
+- How it works (IPv4 and IPv6):
+    - The Security Policy Database (SPD) in the sending host decides wheather to protect (IPsec), bypass (no IPsec) or discard the packet, based on IP addresses and next laye header information.
+    - Security information for IPsec tunnels between two hosts, such as chosen cryptographic protocols and keys, is stored in Security Associations (SAs), one on each side for each direction of each tunnel. Both authentication (AH) and encryption (ESP) depoend upon the existance of SAs.
+    - SAs are typically created using Internet Key Exchange (IKE).
+    - IPsec is used wither in tunnel mode or transport mode.
+    - Tunnel mode:
+        - When a full IPv6 datagram (headers plus payload) is placed inside an encapsulating IPv6 plus IPsec datagram.
+        - Typically used between two routers providing an encrypted link between them, where existing, unencrypted traffic enters the first router and exits the second router.
+        - The full original packet is encrypted, effectively hiding the source and destination addresses and other header info.
+    - Transport mode:
+        - When the payload is placed directly after the IPv6 plus IPsec headers (only one layer of IPv6 headers).
+        - Used for end-to-end/host-to-host encryption, where IPsec is added when building the datagram.
+        - This mode places the processing overhead from the intermediate nodes in the network to the end hosts, giving a more distributed and potentially a more scalable structure.
+- IPv6 IPsec headers:
+    - Extension headers that must be inspected by intermediate nodes (hop-by-hop, routing, fragmentation) must be placed unencrypted before the AH/ESP header.
+    - Authenticated Header (AH):
+        - Provides authentication and integrity services.
+        - Support in IPsec implementations is not mandatory.
+        - It generates a cryptographic hash using keys from the SAs, called an integrity check value (ICV). It hashes the base header (immutable fields only), the extension headers before the AH header (immutable fields only), the AH header itself (excluding the ICV), the following extension headers and the upper layer protocol. If used in tunnel mode, the hash includes the full encapsulated IPv6 headers.
+    - Encapsulating Security Payload (ESP):
+        - Provides authentication, integrity and confidentiality services.
+        - If not using encryption then it provides the same provides the same benefits as AH, although AH is more easily inspected by security devices.
+        - Support is mandatory in IPsec implementations.
+        - The extension headers after the ESP header are encrypted toghether with the upper layer payload. An ESP trailer is added to the end of the datagram.
+        - When using integrity checking as well, the ICV value is placed at the end of the datagram, after the ESP trailer.
 
 ### Routing Protocols (Summary)
 
@@ -440,6 +495,91 @@ breadcrumbs:
     - Like NAT44, including all its problems.
     - Stateful.
 
+## Security
+
+- Many actors are starting to realize that IPv6 is a thing and a potential attack surface.
+- As most other things, security should be integrated into standards and implementations from the very beginning.
+- Security policies should be IP version-agnostic, both at higher and preferably lower levels.
+- IPv6 support in network devices:
+    - It's not a yes/no question, as one could assume.
+    - There are a large amount of IPv6 features which some vendors implement and some don't. Some simply say "yes", some have documentation on what is implementet.
+    - See RIPE-772 ("Requirements for IPv6 in ICT Equipment") or NIST/USGv6 ("NIST IPv6 Profile") for templates/profiles used to certify levels of IPv6 support.
+- For end-to-end security, IPv6 has IPsec baked-in using extension headers, whereas IPv4 runs IPsec entirely in upper-layer protocols.
+- Extension headers are an added challenge for security tools, due to its chained and variable-length structure and since all extension header types must be known and analyzed.
+- Measures against network scanning:
+    - Use random interface IDs (especially for client networks).
+    - Use an IPS that can detect and block scanning attempts.
+    - Traffic filtering or rate limiting may be used.
+    - Avoid leaking internal routing information, e.g. by accidentally enabling OSPF on client networks.
+
+### False-ish Statements
+
+- *IPv6 is less secure than IPv4, either generally or wrt. certain parts.* Generally not true, IPv4 and IPv6 have different features and possibilities but are still pretty similar wrt. general use. When pointing to certrain parts that seem insecure or improperly designed, people often fail to realize that the same problems are often inherent in IPv4 and that there actually exists security features or methods to complement the weaknesses.
+- *No NAT means no protection and no privacy.* "No protection" is completely false, that is the job of the firewall (still present in IPv6), not NAT. "No privacy" is slightly true as IPv4 NAT does indeed scramble private addresses into one or more public addresses, whereas for IPv6, the same "internal" address is visible from service providers. Especially SLAAC with modified EUI-64 addressing was vulnerable to tracking even across *different* end-user networks. SLAAC with privacy extensions and stable addresses does however give pretty decent address privacy protection. Although, as with IPv4, the public address (IPv4) or prefix (IPv6) is still not in any ways "hidden", which neither NAT nor temporary addresses can avoid. TL;DR: NAT is not a security tool.
+- *IPv6 is a vulnerability in my IPv4-only network.* Typically yes, actually. Unmanaged/ignored IPv6 will often mean that hosts on the network kan freely communicate between themselves and also run certain attacks, blocking all security measures implemented for IPv4. As IPv6 is often enabled by default on hosts, it *must* be managed at least a little, by running full dual-stack (including security mechanisms), by only running IPv6 security mechanisms (RA guard, ND guard etc. according to current IPv4 traffic policies) or by actively blocking IPv6 on routers and switches. The latter would of course keep the network in the past, prevent access to IPv6-only resources and cause a lot more work when eventually implementing IPv6, so implementing it *now* is often the better approach for multiple reasons.
+- *IPv6 is impossible to scan.* It's true that brute-force/naive searches trying to scan *all* addresses will take too many resources (and traffic), searching based on a bit of knowledge is possible. For instance, many subnets are placed early in prefixes and most static addresses are placed low in the subnet (typically within the first 1024 addresses). Scanning e.g. the first 128 addresses for all /64 networks in a /48 (65536) or a /56 (256) is managable with a low amount of resources and a bit of time. However, for hosts using SLAAC (and not modified EUI-64), this means scanning the whole /64 to find all hosts. Alternative methods include DNS resolution (made simpler with DNSSEC) and traceroutes (for network infrastructure). Overall, if you want to prevent adversaries from scanning your network from the outside, block it at the firewall. If you want yourself to be able to scan your own network, consider scraping ND caches and MAC tables from routers and switches instead (or use built-in device tracking if the network devices support it).
+- *IPv6 subnets are always reachable (GUA specifically).* Traffic can be blocked using firewalls and ACLs. If the GUA prefix should truly be isolated from the Internet, you can simply not advertise routes to it. Using public addressing does not mean it must be publicly routable or reachable.
+
+### Threats
+
+- IP spoofing:
+    - A simple spoofing attack where an adversary sends a packet from a spoofed source address.
+    - Further used in e.g. smurf attacks.
+    - Doesn't work for handshaked protocols like TCP, where the source must receive a packet and then send another packet as part of a handshake, as the return packet is not sent to the adversary but to the real source host.
+    - Doesn't work for authenticated protocols.
+    - Doesn't allow the adversary to receive traffic intended to the real host (would require MITM or hijack).
+    - To mitigate external hosts spoofing internal addresses, add ingress filtering at the perimeter firewall/border router, dropping all incoming traffic sourced from internal (spoofed) addresses. For bonus point, add egress filtering dropping outgoing traffic sourced from external (spoofed) addresses.
+    - To mitigate spoofing internally, apply strict unicast reverse path forwarding (uRPF) for all client and server networks, preventing them from sending traffic from source addresses not part of the connected networks. This can also be applied for firewalls and linknets, but can cause problems if asymmetric or complex traffic flows are possible.
+- RA and ND spoofing: **TODO**
+- Traffic class and flow label as covert channels:
+    - The two fields in the IPv6 header may be used to smuggle information between hosts, unnoticed by simple security tools.
+    - Can be mitigated using a proper IDS/IPS that checks the header fields.
+    - The traffic class is only expected to exist within trusted traffic policy domains and should be wiped or ignored when sourced from untrusted networks/clients.
+    - The flow label is currently not used by the majority of networks, although it could be a bad idea to simply wipe it as might interfere with future use.
+- Routing header type 0 (RH0):
+    - Packtes using the routing extended header with routing type 0, allowing the sender to specify up to 127 addresses to visit in the path. This enables a DOS where the adversary targets two ends of a link/path and makes the packets ping-ping back and forth between those two routers around 126 times (roughly a 63x traffic amplification).
+    - Mitigated by not allowing RH0 routing, either by using RFC 5095-compliant routers (which deprecated RH0) or by blocking packets with the RH0 header in firewalls.
+- Bypassing RA guard or similar by using extension headers:
+    - The idea is that you can trick security devices or RA guard features if using extension headers. Very simple implementations may e.g. only look at the "next header" value of the base header and miss that it is an ICMPv6 packet if there exist any extension headers.
+    - Proper implementations should handle this properly.
+- Bypassing RA guard or similar by using fragmentation:
+    - This is similar to the last bypass threat, but based on the fact that the original packet must be reassembled in order to check for RA messages or similar. As RA guard is implementet at switch level, reassembly is generally not an option.
+    - The mitigation is simply to forbid using fragmented NDP packets, as is now standardized. This means that security devices and switches can ignore fragmented RA messages since compliant hosts are forced to discard them anyways.
+    - RFC 7112 describes a related mitigation, where the full header chain should (must?) always go in the first fragment, so only the first fragment need to be inspected to check for e.g. ICMP messages. It also describes some RA guard-specific stuff.
+- General fragmentation threats:
+    - Overlapping fragments:
+        - Can cause problems in vulnerable operating systems, yielding e.g. the Teardrop DOS attack or IDS bypass attacks.
+        - RFC 5722 requires that datagrams containing overlapping fragments must be silently discarded.
+    - Not sending the last fragment:
+        - Can cause resource exhaustion in hosts, which keep waiting for the last fragment before completing the reassembly.
+        - RFC 8200 establishes a fragment reassembly timer, starting with the first-arrived fragment. If the time runs out, all fragments must be silently discarded. It defaults to 60 seconds.
+    - Atomic fragments:
+        - Fragments with fragment offset 0 and M flag 0, meaning it's a only single fragment.
+        - Such fragments may be crafted by an adversary to cause overlapping fragments for an existing stream of fragments, forcing the host to discard the original datagram.
+        - RFC 6946 requires hosts to process atomic fragments in isolation from normal datagrams and non-atomic streams of fragments.
+- Neighbor cache exhaustion:
+    - A DOS attack targeting the neighbor cache of routers on a /64 linknet. When the attacker sends a packet toward an address inside the /64 that does not belong to either of the linknet nodes, the router toward the linknet would attempt to look up the neighbor owning the address before marking the address as "INCOMPLETE" in its ND cache (as well as starting certain timers and stuff). Sending packets to a large number of addresses on the linknet will eventually exhaust the ND cache of the router and potentially steal a large portion of control plane processing power. For addresses hitting solicited-node multicast groups used by neighbors, the neighbors will potentially spend a large amount of control plane processing power on simply discarding the packets.
+    - Rate limiting ICMP can help reduce the attack, but can in certain cases escalate the DOS if either router fails to form neighborships due to dropped ICMP messages.
+    - A simple mitigation is to use /127 networks for P2P links, or slightly larger if more than two nodes use the linknet.
+    - Another mitigation is a new feature implemented by multiple vendors, called "IPv6 Destination Guard" (Cisco). Instead of sending neighbor solicitationt on linknets, it uses ND gleaning and ND refresh timers to find neighbors.
+
+### First-Hop Security Mechanisms
+
+- IPv6 Router Advertisement Guard (RA Guard):
+    - Prevents rogue routers trying to advertise (primarily) the default route and steal traffic from other hosts on the subnet, similar to DHCP snooping plus IPSG for IPv4.
+    - Can be mitigated either using custom port ACLs (blocking RAs from downlink ports) or using the RA Guard feature present on most managed switches.
+- IPv6 Destination Guard:
+    - For use on linknets, to mitigate the neighbor cache exhaustion attack.
+    - This should always be used if using /64 linknets. However, if using /127 or similar, this is not needed (same as for IPv4) (see RFC6164).
+    - It prevents the router from sending NS-es and instead uses ND gleaning and ND refresh timers to form neighborships.
+    - **TODO**: Move Cisco example to Cisco pages.
+    - Config statements (Cisco IOS):
+        - Define policy (global): `ipv6 destination-guard policy main` (using name `main`)
+        - Set enforcement (policy): `enforcement always` (or `stressed`?)
+        - Apply policy (interface): `ipv6 destination-guard attach-policy main`
+    - Operational commands (Cisco IOS):
+        - Show status: `show ipv6 destination-guard policy <name>`
+
 ## Address Planning and Implementation
 
 ### Random Notes
@@ -505,6 +645,7 @@ breadcrumbs:
     - Redundancy and load balancing.
     - Potentally lower costs if the ISPs offer different prices for different services.
     - IPv6 supports native multihoming since interfaces can be assigned multiple prefixes from different routers.
+- RFC 7421 provides an analysis of the 64-bit boundary in IPv6 addressing.
 
 ### RIPE: IPv6 Fundamentals course
 
