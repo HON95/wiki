@@ -183,7 +183,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - Removed the "options" field and its padding, options are now replaced by EHs.
 - Replaced the "type of service" (ToS) with the "traffic class", used for the same purpose. Actually split into a DiffServ field and an ECN field for both protocols.
 - Replaced the "total length" field (size of header and payload) with the "payload length" field (size of payload, including EHs).
-- Replaced the "time to live" (TTL) field with the "hop limit" field. Whereas the IPv4 TTL was meant to represent time in seconds, the IPv6 hop limit now specifies the number of hops instead, which is generally how TTL was implementet anyways.
+- Replaced the "time to live" (TTL) field with the "hop limit" field. Whereas the IPv4 TTL was meant to represent time in seconds, the IPv6 hop limit now specifies the number of hops instead, which is generally how TTL was implemented anyways.
 - Replaced the "protocol" field with "next header" field, giving the type of the next EH or the upper-layer protocol if no EHs (like the last EH).
 - Added the "flow label" field, allowing the use of explicit flows instead of the implicit 5-tuple flow definition. A zero value means no flow classification. The flow label indicates to intermediate hops that the packets in the flow should travel along the same path, preventing reordering and stuff.
 
@@ -252,7 +252,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - Error messages not known by the known should be forwarded to upper-layer protocols to interpret them, according to standard. One should consider filtering not needed ICMP messages.
 - While ICMPv4 *may* be blocked without completely breaking IPv4, IPv6 will break if ICMPv6 is blocked, due to NDP being a part of ICMPv6 and ARP not being a part of ICMPv4.
 - ICMPv6 error messages must not be sent in response to packets destined to a multicast address, as this can be used for discovery and amplification attacks (RFC 4443). This does not apply to "packet too big" and "parameter problem", however.
-- Responding with a "echo response" to an "echo request" send to a multicast address (aka a multicast ping) is optional. Most OSes nowadays don't do this by default.
+- Responding with a "echo response" to an "echo request" sent to a multicast address (aka a multicast ping) is optional. Most OSes nowadays don't do this by default.
 - Received ICMPv6 informational messages with an unknown type must be silently discarded. This prevents discovery.
 - Nodes must rate limit their originated ICMPv6 error messages.
 
@@ -331,7 +331,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Compatible with MLDv1. If a link has any MLDv1 nodes, all nodes must operate in MLDv1-compatible mode.
     - Messages:
         - Query (ICMP type 130): Same as MLDv1, but adds the group-and-source-specific query type to query if a list of sources for the group has any listeners, sent to the group address.
-        - Report v2 (ICMP type 143): Similar to MLDv1 Report, but also takes the role of MLDv1 Done for hosts leaving a group. It's sent to the all-MLDv2-capable-routers group (`ff02::16`). It's a "state change report" when sent because of group membership changes, or a "current state report" if sent in response to a query.
+        - Report v2 (ICMP type 143): Similar to MLDv1 Report, but also takes the role of MLDv1 Done for hosts leaving a group. It's sent to the all-MLDv2-capable-routers group (`ff02::16`). It's a "state change report" if sent because of group membership changes, or a "current state report" if sent in response to a query.
     - For a certain group, a node can use either include filter mode or exclude filter mode to filter which sources it wishes to receive traffic from. Lightweight MLDv2 (RFC5790) only allows include filter mode.
 - All MLD messages shoud be sent with a hop limit of 1, to keep all traffic on the link. Additionally, only link-local addresses should be used as source addresses.
 - All MLD messages should include the hop-by-hop header with the router alert option set, so that routers can naturally receive MLD messages for groups they're not a member of.
@@ -393,9 +393,9 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ### Domain Name System (DNS)
 
-- A6 and AAAA type records.
+- A6 (old) and AAAA type records.
 - Dual stack hosts need two entries.
-- IP6.ARPA. Originally IP6.INT.
+- `ip6.arpa`. Originally `ip6.int`.
 - Dual stack clients query for both a A and an AAAA record for each domain name to resolve.
 - The transport used is independent of the record type being queried for.
 - Native IPv6 is generally preferred over IPv4.
@@ -417,7 +417,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ### IPSec
 
-- IPsec provides **TODO**.
+- IPsec provides authenticated and/or encrypted transport between two nodes.
 - Baked into IPv6 using the AH and ESP extension headers.
 - How it works (IPv4 and IPv6):
     - The Security Policy Database (SPD) in the sending host decides wheather to protect (IPsec), bypass (no IPsec) or discard the packet, based on IP addresses and next laye header information.
@@ -598,7 +598,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - Security policies should be IP version-agnostic, both at higher and preferably lower levels.
 - IPv6 support in network devices:
     - It's not a yes/no question, as one could assume.
-    - There are a large amount of IPv6 features which some vendors implement and some don't. Some simply say "yes", some have documentation on what is implementet.
+    - There are a large amount of IPv6 features which some vendors implement and some don't. Some simply say "yes", some have documentation on what is implemented.
     - See RIPE-772 ("Requirements for IPv6 in ICT Equipment") or NIST/USGv6 ("NIST IPv6 Profile") for templates/profiles used to certify levels of IPv6 support.
     - Verify that the IPv6 features actually work as expected, especially security mechanism one could just assume work correctly.
 - For end-to-end security, IPv6 has IPsec baked-in using extension headers, whereas IPv4 runs IPsec entirely in upper-layer protocols.
@@ -775,7 +775,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - The idea is that you can trick security devices or RA guard features if using extension headers. Very simple implementations may e.g. only look at the "next header" value of the base header and miss that it is an ICMPv6 packet if there exist any extension headers.
     - Proper implementations should handle this properly.
 - Bypassing RA guard or similar by using fragmentation:
-    - This is similar to the last bypass threat, but based on the fact that the original packet must be reassembled in order to check for RA messages or similar. As RA guard is implementet at switch level, reassembly is generally not an option.
+    - This is similar to the last bypass threat, but based on the fact that the original packet must be reassembled in order to check for RA messages or similar. As RA guard is implemented at switch level, reassembly is generally not an option.
     - The mitigation is simply to forbid using fragmented NDP packets, as is now standardized. This means that security devices and switches can ignore fragmented RA messages since compliant hosts are forced to discard them anyways.
     - RFC 7112 describes a related mitigation, where the full header chain should (must?) always go in the first fragment, so only the first fragment need to be inspected to check for e.g. ICMP messages. It also describes some RA guard-specific stuff.
 - General fragmentation threats:
@@ -826,7 +826,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ### First-Hop Security Mechanisms
 
-- IPv6 Router Advertisement Guard (RA Guard):
+- IPv6 RA Guard:
     - Prevents rogue routers trying to advertise (primarily) the default route and steal traffic from other hosts on the subnet, similar to DHCP snooping plus IPSG for IPv4.
     - Can be mitigated either using custom port ACLs (blocking RAs from downlink ports) or using the RA Guard feature present on most managed switches.
 - IPv6 Destination Guard:
@@ -840,6 +840,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
         - Apply policy (interface): `ipv6 destination-guard attach-policy main`
     - Operational commands (Cisco IOS):
         - Show status: `show ipv6 destination-guard policy <name>`
+- **TODO**
 
 ## Address Planning and Implementation
 
