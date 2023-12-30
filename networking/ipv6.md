@@ -157,14 +157,6 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - Reserved subnet addresses:
     - The first and last addresses in a subnet are not reserved and it's *possible* be assigned to hosts, unlike IPv4 (i.e. the network and broadcast addresses).
     - However, address zero is reserved for the subnet-router anycast address and the last 128 addresses are reserved for other subnet anycast addresses.
-- Neighbor cache.
-    - States:
-        - Incomplete.
-        - Reachable.
-        - Stale.
-        - Delay.
-        - Probe.
-- Destination cache.
 - Address states:
     - Tenative: Waits for DAD to finish.
     - Preferred: Can be used.
@@ -228,15 +220,72 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ## Protocols
 
-### Neighbor Discovery (ND)
+### Internet Control Message Protocol for IPv6 (ICMPv6)
 
-- Uses ICMPv6.
-- Link-layer address resolution.
-- Neighbor unreachability detection (NUD).
+- Used for error messages (e.g. "packet too big") and informational messages (e.g. echo, NDP and MLD).
+- Just like ICMPv4, the header contains an 8-bit type, and 8-bit code and a 16-bit checksum (32 bits total).
+- The code functions as a sub-type to provide a more detailed error.
+- Format:
+    - ICMPv6 packets follow either the general format or the extended format.
+    - The general format is used by "packet too big" and "parameter problem". "packet too big" contains the MTU and "parameter problem" contains a pointer to which byte of the IPv6 packet that contains a problem, followed by as much of the original packet as possible, without the ICMP packet exceeding 1280 bytes.
+    - The extended format adds a length field at the start of the body and and extension structure at the end of the body (after parts of the original packet). The extension structure contains a header and one or more objects, each containing an object header and an object payload.
+    - The extended format is used by "destination unreachable" and "time exceeded".
+- Error messages (4 main):
+    - Type 1: Destination unreachable (8 codes).
+    - Type 2: Packet too big.
+    - Type 3: Time exceeded (2 codes).
+    - Type 4: Parameter problem (3 codes).
+- Informational messages (includes MLD and NDP):
+    - Type 128: Echo request.
+    - Type 129: Echo reply.
+    - Type 130 (MLD): Multicast listener query.
+    - Type 131 (MLD): Multicast listener report.
+    - Type 132 (MLD): Multicast listener done.
+    - Type 133 (NDP): Router solicitation (RS).
+    - Type 134 (NDP): Router advertisement (RA).
+    - Type 135 (NDP): Neighbor solicitation (NS).
+    - Type 136 (NDP): Neighbor advertisement (NA).
+    - Type 137 (NDP): Redirect message.
+    - Type 143 (MLD): Multicast listener report v2.
+    - ... and more.
+- Se IANA for an updated list of [ICMPv6 parameters](https://www.iana.org/assignments/icmpv6-parameters/icmpv6-parameters.xhtml).
+- While ICMPv4 *may* be blocked without completely breaking IPv4, IPv6 will break if ICMPv6 is blocked, due to NDP being a part of ICMPv6 and ARP not being a part of ICMPv4.
+- ICMPv6 error messages must not be sent in response to packets destined to a multicast address, as this can be used for discovery and amplification attacks (RFC 4443). This does not apply to "packet too big" and "parameter problem", however.
+- Responding with a "echo response" to an "echo request" send to a multicast address (aka a multicast ping) is optional. Most OSes nowadays don't do this by default.
+- Received ICMPv6 informational messages with an unknown type must be silently discarded. This prevents discovery.
+- Nodes must rate limit their originated ICMPv6 error messages.
+
+### Neighbor Discovery Protocol (ND or NDP)
+
+- Uses ICMPv6, types 133–137.
+- Provides:
+    - Router advertisements.
+    - Link-layer address resolution (similar to IPv4 ARP).
+    - Neighbor unreachability detection (NUD).
+    - Duplicate IP address detection (DAD).
+    - Redirect messages.
+- Neighbor cache:
+    - Contains entries about recently discovered neighbors, keyed on the neighbor's on-link address.
+    - Entry contents:
+        - The Link-local address.
+        - A flag indicating if it is a router.
+        - A pointer to any queued packets waiting for address resolution to complete.
+        - Reachability state (NUD).
+        - Etc.
+    - Entry states:
+        - INCOMPLETE: Initial address resolution is taking place.
+        - REACHABLE: Reachability recently confirmed. This typically lasts for 30 seconds after the last traffic.
+        - STALE: Reachability expired, but it will still be used and will transition to DELAY when a packet is sent.
+        - DELAY: A packet was recently sent from STALE, we're waiting for a response packet. If none is received in time, start NUD and transition to PROBE.
+        - PROBE: NUD is taking place, typically sending 3 NSes with 1-second spacing. (If it fails, some implementations may transition to an implementation-defined FAILED state.)
+- Destination cache:
+    - Contains entries about recently used on-link and off-link destinations.
+    - Maps a destination IP address to the IP address of the next-hop neighbor, which may then bee looked up in the neighbor cache.
+    - Redirect messages update this cache.
+    - Entries may also contain information such as the path MTU and round-trip timers maintained by transport protocols.
 - Duplicate IP address detection (DAD).
     - Determines if the address is unique before it can be used.
-    - Opportunistic DAD allows using the address before DAD finishes.
-- Redirect.
+    - Opportunistic DAD allows using the address before DAD finishes (used by Windows).
 - Router advertisements.
     - SLAAC or DHCPv6.
     - M-bit (managed address configuration flag): If DHCPv6 is used to assign host addresses.
@@ -245,63 +294,100 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - A-bit (address configuration flag) (for prefix): If the host can generate a SLAAC address using this prefix. Can be set together with M-bit for fun results.
     - RA messages are required to originate on-link, have a link-local source address, and have a hop limit value of 255 (RFC 4861).
     - See RFC 7113 for RA guard security details.
-- Neighbor advertisements.
-- Uses a hop limit of 255 and received request with lower hop limits are ignored.
-- Suggests using IPsec for ND messages.
+- Uses a hop limit of 255. Received requests with lower hop limits are discarded. This prevents NDP attacks from outside the local network.
+- IPsec may be used for ND messages, but in practice it is not used.
 - Identification of ND messages:
-    - All-zero to all-routers: SLAAC.
-    - All-zero to solicited-node: DAD.
+    - All-zero to solicited-node: Duplicate address detection (DAD).
     - Unicast to solicited-node: Link-layer address resolution.
-    - Unicast to unicast: Unreachability detection.
-- Inverse neighbor discovery (IND).
+    - Unicast to unicast: Neighbor unreachability detection (NUD).
 - Secure neighbor discovery (SEND):
     - Router authentication.
     - Cryptographically generated address (CGA).
     - Some security options.
-- NDP is vulnerable to the same attacks as for ARP and DHCP.
-    - First hop security mechanisms for NDP include ICMP guard.
-    - IPsec and SEND may also prevent certain attacks.
+    - Standardized (RFC 3971) but not widely available, so it can't be reliably used.
+- Other RFCs:
+    - RFC 3122 proposes Inverse neighbor discovery (IND).
+    - RFC 7048 proposes changes to NUD and an extra UNREACHABLE neighbor cache state.
+    - RFC 7527 proposes an enhanced DAD, which is able to detect looped-back DAD messages and self-heal after the problem is fixed.
+    - RFC 9131 proposes Gratuitous Neighbor Discovery.
 
 ### Multicast Listener Discovery (MLD)
 
-- Uses ICMPv6.
-- For registration of multicast listeners within a subnet.
-- Handled by IGMP in IPv4.
-- Version 1:
-    - Based on IGMPv2.
-    - Any-source multicast (ASM).
+- Uses ICMPv6, types 130–132.
+- For registration of multicast listeners within a subnet, similar to IGMP in IPv4.
+- Since multicast is mandatory for NDP to function, MLD is required for IPv6. NDP requires the host to join multiple multicast groups, e.g. the all-nodes group and the solicited-node group.
+- MLDv1:
+    - Based on IGMPv2, using any-source multicast (ASM).
+    - Support is no longer mandatory.
     - Messages:
-        - Query: Sent by routers to query the subnet for listeners for all groups (general) or a specific group (specific).
-        - Report: Sent by hosts to join a group or to respond to queries.
-        - Done: Sent by hosts to leave a group.
-- Version 2:
-    - Based on IGMPv3.
-    - Source-specific multicast (SSM).
+        - Query (ICMP type 130): Sent by routers to query the subnet for listeners for all groups (general, sent to all-nodes group) or a specific group (specific, sent to specific group).
+        - Report (ICMP type 131): Sent by hosts to join a group or to respond to queries, sent to the respective group.
+        - Done (ICMP type 133): Sent by hosts to leave a group, sent to the all-routers group.
+- MLDv2:
+    - Based on IGMPv3, using source-specific multicast (SSM).
+    - Support is mandatory.
+    - Compatible with MLDv1. If a link has any MLDv1 nodes, all nodes must operate in MLDv1-compatible mode.
     - Messages:
-        - Query: Same as MLDv1, but adds the source-specific query type.
-        - Report: Same as MLDv1, but also takes the role of MLDv1 Done for hosts leaving a group.
-- PIM can be used for routing between subnet.
-- MLD snooping can be used by switches.
+        - Query (ICMP type 130): Same as MLDv1, but adds the group-and-source-specific query type to query if a list of sources for the group has any listeners, sent to the group address.
+        - Report v2 (ICMP type 143): Similar to MLDv1 Report, but also takes the role of MLDv1 Done for hosts leaving a group. Is sent to the all-MLDv2-capable-routers group (`ff02::16`). Is a "state change report" when sent because of group membership changes, or a "current state report" if sent in response to a query.
+    - For a certain group, a node can use either include filter mode or exclude filter mode to filter which sources it wishes to receive traffic from. Lightweight MLDv2 (RFC5790) only allows include filter mode.
+- All MLD messages shoud be sent with a hop limit of 1, to keep all traffic on the link. Additionally, only link-local addresses should be used as source addresses.
+- All MLD messages should include the hop-by-hop header with the router alert option set, so that routers can naturally receive MLD messages for groups they're not a member of.
+- MLD snooping can be used by switches to optimize switching. It only allows multicast traffic on ports with listeners. It does not protect against any threats.
+- To prevent downlink switch ports from sending queries, enable MLD protection on the switches through an ACL that blocks ICMPv6 MLD query messages.
+- To protect routers from resource exhaustion, enable memory limits and rate limits.
+- PIM can be used for routed multicast (between subnets).
 - Multicast router discovery (MRD):
     - Based on MLD.
     - For discovery of multicast routers.
 
 ### Dynamic Host Configuration Protocol for IPv6 (DHCPv6)
 
-- Relies on routing advertisements.
-- Stateless or stateful.
-- Reconfiguration message send by server to indicate changes (lacking in DHCPv4).
-- DHCP Unique Identifier (DUID).
-- Identity Association (IA).
+- Optional for IPv6 address assignments, SLAAC may be used instead.
+- Relies on RAs to provide the default route and start trigger DHCP discovery.
+- Stateful (with address assignment) or stateless (without address assignment).
+- Uses UDP port 546 for clients and 547 for servers (DHCPv4 uses ports 68 and 67).
+- Instead of broadcasting as in DHCPv4, DHCPv6 clients use the multicast address `ff02::1:2` (all DHCP relay agents and servers). DHCP relays may use `ff05::1:3` (all DHCP servers) to reach upstream servers, but typically have the DHCP server unicast addresses configured instead.
+- Reconfiguration messages are sent by the server to indicate changes (not possible in DHCPv4).
+- Supports relays, same as DHCPv4.
+- Uses DHCP Unique Identifier (DUID) to identify clients (DHCPv4 uses plain MAC addresses).
+- Client messages:
+    - Solicit: Like DHCPv4 discovery, a client wants address offers.
+    - Request: Like DHCPv4 request, a client requests an IP address from a new offer.
+    - Confirm: The client did a successful DAD on a newly assigned address.
+    - Decline: Unlike Confirm, the DAD failed and the address can't be used.
+    - Renew: A client wants to renew its lease.
+    - Rebind: Sent after a Renew went unanswered.
+    - Release: A client releases its leases.
+    - Information-Request: For stateless DHCP, a client wants to know stuff. The server responds with a Reply.
+- Server messages:
+    - Advertise: Like DHCPv4 offer, a server offers an address.
+    - Reply: Like DHCPv4 acknowledge, the server responds to a request.
+    - Reconfigure: The server indicates that information has changed, and the client must fetch it using Renew/Reply or Information-Request.
+- Relay messages (to/from servers):
+    - Relay-Forw: Messages relayed from client to server.
+    - Relay-Reply: Messages relayed from server to client.
+- Address allocation strategies:
+    - Iterative: Simple, non-deterministic. Vulnerable to enumeration attacks.
+    - Identifier-based: Gives an address based on some fixed identifier, such that it typically gets the same address each time. May leak the identifier.
+    - Hash allocation: Like identifier-based allocation, but hashes the identifier to avoid leaking it directly.
+    - Random allocation: Non-deterministic and the most privacy-preserving option.
+- Identity Association (IA):
     - One per interface.
     - Contains IPv6 addresses plus timers.
 - Clients must perform DAD after being allocated an address by the server.
-- Rapid commit option (only two messages).
-- Renew and rebind.
-- Prefix delegation with prefix exclusion.
-- IPsec can be used.
+- Rapid commit option (only two messages) may be used if supported by both the client and the server.
+- DHCP Prefix Delegation (DHCP-PD):
+    - Allows clients to request prefixes to be routed to them.
+    - Typically used between home network CPEs and ISPs to get dynamically assigned an /56 IPv6 prefix to address its internal networks from.
+    - The prefix exclusion option may be used by the delegating router to reserve subprefixes for e.g. the downlink (RFC 6603).
+- Secure DHCPv6 (draft-ietf-dhc-sedhcpv6-21):
+    - Uses PKI to autenticate and encrypt client-server communication.
+- DHCPv6-Shield (RFC 7610):
+    - Aka DHCPv6 guard or DHCPv6 snooping, using designated ports as trusted uplinks toward servers.
+- IPsec can be used, especially between relays and servers.
 - Android and Chrome OS does not support DHCPv6, by design.
-    - To help with traceability without DHCPv6, Netflow or periodic NDP cache scans with SNMP can be used.
+- To help with traceability without DHCPv6, Netflow or periodic NDP cache scans with SNMP can be used.
 
 ### Domain Name System (DNS)
 
@@ -357,15 +443,17 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
         - The extension headers after the ESP header are encrypted toghether with the upper layer payload. An ESP trailer is added to the end of the datagram.
         - When using integrity checking as well, the ICV value is placed at the end of the datagram, after the ESP trailer.
 
-### Routing Protocols (Summary)
+### Routing Protocols (Brief)
 
-- Using one shared instance VS two instances (ships in the night).
+- Some use one shared instance for IPv4 and IPv6 while some use a separate instance for IPv4 (ships in the night), potentially different protocol versions.
+- Best practices recommend using authentication between routing peers.
 - RIPng:
     - Limited diameter.
     - Long routing loop convergence (count to infinity).
     - Too simple metric.
+    - IPsec is recommended for authentication, but isn't typically available in practice.
 - OSPFv3:
-    - Only for IPv6, IPv4 must still use OSPFv2.
+    - Originally it supported only IPv6 so IPv4 had to use OSPFv2, but now it supports IPv4 too through address families. In practice, IPv4 typically still uses OSPFv2, though, with some vendors lacking support for OSPFv3 address families.
     - Differences from OSPFv2:
         - Routes to links, not subnets.
         - Uses link-local addresses for neighbors.
@@ -373,12 +461,14 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
         - Removal of addressing semantics. IPv6 addresses are not present in OSPF headers.
         - Flooding scope.
         - Authentication.
+    - Implementations are required to either support IPsec ESP for authentication and confidentiality, or OSPFv3 authentication trailers containing a cryptographic hash using a shared key. As such, OSPFv3 is currently the only available IGP supporting encrypted route updates.
 - IS-IS:
     - Single instance for both IPv4 and IPv6.
+    - Supports HMAC-SHA authentication.
 - EIGRP.
-- BGP-4:
-    - Uses implicit support for protocols other than IPv4 (multiprotocol NLRI).
-    - BGP-4 routers still require (local) IPv4 addresses because of the BGP identifier.
+- MP-BGP:
+    - Multiprotocol NLRI gives implicit support for carrying other protocols such as IPv6.
+    - Supports TCP Authenticated Option (TCP-AO) for authentication, but the obsolete TCP MD5 signature option is still more widely used.
 
 ## Transition Technologies
 
@@ -514,11 +604,16 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ### False-ish Statements
 
-- *IPv6 is less secure than IPv4, either generally or wrt. certain parts.* Generally not true, IPv4 and IPv6 have different features and possibilities but are still pretty similar wrt. general use. When pointing to certrain parts that seem insecure or improperly designed, people often fail to realize that the same problems are often inherent in IPv4 and that there actually exists security features or methods to complement the weaknesses.
-- *No NAT means no protection and no privacy.* "No protection" is completely false, that is the job of the firewall (still present in IPv6), not NAT. "No privacy" is slightly true as IPv4 NAT does indeed scramble private addresses into one or more public addresses, whereas for IPv6, the same "internal" address is visible from service providers. Especially SLAAC with modified EUI-64 addressing was vulnerable to tracking even across *different* end-user networks. SLAAC with privacy extensions and stable addresses does however give pretty decent address privacy protection. Although, as with IPv4, the public address (IPv4) or prefix (IPv6) is still not in any ways "hidden", which neither NAT nor temporary addresses can avoid. TL;DR: NAT is not a security tool.
-- *IPv6 is a vulnerability in my IPv4-only network.* Typically yes, actually. Unmanaged/ignored IPv6 will often mean that hosts on the network kan freely communicate between themselves and also run certain attacks, blocking all security measures implemented for IPv4. As IPv6 is often enabled by default on hosts, it *must* be managed at least a little, by running full dual-stack (including security mechanisms), by only running IPv6 security mechanisms (RA guard, ND guard etc. according to current IPv4 traffic policies) or by actively blocking IPv6 on routers and switches. The latter would of course keep the network in the past, prevent access to IPv6-only resources and cause a lot more work when eventually implementing IPv6, so implementing it *now* is often the better approach for multiple reasons.
-- *IPv6 is impossible to scan.* It's true that brute-force/naive searches trying to scan *all* addresses will take too many resources (and traffic), searching based on a bit of knowledge is possible. For instance, many subnets are placed early in prefixes and most static addresses are placed low in the subnet (typically within the first 1024 addresses). Scanning e.g. the first 128 addresses for all /64 networks in a /48 (65536) or a /56 (256) is managable with a low amount of resources and a bit of time. However, for hosts using SLAAC (and not modified EUI-64), this means scanning the whole /64 to find all hosts. Alternative methods include DNS resolution (made simpler with DNSSEC) and traceroutes (for network infrastructure). Overall, if you want to prevent adversaries from scanning your network from the outside, block it at the firewall. If you want yourself to be able to scan your own network, consider scraping ND caches and MAC tables from routers and switches instead (or use built-in device tracking if the network devices support it).
-- *IPv6 subnets are always reachable (GUA specifically).* Traffic can be blocked using firewalls and ACLs. If the GUA prefix should truly be isolated from the Internet, you can simply not advertise routes to it. Using public addressing does not mean it must be publicly routable or reachable.
+- *IPv6 is less secure than IPv4, either generally or wrt. certain parts.*
+    - Generally not true, IPv4 and IPv6 have different features and possibilities but are still pretty similar wrt. general use. When pointing to certrain parts that seem insecure or improperly designed, people often fail to realize that the same problems are often inherent in IPv4 and that there actually exists security features or methods to complement the weaknesses.
+- *No NAT means no protection and no privacy.*
+    - "No protection" is completely false, that is the job of the firewall (still present in IPv6), not NAT. "No privacy" is slightly true as IPv4 NAT does indeed scramble private addresses into one or more public addresses, whereas for IPv6, the same "internal" address is visible from service providers. Especially SLAAC with modified EUI-64 addressing was vulnerable to tracking even across *different* end-user networks. SLAAC with privacy extensions and stable addresses does however give pretty decent address privacy protection. Although, as with IPv4, the public address (IPv4) or prefix (IPv6) is still not in any ways "hidden", which neither NAT nor temporary addresses can avoid. TL;DR: NAT is not a security tool.
+- *IPv6 is a vulnerability in my IPv4-only network.*
+    - Typically yes, actually. Unmanaged/ignored IPv6 will often mean that hosts on the network kan freely communicate between themselves and also run certain attacks, blocking all security measures implemented for IPv4. As IPv6 is often enabled by default on hosts, it *must* be managed at least a little, by running full dual-stack (including security mechanisms), by only running IPv6 security mechanisms (RA guard, ND guard etc. according to current IPv4 traffic policies) or by actively blocking IPv6 on routers and switches. The latter would of course keep the network in the past, prevent access to IPv6-only resources and cause a lot more work when eventually implementing IPv6, so implementing it *now* is often the better approach for multiple reasons.
+- *IPv6 is impossible to scan.*
+    - It's true that brute-force/naive searches trying to scan *all* addresses will take too many resources (and traffic), searching based on a bit of knowledge is possible. For instance, many subnets are placed early in prefixes and most static addresses are placed low in the subnet (typically within the first 1024 addresses). Scanning e.g. the first 128 addresses for all /64 networks in a /48 (65536) or a /56 (256) is managable with a low amount of resources and a bit of time. However, for hosts using SLAAC (and not modified EUI-64), this means scanning the whole /64 to find all hosts. Alternative methods include DNS resolution (made simpler with DNSSEC) and traceroutes (for network infrastructure). Overall, if you want to prevent adversaries from scanning your network from the outside, block it at the firewall. If you want yourself to be able to scan your own network, consider scraping ND caches and MAC tables from routers and switches instead (or use built-in device tracking if the network devices support it).
+- *IPv6 subnets are always reachable (GUA specifically).*
+    - Traffic can be blocked using firewalls and ACLs. If the GUA prefix should truly be isolated from the Internet, you can simply not advertise routes to it. Using public addressing does not mean it must be publicly routable or reachable.
 
 ### Threats
 
@@ -530,14 +625,64 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Doesn't allow the adversary to receive traffic intended to the real host (would require MITM or hijack).
     - To mitigate external hosts spoofing internal addresses, add ingress filtering at the perimeter firewall/border router, dropping all incoming traffic sourced from internal (spoofed) addresses. For bonus point, add egress filtering dropping outgoing traffic sourced from external (spoofed) addresses.
     - To mitigate spoofing internally, apply strict unicast reverse path forwarding (uRPF) for all client and server networks, preventing them from sending traffic from source addresses not part of the connected networks. This can also be applied for firewalls and linknets, but can cause problems if asymmetric or complex traffic flows are possible.
-- RA and ND spoofing: **TODO**
+    - To mitigate spoofing from clients connected to a managed switch, enable IPv6 inspection (builds a dynamic binding database) and enable IPv6 source guard (blocks packets sourced from addresses not in the binding database).
+- RA and NS/ND spoofing (MITM or DoS):
+    - NS and NA spoofing allows hosts to redirect traffic destined to another neighbor through cache poisoning. As both NS and NA messages update neighbor caches, both may be used.
+    - RA spoofing allows hosts to redirect traffic destined to outside the local network by taking over the default gateway (or other routes) through cache poisoning.
+    - These poisoning attacks may either be used for MITM attacks (adversary poisoning neighbors' caches with their own MAC address, then sending traffic to the correct neighbor) or for DoS attacks (poisoning with any other MAC address, so traffic doesn't reach the intended host).
+    - These spoofind attacks are also present in IPv4 through ARP poisoning and rogue DHCPv4 servers.
+    - RAs can additionally be used to spoof specific routes on non-uplink interfaces on hosts, such that the longest-prefix-match rule causes traffic to exit through that interface even though the default gateway is found on a different interface.
+    - Spoofed RAs can also contain erroneous configuration to misconfigure the client, yielding a DoS. Or to set a custom DNS server, yielding a DNS MITM, often used to hijack other services.
+    - Mitigations include first-hop security mechanisms like RA guard against RA spoofing, IPv6 snooping (DHCPv6 guard and ND inspection) against NS/NA spoofing and optionally IPv6 source guard against traffic spoofing. RA guard lets you statically specify router ports, while IPv6 snooping builds a dynamic binding database and validates NS/NA messages against it. IPv6 source guard prevents sending traffic from spoofed addresses, i.e. those not found in the binding database. Not all switches properly support this yet.
+    - For servers and stuff, this is often partially avoided by using static configuration. NS/NA spoofing or MAC address spoofing may still be possible vulnerabilities, though.
+    - See RFCs 3756 and 6104 for more info on ND threats.
+- Redirect spoofing (MITD or DoS):
+    - Spoofed redirect messages, containing the real router's source address, some destination prefix and the adversary's target address, may be used for similar purposes as RA spoofing.
+    - The general mitigation is to simply not accept redirects in the hosts' configurations.
+- DNS MITM:
+    - Through RA spoofing, the adversary can set a custom DNS server, yielding a DNS MITM. This can be used to hijack other services.
+    - See the RA spoofing notes for mitigations (spoiler: RA guard).
+    - In addition to normal DNS, keep these name resolution services in mind too:
+        - DNS Service Discovery (DNS-SD)
+        - Multicast DNS (mDNS)
+        - Link-Local Multicast Name Resolution (LLMNR)
+- DAD DoS:
+    - For this attack, the adversary keeps answering DAD messages sent by a host trying to choose an address (with NS or NA messages), making it look like all the addresses it tries are already taken.
+    - It may also target the default gateway for the local network, if the router has just been restarted and is using DAD.
+    - This is a variant of NS/NA spoofing and similar mitigations should be applied.
+- Neighbor cache exhaustion (DoS):
+    - A DoS attack targeting the neighbor cache of routers on a /64 linknet. When the attacker sends a packet toward an address inside the /64 that does not belong to either of the linknet nodes, the router toward the linknet would attempt to look up the neighbor owning the address before marking the address as "INCOMPLETE" in its ND cache (as well as starting certain timers and stuff). Sending packets to a large number of addresses on the linknet will eventually exhaust the ND cache of the router and potentially steal a large portion of control plane processing power. For addresses hitting solicited-node multicast groups used by neighbors, the neighbors will potentially spend a large amount of control plane processing power on simply discarding the packets.
+    - Rate limiting ICMP can help reduce the attack, but can in certain cases escalate the DoS if either router fails to form neighborships due to dropped ICMP messages.
+    - A simple mitigation is to use /127 networks for P2P links, or slightly larger if more than two nodes use the linknet.
+    - Another mitigation is a new feature implemented by multiple vendors, called "IPv6 Destination Guard" (Cisco). Instead of sending neighbor solicitationt on linknets, it uses ND gleaning and ND refresh timers to find neighbors.
+- Rogue DHCPv6 servers:
+    - Just like rogue DHCPv4 servers, but requires the RA to have the M and/or O flag set to tell the host to use DHCP.
+    - May be used to assign adversarial DNS servers (MITM), bad IPv6 addresses (DoS) or other options. The default gateway address can't be set, that's configured by RAs in IPv6.
+    - This may be used in combination with a DHCP exhaustion attack to prevent the legitimate server from being able to assign any addresses.
+    - Like DHCPv4, enable DHCPv6 snooping, which prevents untrusted ports from sending server messages.
+- DHCP starvation (DoS):
+    - A client requests a ton of IP addresses using different DUIDs and exhausts the address pool.
+    - First-hop security may be used to mitigate this.
+- MLD report flooding (DoS):
+    - Sending loads of MLD report messages might exhaust the router's resources.
+    - To limit memory usage, set a limit for the number of MLD entries on the router.
+    - To limit control plane processing, rate limit MLD messages.
+    - As a more drastic solution, disable MLD if not needed.
+- MLD amplification attack (DoS):
+    - Sending generic query message with the router's address as the spoofed source, a lot of reports will be sent to the router.
+    - Like MLD flooding, you should rate limit MLD messages on the router, or potentially disable MLD if not needed.
+    - MLD protection on switches in the form of an ACL that blocks incoming MLD queries on downlinks will prevent this.
+- MLD scanning:
+    - Passive scanning: Snoop on MLD messages on the link. Since all host must join at least one group, all conformant hosts can be eventually be found.
+    - Active scanning: Send queries and listen for reports. Using MLD protection will prevent this.
+    - As certain OSes always join certain groups, you can get a rough fingerprint of the OS of a host.
 - Traffic class and flow label as covert channels:
     - The two fields in the IPv6 header may be used to smuggle information between hosts, unnoticed by simple security tools.
     - Can be mitigated using a proper IDS/IPS that checks the header fields.
     - The traffic class is only expected to exist within trusted traffic policy domains and should be wiped or ignored when sourced from untrusted networks/clients.
     - The flow label is currently not used by the majority of networks, although it could be a bad idea to simply wipe it as might interfere with future use.
 - Routing header type 0 (RH0):
-    - Packtes using the routing extended header with routing type 0, allowing the sender to specify up to 127 addresses to visit in the path. This enables a DOS where the adversary targets two ends of a link/path and makes the packets ping-ping back and forth between those two routers around 126 times (roughly a 63x traffic amplification).
+    - Packtes using the routing extended header with routing type 0, allowing the sender to specify up to 127 addresses to visit in the path. This enables a DoS where the adversary targets two ends of a link/path and makes the packets ping-ping back and forth between those two routers around 126 times (roughly a 63x traffic amplification).
     - Mitigated by not allowing RH0 routing, either by using RFC 5095-compliant routers (which deprecated RH0) or by blocking packets with the RH0 header in firewalls.
 - Bypassing RA guard or similar by using extension headers:
     - The idea is that you can trick security devices or RA guard features if using extension headers. Very simple implementations may e.g. only look at the "next header" value of the base header and miss that it is an ICMPv6 packet if there exist any extension headers.
@@ -548,7 +693,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - RFC 7112 describes a related mitigation, where the full header chain should (must?) always go in the first fragment, so only the first fragment need to be inspected to check for e.g. ICMP messages. It also describes some RA guard-specific stuff.
 - General fragmentation threats:
     - Overlapping fragments:
-        - Can cause problems in vulnerable operating systems, yielding e.g. the Teardrop DOS attack or IDS bypass attacks.
+        - Can cause problems in vulnerable operating systems, yielding e.g. the Teardrop DoS attack or IDS bypass attacks.
         - RFC 5722 requires that datagrams containing overlapping fragments must be silently discarded.
     - Not sending the last fragment:
         - Can cause resource exhaustion in hosts, which keep waiting for the last fragment before completing the reassembly.
@@ -557,11 +702,11 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
         - Fragments with fragment offset 0 and M flag 0, meaning it's a only single fragment.
         - Such fragments may be crafted by an adversary to cause overlapping fragments for an existing stream of fragments, forcing the host to discard the original datagram.
         - RFC 6946 requires hosts to process atomic fragments in isolation from normal datagrams and non-atomic streams of fragments.
-- Neighbor cache exhaustion:
-    - A DOS attack targeting the neighbor cache of routers on a /64 linknet. When the attacker sends a packet toward an address inside the /64 that does not belong to either of the linknet nodes, the router toward the linknet would attempt to look up the neighbor owning the address before marking the address as "INCOMPLETE" in its ND cache (as well as starting certain timers and stuff). Sending packets to a large number of addresses on the linknet will eventually exhaust the ND cache of the router and potentially steal a large portion of control plane processing power. For addresses hitting solicited-node multicast groups used by neighbors, the neighbors will potentially spend a large amount of control plane processing power on simply discarding the packets.
-    - Rate limiting ICMP can help reduce the attack, but can in certain cases escalate the DOS if either router fails to form neighborships due to dropped ICMP messages.
-    - A simple mitigation is to use /127 networks for P2P links, or slightly larger if more than two nodes use the linknet.
-    - Another mitigation is a new feature implemented by multiple vendors, called "IPv6 Destination Guard" (Cisco). Instead of sending neighbor solicitationt on linknets, it uses ND gleaning and ND refresh timers to find neighbors.
+- ICMPv6 error messages for packets sent to multicast addresses:
+    - This could be used for discovery and amplification attacks if all nodes listening to the multicast address were to respond with ICMPv6 error messages, e.g. in Smurf attacks.
+    - ICMPv6 partially solves this by forbidding sending error messages in response to packets sent to multicast addresses, however, this does not apply to "packet too big" and "parameter problem" (RFC 4443).
+    - The above exception means that "paramteter problem" may still be used for network discovery, by crafting an invalid packet and sending it to the all-nodes link-local multicast address.
+    - As a side note, responding to a multicast ping ("echo request" sent to a multicast address) is optional and most OSes don't do this by default. This could be used in Smurt attacks (traditionally with IPv4 local or directed broadcasts and a spoofed source address).
 
 ### First-Hop Security Mechanisms
 
