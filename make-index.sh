@@ -18,9 +18,7 @@ no_toc: false
 ---
 {% include header.md %}
 
-Random collection of config notes and miscellaneous stuff. _Technically not a wiki._
-
-_(Alphabetically sorted, so the ordering might seem a bit strange.)_
+Random collection of config notes and Miscellanea. _Technically not a wiki._
 EOF
 
 # Add categories and pages

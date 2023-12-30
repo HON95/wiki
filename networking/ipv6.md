@@ -249,6 +249,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Type 143 (MLD): Multicast listener report v2.
     - ... and more.
 - Se IANA for an updated list of [ICMPv6 parameters](https://www.iana.org/assignments/icmpv6-parameters/icmpv6-parameters.xhtml).
+- Error messages not known by the known should be forwarded to upper-layer protocols to interpret them, according to standard. One should consider filtering not needed ICMP messages.
 - While ICMPv4 *may* be blocked without completely breaking IPv4, IPv6 will break if ICMPv6 is blocked, due to NDP being a part of ICMPv6 and ARP not being a part of ICMPv4.
 - ICMPv6 error messages must not be sent in response to packets destined to a multicast address, as this can be used for discovery and amplification attacks (RFC 4443). This does not apply to "packet too big" and "parameter problem", however.
 - Responding with a "echo response" to an "echo request" send to a multicast address (aka a multicast ping) is optional. Most OSes nowadays don't do this by default.
@@ -294,7 +295,8 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - A-bit (address configuration flag) (for prefix): If the host can generate a SLAAC address using this prefix. Can be set together with M-bit for fun results.
     - RA messages are required to originate on-link, have a link-local source address, and have a hop limit value of 255 (RFC 4861).
     - See RFC 7113 for RA guard security details.
-- Uses a hop limit of 255. Received requests with lower hop limits are discarded. This prevents NDP attacks from outside the local network.
+- Uses a hop limit of 255 and requires hosts to discard arriving packets with lower hop limits. This prevents NDP attacks from outside the local network.
+- RFC 6980 forbids fragmented NDP packets, as it can be used in attacks against e.g. RA guard. This forces hosts to discard fragmented NDP packets.
 - IPsec may be used for ND messages, but in practice it is not used.
 - Identification of ND messages:
     - All-zero to solicited-node: Duplicate address detection (DAD).
@@ -329,7 +331,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Compatible with MLDv1. If a link has any MLDv1 nodes, all nodes must operate in MLDv1-compatible mode.
     - Messages:
         - Query (ICMP type 130): Same as MLDv1, but adds the group-and-source-specific query type to query if a list of sources for the group has any listeners, sent to the group address.
-        - Report v2 (ICMP type 143): Similar to MLDv1 Report, but also takes the role of MLDv1 Done for hosts leaving a group. Is sent to the all-MLDv2-capable-routers group (`ff02::16`). Is a "state change report" when sent because of group membership changes, or a "current state report" if sent in response to a query.
+        - Report v2 (ICMP type 143): Similar to MLDv1 Report, but also takes the role of MLDv1 Done for hosts leaving a group. It's sent to the all-MLDv2-capable-routers group (`ff02::16`). It's a "state change report" when sent because of group membership changes, or a "current state report" if sent in response to a query.
     - For a certain group, a node can use either include filter mode or exclude filter mode to filter which sources it wishes to receive traffic from. Lightweight MLDv2 (RFC5790) only allows include filter mode.
 - All MLD messages shoud be sent with a hop limit of 1, to keep all traffic on the link. Additionally, only link-local addresses should be used as source addresses.
 - All MLD messages should include the hop-by-hop header with the router alert option set, so that routers can naturally receive MLD messages for groups they're not a member of.
@@ -587,6 +589,10 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ## Security
 
+![RIPE-722 Overview](../files/ripe-722-overview.png)
+
+*Figure: RIPE-722 "Requirements for IPv6 in ICT Equipment" overview. (Source: RIPE)*
+
 - Many actors are starting to realize that IPv6 is a thing and a potential attack surface.
 - As most other things, security should be integrated into standards and implementations from the very beginning.
 - Security policies should be IP version-agnostic, both at higher and preferably lower levels.
@@ -594,6 +600,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - It's not a yes/no question, as one could assume.
     - There are a large amount of IPv6 features which some vendors implement and some don't. Some simply say "yes", some have documentation on what is implementet.
     - See RIPE-772 ("Requirements for IPv6 in ICT Equipment") or NIST/USGv6 ("NIST IPv6 Profile") for templates/profiles used to certify levels of IPv6 support.
+    - Verify that the IPv6 features actually work as expected, especially security mechanism one could just assume work correctly.
 - For end-to-end security, IPv6 has IPsec baked-in using extension headers, whereas IPv4 runs IPsec entirely in upper-layer protocols.
 - Extension headers are an added challenge for security tools, due to its chained and variable-length structure and since all extension header types must be known and analyzed.
 - Measures against network scanning:
@@ -601,6 +608,85 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Use an IPS that can detect and block scanning attempts.
     - Traffic filtering or rate limiting may be used.
     - Avoid leaking internal routing information, e.g. by accidentally enabling OSPF on client networks.
+- Deploy an IDS like Snort/Suricata/Zeek to find attacks and a vulnerability scanner like OpenVAS/Nessus to find vulnerabilities. NGFWs may come with these features as built-in proprietary solutions, but using a few open-source tools in addition may be a good idea.
+- Stay up to date:
+    - Follow IETF for new RFCs, BCPs and stuff.
+    - Follow RIPE for BCPs and recommendations.
+    - Follow your network vendors for specific vulnerabilities and patches.
+    - Follow cybersecurity organizations for general vulnerabilities and recommendations.
+    - Follow vulnerability databases like CVE or NVE for current vulnerabilities affecting your products.
+
+### Traffic Filtering
+
+- Generally applied by host firewalls, simple network firewalls (stateful L3-L4), NG network firewalls (stateful L3-L7 + IDS) or router/switch ACLs (stateless).
+- Since IPv6 uses public addresses (GUA), unlike modern IPv4 networks, it relies more heavily on proper firewalling.
+- Due to a larger available address space for organizations, IPv6 address plans focus more on structure and aggegation, which generally allows for simpler filtering rules. One would also typically have only a single IPv6 prefix for the whole organization, but maybe multiple small IPv4 prefixes.
+- Filter ULA and site-scoped multicast at site/org. boundaries.
+- Apply ingress and egress filtering to drop bogons (static), spoofed addresses (wrong side of border) and internal-only addresses.
+- For general filtering in dual-stack networks, make sure to keep IPv4 and IPv6 filters in sync.
+- ICMPv6 filtering:
+    - Must be done with care, as functioning IPv6 depends on many of its types (e.g. for PMTUD, NDP, MLD).
+    - Can typically follow a whitelist model in network firewalls/routers, where all ICMPv6 is disabled by default. The blacklist model may be appropriate for hosts.
+    - Should be allowed:
+        - Type 1: Destination unreachable (all codes).
+        - Type 2: Packet too big (all codes).
+        - Type 3: Time exceeded (all codes).
+        - Type 4: Parameter problem (all codes).
+    - Should be allowed for troubleshooting:
+        - Type 128: Echo request.
+        - Type 129: Echo reply.
+        - Type 139,140: Node information query/response (maybe).
+    - Should be allowed on link only:
+        - Type 130,131,132,143: MLD (all v1/2).
+        - Type 133–136: NDP (only RS/RA/NS/NA).
+        - Type 141,142: Inverse NDP (INS/INA).
+        - Type 148,149: SEND (maybe).
+        - Type 151–153: MRD (maybe).
+    - Should be dropped:
+        - Type 138: Router renumbering (not needed, ignored without IPsec).
+        - Type 139,140: Node information query/response (maybe).
+        - Type 100,101,200,201: Private experimentation.
+        - Type 5–99,102–126: Unallocated error codes (maybe).
+        - Type 127,255: Reserved for future ICMP expansions (maybe).
+    - Should be dropped on link only:
+        - Type 137: Redirect (NDP) (if untrusted clients and not ignored by all hosts).
+    - For more information about ICMPv6 filtering in firewalls, see RFC 4890.
+- Extension header (EH) filtering:
+    - Firewalls should be able to properly recognize and filter by EHs.
+    - RFC 7112 requires that the full header chain goes in the first fragment.
+    - Packets with invalid/forbidden combinations of headers should be dropped.
+    - RH0 should be dropped.
+- Transition mechanisms:
+    - Makes traffic inspection and filtering a bit more complicated.
+    - Consists of tunneling methods and translation methods (see separate section for more info).
+    - Consider filtering transition mechanisms you don't employ in the network.
+    - Native IPv6 uses EtherType `0x86dd`, tunnel methods use a specific IP upper-layer protocol number or TCP/UDP port.
+
+### BGP
+
+- Route hijacking:
+    - By originating the prefix from the adversarial AS (simple) or by forging a fake AS-path and making traffic go through the adversarial AS (complex).
+    - Can happen by mistake or by malicious intent.
+    - The route with the shortest path (generally) wins, so the adversarial route may win "nearby" and lose "far away".
+    - This can be used in DoS or MITM attacks, with the latter being harder to detect.
+    - The MITM attack is a bit more involved as the traffic stil needs to reach the legitimate AS in the end.
+    - Mitigations against fake-origin route hijacking:
+        - Route filtering based on agreements and/or IRR databases.
+        - RPKI w/ authenticated origins.
+        - BGPsec (not widely used).
+    - As an emergency mitigation, announce more specific routes to win the longest-prefix-match.
+- Prefix filtering:
+    - Use bogon filtering. See RFC 5156, [IANA](https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml) and [Cymru](https://www.team-cymru.com/bogon-networks).
+    - Use RPKI filtering, by preferring RPKI-valid routes and dropping RPKI-invalid routes.
+    - Allow end users and peers to only advertise agreed-upon routes, typically sourced automatically from IRR.
+- [MANRS](https://www.manrs.org/) (Mutually Agreed Norms for Routing Security):
+    - A global initiative aiming to build more a secure and resilient Internet through collaborative efforts, targeting network operators, IXPs and CDNs/cloud providers.
+    - Network operator actions:
+        1. Facilitate global operational communication and coordination (keep contact information up to date).
+        1. Facilitate validation of routing information on a global scale (correctly use route objects, RPKI and document routing policy).
+        1. Prevent traffic with a spoofed IP address (use ingress filtering and maybe uRPF) (optional).
+        1. Prevent propagation of incorrect routing information (define a clear routing policy, use RPKI checking, use BGP bogon filtering etc.).
+- Use TCP-AO for peering authentication. IPsec is not supported.
 
 ### False-ish Statements
 
@@ -650,6 +736,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - For this attack, the adversary keeps answering DAD messages sent by a host trying to choose an address (with NS or NA messages), making it look like all the addresses it tries are already taken.
     - It may also target the default gateway for the local network, if the router has just been restarted and is using DAD.
     - This is a variant of NS/NA spoofing and similar mitigations should be applied.
+- Node information query leaks: **TODO** (RFC 4620)
 - Neighbor cache exhaustion (DoS):
     - A DoS attack targeting the neighbor cache of routers on a /64 linknet. When the attacker sends a packet toward an address inside the /64 that does not belong to either of the linknet nodes, the router toward the linknet would attempt to look up the neighbor owning the address before marking the address as "INCOMPLETE" in its ND cache (as well as starting certain timers and stuff). Sending packets to a large number of addresses on the linknet will eventually exhaust the ND cache of the router and potentially steal a large portion of control plane processing power. For addresses hitting solicited-node multicast groups used by neighbors, the neighbors will potentially spend a large amount of control plane processing power on simply discarding the packets.
     - Rate limiting ICMP can help reduce the attack, but can in certain cases escalate the DoS if either router fails to form neighborships due to dropped ICMP messages.
@@ -692,6 +779,15 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - The mitigation is simply to forbid using fragmented NDP packets, as is now standardized. This means that security devices and switches can ignore fragmented RA messages since compliant hosts are forced to discard them anyways.
     - RFC 7112 describes a related mitigation, where the full header chain should (must?) always go in the first fragment, so only the first fragment need to be inspected to check for e.g. ICMP messages. It also describes some RA guard-specific stuff.
 - General fragmentation threats:
+    - Partial header chain in first fragment:
+        - RFC 7112 requires that the full header chain must go in the first fragment. This makes traffic inspection much easier.
+        - This can be caused by creating lots of tiny fragments, such that upper-layer headers no longer go in the first fragment.
+        - Firewalls should filter non-conformant packets.
+    - Fragments inside fragments:
+        - Multiple layers of fragmentation, making traffic inspection difficult.
+        - This should not happen as only one fragment header is allowed. The firewall should silently discard such packets.
+    - Fragmentation inside tunnels:
+        - A proper NGFW or IDS is required to inspect this traffic.
     - Overlapping fragments:
         - Can cause problems in vulnerable operating systems, yielding e.g. the Teardrop DoS attack or IDS bypass attacks.
         - RFC 5722 requires that datagrams containing overlapping fragments must be silently discarded.
@@ -707,6 +803,26 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - ICMPv6 partially solves this by forbidding sending error messages in response to packets sent to multicast addresses, however, this does not apply to "packet too big" and "parameter problem" (RFC 4443).
     - The above exception means that "paramteter problem" may still be used for network discovery, by crafting an invalid packet and sending it to the all-nodes link-local multicast address.
     - As a side note, responding to a multicast ping ("echo request" sent to a multicast address) is optional and most OSes don't do this by default. This could be used in Smurt attacks (traditionally with IPv4 local or directed broadcasts and a spoofed source address).
+- DDoS attacks:
+    - Works just as for IPv4.
+    - An additional threat for IPv6 is the RH0 amplification attack, which should hopefully not be relevant any more with updated implementation and filtering where required.
+    - With the address expansion from e.g. IoT and lack of NAT, IPv6 DDoS attacks are likely to participate with more unique addresses than for IPv4.
+    - As IPv6 is often a bit more neglected than IPv4 from both network designs and software/firmware implementations, there's likely less active security measures for IPv6 than for its IPv4 counterpart.
+    - As IoT devices are both growing in number and often have somewhat neglected security mechanisms, they're a prime target for infecting and including them in the attack.
+    - Protection:
+        - Use location-distributed services with anycast addresses, to force target distribution of the attack.
+        - Use cloud-based or ISP-based scrubbing services in front of your own services. Make sure they can't be easily bypassed.
+        - Use remote-triggered blackholing (RTBH) through the well-known BGP community, to stop the traffic before reaching your network, if your ISP supports it.
+        - Use IPSes to automatically prevent the attack from reaching further into your network.
+        - Use automation to detect DDoS attacks and dynamically apply filtering on routers or firewalls (e.g. a special ingress filter for ongoing attacks).
+        - To avoid having your devices infected and participating in attacks against other parties, apply appropriare security measures to protect them.
+- Transition mechanism attacks:
+    - Disable unused transition mechanisms on hosts, e.g. ISATAP, to prevent automatic tunnels.
+    - Filter unused transition mechanisms on firewalls.
+    - Filter "translated" traffic from interfaces/zones it's not supposed to come from.
+    - NAT64/DNS64-based attacks:
+        - IP pool depletion attack: Standard dynamic NAT/PAT exhaustion.
+        - Processing overload attack: Flooding traffic with protocols that contain L3 information and requires special treatment, like FTP.
 
 ### First-Hop Security Mechanisms
 
