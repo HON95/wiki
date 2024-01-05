@@ -507,6 +507,18 @@ Note: Anonymous users have read-only access to everything.
 1. Show UPSes: `LIST UPS`
 1. Show UPS vars: `LIST VAR <ups>`
 
+## OpenLDAP
+
+### Install Client
+
+- Arch: `sudo pacman -S openldap`
+- Debian: `sudo apt install ldap-utils`
+
+### Usage
+
+- Search:
+    - Unanthenticated user search: `ldapsearch -x -b ou=people,dc=example,dc=net -H ldap://ldap.example.net uid=hon`
+
 ## OpenSSL
 
 ### Usage
