@@ -65,41 +65,9 @@ breadcrumbs:
     - Spanning tree: Must now be specified for each interface to activete for, instead of enabling for all. Supports interface ranges. Now supports multiple spanning tree instances for different interfaces.
     - IGMP snooping: Interfaces must be listed (or `all`).
 - Firewalling:
-    - TODO
+    - **TODO**
 - First hop security:
-    - See screenshots fron nLogic course. Custom firewall filters may be required.
-    - Example:
-        ```
-        firewall {
-            family ethernet-switching {
-                filter RA-guard {
-                    term router-solicitation {
-                        from {
-                            destination-mac-address 33:33:00:00:00:02;
-                        }
-                        then {
-                            discard;
-                        }
-                    }
-
-                    term router-advertise {
-                        from {
-                            destination-mac-address 33:33:00:00:00:01;
-                        }
-                        then {
-                            discard;
-                        }
-                    }
-
-                    term permit-all {
-                        then {
-                            accept;
-                        }
-                    }
-                }
-            }
-        }
-        ```
+    - **TODO**
 
 ## Initial Setup
 
