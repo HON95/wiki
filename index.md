@@ -143,12 +143,13 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Wi-Fi Protected Access (WPA)](/networking/wpa/)
 - [Zero Trust Networking](/networking/zero-trust/)
 
-## Personal Devieces
+## Personal Devices
 
 - [Android](/personal-device/android/)
 - [PC Applications](/personal-device/applications/)
 - [Arch (i3)](/personal-device/arch-i3/)
 - [Kubuntu](/personal-device/kubuntu/)
+- [Linux](/personal-device/linux/)
 - [Manjaro (KDE)](/personal-device/manjaro-kde/)
 - [Windows](/personal-device/windows/)
 
