@@ -101,4 +101,22 @@ Source: Mostly RIPE.
     - LIRs can request PI for end users, thus acting as a "sponsoring LIR".
 - According to RIPE policies, all assignments must be registered in the RIPE Database using `inet6num` objetcs with one of the `ASSIGNED`, `AGGREGATED-BY-LIR` or `ASSIGNED PI` statuses.
 
+## IP Blocklisting
+
+- Getting unblocked can take time, so prevent getting blocked in the first place.
+- Contacting the blocklisting operator and finding out why your prefix or ASN got blacklisted can be challenging.
+- When getting a new prefix, check that it is not blocklisted.
+- Prevent getting blocklisted:
+    - As an ISP, make clear contracts for your customers to prevent unwanted content.
+    - Implement BCP 38: "Network Ingress Filtering: Defeating Denial of Service Attacks which employ IP Source Address Spoofing".
+    - Implement BGP security measures.
+    - Use RPKI ROAs and keep IRR up to date.
+    - Create IRR inet(6)num allocations/assignments for customers with proper descriptions, so blocklisting can hopefully be contained to problematic customers.
+    - Implement automated blocklist monitoring to quickly find problems before customers complain.
+    - If appropriate, monitor traffic from customers and automatically block them before they can become a public problem.
+- How RIPE quatantines prefixes:
+    1. Delist all objects.
+    1. Put in quarantene for 6 months or as long as publicly routed.
+    1. Assign to LIR in waitlist.
+
 {% include footer.md %}
