@@ -106,6 +106,10 @@ Source: Mostly RIPE.
 - Getting unblocked can take time, so prevent getting blocked in the first place.
 - Contacting the blocklisting operator and finding out why your prefix or ASN got blacklisted can be challenging.
 - When getting a new prefix, check that it is not blocklisted.
+- Implement blocklisting:
+    - Statically add static bogons prefixes (e.g. RFC1918 or Class E on the Internet).
+    - Dynamically source dynamic blocklists, built internally or using a public blocklist.
+    - Filter on source address on ingress and on destination address on egress.
 - Prevent getting blocklisted:
     - As an ISP, make clear contracts for your customers to prevent unwanted content.
     - Implement BCP 38: "Network Ingress Filtering: Defeating Denial of Service Attacks which employ IP Source Address Spoofing".
