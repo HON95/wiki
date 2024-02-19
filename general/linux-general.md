@@ -315,6 +315,14 @@ breadcrumbs:
     - DHCPv4: `ip and udp and (port 67 and port 68)`
     - DHCPv6: `ip6 and udp and (port 547 and port 546)`
 
+#### Net-SNMP (Client)
+
+- Walk (v2c): `snmpwalk -v2c -c<community> <host> [oid]`
+- Walk (v3 auth+priv): `snmpwalk -v3 -l authpriv -u <user> -a SHA -A <auth-pass> -x AES -X <priv-pass> <host> [oid]`
+- Examples:
+    - Get MAC table for VLAN (v2c): `snmpwalk -v2c -c<community>@<vid> <host> BRIDGE-MIB::dot1dTpFdbTable` (defaults: VLAN 1)
+    - Get MAC table for VLAN (v3 w/ context): `snmpwalk -v3 <auth-args> -nvlan-<vid> <host> BRIDGE-MIB::dot1dTpFdbTable` (defaults: VLAN 1)
+
 ### Memory
 
 - NUMA stats:
