@@ -47,7 +47,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 - [Computer Testing](/general/computer-testing/)
 - [General](/general/general/)
-- [Linux General](/general/linux-general/)
+- [Linux General](/general/linux/)
 
 ## High-Performance Computing (HPC)
 
@@ -170,6 +170,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Data Stuff](/soft-eng/data/)
 - [Database Management Systems (DBMSes)](/soft-eng/dbmses/)
 - [GNU Compiler Collection (GCC)](/soft-eng/gcc/)
+- [Git](/soft-eng/git/)
 - [Go (Language)](/soft-eng/go/)
 - [Licensing](/soft-eng/licensing/)
 - [OpenMP](/soft-eng/openmp/)

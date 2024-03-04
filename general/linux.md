@@ -28,7 +28,7 @@ breadcrumbs:
 
 - Environment variables from `*/environment.d/*.conf` aren't visible for login sessions when using systemd. `/etc/environment` works, though. See [systemd#7641](https://github.com/systemd/systemd/issues/7641).
 
-## Commands
+## Programs
 
 ### General
 
