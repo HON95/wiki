@@ -640,7 +640,7 @@ EAP-Identity=@ntnu.no
 EAP-PEAP-CACert=/var/lib/iwd/eduroam.crt
 EAP-PEAP-ServerDomainMask=radius.ntnu.no
 EAP-PEAP-Phase2-Method=MSCHAPV2
-EAP-PEAP-Phase2-Identity=<username>
+EAP-PEAP-Phase2-Identity=<username>@ntnu.no
 EAP-PEAP-Phase2-Password=<password>
 
 [Settings]
