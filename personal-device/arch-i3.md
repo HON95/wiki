@@ -190,6 +190,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. (Example) Connect to eduroam:
         1. (Note) See the [wiki](https://wiki.archlinux.org/title/Iwd#eduroam) for more info.
         1. Go to the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) to download a config script for your organization. **Don't run it**, it doesn't support `iwd`.
+        1. Create the private credentials dir: `mkdir /var/lib/iwd/ && chown root:root /var/lib/iwd/ && chmod 700 /var/lib/iwd/`
         1. Create the config file `/var/lib/iwd/eduroam.8021x` (name-sensitive), containing the template snippet below with values found in the eduroam script.
 1. Setup DNS server(s):
     1. `echo "nameserver 1.1.1.1" >> /etc/resolv.conf` (Cloudflare)
@@ -621,11 +622,11 @@ The following values from the [eduroam configuration assistant tool (CAT)](https
 | - | - |
 | File name | `Config.ssids` (one) | Typically `eduroam`, with `8021x` file ending. |
 | `EAP-Method` | `Config.eap_outer` | |
-| `EAP-Identity` | `Config.anonymous_identity` | `anonymous@Config.user_realm` if missing. |
+| `EAP-Identity` | `Config.anonymous_identity` | `@Config.user_realm` if missing. |
 | `EAP-PEAP-CACert` | `Config.CA` | Place the cert data in a file and specify the path. |
 | `EAP-PEAP-ServerDomainMask` | `Config.servers` (one) | Without `DNS:` prefix. |
 | `EAP-PEAP-Phase2-Method` | `Config.eap_inner` | |
-| `EAP-PEAP-Phase2-Identity` | `<username>@Config.user_realm`
+| `EAP-PEAP-Phase2-Identity` | `<username>`
 | `EAP-PEAP-Phase2-Password` | `<password>` | |
 
 Place the CA certificate in `/var/lib/iwd/eduroam.crt`.
@@ -635,11 +636,11 @@ NTNU template:
 ```ini
 [Security]
 EAP-Method=PEAP
-EAP-Identity=anonymous@ntnu.no
+EAP-Identity=@ntnu.no
 EAP-PEAP-CACert=/var/lib/iwd/eduroam.crt
 EAP-PEAP-ServerDomainMask=radius.ntnu.no
 EAP-PEAP-Phase2-Method=MSCHAPV2
-EAP-PEAP-Phase2-Identity=<username>@ntnu.no
+EAP-PEAP-Phase2-Identity=<username>
 EAP-PEAP-Phase2-Password=<password>
 
 [Settings]
