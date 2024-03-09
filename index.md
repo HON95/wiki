@@ -132,6 +132,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Network Authentication](/networking/net-auth/)
 - [Open Shortest Path First (OSPF)](/networking/ospf/)
 - [pfSense](/networking/pfsense/)
+- [Precision Time Protocol (PTP)](/networking/ptp/)
 - [Routing](/networking/routing/)
 - [Network Security](/networking/security/)
 - [Switching](/networking/switching/)
