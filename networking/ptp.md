@@ -173,8 +173,8 @@ breadcrumbs:
 #### Product Support
 
 - 2-step PTP and multicast support only.
-- Catalyst 9300, 9400, 9500:
-    - Profiles: Default and 802.1AS.
+- Catalyst 9000:
+    - Profiles: Default, 802.1AS, G.8275.1, AES67.
     - Clock modes: GMC, BC, E2E-TC, P2P-TC
     - With exceptions.
 - Nexus 9000 (first gen):
