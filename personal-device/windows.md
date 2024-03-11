@@ -44,6 +44,10 @@ breadcrumbs:
     - Because Linux uses it, so the Windows time will be wrong if dual booting.
     - Open `regedit`.
     - Set DWORD `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation\RealTimeIsUniversal` to `1`.
+- Disable network throttling:
+    - Open CMD as admin.
+    - Run `netsh int tcp show global` and look for "Receive Window Auto-Tuning Level". "enabled" means throttling is enabled.
+    - Run `netsh int tcp set global autotuninglevel=disabled` to disable it.
 - Change the computer name.
 - Check Windows Security.
 - Start menu:
