@@ -16,8 +16,6 @@ breadcrumbs:
 
 ## Special Prefixes and Addresses
 
-### Prefixes
-
 | Prefix | Scope | Description |
 | - | - | - |
 | `::/0` | | Default route |
@@ -41,7 +39,7 @@ breadcrumbs:
 
 See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assignments/iana-ipv6-special-registry/iana-ipv6-special-registry.xhtml) for an updated table.
 
-### Multicasst addresses
+### Multicast
 
 | Prefix | Scope | Description |
 | - | - | - |
@@ -342,6 +340,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - Multicast router discovery (MRD):
     - Based on MLD.
     - For discovery of multicast routers.
+- Configuration and commands: See [Multicast](../multicast/).
 
 ### Dynamic Host Configuration Protocol for IPv6 (DHCPv6)
 

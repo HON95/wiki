@@ -129,6 +129,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Juniper SRX Series Firewalls](/networking/juniper-srx/)
 - [Linksys LGS Switches](/networking/linksys-lgs/)
 - [Linux Switching & Routing](/networking/linux/)
+- [Multicast](/networking/multicast/)
 - [Network Authentication](/networking/net-auth/)
 - [Open Shortest Path First (OSPF)](/networking/ospf/)
 - [pfSense](/networking/pfsense/)
