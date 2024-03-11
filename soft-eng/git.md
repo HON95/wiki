@@ -46,12 +46,19 @@ breadcrumbs:
             - "docs: correct spelling of CHANGELOG"
             - "feat(lang): add Norwegian language"
     - For squash based workflows, lead maintainers can clean up the commit messages when they're merged, so that the "casual contributer" doesn't need to conform exactly to the commit message rules.
+- Big repo enhancements:
+    - Windows has contributed a lot here since they moved Windows to git. They have approximately 3.5M files in a 300GB repo, used by 4000 engineers (2024). Most of the features were added through the Scalar project, but it's now mostly available in the Git core.
 
 ## Commands
 
 - General:
-    - Clone a repo using SSH (GitHub HON95/wiki example): `git clone git@github.com:HON95/wiki.git [local-dir]`
     - Check the status: `git status`
+    - Update local config and add cron job to update/cleanup repo stuff in the background: `git maintenance start`
+    - Show reflog: `git reflog`
+- Cloning:
+    - Clone a repo using SSH (GitHub HON95/wiki example): `git clone git@github.com:HON95/wiki.git [local-dir]`
+    - Partial clone without blobs (for big repos, will fetch them on demand): `git clone --filter=blob:none <...>`
+    - Partial clone without trees (for big repos, rarely used, maybe for CI): `git clone --filter=tree:0 <...>`
 - Staging files:
     - Add all files: `git add -A`
     - Unstage all files (without changing them): `git reset`
@@ -77,16 +84,19 @@ breadcrumbs:
     - Force push, but only if the remote hasn't changed (less dangerous): `git push --force-with-lease`
 - Branching:
     - Edit the description of a branch: `git branch --edit-description [branchname]` (defaults to active branch)
+    - Sparse checkout (limit locally present dirs, assume others are unchanged): `git sparse-checkout set <dir ...>`
 - Stashing:
     - **TODO**
 - Diffing:
     - Show diff between unstaged changes and staged/HEAD: `git diff [file]`
+    - Show diff for a commit: `git diff <commit-hash>~ <commit-hash>`
     - Show diffs within a line as diffs within a line: `git diff --word-diff`
 - Log searching:
     - Show log for repo: `git log`
     - Show log for file: `git log <file>`
     - Show log as patch text: `git log -p`
     - Search log for when something changed: `git log -G <regex> -p`
+    - Show log with graph (show branching and merging): `git log --graph --oneline`
 - Blaming:
     - Blame for a section of lines: `git blame -L <start-line>,<stop-line> <file>`
     - Check history for a section of lines: `git log -L <start-line>,<stop-line>:<file>` (note the `:`)
@@ -98,21 +108,23 @@ breadcrumbs:
         - ... or in any commit at all (slow): `git blame -C -C -C <...>`
 - Submodules:
     - **TODO**
-- Backgroun maintenance tasks:
-    - Update local config and add cron job to update/cleanup repo stuff in the background: `git maintenance start`
 - Config:
     - Se section below.
     - Update global config: `git config --global <key> <value>`
-- Miscellanea:
-    - Show reflog: `git reflog`
 
 ## Config
 
 - Conditional configs:
     - Use `[includeIf <condition>]` sections with a `path = <config-path>` statement to conditionally include the config at the target path.
     - Example: Use `[includeIf "gitdir:~/projects/work/"]` plus `path = ~/projects/work/.gitconfig` to use the work git config for work projects, e.g. to change the email address or SSH keys.
+- Project config:
+    - Enable filesystem monitor for git status (for big repos):
+        - `git config core.untrackedcache true`
+        - `git config core.fsmonitor true`
 
-### Example Config
+### Example Global Config
+
+`~/.gitconfig`
 
 ```ini
 [user]
@@ -121,6 +133,9 @@ breadcrumbs:
 [core]
         # Convert CRLF to LF
         autocrlf = input
+[fetch]
+        # Write commit-graph cache
+        writeCommitGraph = true
 [commit]
         # Don't auto-sign, use it selectively instead
         gpgsign = false

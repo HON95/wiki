@@ -85,11 +85,12 @@ breadcrumbs:
     - Use priority 1 to choose the primary GMC.
     - Connect the backup GMC to an Ethernet switch at most one bridge hop away from the primary. This yealds lower PDV changes in case of failovers.
 
-### Versions
+### Versions and Amendments
 
 #### PTPv1 (IEEE 1588-2002)
 
 - The initial version, designed to give greater precision than NTP by using GPS.
+- The full name is "Standard for a Precision Clock Synchronization Protocol for Networked Measurement and Control Systems" (SPCSPNMCS?).
 - Used e.g. by older Dante devices.
 
 #### PTPv2 (IEEE 1588-2008)
@@ -100,6 +101,19 @@ breadcrumbs:
 #### PTPv2.1 (IEEE 1588-2019)
 
 - Includes some backwards-compatible improvements to the 2008 version.
+
+#### IEEE 1588g-2022 (IEEE Std 1588-2019 Amendment)
+
+- Introduces alternative terminology for master and slave.
+- New terms:
+    - Master: Time transmitter (TT)
+    - Slave: Time receiver (TR)
+    - Grandmaster: Grandmaster (GM) (unchanged)
+    - BMCA: BTCA
+
+#### IEEE 1588e-2024 (IEEE Std 1588-2019 Amendment)
+
+- Identifies structure and content of the IEEE 1588 MIB and YANG modules.
 
 ### PTPv2 Profiles
 
