@@ -193,6 +193,10 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
             1. Go to the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) to download a config script for your organization. **Don't run it**, it doesn't support `iwd`.
             1. Create the private credentials dir: `mkdir /var/lib/iwd/ && chown root:root /var/lib/iwd/ && chmod 700 /var/lib/iwd/`
             1. Create the config file `/var/lib/iwd/eduroam.8021x` (name-sensitive), containing the template snippet below with values found in the eduroam script.
+        1. (Extra) Troubleshooting (as root):
+            1. Run it in debug mode (stop the service first): `IWD_TLS_DEBUG=TRUE IWD_WSC_DEBUG_KEYS=1 /usr/lib/iwd/iwd`
+            1. Check the debug certificate file (if the log says it stored it): `cat /tmp/iwd-tls-debug-server-cert.pem`
+            1. Force it to try to connect (if nothing happens): `iwctl station wlan0 connect <SSID>`
     - Using wpa_supplicant (not recommended):
         1. Install: `sudo pacman -S wpa_supplicant`
         1. Configure:
