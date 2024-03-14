@@ -635,7 +635,7 @@ AutoConnect=true
 DisablePeriodicScan=no
 ```
 
-### iwd eduroam Config
+### iwd Config
 
 File: `/var/lib/iwd/eduroam.8021x` (for SSID `eduroam`)
 
@@ -654,7 +654,7 @@ The following values from the [eduroam configuration assistant tool (CAT)](https
 
 Place the CA certificate in `/var/lib/iwd/eduroam.crt`.
 
-NTNU template:
+NTNU eduroam template:
 
 ```ini
 [Security]
@@ -693,7 +693,24 @@ network={
     psk="HelloWorld"
 }
 
-# WPA Enterprise (PEAP-MSCHAPv2)
+# WPA Enterprise (PEAP-MSCHAPv2) (NTNU eduroam example)
+network={
+    key_mgmt=WPA-EAP
+    pairwise=CCMP
+    group=CCMP TKIP
+    eap=PEAP
+    phase2="auth=MSCHAPV2"
+    # Point to actual EAP CA cert
+    ca_cert="/var/lib/wpa_supplicant/certs/eduroam.crt"
+    altsubject_match="DNS:radius.ntnu.no"
+    anonymous_identity="@ntnu.no"
+    # Your credentials
+    identity="user@ntnu.no"
+    password="user_password"
+}
+
+# dot1x wired (PEAP-MSCHAPv2)
+# NOT TESTED
 network={
     key_mgmt=IEEE8021X
     eap=PEAP

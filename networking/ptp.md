@@ -166,7 +166,7 @@ breadcrumbs:
 - Does not allow non-PTP bridges in the path.
 - Implicitly supports P2P TCs (not configurable).
 
-#### ITU-T G.82751
+#### Telecom (ITU-T G.82751)
 
 - Used for telecom and mobile backhaul.
 
@@ -176,7 +176,7 @@ breadcrumbs:
 - Used by newer Dante devices, while older ones use PTPv1. Certain Dante devices support both PTP versions, such that they can consume PTPv2 and supply PTPv1 to other devices in the same bridge domain (like a BC).
 - A variant of the default profile, with certain chosen parameters.
 
-#### SMPTE 2059-2
+#### SMPTE (SMPTE 2059-2)
 
 - For multimedia.
 
