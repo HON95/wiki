@@ -7,8 +7,8 @@ breadcrumbs:
 
 ## Resources
 
-- (Ceph: Ceph PGs per Pool Calculator)[https://ceph.com/pgcalc/]
-- (Ceph Documentation: Placement Group States)[https://docs.ceph.com/docs/mimic/rados/operations/pg-states/]
+- [Ceph: Ceph PGs per Pool Calculator](https://ceph.com/pgcalc/)
+- [Ceph Documentation: Placement Group States](https://docs.ceph.com/docs/mimic/rados/operations/pg-states/)
 
 ## Info
 

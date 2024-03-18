@@ -77,6 +77,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 ## Linux Server
 
 - [Linux Server Applications](/linux-server/applications/)
+- [Linux Server Database: CockroachDB (CRDB)](/linux-server/db-crdb/)
 - [Debian Server](/linux-server/debian/)
 - [Linux Server Storage](/linux-server/storage/)
 - [Linux Server Storage: Ceph](/linux-server/storage-ceph/)
@@ -170,7 +171,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Clang/LLVM](/soft-eng/clang-llvm/)
 - [C++ (Language)](/soft-eng/cpp/)
 - [Data Stuff](/soft-eng/data/)
-- [Database Management Systems (DBMSes)](/soft-eng/dbmses/)
+- [Databases](/soft-eng/db/)
 - [GNU Compiler Collection (GCC)](/soft-eng/gcc/)
 - [Git](/soft-eng/git/)
 - [Go (Language)](/soft-eng/go/)
