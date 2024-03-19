@@ -14,7 +14,7 @@ For metrics collection.
 - See [OpenMetrics](https://openmetrics.io/) \[[spec](https://github.com/OpenObservability/OpenMetrics/blob/main/specification/OpenMetrics.md)\] for a more standardized version of the Prometheus exposition format.
 - Metrics (typically?) contain a name, a label set and a numeric value (integer, floating-point or boolean).
 
-## Setup (Docker)
+## Initial Setup (Docker)
 
 Includes instructions for both the normal mode (aka server mode) and agent mode (no local storage).
 
@@ -32,6 +32,31 @@ Includes instructions for both the normal mode (aka server mode) and agent mode 
 1. Configure `prometheus.yml`.
     - I.e. set global variables (like `scrape_interval`, `scrape_timeout` and `evaluation_interval`) and scrape configs.
 1. (Optional) Setup Cortex or Thanos for global view, HA and/or long-term storage. **TODO:** See Grafana Mimir too.
+
+## Configuration
+
+- Filtering which targets to scrape:
+    - This can be useful for segregating which targets to scrape into different jobs or to prevent scraping certain targets. A similar method is used to change labels, using other relabel actions.
+    - This is done using the [`relabel_configs`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) with `relabel_action: drop` in the scrape job.
+    - Info from the configured service discovery are available as `__meta_*` labels. These are removed before the target is scraped.
+    - Info from the config are available as `job`, `__scheme__` (port), `__metrics_path__` (metrics path), `__param_*` (URL params) and `__address__` (host plus port).
+    - The `__address__` and `instance` label must exist and be valid before the scrape target is created. Both must contain a hostname or an IP address plus an optional port. The address is the one Prometheus sends the scrape request to, while the instance is the one that will be sent to the exporter to scrape and the one that will be present together with the job on the scraped metrics.
+    - Temporary relabel variables should be prefixed `__tmp`, e.g. as an intermediate step when moving label values around.
+    - Labels prefixed with `__` will be removed after target relabeling is completed.
+- Filtering which metrics to ingest:
+    - This can be used to only ingest the most important metrics and avoid certain very expensive metrics. A similar method is used to change labels, using other relabel actions.
+    - This is done using the [`metric_relabel_configs`](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) with `relabel_action: drop` in the scrape job.
+    - Labels starting with `__` are dropped after metric relabeling and not included in the final label set.
+    - Special timeseries such as `up` and `scrape_duration_seconds` are not affected by relabeling.
+- Honor special labels from the scrape target:
+    - This can be useful e.g. for federation, where you are scraping another scraper that has already set the correct (and trusted) labels.
+    - If certain labels like `instance` and `job` are present in the scraped metrics, they will normally be renamed with the `exported_` prefix.
+    - If you instead want to overwrite the local label values, set `honor_labels` to true.
+- Federation (scrape another Prometheus server):
+    - Typically for hierarchical and cross-service architectures.
+    - See [federation](https://prometheus.io/docs/prometheus/latest/federation/).
+    - Native histogram support is experimental, see the documentation for more details.
+    - TL;DR: Scrape the `/federate` endpoint, specify a `match[]` parameter that matches an instant vector and enable `honor_labels`. Optionally specify a `metric_relabel_configs` config to relabel or drop certain timeseries.
 
 ## Notes
 
