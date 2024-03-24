@@ -30,7 +30,7 @@ breadcrumbs:
 
 #### Linux
 
-- See the the [Video4Linux 2 (V4L2) page](../v4l2/) for more info about managing devices.
+- See the the [Video4Linux 2 (V4L2) page](/media/v4l2/) for more info about managing devices.
 - List devices: `v4l2-ctl --list-devices`
     - Cameras often provide multiple `/dev/video<n>` for the same device, only one of them provides the correct video feed.
 - Show current device info: `v4l2-ctl -<n> --all` (for `/dev/video<n>`)

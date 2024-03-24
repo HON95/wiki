@@ -44,14 +44,14 @@ breadcrumbs:
 
 ### Extra
 
-1. Install applications: See [PC Applications](/config/pc/applications/).
+1. Install applications: See [PC Applications](/pc/applications/).
 1. (Optional) Install encrypted DVD support:
     - Install: `sudo apt install libdvd-pkg && sudo dpkg-reconfigure libdvd-pkg`
     - Warning: Don't change the region if not necessary. It's typically limited to five changes.
 
 ### PipeWire
 
-Kubuntu comes with PulseAudio. PipeWire is a modern solution designed to replace PulseAudio, JACK and ALSA. This means it combines the simplicity of basic desktop usage from PulseAudio with the complexity of session managers from JACK, with extra focus on security, performance and compatibility. Plus it supports video. See [PipeWire (Applications)](../applications/#pipewire) for more config info.
+Kubuntu comes with PulseAudio. PipeWire is a modern solution designed to replace PulseAudio, JACK and ALSA. This means it combines the simplicity of basic desktop usage from PulseAudio with the complexity of session managers from JACK, with extra focus on security, performance and compatibility. Plus it supports video. See [PipeWire (Applications)](/personal-device/applications/#pipewire) for more config info.
 
 1. Install PipeWire:
     1. Install: `sudo apt install pipewire pipewire-audio-client-libraries pipewire-pulse`

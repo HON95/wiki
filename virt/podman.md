@@ -117,7 +117,7 @@ Warning: If you have any existing CNI networks, forcing Netavark will break thos
 
 ### General
 
-- See [Docker usage](../docker/#usage).
+- See [Docker usage](/virt/docker/#usage).
     - Most commands are Docker clones and simply replacing `docker` with `podman` in the command will typically work.
     - Configuration files are a bit different.
 - Registries:

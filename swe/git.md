@@ -59,10 +59,18 @@ breadcrumbs:
     - Clone a repo using SSH (GitHub HON95/wiki example): `git clone git@github.com:HON95/wiki.git [local-dir]`
     - Partial clone without blobs (for big repos, will fetch them on demand): `git clone --filter=blob:none <...>`
     - Partial clone without trees (for big repos, rarely used, maybe for CI): `git clone --filter=tree:0 <...>`
+    - Clone with scalar:
+        - The `scalar` command now comes shipped with Git, after being upstreamed by Microsoft.
+        - Cloning with scalar will set up the defaults for better scaling, with features like prefetching, commit-graph, filesystem monitor, partial cloning and sparse checkout.
+        - Usage: `scalar clone <remote-repo>`
 - Staging files:
-    - Add all files: `git add -A`
+    - Stage all changes: `git add -A`
+    - Stage specific files: `git add <file>`
+    - Unstage changes: `git reset [file]`
     - Unstage all files (without changing them): `git reset`
-    - Discard changes (rollback to HEAD): `git checkout -- <dir or file>`
+    - Discard changes for file: `git checkout [target] -- <file>` (target defaults to HEAD)
+    - Discard changes for file (new command): `git restore [--source <target>] <file>` (target defaults to HEAD)
+    - Discard all changes: `git reset --hard HEAD`
     - gitignore:
         - Add files to ignore in `.gitignore` in the same or a parent folder.
         - A leading `/` means to only match in the same folder as the gitignore file (the gitignore root).
@@ -78,11 +86,19 @@ breadcrumbs:
         - See note above about when to sign commits.
         - Configure a signing key in the config first.
         - To sign a commit, use `git commit -S ...`.
-    - Show details about last commit: `git cat-file -p HEAD`
+    - Fixup and auto-squash:
+        - Allows you to add a special type of commit that updates a previous commit, without rebase nightmares.
+        - If you only want to update the directly previous commit, just use `git commit --amend` instead.
+        - Commit the updates to a previous commit, referencing the previous commit: `git commit --fixup=<prev-commit-hash>`
+        - Auto-squash the temporary fixup commit(s) into the original commit(s): `git rebase --autosquash <branch>`
+    - Show details about the last commit: `git cat-file -p HEAD`
+    - Show details about a single file in the last commit: `git cat-file -p HEAD:"filename.txt"` (example)
 - Pulling/pushing:
     - Force push, e.g. when changing history (dangerous): `git push --force`
     - Force push, but only if the remote hasn't changed (less dangerous): `git push --force-with-lease`
 - Branching:
+    - Checkout a branch: `git checkout [-b] <branch>` (`-b` if new branch)
+    - Checkout a branch (new command): `git switch [-c] <branch>` (`-c` if new branch)
     - Edit the description of a branch: `git branch --edit-description [branchname]` (defaults to active branch)
     - Sparse checkout (limit locally present dirs, assume others are unchanged): `git sparse-checkout set <dir ...>`
 - Stashing:
@@ -106,8 +122,31 @@ breadcrumbs:
         - Detect movement in the same commit: `git blame -C <...>`
         - ... or in the commit that created the file: `git blame -C -C <...>`
         - ... or in any commit at all (slow): `git blame -C -C -C <...>`
+- Attributes:
+    - The attribute config is stored in `.gitattributes`.
+    - Used by e.g. Git LFS.
+    - Show EXIF diff for binary picture diffs (repo-level):
+        1. Install `exiftool`.
+        1. Enable EXIF diffing: `echo '*.png diff=exif' >> .gitattributes`
+        1. Set EXIF tool: `git config diff.exif.textconv exiftool`
 - Submodules:
     - **TODO**
+- Hooks:
+    - Most important hooks:
+        - Commit stuff: `pre-commit`, `prepare-commit-msg`, `commit-msg`, `post-commit`
+        - Rewriting stuff: `pre-rebase`, `post-rewrite`
+        - Merging stuff: `post-merge`, `pre-merge-commit`
+        - Switching/pushing stuff: `post-checkout`, `reference-transaction`, `pre-push`
+        - Server stuff: `pre-receive`, `update`, `proc-receive`, `post-receive`, `post-update`, `push-to-checkout`
+    - The [pre-commit app](https://pre-commit.com/) may be used to manage pre-commit hooks, like checks to run before the commit is allowed to go through. [Husky](https://typicode.github.io/husky/) is another alternative.
+- Git Large File Storage (LFS):
+    - To keep large files in the repo by pushing them to an LFS server but with references in the repo.
+    - Uses Git's "smudge and clean" to pull/push files seemingly like normal Git files.
+    - Git LFS might need to be installed first:
+        - Windows: [Download from git-lfs.com.](https://git-lfs.com/)
+    - Enable LFS for repo (setup hooks): `git lfs install`
+    - Track certain files (setup attributes): `git lfs track "*.mov"`
+    - Show info about file in LFS: `git cat-file -p HEAD:"movie.mov"` (example)
 - Config:
     - Se section below.
     - Update global config: `git config --global <key> <value>`
@@ -124,7 +163,9 @@ breadcrumbs:
 
 ### Example Global Config
 
-`~/.gitconfig`
+File: `~/.gitconfig`
+
+Note: Avoid quotation marks around values.
 
 ```ini
 [user]
@@ -149,6 +190,9 @@ breadcrumbs:
 [branch]
         # Sorted "git branch" output
         sort = -committerdate
+[rebase]
+        # Automaticall update refs by sefault after rebase
+        updateRefs = true
 ```
 
 (Keep up to date with [HON95/configs](https://github.com/HON95/configs/blob/master/git/config).)

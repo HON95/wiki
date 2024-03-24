@@ -11,8 +11,8 @@ Compared to OpenCL (which is also supported by both NVIDIA and AMD), it's much m
 ### Related Pages
 {:.no_toc}
 
-- [ROCm](../rocm/)
-- [CUDA](../cuda/)
+- [ROCm](/hpc/rocm/)
+- [CUDA](/hpc/cuda/)
 
 ## Resources
 
@@ -27,13 +27,13 @@ Compared to OpenCL (which is also supported by both NVIDIA and AMD), it's much m
 
 ### Install for AMD GPUs
 
-1. Install the ROCm suite (contains HIP and other useful stuff): See [ROCm](../rocm/).
+1. Install the ROCm suite (contains HIP and other useful stuff): See [ROCm](/hpc/rocm/).
 
 ### Install for NVIDIA GPUs
 
 Updated for ROCm 5.0.
 
-1. Install the CUDA toolkit and the NVIDIA driver: See [CUDA](../cuda/).
+1. Install the CUDA toolkit and the NVIDIA driver: See [CUDA](/hpc/cuda/).
 1. Add the ROCm package repo:
     1. Install requirements: `sudo apt install curl libnuma-dev wget gnupg2`
     1. Add repo key: `curl -sSf https://repo.radeon.com/rocm/rocm.gpg.key | sudo gpg --dearmor --output /usr/share/keyrings/rocm.gpg`

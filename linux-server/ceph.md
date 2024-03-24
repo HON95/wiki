@@ -1,5 +1,5 @@
 ---
-title: 'Linux Server Storage: Ceph'
+title: Ceph
 breadcrumbs:
 - title: Linux Server
 ---

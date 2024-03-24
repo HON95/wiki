@@ -50,6 +50,6 @@ Nothing special.
 
 ### Extra
 
-1. Install applications: See [PC Applications](/config/pc/applications/).
+1. Install applications: See [PC Applications](/pc/applications/).
 
 {% include footer.md %}

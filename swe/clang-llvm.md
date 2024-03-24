@@ -10,7 +10,7 @@ LLVM is an extensive compiler platform and toolchain. It's typically used as the
 ### Related Pages
 {:.no_toc}
 
-- [GCC](../gcc/)
+- [GCC](/swd/gcc/)
 
 ## Usage
 

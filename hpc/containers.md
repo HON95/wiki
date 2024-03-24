@@ -11,7 +11,7 @@ breadcrumbs:
 
 #### Resources
 
-- Config notes: [Docker](/config/virt-cont/docker/)
+- Config notes: [Docker](/virt/docker/)
 
 #### General Information
 
@@ -26,7 +26,7 @@ breadcrumbs:
 #### Resources
 
 - Homepage: [Singularity](https://singularity.hpcng.org/)
-- Config notes: [Singularity](/config/hpc/singularity/)
+- Config notes: [Singularity](/hpc/singularity/)
 
 #### Information
 

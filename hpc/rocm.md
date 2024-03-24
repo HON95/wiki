@@ -11,8 +11,8 @@ It uses the runtime API and kernel language HIP, which is compilable for both AM
 ### Related Pages
 {:.no_toc}
 
-- [HIP](../hip/)
-- [Clang/LLVM](/se/clang-llvm/)
+- [HIP](/hpc/hip/)
+- [Clang/LLVM](/swd/clang-llvm/)
 
 ## Resources
 
@@ -48,7 +48,7 @@ Updated for ROCm 5.0.
 1. Verify AMDGPU DKMS install: `sudo dkms status`
 1. Verify ROCm install: `rocminfo`
     - This should show you AMD GPU as an agent (and also you AMD CPU if you have one).
-1. (Optional) Verify HIP: See [HIP](../HIP/).
+1. (Optional) Verify HIP: See [HIP](/hpc/HIP/).
 
 ## Usage and Tools
 

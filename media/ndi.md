@@ -63,6 +63,6 @@ A network video protocol by NewTek.
 
 ### OBS NDI Plugin
 
-See [OBS](../obs/).
+See [OBS](/media/obs/).
 
 {% include footer.md %}

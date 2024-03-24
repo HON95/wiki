@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/)
+- [Ubiquiti UniFi Controllers](/network/ubiquiti-unifi-controllers/)
 
 ### Using
 {:.no_toc}

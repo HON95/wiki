@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Cisco IOS/IOS XE General](../cisco-ios-general/)
+- [Cisco IOS/IOS XE General](/networking/cisco-ios-general/)
 
 ## Initial Configuration
 

@@ -10,7 +10,7 @@ For Arch with LUKS encrypted root, using the i3 window manager.
 ### Related Pages
 {:.no_toc}
 
-- [Applications: i3](../applications/#i3)
+- [Applications: i3](/personal-device/applications/#i3)
 
 ## Resources
 
@@ -329,7 +329,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 ### Setup the i3 Window Manager Basics
 
 1. (Note) Some notes about i3:
-    - Se [i3](../applications/#i3) for more personal notes about i3.
+    - Se [i3](/personal-device/applications/#i3) for more personal notes about i3.
     - Use `Mod+Shift+R` to reload the i3 config.
     - Use `Mod+Shift+E` to exit i3.
     - Use `Mod+Enter` to open a terminal.
@@ -482,7 +482,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 ### Setup Audio
 
 Note: We're using the PipeWire sound server, a modern, security-focused and compatible replacement for both PulseAudio and JACK.
-See [PipeWire (Applications)](../applications/#pipewire) for more config info.
+See [PipeWire (Applications)](/personal-device/applications/#pipewire) for more config info.
 
 1. Install ALSA stuff:
     1. (Note) ALSA itself is already provided as built-in kernel modules and ALSA drivers will just work.
@@ -546,7 +546,7 @@ See [PipeWire (Applications)](../applications/#pipewire) for more config info.
 1. Setup terminal emulator:
     1. Already done.
 1. Setup the ZSH shell:
-    1. See [Applications: ZSH](../applications/#zsh-linux) (includes font, theme and plugins).
+    1. See [Applications: ZSH](/personal-device/applications/#zsh-linux) (includes font, theme and plugins).
 1. Setup the VLC video and audio player:
     1. Install: `sudo pacman -S vlc`
 1. Setup the Mirage image viewer:

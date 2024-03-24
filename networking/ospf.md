@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Routing Theory](../routing/)
+- [Routing Theory](/networking/routing/)
 
 ## TODO
 

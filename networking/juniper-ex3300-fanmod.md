@@ -25,31 +25,31 @@ I take no responsibility if this destroys your switch, burns your house down and
 
 **Old and new fans.** The one with screws is the back fan.
 
-[![All fans](../files/juniper-ex3300-fanmod/fans-all.jpg)](../files/juniper-ex3300-fanmod/fans-all.jpg)
+[![All fans](/networking/files/juniper-ex3300-fanmod/fans-all.jpg)](/networking/files/juniper-ex3300-fanmod/fans-all.jpg)
 
 **Original switch.**
 
-[![Original switch](../files/juniper-ex3300-fanmod/switch-original.jpg)](../files/juniper-ex3300-fanmod/switch-original.jpg)
+[![Original switch](/networking/files/juniper-ex3300-fanmod/switch-original.jpg)](/networking/files/juniper-ex3300-fanmod/switch-original.jpg)
 
 **Original back fan.**
 
-[![Original back fan](../files/juniper-ex3300-fanmod/fan-old-back.jpg)](../files/juniper-ex3300-fanmod/fan-old-back.jpg)
+[![Original back fan](/networking/files/juniper-ex3300-fanmod/fan-old-back.jpg)](/networking/files/juniper-ex3300-fanmod/fan-old-back.jpg)
 
 **Original PSU fan.**
 
-[![Original PSU fan](../files/juniper-ex3300-fanmod/fan-old-psu.jpg)](../files/juniper-ex3300-fanmod/fan-old-psu.jpg)
+[![Original PSU fan](/networking/files/juniper-ex3300-fanmod/fan-old-psu.jpg)](/networking/files/juniper-ex3300-fanmod/fan-old-psu.jpg)
 
 **Modded switch.**
 
-[![Modded switch](../files/juniper-ex3300-fanmod/switch-modded.jpg)](../files/juniper-ex3300-fanmod/switch-modded.jpg)
+[![Modded switch](/networking/files/juniper-ex3300-fanmod/switch-modded.jpg)](/networking/files/juniper-ex3300-fanmod/switch-modded.jpg)
 
 **Modded switch again.**
 
-[![Modded switch, different angle](../files/juniper-ex3300-fanmod/switch-modded-2.jpg)](../files/juniper-ex3300-fanmod/switch-modded-2.jpg)
+[![Modded switch, different angle](/networking/files/juniper-ex3300-fanmod/switch-modded-2.jpg)](/networking/files/juniper-ex3300-fanmod/switch-modded-2.jpg)
 
 **Backside of PSU PCB.** Notice the 12V and GND wires from the fan cable extenders soldered onto it.
 
-[![PSU PCB backside](../files/juniper-ex3300-fanmod/psu-back.jpg)](../files/juniper-ex3300-fanmod/psu-back.jpg)
+[![PSU PCB backside](/networking/files/juniper-ex3300-fanmod/psu-back.jpg)](/networking/files/juniper-ex3300-fanmod/psu-back.jpg)
 
 ## Steps
 

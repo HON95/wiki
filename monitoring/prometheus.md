@@ -126,7 +126,7 @@ Instructions:
 1. Create the required files and directories:
     - `touch /etc/default/prometheus-node-exporter`
     - `mkdir -p /var/lib/prometheus/node-exporter/`
-1. Create the systemd service `/etc/systemd/system/prometheus-node-exporter.service`, see [prometheus-node-exporter.service](../files/prometheus-node-exporter.service.txt).
+1. Create the systemd service `/etc/systemd/system/prometheus-node-exporter.service`, see [prometheus-node-exporter.service](/monitoring/files/prometheus-node-exporter.service.txt).
 1. (Optional) Configure it:
     - The defaults work fine.
     - File: `/etc/default/prometheus-node-exporter`

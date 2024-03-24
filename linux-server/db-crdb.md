@@ -1,5 +1,5 @@
 ---
-title: 'Linux Server Database: CockroachDB (CRDB)'
+title: CockroachDB (CRDB)
 breadcrumbs:
 - title: Linux Server
 ---
@@ -7,7 +7,7 @@ breadcrumbs:
 
 ## Resources
 
-- [Databases](/soft-eng/db/)
+- [Databases](/swe/db/)
 
 ## Info
 

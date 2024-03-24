@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Linux Switching & Routing](/config/network/linux/)
+- [Linux Switching & Routing](/network/linux/)
 
 ## General
 

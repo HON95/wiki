@@ -8,7 +8,7 @@ breadcrumbs:
 ## General
 
 - A full zero-trust network solution for campus/enterprise networks (not DC), part of Cisco DNA (often called DNA/SDA).
-- Relation to Cisco Application Centric Infrastructure (ACI): [Cisco ACI: Relation to SDA](../cisco-aci/#relation-to-sda)
+- Relation to Cisco Application Centric Infrastructure (ACI): [Cisco ACI: Relation to SDA](/networking/cisco-aci/#relation-to-sda)
 
 ## Links
 

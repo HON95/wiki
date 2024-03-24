@@ -46,13 +46,13 @@ function check_link {
     fi
 
     # Show error if using relative path.
-    if grep -P '/$' <<<$target_file >/dev/null; then
+    if grep -P '^\.\.' <<<$target_file >/dev/null; then
         print_error "$src_file" "$web_url" "$target_file" "Relative paths not allowed."
         return
     fi
 
     # Show error if file does not exist.
-    if [[ ! -f $target_file ]]; then
+    if [[ ! -f $PWD/$target_file ]]; then
         print_error "$src_file" "$web_url" "$target_file" "Target file does not exist."
         return
     fi

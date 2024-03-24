@@ -22,19 +22,19 @@ breadcrumbs:
 
 ### Address Space
 
-See the [IPv4](../ipv4/) and [IPv6](../ipv6/) pages.
+See the [IPv4](/networking/ipv4/) and [IPv6](/networking/ipv6/) pages.
 
 ## Protocols
 
 ### Internet Group Messaging Protocol (IGMP)
 
 - For cooordination between the host and the first-hop router.
-- See [IPv4](../ipv4/).
+- See [IPv4](/networking/ipv4/).
 
 ### Multicast Listener Discovery (MLD)
 
 - For cooordination between the host and the first-hop router.
-- See [IPv6](../ipv6/).
+- See [IPv6](/networking/ipv6/).
 
 ## Vendor Support
 

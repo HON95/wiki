@@ -418,7 +418,7 @@ Using GPG (from package `gnupg2` on Debian).
     - The nice value is inherited by child processes (meaning forking processes maintains the nice value it started with).
     - Use `renice` to change the value.
     - Use `ionice` to set the I/O scheduler and scheduler-specific priority.
-- Stress test with stress/stress-ng (see [Computer Testing](../computer-testing/)):
+- Stress test with stress/stress-ng (see [Computer Testing](/general/computer-testing/)):
     - Install (Debian): `apt install stress-ng`
     - Install (Arch): `apt install stress`
     - Stress CPU: `stress(-ng) -c $(nproc) -t $((10*60))` (use all CPU threads for 10 minutes)

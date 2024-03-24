@@ -77,11 +77,12 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 ## Linux Server
 
 - [Linux Server Applications](/linux-server/applications/)
-- [Linux Server Database: CockroachDB (CRDB)](/linux-server/db-crdb/)
+- [Ceph](/linux-server/ceph/)
+- [CockroachDB (CRDB)](/linux-server/db-crdb/)
 - [Debian Server](/linux-server/debian/)
+- [RabbitMQ](/linux-server/rabbitmq/)
 - [Linux Server Storage](/linux-server/storage/)
-- [Linux Server Storage: Ceph](/linux-server/storage-ceph/)
-- [Linux Server Storage: ZFS](/linux-server/storage-zfs/)
+- [ZFS](/linux-server/zfs/)
 
 ## Media
 
@@ -167,26 +168,26 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 ## Software Engineering
 
-- [C/C++ Tools](/soft-eng/ccpp-tools/)
-- [Clang/LLVM](/soft-eng/clang-llvm/)
-- [C++ (Language)](/soft-eng/cpp/)
-- [Data Stuff](/soft-eng/data/)
-- [Databases](/soft-eng/db/)
-- [GNU Compiler Collection (GCC)](/soft-eng/gcc/)
-- [Git](/soft-eng/git/)
-- [Go (Language)](/soft-eng/go/)
-- [Licensing](/soft-eng/licensing/)
-- [OpenMP](/soft-eng/openmp/)
-- [Rust (Language)](/soft-eng/rust/)
-- [Web Security](/soft-eng/web-security/)
+- [C/C++ Tools](/swe/ccpp-tools/)
+- [Clang/LLVM](/swe/clang-llvm/)
+- [C++ (Language)](/swe/cpp/)
+- [Data Stuff](/swe/data/)
+- [Databases](/swe/db/)
+- [GNU Compiler Collection (GCC)](/swe/gcc/)
+- [Git](/swe/git/)
+- [Go (Language)](/swe/go/)
+- [Licensing](/swe/licensing/)
+- [OpenMP](/swe/openmp/)
+- [Rust (Language)](/swe/rust/)
+- [Web Security](/swe/web-security/)
 
 ## Virtualization, Containerization and Orchestration
 
-- [Docker](/virt-cont/docker/)
-- [Kubernetes](/virt-cont/k8s/)
-- [libvirt & KVM](/virt-cont/libvirt-kvm/)
-- [Podman](/virt-cont/podman/)
-- [Proxmox VE](/virt-cont/proxmox-ve/)
-- [VirtualBox](/virt-cont/virtualbox/)
+- [Docker](/virt/docker/)
+- [Kubernetes](/virt/k8s/)
+- [libvirt & KVM](/virt/libvirt-kvm/)
+- [Podman](/virt/podman/)
+- [Proxmox VE](/virt/proxmox-ve/)
+- [VirtualBox](/virt/virtualbox/)
 
 {% include footer.md %}

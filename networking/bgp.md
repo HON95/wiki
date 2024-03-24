@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Routing Theory](../routing/)
+- [Routing Theory](/networking/routing/)
 
 ## General
 
@@ -87,7 +87,7 @@ The path selection algorithm is used to select a single best path for a prefix. 
     - See [Managing Route Objects in the IRR (RIPE)](https://www.ripe.net/manage-ips-and-asns/db/support/managing-route-objects-in-the-irr).
     - IRR policies are handled by `route(6)` objects, containing the ASN and IPv4/IPv6 prefix.
     - Authorization for managing `route(6)` objects can be a little complicated. Generally, the LIR is always allowed to manage it.
-- For more info, see [Internet Governance and Registries](../inet-gov-reg/).
+- For more info, see [Internet Governance and Registries](/networking/inet-gov-reg/).
 
 ## Resource Public Key Infrastructure (RPKI)
 

@@ -114,7 +114,7 @@ KERNEL=="hidraw*", ATTRS{idVendor}=="0fd9", ATTRS{idProduct}=="008f", MODE="0660
 
 ### Installation
 
-See my [Arch setup with i3](../arch-i3/).
+See my [Arch setup with i3](/personal-device/arch-i3/).
 
 ### Configuration
 
@@ -207,7 +207,7 @@ Comes with adapters for compatibility with existing applications and such that e
 
 ### Installation
 
-See the [Arch (i3)](../arch-i3/) or [Kubuntu](../kubuntu/) config notes.
+See the [Arch (i3)](/personal-device/arch-i3/) or [Kubuntu](/personal-device/kubuntu/) config notes.
 
 ### Configuration
 

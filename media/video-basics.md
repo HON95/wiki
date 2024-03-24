@@ -5,7 +5,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-- Also see [image basics](../image-basics/) and [audio basics](../audio-basics/) for other concepts that apply to video as well.
+- Also see [image basics](/media/image-basics/) and [audio basics](/media/audio-basics/) for other concepts that apply to video as well.
 - Video formats:
     - **TODO**
     - MP4 (aka MPEG-4 Part 14):

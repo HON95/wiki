@@ -9,7 +9,7 @@ A container technology for HPC.
 
 ## Information
 
-- For more general imformation and comparison to other HPC container technologies, see [Containers](/config/hpc/containers/).
+- For more general imformation and comparison to other HPC container technologies, see [Containers](/hpc/containers/).
 
 ## Configuration
 

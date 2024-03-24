@@ -130,7 +130,7 @@ A free community backend for Bitwarden.
 
 ## Ceph
 
-See [Storage: Ceph](/config/linux-server/storage/#ceph).
+See [Storage: Ceph](/linux-server/storage/#ceph).
 
 ## Certbot
 
@@ -210,11 +210,11 @@ This setup requires pubkey plus MFA (if configured) plus password.
 
 ## Intel SSD Data Center Tool (isdct)
 
-See [Storage: isdct](/config/linux-server/storage/#intel-ssd-data-center-tool-isdct).
+See [Storage: isdct](/linux-server/storage/#intel-ssd-data-center-tool-isdct).
 
 ## Home Assistant
 
-See [Home Assistant](/config/iot-ha/home-assistant/).
+See [Home Assistant](/iot-ha/home-assistant/).
 
 ## ISC DHCP Server
 
@@ -729,11 +729,11 @@ Logs are located in `/app/storage/logs/laravel/` inside the container.
 
 #### Counter-Strike: Global Offensive
 
-See [Counter-Strike: Global Offensive (CS:GO)](/config/game-servers/csgo/).
+See [Counter-Strike: Global Offensive (CS:GO)](/game-servers/csgo/).
 
 #### Team Fortress 2
 
-See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
+See [Team Fortress 2 (TF2)](/game-servers/tf2/).
 
 ## Router Advertisement Daemon (radvd)
 
@@ -919,7 +919,7 @@ See [Team Fortress 2 (TF2)](/config/game-servers/tf2/).
 
 ## UniFi
 
-See [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/).
+See [Ubiquiti UniFi Controllers](/network/ubiquiti-unifi-controllers/).
 
 ## WireGuard
 
@@ -927,7 +927,7 @@ See [Ubiquiti UniFi Controllers](/config/network/ubiquiti-unifi-controllers/).
 
 1. Install: `apt install wireguard`
 1. (Debian) Fix broken DNS (using systemd resolved):
-    1. Enable systemd resolved: See [systemd-resolved (Debian server setup)](/config/linux-server/debian/#using-systemd-resolved-alternative-2).
+    1. Enable systemd resolved: See [systemd-resolved (Debian server setup)](/linux-server/debian/#using-systemd-resolved-alternative-2).
     1. Fix missing `resolvconf`: `ln -s /usr/bin/resolvectl /usr/local/bin/resolvconf`
 
 ### Usage
@@ -959,6 +959,6 @@ PersistentKeepalive = 25
 
 ## ZFS
 
-See [Storage: ZFS](/config/linux-server/storage/#zfs).
+See [Storage: ZFS](/linux-server/storage/#zfs).
 
 {% include footer.md %}

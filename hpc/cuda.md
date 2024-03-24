@@ -10,7 +10,7 @@ Introduced by NVIDIA in 2006. While GPU compute was hackishly possible before CU
 ### Related Pages
 {:.no_toc}
 
-- [HIP](../hip/)
+- [HIP](/hpc/hip/)
 
 ## TODO
 
@@ -59,7 +59,7 @@ Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-do
 
 Docker containers may run NVIDIA applications using the NVIDIA runtime for Docker.
 
-See [Docker](/config/virt-cont/docker/).
+See [Docker](/virt/docker/).
 
 ### DCGM
 

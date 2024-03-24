@@ -12,7 +12,7 @@ The notes below mainly apply to C/C++, unless otherwise stated.
 ### Related Pages
 {:.no_toc}
 
-- [Clang/LLVM](../clang-llvm/)
+- [Clang/LLVM](/swd/clang-llvm/)
 
 ## Usage
 

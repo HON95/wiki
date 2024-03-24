@@ -165,7 +165,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ## Packet Structure
 
-![Packet header differences between IPv4 and IPv6](../files/ripe-ipv6-header-changes.png)
+![Packet header differences between IPv4 and IPv6](/networking/files/ripe-ipv6-header-changes.png)
 
 *Figure: Packet header differences between IPv4 and IPv6. (Source: RIPE)*
 
@@ -340,7 +340,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - Multicast router discovery (MRD):
     - Based on MLD.
     - For discovery of multicast routers.
-- Configuration and commands: See [Multicast](../multicast/).
+- Configuration and commands: See [Multicast](/networking/multicast/).
 
 ### Dynamic Host Configuration Protocol for IPv6 (DHCPv6)
 
@@ -588,7 +588,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 
 ## Security
 
-![RIPE-722 Overview](../files/ripe-722-overview.png)
+![RIPE-722 Overview](/networking/files/ripe-722-overview.png)
 
 *Figure: RIPE-722 "Requirements for IPv6 in ICT Equipment" overview. (Source: RIPE)*
 

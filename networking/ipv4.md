@@ -96,6 +96,6 @@ The terms are frequently interchanged and now typically used to refer to the sam
     - Adds a leave process, group queries, querier election (separated from DR election) and a maximum response time (MRT) field.
     - Group queries are only sent to the specific groups and not all hosts.
     - The maximum response time (MRT) is used in queries to inform hosts about how long the router will wait for a report. Hosts will wait a random amount of time less than the MRT and then sends a report if no other host has sent one yet. This reduces the amount of reports in the local network. IGMPv1 uses a hardcoded value of 10 seconds instead. The maximum configurable value is 25 seconds (255s/10). If the timer runs out on the router and no reports have been received, it informs PIM that there are no more listeners.
-- Configuration and commands: See [Multicast](../multicast/).
+- Configuration and commands: See [Multicast](/networking/multicast/).
 
 {% include footer.md %}

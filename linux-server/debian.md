@@ -12,7 +12,7 @@ Using **Debian 11 (Bullseye)**.
 ### Installation
 
 - Always verify the downloaded installation image after downloading it.
-- If installing in a Proxmox VE VM, see [Proxmox VE: VMs: Initial Setup](/config/virt-cont/proxmox-ve/#initial-setup).
+- If installing in a Proxmox VE VM, see [Proxmox VE: VMs: Initial Setup](/virt/proxmox-ve/#initial-setup).
 - Prefer UEFI if possible.
 - Use the non-graphical installer. It's basically the same as the graphical one.
 - If it asks to install non-free firmware, take note of the packages so they can be installed later.
@@ -33,7 +33,7 @@ Using **Debian 11 (Bullseye)**.
     - For automation-managed systems: The passwords may be something temporary and the non-root user may be called e.g. `ansible` (for the initial automation).
 - System disk partitioning:
     - Simple system: Guided, single partition, use all available space.
-    - Advanced system: Manually partition, see [system storage](/config/linux-server/storage/#system-storage).
+    - Advanced system: Manually partition, see [system storage](/linux-server/storage/#system-storage).
     - Swap can be set up later as a file or LVM volume.
     - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - Package manager:
@@ -164,7 +164,7 @@ The first steps (`(Skip)`) may be skipped if already configured during installat
 1. Setup lm_sensors to monitor sensors:
     1. Install `lm-sensors`.
     1. Run `sensors` to make sure it runs without errors and shows some (default-ish) sensors.
-    1. For further configuration (more sensors) and more info, see [Linux Server Applications: lm_sensors](/config/linux-server/applications/#lm_sensors).
+    1. For further configuration (more sensors) and more info, see [Linux Server Applications: lm_sensors](/linux-server/applications/#lm_sensors).
 1. Check the performance governor and other frequency settings:
     1. Install `linux-cpupower`.
     1. Show: `cpupower frequency-info`
@@ -287,7 +287,7 @@ Everything here is optional.
         - Check: `swapon --show`
     1. Add it to fstab using this line: `/swapfile swap swap defaults 0 0`
         - Check: `mount -a`
-- Setup Postfix mail relay: See [Linux Server Applications: Postfix](/config/linux-server/applications/#postfix).
+- Setup Postfix mail relay: See [Linux Server Applications: Postfix](/linux-server/applications/#postfix).
 - Prevent root local login:
     - Alternatively, keep it enabled with a strong password as a local backdoor for recovery or similar.
     - Add a personal user first.

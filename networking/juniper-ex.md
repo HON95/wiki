@@ -10,8 +10,8 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Juniper Hardware](/config/network/juniper-hardware/)
-- [Juniper Junos OS](/config/network/juniper-junos/)
+- [Juniper Hardware](/network/juniper-hardware/)
+- [Juniper Junos OS](/network/juniper-junos/)
 
 ### Using
 {:.no_toc}

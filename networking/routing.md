@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [BGP](../bgp/)
+- [BGP](/networking/bgp/)
 
 ## General
 

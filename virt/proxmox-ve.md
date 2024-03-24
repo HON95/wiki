@@ -53,7 +53,7 @@ See [HON95/ansible](https://github.com/HON95/ansible) (Debian role) and [lae.pro
 
 ### Initial Configuration
 
-Follow the instructions for [Debian server](/config/linux-server/debian/) in addition to the notes and instructions below (read them first).
+Follow the instructions for [Debian server](/linux-server/debian/) in addition to the notes and instructions below (read them first).
 
 Warning: Don't install any of the firmware packages, it will remove the PVE firmware packages.
 
@@ -294,7 +294,7 @@ The "Cloud-Init" notes can be ignored if you're not using Cloud-Init. See the se
 1. Setup the VM (see the general setup section).
 1. (Recommended) Setup the QEMU guest agent: See the section about it.
 1. (Optional) Setup SPICE (for better graphics): See the section about it.
-1. More detailed Debian setup: [Debian](/config/linux-server/debian/)
+1. More detailed Debian setup: [Debian](/linux-server/debian/)
 
 ### Linux VM Cloud-Init Debian Template
 
@@ -531,7 +531,7 @@ Check the host system logs. It may for instance be due to hardware changes or st
 
 ### Ceph
 
-See [Storage: Ceph](/config/linux-server/storage/#ceph) for general notes.
+See [Storage: Ceph](/linux-server/storage/#ceph) for general notes.
 The notes below are PVE-specific.
 
 #### Notes

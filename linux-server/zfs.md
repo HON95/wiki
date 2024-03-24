@@ -1,5 +1,5 @@
 ---
-title: 'Linux Server Storage: ZFS'
+title: ZFS
 breadcrumbs:
 - title: Linux Server
 ---

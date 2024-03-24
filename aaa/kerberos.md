@@ -38,6 +38,6 @@ It's designed to be run on top of an untrusted network using an appropriate set 
 
 ## Setup
 
-See [FreeIPA](/config/aaa/freeipa/) (a suite consisting of MIT Kerberos and more).
+See [FreeIPA](/aaa/freeipa/) (a suite consisting of MIT Kerberos and more).
 
 {% include footer.md %}
