@@ -390,12 +390,12 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
             ```
         1. (Optional) Reboot and try writing to the file without root.
     1. Add a script/program for changing the brightness:
-        1. Create a `/usr/local/bin/backlight` script to control the backlight. See the snippet below for the content.
+        1. Create a `/usr/local/bin/display-backlight` script to control the backlight. [Example script.](https://github.com/HON95/configs/blob/master/linux/display-backlight.sh)
     1. Add i3 keybinds:
         1. In the i3 config, add:
             ```
-            bindsym XF86MonBrightnessUp exec --no-startup-id /usr/local/bin/backlight +20%
-            bindsym XF86MonBrightnessDown exec --no-startup-id /usr/local/bin/backlight -20%
+            bindsym XF86MonBrightnessUp exec --no-startup-id /usr/local/bin/display-backlight +1
+            bindsym XF86MonBrightnessDown exec --no-startup-id /usr/local/bin/display-backlight -1
             ```
 1. (Optional) Setup better console font:
     1. (Note) Using the MesloLGS font. See [this](https://github.com/romkatv/powerlevel10k#fonts) for more info.
