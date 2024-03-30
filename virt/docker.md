@@ -63,33 +63,7 @@ Main config: `/etc/docker/daemon.json`
     - This is not recommended on servers as it effectively grants them root access without sudo.
     - Add them to the `docker` group.
 
-Full main config example:
-
-```json
-{
-    "experimental": true,
-    "exec-opts": ["native.cgroupdriver=systemd"],
-    "ipv6": true,
-    "fixed-cidr-v6": "fd8c:0c98:8726:3a42::/64",
-    "ip6tables": true,
-    "default-address-pools": [
-        {"base": "10.194.0.0/16", "size": 24},
-        {"base": "fd34:93c7:6fa8::/48", "size": 64}
-    ],
-    "dns": ["1.1.1.1", "2606:4700:4700::1111"],
-    "log-driver": "json-file",
-    "log-opts": {
-        "mode": "non-blocking",
-        "max-buffer-size": "5m",
-        "max-size": "10m",
-        "max-file": "3",
-        "compress": "true"
-    },
-    "userland-proxy": false,
-    "mtu": 1500,
-    "metrics-addr": "[::]:9323"
-}
-```
+Full main config example: [daemon.js](https://github.com/HON95/configs/blob/master/docker/daemon.json)
 
 ### Docker Compose
 
