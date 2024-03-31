@@ -290,6 +290,9 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. (Note) Most breaks on wide displays (e.g. UHD), so don't use it if that may be a problem.
     1. Install the most pager: `sudo pacman -S most`
     1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export PAGER=most`
+1. Setup a BASH command completion dir (also used by ZSH for CLI apps that don't support ZSH):
+    1. Create dir `/etc/bash_completion.d`.
+    1. Setup `/etc/profile.d/completion.sh`, see the example below.
 1. (Optional) Reboot.
 
 ### Setup the Xorg Display Server
@@ -814,6 +817,23 @@ Alternatively, to disable DPMS completely:
 Section "Extensions"
     Option "DPMS" "Disable"
 EndSection
+```
+
+### BASH Command Completion Configs
+
+File: `/etc/profile.d/completion.sh`
+
+```sh
+# Don't include /usr/share/bash-completion/bash_completion,
+# assume bashrc or something already includes it.
+# We don't want that when reading /etc/profile with ZSH anyways.
+
+if [[ $PS1 && -d /etc/bash_completion.d/ ]]; then
+    for f in /etc/bash_completion.d/*; do
+        test -r "$f" && . "$f"
+    done
+    unset f
+fi
 ```
 
 ### i3 Media Keys

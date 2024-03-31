@@ -5,7 +5,31 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Virtual Machines
+## Azure CLI
+
+### Install
+
+- Arch Linux:
+    - Install CLI: `sudo pacman -S azure-cli`
+    - Setup BASH command completion using `/etc/bash_completion.d/`. If using ZSH, configure reading BASH profile configs. See `/etc/profile.d/completion.sh` in [Arch](personal-device/arch/).
+    - Download command completion: `sudo curl -L https://raw.githubusercontent.com/Azure/azure-cli/dev/az.completion -o /etc/bash_completion.d/az`
+
+### Usage
+
+- Warning: Make sure to destroy test resources as they can get expensive to keep around for no reason.
+- Login/logout:
+    - Interactively (web): `az login`
+    - Logout: `az logout`
+- Resource Group (RG):
+    - Create: `az group create --name <rg> --location norwayeast` (e.g. `test_rg`)
+- Azure Container Registry (ACR):
+    - Note: The registry name must be unique in Azure and can only contain 5-50 alphanumeric characters.
+    - Create: `az acr create --resource-group <rg> --name <acr> --sku Basic`
+    - Delete: `az acr delete --name <acr>`
+    - Build image and push: `az acr build --registry <acr> --image <image>:<tag> [path]` (path: must contain a `Dockerfile`) (image: e.g. `aks-store-demo/product-service:latest`)
+    - Show images: `az acr repository list --name <acr> --output table`
+
+## Virtual Machine (VM)
 
 ### Creating a VM and Required Resources
 
@@ -73,7 +97,7 @@ Note: This sets up a simple VM (called `Yolo`) in its own resource group and its
     - (**TODO**) Was it pointless to select any inbound ports during VM creation when the NSG rules will be applied anyways?
     - Go to the "IP configurations" tab and add a new secondary config for IPv6 named `ipconfig2`, with dynamic assignment and associated with the created public IPv6 address.
 
-### Networking
+### Network
 
 - You're forced to use NAT (with an internal network conneted to the VM) both for IPv4 and IPv6 (_why?_).
 - Some guides may tell you that you need to create a load balancer in order to add IPv6 to VMs, but that's avoidable.
@@ -85,5 +109,32 @@ Note: This sets up a simple VM (called `Yolo`) in its own resource group and its
     1. Create an IPv4 address and an IPv6 address.
     1. In the virtual network for the VM, add a ULA IPv6 address space (e.g. an `fdXX:XXXX:XXXX::/48`). Then modify the existing subnet (e.g. `default`), tick the "Add IPv6 address space" box and add a /64 subnet from the address space you just added.
     1. In the network interface for the VM, configure the primary config to use the private IPv4 subnet and the public IPv4 address. Add a new secondary config for for the IPv6 (private) ULA subnet and the (public) GUA.
+
+## Azure Kubernetes Service (AKS)
+
+### Resources
+
+- [Azure: Quotas, virtual machine size restrictions, and region availability in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/quotas-skus-regions)
+
+### Info
+
+- To allow an AKS cluster to interact with other Azure resources, the Azure platform automatically creates a cluster identity. In this example, the cluster identity is granted the right to pull images from the ACR instance you created in the previous tutorial. To execute the command successfully, you need to have an Owner or Azure account administrator role in your Azure subscription. (From AKS docs.)
+
+### Setup
+
+**TODO**
+
+Using Azure CLI.
+
+1. (Optional) Spin up an Azure Container Registry (ACR) first.
+    - Only if you need to build your own applications. But maybe use a free alternative like Docker Hub instead.
+1. Install k8s CLI:
+    - Arch Linux: `sudo pacman -S kubectl`
+    - Azure CLI (last resort): `sudo az aks install-cli`
+1.
+
+**TODO**:
+
+1. Prepare AKS RBAC: [Control access to cluster resources using Kubernetes RBAC and Microsoft Entra identities in AKS](https://learn.microsoft.com/en-us/azure/aks/azure-ad-rbac)
 
 {% include footer.md %}
