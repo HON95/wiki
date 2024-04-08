@@ -76,6 +76,7 @@ breadcrumbs:
         - A leading `/` means to only match in the same folder as the gitignore file (the gitignore root).
         - A trailing `/` means to only match directories.
         - A `*` means to use globbing to match files, e.g. `*.log` to match all log files.
+        - A leading `**/` means to match in the current directory or in subdirectories.
 - Committing:
     - Typical command (with inline message): `git commit -m "<message>"`
     - Commit message:

@@ -20,6 +20,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 - [Ansible](/automation/ansible/)
 - [Puppet](/automation/puppet/)
+- [Terraform](/automation/terraform/)
 
 ## Cloud
 

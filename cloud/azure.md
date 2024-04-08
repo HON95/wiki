@@ -20,6 +20,11 @@ breadcrumbs:
 - Login/logout:
     - Interactively (web): `az login`
     - Logout: `az logout`
+- Subscriptions:
+    - Set active subscription (see `id` field from login output): `az account set --subscription <sub-id>`
+- Service principals:
+    - Create (with subscription ID from login): `az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<sub-id>"`
+    - Copy all the outputted value into the application that needs the credentials, including the inputted subscription ID.
 - Resource Group (RG):
     - Create: `az group create --name <rg> --location norwayeast` (e.g. `test_rg`)
 - Azure Container Registry (ACR):
@@ -52,6 +57,7 @@ Note: This sets up a simple VM (called `Yolo`) in its own resource group and its
     - Use "Microsoft network" routing preference.
     - Use the "zone-redundant" availability zone.
     - Take note of the allocated IPv4 and IPv6 addresses so you can add it to DNS records.
+    - **TODO** See the docs about "IPs created before the availability zone are not zone redundant" etc.
 1. (Optional) Create a NAT gateway for outbound connections (`Yolo-NATGW`):
     - This is required when using multiple VMs behind a limited number of public IPv4 addresses, which may cause port exhaustion if the VMs create many outbound connections. This is not required if all VMs have dedicated public IPv4 addresses, however.
     - Create the NAT gateway with TCP idle timeout 10 minutes (e.g.).

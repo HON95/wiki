@@ -7,8 +7,6 @@ breadcrumbs:
 
 ## Usage
 
-### General
-
 - Specify SSH password: `--ask-pass`
 - Specify sudo password: `--ask-become-pass`
 - Specify username: `--username=<username>`
