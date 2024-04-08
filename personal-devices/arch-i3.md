@@ -879,4 +879,35 @@ bindsym $mod+Print exec maim -i $(xdotool getactivewindow) $HOME/Downloads/Scree
 bindsym $mod+Shift+Print exec maim $HOME/Downloads/Screenshot_$(date -Iseconds).png
 ```
 
+## Troubleshooting
+
+### Fix Boot
+
+1. Boot into live-OS.
+1. Find the disk: `lsblk`
+1. Decrypt it: `cryptsetup luksOpen /dev/<partition> crypt_root`
+1. Mount it: `mount /dev/mapper/crypt_root /mnt`
+1. Mount the EFI partition: `mount /dev/<partition-1> /mnt/boot/efi`
+1. Chroot into it: `arch-chroot /mnt`
+1. Fix GRUB: `grub-install --target=x86_64-efi --efi-directory=/boot/efi && grub-mkconfig -o /boot/grub/grub.cfg`
+1. Fix initramfs: `mkinitcpio -P`
+
+If the GRUB or initramfs commands didn't work (e.g. if it broke during an Pacman upgrade and lots of packages are corrupt):
+
+1. Exit the chroot (if inside it).
+1. Mount other stuff:
+    - `mount -t proc /proc /mnt/proc`
+    - `mount --rbind /sys /mnt/sys`
+    - `mount --rbind /dev /mnt/dev`
+1. (Maybe) Fix DNS: `rm /mnt/etc/resolv.conf; echo nameserver 1.1.1.1 > /mnt/etc/resolv.conf`
+1. (Maybe) Remove the Pacman DB lock: `rm /mnt/var/lib/pacman/db.lck`
+1. (Maybe) Overwrite the Pacman mirrorlist: `cp /etc/pacman.d/mirrorlist /mnt/etc/pacman.d/mirrorlist`
+1. Reinstall all packages:
+    1. Get packages: `pacman --sysroot /mnt -Qq >tmp.txt`
+    1. Remove non-Pacman packages (e.g. from yay) from the text file until the next command succeeds.
+    1. Reinstall: `pacman --sysroot /mnt -S --overwrite "*" - <tmp.txt`
+1. Fix boot dir perms: `chmod 700 /mnt/boot`
+1. Fix resolvconf: `ln -sf /run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf`
+1. Reboot.
+
 {% include footer.md %}
