@@ -87,6 +87,7 @@ An example of a full-ish configuration. Skip any steps already done in "minimum 
 1. Set default routes: `set protocols static route[6] <0.0.0.0/0|::/0> next-hop <next-hop>` (for IPv4 and IPv6)
 1. (Optional) Setup basic SSHD:
     1. Enable server: `set service ssh`
+    1. Disable reverse DNS lookup: `set service ssh disable-host-validation`
     1. (Optional) Disable password login (pubkeys only): `set service ssh disable-password-authentication`
     1. (Optional) Commit and log in through SSH instead of the console.
 1. Replace default user:

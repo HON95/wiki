@@ -13,6 +13,7 @@ breadcrumbs:
 - [IETF RFC 7934 (BCP 204): Host Address Availability Recommendations](https://datatracker.ietf.org/doc/html/rfc7934)
 - [IETF RFC 8200 (STD 86): Internet Protocol, Version 6 (IPv6) Specification](https://datatracker.ietf.org/doc/html/rfc8200)
 - [APNIC: IPv6 Best Current Practices](https://www.apnic.net/community/ipv6-program/ipv6-bcp/)
+- [apenwarr: The world in which IPv6 was a good design](https://apenwarr.ca/log/20170810)
 
 ## Special Prefixes and Addresses
 

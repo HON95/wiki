@@ -11,8 +11,8 @@ breadcrumbs:
 
 - Arch Linux:
     - Install CLI: `sudo pacman -S azure-cli`
-    - Setup BASH command completion using `/etc/bash_completion.d/`. If using ZSH, configure reading BASH profile configs. See `/etc/profile.d/completion.sh` in [Arch](personal-device/arch/).
     - Download command completion: `sudo curl -L https://raw.githubusercontent.com/Azure/azure-cli/dev/az.completion -o /etc/bash_completion.d/az`
+        - First: To setup BASH command completion with ZSH, configure reading BASH profile configs and see `/etc/profile.d/completion.sh` in [Arch](personal-device/arch/). Create `/etc/bash_completion.d` if it doesn't exist yet.
 
 ### Usage
 
@@ -27,18 +27,37 @@ breadcrumbs:
     - Copy all the outputted value into the application that needs the credentials, including the inputted subscription ID.
 - Resource Group (RG):
     - Create: `az group create --name <rg> --location norwayeast` (e.g. `test_rg`)
+    - List all resources under an RG: `az resource list --resource-group=<name>`
 - Azure Container Registry (ACR):
     - Note: The registry name must be unique in Azure and can only contain 5-50 alphanumeric characters.
     - Create: `az acr create --resource-group <rg> --name <acr> --sku Basic`
     - Delete: `az acr delete --name <acr>`
     - Build image and push: `az acr build --registry <acr> --image <image>:<tag> [path]` (path: must contain a `Dockerfile`) (image: e.g. `aks-store-demo/product-service:latest`)
     - Show images: `az acr repository list --name <acr> --output table`
+- Miscellanea:
+    - Get VM sizes: `az vm list-sizes --location "Norway East"`
+        - With filtering (example): `az vm list-sizes --location "Norway East" | jq '.[] | select(.numberOfCores <= 2) | select(.memoryInMB == 1024)'`
 
 ## Virtual Machine (VM)
 
-### Creating a VM and Required Resources
+### Info
 
-Note: This sets up a simple VM (called `Yolo`) in its own resource group and its own resources.
+#### Network
+
+- You're forced to use NAT (with an internal network conneted to the VM) both for IPv4 and IPv6 (_why?_).
+- Some guides may tell you that you need to create a load balancer in order to add IPv6 to VMs, but that's avoidable.
+- ICMPv6 is completely broken. You can't ping inbound over IPv6 (outbound works), path MTU discovery (PMTUD) is broken, etc. Broken PMTUD can be avoided by simply setting the link MTU from 1500 to 1280 (the minimum for IPv6).
+- The default ifupdown network config (which uses DHCP for v4 and v6) broke IPv6 connectivity for me after a while for some reason. Switching to systemd-networkd with DHCP and disabling Ifupdown (comment out everything in `/etc/network/interfaces` and mask `ifup@eth0.service`) solved this for me.
+- If you configure non-Azure DNS servers in the VM config, it will seemingly only add one of the configured servers to `/etc/resolv.conf`. **TODO** It stops overriding `/etc/resolv.conf` if using Azure DNS servers?
+- Adding IPv6 to VM:
+    1. (Note) This was written afterwards, I may be forgetting some steps.
+    1. Create an IPv4 address and an IPv6 address.
+    1. In the virtual network for the VM, add a ULA IPv6 address space (e.g. an `fdXX:XXXX:XXXX::/48`). Then modify the existing subnet (e.g. `default`), tick the "Add IPv6 address space" box and add a /64 subnet from the address space you just added.
+    1. In the network interface for the VM, configure the primary config to use the private IPv4 subnet and the public IPv4 address. Add a new secondary config for for the IPv6 (private) ULA subnet and the (public) GUA.
+
+### Setup (Web Example)
+
+This sets up a simple VM (called `Yolo`) in its own resource group and its own resources.
 
 1. Create a resource group (`Yolo-RG`) in the desired region.
     - This will be used by all other resources for the VM.
@@ -103,44 +122,158 @@ Note: This sets up a simple VM (called `Yolo`) in its own resource group and its
     - (**TODO**) Was it pointless to select any inbound ports during VM creation when the NSG rules will be applied anyways?
     - Go to the "IP configurations" tab and add a new secondary config for IPv6 named `ipconfig2`, with dynamic assignment and associated with the created public IPv6 address.
 
-### Network
+### Usage
 
-- You're forced to use NAT (with an internal network conneted to the VM) both for IPv4 and IPv6 (_why?_).
-- Some guides may tell you that you need to create a load balancer in order to add IPv6 to VMs, but that's avoidable.
-- ICMPv6 is completely broken. You can't ping inbound over IPv6 (outbound works), path MTU discovery (PMTUD) is broken, etc. Broken PMTUD can be avoided by simply setting the link MTU from 1500 to 1280 (the minimum for IPv6).
-- The default ifupdown network config (which uses DHCP for v4 and v6) broke IPv6 connectivity for me after a while for some reason. Switching to systemd-networkd with DHCP and disabling Ifupdown (comment out everything in `/etc/network/interfaces` and mask `ifup@eth0.service`) solved this for me.
-- If you configure non-Azure DNS servers in the VM config, it will seemingly only add one of the configured servers to `/etc/resolv.conf`. **TODO** It stops overriding `/etc/resolv.conf` if using Azure DNS servers?
-- Adding IPv6 to VM:
-    1. (Note) This was written afterwards, I may be forgetting some steps.
-    1. Create an IPv4 address and an IPv6 address.
-    1. In the virtual network for the VM, add a ULA IPv6 address space (e.g. an `fdXX:XXXX:XXXX::/48`). Then modify the existing subnet (e.g. `default`), tick the "Add IPv6 address space" box and add a /64 subnet from the address space you just added.
-    1. In the network interface for the VM, configure the primary config to use the private IPv4 subnet and the public IPv4 address. Add a new secondary config for for the IPv6 (private) ULA subnet and the (public) GUA.
+- Show VMs (CLI): `az vm list`
 
 ## Azure Kubernetes Service (AKS)
 
 ### Resources
 
-- [Azure: Quotas, virtual machine size restrictions, and region availability in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/quotas-skus-regions)
+- [Microsoft Learn: Quotas, virtual machine size restrictions, and region availability in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/quotas-skus-regions)
+- [Microsoft Learn: Control access to cluster resources using Kubernetes RBAC and Microsoft Entra identities in AKS](https://learn.microsoft.com/en-us/azure/aks/azure-ad-rbac)
 
 ### Info
 
-- To allow an AKS cluster to interact with other Azure resources, the Azure platform automatically creates a cluster identity. In this example, the cluster identity is granted the right to pull images from the ACR instance you created in the previous tutorial. To execute the command successfully, you need to have an Owner or Azure account administrator role in your Azure subscription. (From AKS docs.)
+- The k8s controller is completely managed by Azure.
+- The k8s nodes are created as managed Azure VMs that run Ubuntu or Azure Linux (for a Linux cluster).
+- To allow an AKS cluster to interact with other Azure resources, the Azure platform automatically creates a cluster identity. (From AKS docs.)
+- AKS clusters can use Kubernetes role-based access control (Kubernetes RBAC), which allows you to define access to resources based on roles assigned to users. If a user is assigned multiple roles, permissions are combined. Permissions can be scoped to either a single namespace or across the whole cluster. (From AKS docs.)
+- When you deploy an Azure Kubernetes Service cluster in Azure, it also creates a second resource group for the worker nodes. By default, AKS names the node resource group `MC_resourcegroupname_clustername_location`. (From AKS docs.)
+- Managed resources:
+    - Underlay/overlay networking is managed by AKS.
+    - Creating a Kubernetes load balancer on Azure simultaneously sets up the corresponding Azure load balancer resource (layer 4 only)
+    - As you open network ports to pods, Azure automatically configures the necessary network security group rules.
+    - Azure can also manage external DNS configurations for HTTP application routing as new Ingress routes are established.
+    - Service types: ClusterIP, NodePort, LoadBalancer (internal/external), ExternalName.
 
-### Setup
+#### Networking
 
-**TODO**
+##### Network Models
 
-Using Azure CLI.
+- Kubenet (basic network model):
+    - Simple but limited.
+    - Default, but not recommended.
+    - Doesn't provide global adressing for pods, such that direct connections between certain resources may be impossible/difficult.
+    - Has okay-ish IPv6 support if used with Cilium network policy.
+    - Doesn't support network policy (!).
+    - Limited to 400 nodes per cluster (or 200 if dual-stack).
+    - Underlay network:
+        - A VNet subnet is allocated for the underlay.
+        - Each node gets an address in this subnet.
+    - Overlay network:
+        - The cluster creation creates a private routing instance for the overlay network.
+        - Pods have unrouted IP addresses and uses NAT through the node's underlay address to reach external resources.
+- Azure CNI (advanced network model):
+    - Complex but flexible.
+    - Due to Kubernetes limitations, the Resource Group name, the Virtual Network name and the subnet name must be 63 characters or less.
+    - Azure CNI (old):
+        - Each node and pod gets a unique IP address within the same virtual network, yielding full connectivity within the cluster (no NAT).
+    - Azure CNI Overlay (new):
+        - An evolved variant using private networks for pods, similar for Kubenet, allowing for greater scalability.
+    - Azure CNI Powered by Cilium (recommended):
+        - Integrates with Azure CNI Overlay and adds high-performance networking, observability and network policy enforcement.
+        - AKS manages the Cilium configuration and it can't be modified.
+        - Uses the Azure CNI control plane paired with the Cilium eBPF data plane.
+        - Provides the Cilium network policy engine for network policy enforcement.
+        - Supports assigning IP addresses from an overlay network (like the Azure CNI Overlay mode) or from a virtual network (like the Azure CNI traditional mode).
+        - Kubernetes `NetworkPolicy` resources are the recommended way to configure the policies (not `CiliumNetworkPolicy`).
+        - Doesn't use `kube-proxy`.
+        - Limitations:
+            - Cilium L7 policy enforcement is disabled.
+            - Cilium Hubble is disabled.
+            - Network policies can't use `ipBlock` to allow access to node or pod IPs, use `namespaceSelector` and `podSelector` instead ([FAQ](https://learn.microsoft.com/en-us/azure/aks/azure-cni-powered-by-cilium#frequently-asked-questions)).
+            - Kubernetes services with `internalTrafficPolicy=Local` aren't supported ([issue](https://github.com/cilium/cilium/issues/17796)).
+            - Multiple Kubernetes services can't use the same host port with different protocols ([issue](https://github.com/cilium/cilium/issues/14287)).
+            - Network policies may be enforced on reply packets when a pod connects to itself via service cluster IP ([issue](https://github.com/cilium/cilium/issues/19406) **TODO**: Fixed?).
+
+##### Network Policy Engines
+
+- Azure Network Policy Manager:
+    - No IPv6 support, i.e. useless.
+    - Requires the *Azure CNI* network model.
+- Calico:
+    - Seems OK, with some extra features.
+    - Supports both the *Kubenet* and *Azure CNI* network models.
+    - Supports Linux and Windows.
+    - Supports all policy types.
+- Cilium:
+    - Seems OK too.
+    - Is used by default when using the *Azure CNI Powered by Cilium* network model.
+    - Supports only Linux.
+    - Supports all policy types.
+
+##### IPv6 Support
+
+- Somewhat limited like most Azure things. Dual-stack AKS is mostly supported, but IPv6-only is not supported at all.
+- Limitations (both network models):
+    - Network policies: *Azure Network Policy* and *Calico* don't support dual-stack, but *Cilium* does.
+    - *NAT Gateway* is not supported.
+    - Virtual nodes are not supported.
+    - Windows nodes pools are not supported.
+- IPv6 in the Kubenet network model:
+    - More info: [Microsoft Learn: Use dual-stack Kubenet networking in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/configure-Kubenet-dual-stack)
+    - Dual-stack support must be specified during cluster creation, using argument `--ip-families=ipv4,ipv6`. This will cause all nodes and pods to automatically get IPv6 too.
+    - To enable dual-stack `LoadBalancer` services, see [this](https://learn.microsoft.com/en-us/azure/aks/configure-Kubenet-dual-stack#expose-the-workload-via-a-loadbalancer-type-service).
+- IPv6 in the Azure CNI network model:
+    - **TODO**
+
+### Setup (CLI Example)
+
+Creates a public Linux AKS cluster, using dual-stack Azure CNI with Cilium networking.
+
+Using Azure CLI and example resource names.
 
 1. (Optional) Spin up an Azure Container Registry (ACR) first.
     - Only if you need to build your own applications. But maybe use a free alternative like Docker Hub instead.
 1. Install k8s CLI:
     - Arch Linux: `sudo pacman -S kubectl`
     - Azure CLI (last resort): `sudo az aks install-cli`
-1.
+1. Create AKS cluster: `az aks create --resource-group=test_rg --name=test_aks --tier=standard -s Standard_DS2_v2 --node-count=2 --node-osdisk-type=Ephemeral --network-plugin=azure --network-plugin-mode=overlay --network-dataplane=cilium --ip-families=ipv4,ipv6 --generate-ssh-keys`
+    - To give the cluster identity rights to pull images from an ACR (see the optional first step), add argument `--attach-acr=<acr_id>`. You need owner/admin privileges to orchestrate this.
+    - `--tier=standard` is for production. Use `free` for simple testing.
+    - `-s Standard_DS2_v2` is the default and has 2 vCPU, 7GiB RAM and 14GiB SSD temp storage.
+    - `--node-osdisk-type Ephemeral` uses a host-local OS disk instead of a network-attached disk, yielding better performance and zero cost.
+    - `--ip-families ipv4,ipv6` enables IPv6 support (only dual-stack supported for IPv6).
+    - **TODO** Options to limit API server access: https://learn.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges
+    - **TODO** Is `--pod-cidr 192.168.0.0/16` etc. required? IPv6 too.
+1. Add k8s credentials to local kubectl config: `az aks get-credentials --resource-group=test_rg --name=test_aks`
 
 **TODO**:
 
-1. Prepare AKS RBAC: [Control access to cluster resources using Kubernetes RBAC and Microsoft Entra identities in AKS](https://learn.microsoft.com/en-us/azure/aks/azure-ad-rbac)
+- Best practices: https://learn.microsoft.com/en-us/azure/aks/best-practices
+- k8s RBAC?
+- "In a production environment, we strongly recommend to deploy a private AKS cluster with Uptime SLA. For more information, see private AKS cluster with a Public DNS address."
+- Cilium with IPv6 network policies.
+- Network policy (Cilium for IPv6): https://learn.microsoft.com/en-us/azure/aks/use-network-policies#create-an-aks-cluster-and-enable-network-policy
+- Backup:
+    - https://learn.microsoft.com/en-us/azure/backup/azure-kubernetes-service-backup-overview
+    - https://learn.microsoft.com/en-us/azure/backup/quick-backup-aks
+    - https://learn.microsoft.com/en-us/azure/backup/quick-install-backup-extension
+- Terraform:
+    - [Extra config](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#deploy-an-azure-linux-aks-cluster-with-terraform)
+- [GitOps/Flux v2](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2)
+- [Storage](https://learn.microsoft.com/en-us/azure/aks/concepts-storage)
+- Security patches for node OS? https://learn.microsoft.com/en-us/azure/aks/concepts-vulnerability-management#worker-nodes
+- Limit access to API server: https://learn.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges
+- `kubernetes.azure.com/set-kube-service-host-fqdn`
+- Auto-upgrade: https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster
+- Validate Cilium status and connectivity: https://docs.cilium.io/en/latest/installation/k8s-install-aks/
+
+### Usage
+
+Using example resource names.
+
+- Kubernetes: See [Kubernetes](/virt/k8s/).
+- Cluster:
+    - Show info: `az aks show --resource-group=test_rg --name=test_aks`
+    - Create: See setup example.
+    - Destroy: **TODO**
+    - Stop: `az aks stop --resource-group=test_rg --name=test_aks`
+        - Don't repeatedly stop and start your clusters. This can result in errors. Once your cluster is stopped, you should wait at least 15-30 minutes before starting it again. (From AKS docs.)
+    - Start (might regen some IP addresses): `az aks start --resource-group=test_rg --name=test_aks`
+        - Check if running again: `az aks show --resource-group=test_rg --name=test_aks | jq '.powerState'`
+- Node pools:
+    - Show a nodepool (e.g. get VM size and count): `az aks nodepool show --resource-group=test_rg --cluster-name=test_aks --nodepool-name=nodepool1`
 
 {% include footer.md %}

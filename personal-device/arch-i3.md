@@ -579,6 +579,8 @@ See [PipeWire (Applications)](/personal-device/applications/#pipewire) for more 
     1. (Note) Don't use the `.7z` file format, it doesn't preserve owner info.
 1. Setup network tools:
     1. Install: `sudo pacman -S nmap tcpdump wireshark-qt`
+1. Set default applications (after installation):
+    1. Web browser: `xdg-settings set default-web-browser firefox.desktop`
 
 ### Extra (Optional)
 

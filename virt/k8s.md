@@ -5,42 +5,35 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian**.
-
 ## Setup
 
-1. **TODO**
+1. Install:
+    - Arch Linux: `yay -S kubectl`
 1. (Optional) Setup command completion:
     - BASH (per-user): `echo 'source <(kubectl completion bash)' >>~/.bashrc`
+        - More info: [k8s docs: bash auto-completion](https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-bash-linux/)
     - ZSH (per-user): `echo 'source <(kubectl completion zsh)' >>~/.zshrc`
-    - More info:
-        - [bash auto-completion (k8s docs)](https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-bash-linux/)
-        - [zsh auto-completion (k8s docs)](https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-zsh/)
+        - More info: [k8s docs: zsh auto-completion](https://kubernetes.io/docs/tasks/tools/included/optional-kubectl-configs-zsh/)
 
 ## Usage
 
 - Config:
     - Show: `kubectl config view`
 - Cluster:
-    - Show: `kubectl cluster-info`
+    - Show basic info: `kubectl cluster-info`
 - Nodes:
-    - Show `kubectl get nodes`
+    - Show nodes: `kubectl get nodes [-o wide]`
+    - Show node IP addresses: `kubectl get nodes -o=custom-columns="NAME:.metadata.name,ADDRESSES:.status.addresses[?(@.type=='InternalIP')].address,PODCIDRS:.spec.podCIDRs[*]"`
+    - Show resource usage: `kubectl top nodes`
 - Services:
     - Show: `kubectl get services`
 - Pods:
-    - Show: `kubectl get pods [-A] [-o wide]`
-        - `-A` for all namespaces instead of just the current/default one.
-        - `-o wide` for more info.
+    - Show pods from all namespaces: `kubectl get pods -A [-o wide]`
     - Show logs: `kubectl logs <pod> [container]`
 - Manifests:
     - Show cluster state diff if a manifest were to be applied: `kubectl diff -f <manifest-file>`
 - Events:
     - Show: `kubectl get events`
-
-## Notes and Best Practices
-
-- k8s is the foundation for a platform-as-a-service (PaaS), but requires a ton of configuration if self-hosting/on-premise.
-- **TODO**
 
 ## Related Software
 
