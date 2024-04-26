@@ -140,6 +140,7 @@ breadcrumbs:
     - ncurses-based viewer for e.g. basic system info, top-like process info, network traffic and disk traffic.
     - Usage: `glances` (interactive)
 - `dstat`:
+    - **Warning:** No longer maintained: [dstat-real/dstat#170](https://github.com/dstat-real/dstat/issues/170) (Need to find a replacement.)
     - A versatile replacement for vmstat, iostat and ifstat (according to itself).
     - Prints scrolling output for showing a lot of types of general metrics, one line of columns for each time step.
     - Usage: `dstat <options> [interval] [count]`
