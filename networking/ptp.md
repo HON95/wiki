@@ -166,7 +166,7 @@ breadcrumbs:
 - Does not allow non-PTP bridges in the path.
 - Implicitly supports P2P TCs (not configurable).
 
-#### Telecom (ITU-T G.82751)
+#### Telecom (ITU-T G.8275.1)
 
 - Used for telecom and mobile backhaul.
 

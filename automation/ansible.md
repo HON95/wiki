@@ -9,9 +9,9 @@ breadcrumbs:
 
 - Specify SSH password: `--ask-pass`
 - Specify sudo password: `--ask-become-pass`
-- Specify username: `--username=<username>`
+- Specify username: `-u <username>`
 - Specify SSH key: `--private-key=<key>` (use `/dev/null` to explicitly avoid SSH keys)
-- Hide unchanged/skipped tasks: `export ANSIBLE_DISPLAY_SKIPPED_HOSTS=false; export ANSIBLE_DISPLAY_OK_HOSTS=false`
+- Hide unchanged/skipped tasks (add to your `.bashrc` or something): `export ANSIBLE_DISPLAY_SKIPPED_HOSTS=false; export ANSIBLE_DISPLAY_OK_HOSTS=false`
 
 ### Ad Hoc
 

@@ -19,9 +19,12 @@ A Debian-based router OS, forked from Vyatta. Junos-like CLI.
 
 See [Installation (VyOS)](https://docs.vyos.io/en/latest/install.html).
 
-1. For physical instances, consider disabling Intel Hyper-Threading (it does little for memory-intensive applications like packet routing).
-1. If running as VM inside a hypervisor like Proxmox, disable memory ballooning/memory sharing.
-    - VyOS does not use swapping so accidental overprovisioning that could starve the VyOS VM could cause errors.
+1. For bare-metal:
+    - Consider disabling Intel Hyper-Threading. It does little for memory-intensive applications like packet routing.
+1. For PVE/QEMU VM:
+    - Set the disk size to e.g. 10GB. It will mostly only be used for 500MB VyOS images, logs, containers and other things you might have added.
+    - Disable memory ballooning/memory sharing. VyOS does not use swapping so accidental overprovisioning that could starve the VyOS VM could cause errors.
+    - Enable the QEMU agent option in PVE. VyOS comes with the agent installed.
 1. Download the latest rolling release (free) or LTS release (paid) ISO.
 1. Burn and boot from it (it's a live image).
 1. Log in using user `vyos` and password `vyos`.

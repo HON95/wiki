@@ -121,6 +121,6 @@ breadcrumbs:
 
 - On the Compact version, select two input layers at the same time to show the first on the left channel strips and the second on the right channel strips.
 - Enable color for the RTA.
-- Bring a 5GHz wireless router to set up your own out-of-band network for remote control. Consider hooking the WAN port up to the local network for internet access, if required. Also consider connecting the tablet using an RJ45 Ethernet adapter to avoid relying on WLAN.
+- Bring a 5GHz wireless router to set up your own out-of-band network for remote control. Consider hooking the WAN port up to the local network for internet access, if required. Also consider connecting the tablet using an RJ45 Ethernet adapter to avoid relying on unreliable WLAN.
 
 {% include footer.md %}

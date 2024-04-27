@@ -169,6 +169,9 @@ File: `~/.gitconfig`
 Note: Avoid quotation marks around values.
 
 ```ini
+# https://wiki.hon.one/swe/git/
+# https://github.com/HON95/configs/blob/master/git/config
+
 [user]
         name = <full_name>
         email = <email_addr>

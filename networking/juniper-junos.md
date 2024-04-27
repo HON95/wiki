@@ -426,10 +426,10 @@ Wait for the "The operating system has halted." text before pulling the power, s
 
 ## Tasks
 
-### Reset Root Password
+### Reset Config or Root Password
 
 1. Power on the device and prepare for the next step.
-1. Press space quickly as the "Hit \[Enter\] to boot immediately, or space bar for command prompt." message is shown (right before the kernel is loaded). You should immediately enter a `loader>` prompt.
+1. Wait for the "Hit \[Enter\] to boot immediately, or space bar for command prompt." message to be shown and then press space. You should immediately enter a prompt (typically `loader>`).
 1. Run `boot -s` to boot into single-user mode.
 1. When prompted for a shell, enter `recovery`.
 1. Wait for the device to fully boot.
@@ -458,6 +458,7 @@ This should work in most cases and is the most streamlined version, but may not 
 
 1. (Info) For virtualized boxes like EX4600 and QFX5100, skip the `request system snapshot` parts as these boxes are built differently wrt. Junos.
 1. Cleanup old files: `request system storage cleanup`
+    - Do this *before* mounting the USB or downloading the files, as the upgrade files may get wiped.
 1. Make sure the alternate partition contains a working copy of the current version: See [Validate the Partitions](#validate-the-partitions).
 1. If downloading from a remote location:
     1. Get the file: `file copy <remote-url> /var/tmp/`
@@ -480,7 +481,7 @@ This should work in most cases and is the most streamlined version, but may not 
     - For virtualized devices, add `force-host` to upgrade the host too.
     - If the date is significantly wrong on the device and NTP isn't used/synced, set it manually with `set date <YYYYMMDDhhmm>` first so validation doesn't fail.
     - It may produce some insignificant errors in the process (commands not found etc.).
-1. See [Validate the Partitions](#validate-the-partitions).
+1. See [Validate the Partitions](#validate-the-partitions) to copy the upgraded partition to the other partition.
 
 #### From the Loader
 
@@ -491,7 +492,7 @@ If the normal method did not work, try this instead.
 1. Reboot the device and press space at the right time to enter the loader.
     - The message to wait for should look like this: `Hit [Enter] to boot immediately, or space bar for command prompt.`
 1. Format and flash: `install --format file:///jinstall-whatever.tgz` (with correct name, no `/var/tmp/`)
-1. See [Validate the Partitions](#validate-the-partitions).
+1. See [Validate the Partitions](#validate-the-partitions) to copy the upgraded partition to the other partition.
 
 #### Validate the Partitions
 
@@ -500,14 +501,14 @@ Do this before as a check and after to make sure the new image is working and co
 1. Log into the CLI.
 1. Verify that the system is booted from the active partition of the internal media: `show system storage partitions` (should show `Currently booted from: active`)
 1. Verify that the current Junos version for the *primary* partition is correct: `show system snapshot media internal`
-1. Copy to the alternate root partition (may take several minutes): `request system snapshot slice alternate`
+1. Copy to the alternate root partition, so both have the same version (may take several minutes): `request system snapshot slice alternate`
 1. Verify that the primary and backup partitions have the same Junos version: `show system snapshot media internal`
     - If the command fails, wait a bit and try again. The copy may still be happening in the background.
 1. (Info) To boot from the alternative partition: `request system reboot slice alternate media internal`
 
 #### ISSU and NSSU
 
-Just info, no instructions here yet.
+Just info, no instructions here.
 
 - ISSU and NSSU may be used for upgrade without downtime, if the hardware supports it.
 - If using redundant hardware (multiple REs), ISSU may be use for upgrades without downtime. It may blow up. One RE is upgraded first, then state is transferred to it. Normal upgrade with reboot is more reliable if short downtime is acceptable.

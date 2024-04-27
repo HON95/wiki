@@ -180,7 +180,7 @@ The path selection algorithm is used to select a single best path for a prefix. 
 ## Best Practices
 
 - Announced prefix lengths (max /24 and /48): Generally, use a maximum length of 24 for IPv4 and 48 for IPv6, due to longer prefixes being commonly filtered. See [Visibility of IPv4 and IPv6 Prefix Lengths in 2019 (RIPE)](https://labs.ripe.net/Members/stephen_strowes/visibility-of-prefix-lengths-in-ipv4-and-ipv6).
-- IRR and RPKI: Add `route(6)` objects (for IRR) and ROAs (for RPKI) for all prefixes, both to avoid having your prefixes hijacked and to reduce the risk of getting filtered.
+- IRR and RPKI: Add `route(6)` objects (IRR) and ROAs (RPKI) for all prefixes, both to avoid having your prefixes hijacked and to reduce the risk of getting filtered.
 - Explicit import & export policies: Always explicitly define the input and output policies to avoid route leakage. Certain routers defaults to announcing everything if no policy is defined, but RFC 8212 defines a safe default policy of filtering all routes if no policy is explicitly defined.
 - Enable large communities: 2-byte communities are outdated, enable 12-byte communities to allow for more advanced policies and to keep up up to date with 4-byte ASNs. See RFCs 8092 and 8195.
 - Administrative shutdown message: When administratively shutting down a session (due to maintenance or something), set a message to explain why to the other peer. Peers should log received shutdown messages. See RFC 9003, which adds support for this free-form 128-byte UTF-8 message in the BGP notification message.

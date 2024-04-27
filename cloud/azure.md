@@ -211,6 +211,7 @@ This sets up a simple VM (called `Yolo`) in its own resource group and its own r
     - *NAT Gateway* is not supported.
     - Virtual nodes are not supported.
     - Windows nodes pools are not supported.
+    - Reverse FQDNs for single public IPv6 addresses are not supported.
 - IPv6 in the Kubenet network model:
     - More info: [Microsoft Learn: Use dual-stack Kubenet networking in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/configure-Kubenet-dual-stack)
     - Dual-stack support must be specified during cluster creation, using argument `--ip-families=ipv4,ipv6`. This will cause all nodes and pods to automatically get IPv6 too.
