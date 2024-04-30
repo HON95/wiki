@@ -135,25 +135,62 @@ This sets up a simple VM (called `Yolo`) in its own resource group and its own r
 
 ### Info
 
-- The k8s controller is completely managed by Azure.
-- The k8s nodes are created as managed Azure VMs that run Ubuntu or Azure Linux (for a Linux cluster).
+- AKS can be deployed as a public cluster or a private cluster:
+    - Public AKS has a world-accessible IP address and world-resolvable hostname. The access can be restricted using the _API server authorized IP ranges_ feature.
+    - Private AKS is only accessible from your resources within Azure and uses private DNS.
 - To allow an AKS cluster to interact with other Azure resources, the Azure platform automatically creates a cluster identity. (From AKS docs.)
 - AKS clusters can use Kubernetes role-based access control (Kubernetes RBAC), which allows you to define access to resources based on roles assigned to users. If a user is assigned multiple roles, permissions are combined. Permissions can be scoped to either a single namespace or across the whole cluster. (From AKS docs.)
 - When you deploy an Azure Kubernetes Service cluster in Azure, it also creates a second resource group for the worker nodes. By default, AKS names the node resource group `MC_resourcegroupname_clustername_location`. (From AKS docs.)
 - Managed resources:
     - Underlay/overlay networking is managed by AKS.
-    - Creating a Kubernetes load balancer on Azure simultaneously sets up the corresponding Azure load balancer resource (layer 4 only)
+    - Creating a Kubernetes load balancer on Azure simultaneously sets up the corresponding Azure load balancer resource (layer 4 only).
     - As you open network ports to pods, Azure automatically configures the necessary network security group rules.
     - Azure can also manage external DNS configurations for HTTP application routing as new Ingress routes are established.
     - Service types: ClusterIP, NodePort, LoadBalancer (internal/external), ExternalName.
 
+#### Nodes
+
+- The k8s controller is completely managed by Azure.
+- The k8s nodes are created as managed Azure VMs that run Ubuntu or Azure Linux (for a Linux cluster).
+- Nodes are grouped into _node pools_, where all node VMs are the same type/size.
+- The initial node pool created together with the AKS cluster is called the _system node pool_ and hosts critical system pods such as CoreDNS and konnektivity. For this reaon, the system node pool should use (at least) 3 nodes for proper redundancy for critical components.
+- Additional pools may be created for different VM size requirements, additional pools can be created, called _user node pools_.
+- Requirements and limitations for multiple ndoe pools:
+    - Must use the Standard SKU load balancer.
+    - Must use Virtual Machine Scale Sets for the nodes.
+    - All nodes must reside in the same virtual network.
+    - Node pool names must only contain lowercase alphanumeric characters and must begin with a letter. The name must be 1–12 characters for Linux pools and 1–6 characters for Windows pools.
+
 #### Networking
 
-##### Network Models
+- IPv6 support is somewhat limited, like most Azure things. Dual-stack AKS is mostly supported, but IPv6-only is not supported at all.
+- IPv6 limitations (all network models):
+    - Network policies: *Azure Network Policy* and *Calico* don't support dual-stack, but *Cilium* does.
+    - *NAT Gateway* is not supported.
+    - Virtual nodes are not supported.
+    - Windows nodes pools are not supported.
+    - Reverse FQDNs for _single_ public IPv6 addresses are not supported.
 
-- Kubenet (basic network model):
-    - Simple but limited.
+##### Outbound Node Networking Types
+
+- Load balancer:
+    - Default, appropriate for simple clusters.
+    - Fixed SNAT ports are assigned per node.
+- NAT gateway:
+    - Better for high volumes of outbound connections.
+    - Managed or user-assigned network.
+    - Does not support IPv6 (yet)?
+    - Better SNAT port handling than the load balancer.
+    - Not zone redundant yet.
+- User-defined routing (UDR):
+    - For explicit network control.
+    - Must provide a default route.
+
+##### CNI Plugin
+
+- Kubenet (legacy):
     - Default, but not recommended.
+    - Simple/limited.
     - Doesn't provide global adressing for pods, such that direct connections between certain resources may be impossible/difficult.
     - Has okay-ish IPv6 support if used with Cilium network policy.
     - Doesn't support network policy (!).
@@ -164,28 +201,42 @@ This sets up a simple VM (called `Yolo`) in its own resource group and its own r
     - Overlay network:
         - The cluster creation creates a private routing instance for the overlay network.
         - Pods have unrouted IP addresses and uses NAT through the node's underlay address to reach external resources.
-- Azure CNI (advanced network model):
+    - IPv6 support:
+        - More info: [Microsoft Learn: Use dual-stack Kubenet networking in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/configure-Kubenet-dual-stack)
+        - Dual-stack support must be specified during cluster creation, using argument `--ip-families=ipv4,ipv6`. This will cause all nodes and pods to automatically get IPv6 too.
+        - To enable dual-stack `LoadBalancer` services, see [this](https://learn.microsoft.com/en-us/azure/aks/configure-Kubenet-dual-stack#expose-the-workload-via-a-loadbalancer-type-service).
+- Azure CNI (legacy):
     - Complex but flexible.
-    - Due to Kubernetes limitations, the Resource Group name, the Virtual Network name and the subnet name must be 63 characters or less.
-    - Azure CNI (old):
-        - Each node and pod gets a unique IP address within the same virtual network, yielding full connectivity within the cluster (no NAT).
-    - Azure CNI Overlay (new):
-        - An evolved variant using private networks for pods, similar for Kubenet, allowing for greater scalability.
-    - Azure CNI Powered by Cilium (recommended):
-        - Integrates with Azure CNI Overlay and adds high-performance networking, observability and network policy enforcement.
-        - AKS manages the Cilium configuration and it can't be modified.
-        - Uses the Azure CNI control plane paired with the Cilium eBPF data plane.
-        - Provides the Cilium network policy engine for network policy enforcement.
-        - Supports assigning IP addresses from an overlay network (like the Azure CNI Overlay mode) or from a virtual network (like the Azure CNI traditional mode).
-        - Kubernetes `NetworkPolicy` resources are the recommended way to configure the policies (not `CiliumNetworkPolicy`).
-        - Doesn't use `kube-proxy`.
-        - Limitations:
-            - Cilium L7 policy enforcement is disabled.
-            - Cilium Hubble is disabled.
-            - Network policies can't use `ipBlock` to allow access to node or pod IPs, use `namespaceSelector` and `podSelector` instead ([FAQ](https://learn.microsoft.com/en-us/azure/aks/azure-cni-powered-by-cilium#frequently-asked-questions)).
-            - Kubernetes services with `internalTrafficPolicy=Local` aren't supported ([issue](https://github.com/cilium/cilium/issues/17796)).
-            - Multiple Kubernetes services can't use the same host port with different protocols ([issue](https://github.com/cilium/cilium/issues/14287)).
-            - Network policies may be enforced on reply packets when a pod connects to itself via service cluster IP ([issue](https://github.com/cilium/cilium/issues/19406) **TODO**: Fixed?).
+    - Each node and pod gets a unique IP address from a subnet within the same virtual network, yielding full connectivity within the cluster (no NAT).
+    - Uses some limited form of static IP address allocation.
+- Azure CNI Dynamic IP Allocation and Static Block Allocation:
+    - Like Azure CNI (legacy), but with two new and more efficient IP address allocation methods. (I have no idea what other things are different.)
+    - Dynamic IP Allocation: Very similar to Azure CNI (legacy), but better somehow.
+    - Static Block Allocationn: Assigns IP _blocks_ to nodes on startup, allowing for better scalability.
+- Azure CNI Overlay:
+    - An evolved variant using private networks for pods, similar for Kubenet, allowing for greater scalability.
+    - Supports up to 5 000 nodes and 250 000 nodes.
+    - Allows the overlay IP space to be reused across different clusters.
+    - Pods are not directly reachable from outside the cluster.
+    - Supports dual-stack.
+- Azure CNI Powered by Cilium (recommended):
+    - Integrates with Azure CNI Dynamic/Static/Overlay and adds high-performance networking, observability and network policy enforcement.
+    - Cilium is mostly orthogonal to the Azure CNI chosen, where Cilium is the dataplane and the CNI plugin will act more like an IPAM.
+    - AKS manages the Cilium configuration and it can't be modified.
+    - Uses the Azure CNI control plane paired with the Cilium eBPF data plane.
+    - Provides the Cilium network policy engine for network policy enforcement.
+    - Supports assigning IP addresses from an overlay network (like the Azure CNI Overlay mode) or from a virtual network (like the Azure CNI traditional mode).
+    - Kubernetes `NetworkPolicy` resources are the recommended way to configure the policies (not `CiliumNetworkPolicy`).
+    - Doesn't use `kube-proxy`.
+    - Limitations:
+        - Cilium L7 policy enforcement is disabled.
+        - Cilium Hubble is disabled.
+        - Network policies can't use `ipBlock` to allow access to node or pod IPs, use `namespaceSelector` and `podSelector` instead ([FAQ](https://learn.microsoft.com/en-us/azure/aks/azure-cni-powered-by-cilium#frequently-asked-questions)).
+        - Kubernetes services with `internalTrafficPolicy=Local` aren't supported ([issue](https://github.com/cilium/cilium/issues/17796)).
+        - Multiple Kubernetes services can't use the same host port with different protocols ([issue](https://github.com/cilium/cilium/issues/14287)).
+        - Network policies may be enforced on reply packets when a pod connects to itself via service cluster IP ([issue](https://github.com/cilium/cilium/issues/19406) **TODO**: Fixed?).
+- BYO CNI:
+    - Create the luster without a CNI plugin and then install any CNI plugin that supports AKS.
 
 ##### Network Policy Engines
 
@@ -197,27 +248,20 @@ This sets up a simple VM (called `Yolo`) in its own resource group and its own r
     - Supports both the *Kubenet* and *Azure CNI* network models.
     - Supports Linux and Windows.
     - Supports all policy types.
+    - Doesn't support IPv6 (?).
 - Cilium:
     - Seems OK too.
     - Is used by default when using the *Azure CNI Powered by Cilium* network model.
     - Supports only Linux.
     - Supports all policy types.
 
-##### IPv6 Support
+#### Ingress Controllers
 
-- Somewhat limited like most Azure things. Dual-stack AKS is mostly supported, but IPv6-only is not supported at all.
-- Limitations (both network models):
-    - Network policies: *Azure Network Policy* and *Calico* don't support dual-stack, but *Cilium* does.
-    - *NAT Gateway* is not supported.
-    - Virtual nodes are not supported.
-    - Windows nodes pools are not supported.
-    - Reverse FQDNs for single public IPv6 addresses are not supported.
-- IPv6 in the Kubenet network model:
-    - More info: [Microsoft Learn: Use dual-stack Kubenet networking in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/configure-Kubenet-dual-stack)
-    - Dual-stack support must be specified during cluster creation, using argument `--ip-families=ipv4,ipv6`. This will cause all nodes and pods to automatically get IPv6 too.
-    - To enable dual-stack `LoadBalancer` services, see [this](https://learn.microsoft.com/en-us/azure/aks/configure-Kubenet-dual-stack#expose-the-workload-via-a-loadbalancer-type-service).
-- IPv6 in the Azure CNI network model:
-    - **TODO**
+- General:
+    - Only for HTTP-like traffic. Use a load balancer service instead for non-HTTP-like traffic.
+- Managed ingress-nginx through the application routing add-on (managed).
+- Azure Application Gateway for Containers (managed).
+- Istio ingress gateway (managed).
 
 ### Setup (CLI Example)
 
@@ -230,17 +274,19 @@ Using Azure CLI and example resource names.
 1. Install k8s CLI:
     - Arch Linux: `sudo pacman -S kubectl`
     - Azure CLI (last resort): `sudo az aks install-cli`
-1. Create AKS cluster: `az aks create --resource-group=test_rg --name=test_aks --tier=standard -s Standard_DS2_v2 --node-count=2 --node-osdisk-type=Ephemeral --network-plugin=azure --network-plugin-mode=overlay --network-dataplane=cilium --ip-families=ipv4,ipv6 --generate-ssh-keys`
+1. Create AKS cluster: `az aks create --resource-group=test_rg --name=test_aks --tier=standard --load-balancer-sku=standard --vm-set-type=VirtualMachineScaleSets -s Standard_DS2_v2 --node-count=3 --network-plugin=azure --network-plugin-mode=overlay --network-dataplane=cilium --ip-families=ipv4,ipv6 --generate-ssh-keys --api-server-authorized-ip-ranges=51.13.61.63,2603:1020:e01:2::85`
     - To give the cluster identity rights to pull images from an ACR (see the optional first step), add argument `--attach-acr=<acr_id>`. You need owner/admin privileges to orchestrate this.
     - `--tier=standard` is for production. Use `free` for simple testing.
+    - `--load-balancer-sku=standard` is for using the recommended load balancer variant, which is required for e.g. authorized IP ranges and multiple node pools.
     - `-s Standard_DS2_v2` is the default and has 2 vCPU, 7GiB RAM and 14GiB SSD temp storage.
-    - `--node-osdisk-type Ephemeral` uses a host-local OS disk instead of a network-attached disk, yielding better performance and zero cost.
-    - `--ip-families ipv4,ipv6` enables IPv6 support (only dual-stack supported for IPv6).
-    - **TODO** Options to limit API server access: https://learn.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges
-    - **TODO** Is `--pod-cidr 192.168.0.0/16` etc. required? IPv6 too.
+    - `--node-count=3` creates 3 nodes if specified size. As this node pool is the _system node pool_ hosting critical pods, it' simportant to have at least 3 nodes for proper redundancy.
+    - `--node-osdisk-type=Ephemeral` uses a host-local OS disk instead of a network-attached disk, yielding better performance and zero cost. This only works if the VM cache for the given size is big enough for the VM image, which is not the case for small VM sizes.
+    - `--ip-families=ipv4,ipv6` enables IPv6 support (only dual-stack supported for IPv6).
+    - `--api-server-authorized-ip-ranges=<cidr1>,[cidr2]...` is used to limit access to the k8s controller from any ranges you want access from. The cluster egress IP address is added to this list automatically. Up to 200 IP ranges can be specified.
+    - **TODO** Is `--pod-cidr=192.168.0.0/16` etc. required? IPv6 too.
 1. Add k8s credentials to local kubectl config: `az aks get-credentials --resource-group=test_rg --name=test_aks`
 
-**TODO**:
+#### TODO
 
 - Best practices: https://learn.microsoft.com/en-us/azure/aks/best-practices
 - k8s RBAC?
@@ -260,6 +306,25 @@ Using Azure CLI and example resource names.
 - `kubernetes.azure.com/set-kube-service-host-fqdn`
 - Auto-upgrade: https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster
 - Validate Cilium status and connectivity: https://docs.cilium.io/en/latest/installation/k8s-install-aks/
+- Check upgrade/maintenance window settings.
+- Network Observability add-on (Retina) to BYO Prometheus. Available by default? Check daemon sets. Check pre-built dashboards if not using managed Prom/Grafana.
+- Securing AKS stuff: https://www.youtube.com/watch?v=sNIDC0UylH4
+- Container stuff:
+    - External traffic policy (ETP):
+        - Details depend on the k8s/cloud provider.
+        - Azure: ETP Cluster:
+            - The LB sends incoming traffic to all nodes and kube-proxy on the nodes distributes it to healthy pods, possibly on different nodes.
+            - Generally gives even traffic distribution and is responsive to pod health changes.
+            - Long-lived connections may be impacted by cluster operations that change nodes the connections bounce throough.
+        - Azure: ETP Local:
+            - Traffic is only routed to nodes that are hosting the service.
+            - Requires probing which can cause some traffic to be blackholed for a few seconds after pod changes.
+            - Preserves source IP address.
+    - Pod disruption budget: Set up to avoid cluster-level operations like node upgrades don't kill everything, e.g. choosing how many instances of a container are allowed to be unavailable.
+    - Health probes:
+        - Startup probe: Signals when the application has finished starting up, so the other probes can start. Prevents the liveness probe from restarting the pod before it's up. Mainly for containers that take a very long time to start and are unable to respond to liveless probes during that time.
+        - Liveness probe: Signals if the container is healthy or if it should be restarted. Should check some internal logic, not just if the web endpoint is responding. Other containers in the pod like init containers are not restarted.
+        - Readiness probe: Signals that the container is ready to accept traffic from the load balancer. Used to stop traffic to pods that are temporarily unhealthy e.g. due to startup, overload (with auto-scaling) or internal disconnects.
 
 ### Usage
 
