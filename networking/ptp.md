@@ -25,6 +25,11 @@ breadcrumbs:
 - Packet delay variation (PDV):
     - Variation is often due to varying queue depths.
     - Computed constantly, averaged out over time.
+- Transport:
+    - Multicast or unicast, but most often multicast.
+    - Typically uses multicast with group 224.0.1.129 (default domain 0). These messages may be forwarded, according to the specific profile.
+    - Profiles using peer delay messages use group 224.0.0.107 for specifically those messages. These messages are not forwarded.
+    - Time-critical event messages (sync) use UDP port 319, while general messages (announce, management etc.) use port 320. Delay messages are split across both ports according to the profile details.
 - Intervals/rates of messages:
     - Announce: 1s (power profile), 2s (default profile)
     - Sync: 1s (power and default profiles)
@@ -231,5 +236,47 @@ breadcrumbs:
     - Use STP portfast for non-bridge links.
     - Use matching master and slave profiles. Look for suspicious zero values in the info.
     - Set the TTL to >1 if it will be routed.
+
+## Implementations
+
+### Linux PTP
+
+Link: [linuxptp.sourceforge.net](https://linuxptp.sourceforge.net/)
+
+- Supports OC and BC.
+- Supports multiple PTPv2 profiles, including default and 802.1AS-2011 (gPTP/AVB).
+
+#### Setup: Grandmaster Mode with Chrony Source (Debian)
+
+Configure LinuxPTP as a GM using the default PTPv2 profile, with Chrony as the time source.
+
+1. Check if your NIC supports hardware timestamping: `ethtool -T <interface>`
+    - Software mode is fine for testing stuff.
+1. Install:
+    1. `git clone --depth=1 --branch=v4.1 http://git.code.sf.net/p/linuxptp/code linuxptp`
+    1. `cd linuxptp`
+    1. `make`
+    1. `sudo make install`
+    1. `cd ..`
+1. Copy the config file (default profile): `cp linuxptp/configs/default.cfg /etc/ptp4l.conf`
+1. Create the service config below, using the correct interface.
+1. Enable and start the service: `sudo systemctl daemon-reload && sudo systemctl enable --now ptp4l.service`
+1. Check the system journal to make sure it started correctly: `sudo journalctl -u ptp4l.service -f`
+    - It should show "assuming the grand master role" after a few seconds, assuming it got the grandmaster role.
+1. Validate that PTP messages are sent: `sudo tcpdump -nn -i <interface> host 224.0.1.129`
+
+Service config (`/etc/systemd/system/ptp4l.service`):
+
+```ini
+[Unit]
+Description=LinuxPTP daemon
+After=network.target
+
+[Service]
+ExecStart=ptp4l -4S -f /etc/ptp4l.conf -i eth0
+
+[Install]
+WantedBy=multi-user.target
+```
 
 {% include footer.md %}
