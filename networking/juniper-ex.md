@@ -1,7 +1,7 @@
 ---
 title: Juniper EX Series Switches
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 
@@ -10,8 +10,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Juniper Hardware](/network/juniper-hardware/)
-- [Juniper Junos OS](/network/juniper-junos/)
+- [Juniper Junos OS](/networking/juniper-junos/)
 
 ### Using
 {:.no_toc}
@@ -20,7 +19,7 @@ breadcrumbs:
 
 ## Resources
 
-- [Juniper EX3300 Fan Mod](/guides/network/juniper-ex3300-fanmod/)
+- [Juniper EX3300 Fan Mod](/networking/juniper-ex3300-fanmod/)
 
 ## Basics
 

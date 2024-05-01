@@ -1,7 +1,7 @@
 ---
 title: IPv4 Theory
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

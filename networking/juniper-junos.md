@@ -1,7 +1,7 @@
 ---
 title: Juniper Junos OS
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

@@ -1,14 +1,14 @@
 ---
 title: Ubiquiti UniFi Access Points
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 
 ### Related Pages
 {:.no_toc}
 
-- [Ubiquiti UniFi Controllers](/network/ubiquiti-unifi-controllers/)
+- [Ubiquiti UniFi Controllers](/networking/ubiquiti-unifi-controllers/)
 
 ### Using
 {:.no_toc}

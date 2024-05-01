@@ -1,7 +1,7 @@
 ---
 title: Open Shortest Path First (OSPF)
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

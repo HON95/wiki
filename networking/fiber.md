@@ -1,7 +1,7 @@
 ---
 title: Fibers & Fiber Optics
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

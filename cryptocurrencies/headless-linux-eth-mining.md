@@ -1,7 +1,7 @@
 ---
 title: Headless Linux ETH Mining
 breadcrumbs:
-- title: Crypto
+- title: Cryptocurrencies
 ---
 {% include header.md %}
 

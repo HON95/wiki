@@ -1,7 +1,7 @@
 ---
 title: Zero Trust Networking
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

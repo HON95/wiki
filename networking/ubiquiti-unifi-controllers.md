@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Ubiquiti UniFi Access Points](/network/ubiquiti-unifi-aps/)
+- [Ubiquiti UniFi Access Points](/networking/ubiquiti-unifi-aps/)
 
 ## General
 
@@ -46,7 +46,7 @@ UniFi 5 is the latest version and does only officially support Debian 9 (Stretch
 Official installation instructions: [UniFi: How to Install & Upgrade the UniFi Network Controller Software](https://help.ubnt.com/hc/en-us/articles/360012282453-UniFi-How-to-Install-Upgrade-the-UniFi-Network-Controller-Software)
 
 1. Install Debian 9 (later versions don't have the required versions of Java etc.).
-1. Configure it: See [Debian Server](/linux-server/debian/) (for Debian 10).
+1. Configure it: See [Debian Server](/linux-servers/debian/) (for Debian 10).
 1. Open incoming ports: See note above.
 1. (Optional) NAT port 443 to 8443 (to access it from the normal HTTPS port): `iptables -t nat -A PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 8443`
 1. (Alternative 1) Install via repo: See [How to Install and Update via APT on Debian or Ubuntu (UniFi)](https://help.ui.com/hc/en-us/articles/220066768-UniFi-How-to-Install-and-Update-via-APT-on-Debian-or-Ubuntu).

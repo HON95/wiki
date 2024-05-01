@@ -1,9 +1,11 @@
 ---
 title: Cisco Nexus Switches (NX-OS)
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
+
+*I keep most of my Cisco notes elsewhere, sorry.*
 
 ## Features
 

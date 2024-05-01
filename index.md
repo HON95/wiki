@@ -11,11 +11,6 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [FreeIPA](/aaa/freeipa/)
 - [Kerberos](/aaa/kerberos/)
 
-## Audio
-
-- [Audio Basics](/audio/audio-basics/)
-- [Behringer X32](/audio/behringer-x32/)
-
 ## Automation
 
 - [Ansible](/automation/ansible/)
@@ -27,28 +22,48 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [AWS](/cloud/aws/)
 - [Azure](/cloud/azure/)
 
-## Computer Hardware
+## Computers
 
-- [Dell OptiPlex Series](/computer-hw/dell-optiplex/)
-- [Dell PowerEdge Series](/computer-hw/dell-poweredge/)
-- [Dell PowerEdge Series](/computer-hw/hp-proliant/)
-- [PCs](/computer-hw/pcs/)
+- [Dell OptiPlex Series](/computers/dell-optiplex/)
+- [Dell PowerEdge Series](/computers/dell-poweredge/)
+- [HPE ProLiant Series](/computers/hpe-proliant/)
+- [Laptops](/computers/laptops/)
 
 ## Crypto
 
 - [Headless Linux ETH Mining](/cryptocurrencies/headless-linux-eth-mining/)
 
+## Software Engineering
+
+- [C/C++ Tools](/dev/ccpp-tools/)
+- [Clang/LLVM](/dev/clang-llvm/)
+- [C++ (Language)](/dev/cpp/)
+- [Data Stuff](/dev/data/)
+- [Databases](/dev/db/)
+- [GNU Compiler Collection (GCC)](/dev/gcc/)
+- [Git](/dev/git/)
+- [Go (Language)](/dev/go/)
+- [Licensing](/dev/licensing/)
+- [OpenMP](/dev/openmp/)
+- [Rust (Language)](/dev/rust/)
+- [Web Security](/dev/web-security/)
+
 ## Game Servers
 
-- [Counter-Strike: Global Offensive (CS:GO)](/game-server/csgo/)
-- [Minecraft (Bukkit)](/game-server/minecraft-bukkit/)
-- [Team Fortress 2 (TF2)](/game-server/tf2/)
+- [Counter-Strike: Global Offensive (CS:GO)](/game-servers/csgo/)
+- [Minecraft (Bukkit)](/game-servers/minecraft-bukkit/)
+- [Team Fortress 2 (TF2)](/game-servers/tf2/)
 
 ## General
 
 - [Computer Testing](/general/computer-testing/)
 - [General](/general/general/)
 - [Linux General](/general/linux/)
+
+## Home Automation
+
+- [Home Assistant](/home-auto/home-assistant/)
+- [Raspberry Pi](/home-auto/raspberry-pi/)
 
 ## High-Performance Computing (HPC)
 
@@ -64,29 +79,26 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Slurm](/hpc/slurm/)
 - [Vilje (Supercomputer)](/hpc/vilje/)
 
-## IoT & Home Automation
-
-- [Home Assistant](/iot-ha/home-assistant/)
-- [Raspberry Pi](/iot-ha/raspberry-pi/)
-
 ## Lighting
 
 - [DMX512](/lighting/dmx512/)
 - [Lighting Basics](/lighting/lighting-basics/)
 - [Obsidian Onyx](/lighting/obsidian-onyx/)
 
-## Linux Server
+## Linux Servers
 
-- [Linux Server Applications](/linux-server/applications/)
-- [Ceph](/linux-server/ceph/)
-- [CockroachDB (CRDB)](/linux-server/db-crdb/)
-- [Debian Server](/linux-server/debian/)
-- [RabbitMQ](/linux-server/rabbitmq/)
-- [Linux Server Storage](/linux-server/storage/)
-- [ZFS](/linux-server/zfs/)
+- [Linux Server Applications](/linux-servers/applications/)
+- [Ceph](/linux-servers/ceph/)
+- [CockroachDB (CRDB)](/linux-servers/db-crdb/)
+- [Debian Server](/linux-servers/debian/)
+- [RabbitMQ](/linux-servers/rabbitmq/)
+- [Linux Server Storage](/linux-servers/storage/)
+- [ZFS](/linux-servers/zfs/)
 
 ## Media
 
+- [Audio Basics](/media/audio-basics/)
+- [Behringer X32](/media/behringer-x32/)
 - [FFmpeg](/media/ffmpeg/)
 - [Image Basics](/media/image-basics/)
 - [Network Device Interface (NDI)](/media/ndi/)
@@ -105,7 +117,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Grafana Loki](/monitoring/loki/)
 - [Prometheus](/monitoring/prometheus/)
 
-## Network
+## Networking
 
 - [Network Architecture](/networking/architecture/)
 - [Border Gateway Protocol (BGP)](/networking/bgp/)
@@ -122,21 +134,17 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [FS FSOS Switches](/networking/fs-fsos-switches/)
 - [General](/networking/general/)
 - [HPE/Aruba General](/networking/hpe-aruba-general/)
-- [Internet Governance and Registries](/networking/inet-gov-reg/)
 - [IPv4 Theory](/networking/ipv4/)
 - [IPv6 Theory](/networking/ipv6/)
 - [Juniper EX Series Switches](/networking/juniper-ex/)
 - [Juniper EX3300 Fan Mod](/networking/juniper-ex3300-fanmod/)
-- [Juniper Hardware](/networking/juniper-hardware/)
 - [Juniper Junos OS](/networking/juniper-junos/)
 - [Juniper SRX Series Firewalls](/networking/juniper-srx/)
 - [Linksys LGS Switches](/networking/linksys-lgs/)
 - [Linux Switching & Routing](/networking/linux/)
 - [Multicast](/networking/multicast/)
-- [Network Authentication](/networking/net-auth/)
 - [Open Shortest Path First (OSPF)](/networking/ospf/)
 - [pfSense](/networking/pfsense/)
-- [Precision Time Protocol (PTP)](/networking/ptp/)
 - [Routing](/networking/routing/)
 - [Network Security](/networking/security/)
 - [Switching](/networking/switching/)
@@ -150,45 +158,30 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 ## Personal Devices
 
-- [Android](/personal-device/android/)
-- [PC Applications](/personal-device/applications/)
-- [Arch (i3)](/personal-device/arch-i3/)
-- [Kubuntu](/personal-device/kubuntu/)
-- [Linux](/personal-device/linux/)
-- [Manjaro (KDE)](/personal-device/manjaro-kde/)
-- [Windows](/personal-device/windows/)
+- [Android](/personal-devices/android/)
+- [PC Applications](/personal-devices/applications/)
+- [Arch (i3)](/personal-devices/arch-i3/)
+- [Kubuntu](/personal-devices/kubuntu/)
+- [Linux](/personal-devices/linux/)
+- [Manjaro (KDE)](/personal-devices/manjaro-kde/)
+- [Windows](/personal-devices/windows/)
 
 ## Power
 
 - [APC PDUs](/power/apc-pdus/)
 
-## Services
+## Service
 
 - [DNS Theory](/services/dns/)
 - [Email Theory](/services/email/)
+- [Internet Governance and Registries](/services/inet-gov-reg/)
+- [Network Time Protocol (NTP)](/services/ntp/)
+- [Precision Time Protocol (PTP)](/services/ptp/)
 
-## Software Engineering
+## Virtualization
 
-- [C/C++ Tools](/swe/ccpp-tools/)
-- [Clang/LLVM](/swe/clang-llvm/)
-- [C++ (Language)](/swe/cpp/)
-- [Data Stuff](/swe/data/)
-- [Databases](/swe/db/)
-- [GNU Compiler Collection (GCC)](/swe/gcc/)
-- [Git](/swe/git/)
-- [Go (Language)](/swe/go/)
-- [Licensing](/swe/licensing/)
-- [OpenMP](/swe/openmp/)
-- [Rust (Language)](/swe/rust/)
-- [Web Security](/swe/web-security/)
-
-## Virtualization, Containerization and Orchestration
-
-- [Docker](/virt/docker/)
-- [Kubernetes](/virt/k8s/)
-- [libvirt & KVM](/virt/libvirt-kvm/)
-- [Podman](/virt/podman/)
-- [Proxmox VE](/virt/proxmox-ve/)
-- [VirtualBox](/virt/virtualbox/)
+- [libvirt & KVM](/virtualization/libvirt-kvm/)
+- [Proxmox VE](/virtualization/proxmox-ve/)
+- [VirtualBox](/virtualization/virtualbox/)
 
 {% include footer.md %}

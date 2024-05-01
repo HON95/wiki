@@ -11,7 +11,7 @@ breadcrumbs:
 
 #### Resources
 
-- Config notes: [Docker](/virt/docker/)
+- Config notes: [Docker](/containers/docker/)
 
 #### General Information
 

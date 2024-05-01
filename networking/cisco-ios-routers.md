@@ -1,9 +1,11 @@
 ---
 title: Cisco Routers (IOS/IOS XE)
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
+
+*I keep most of my Cisco notes elsewhere, sorry.*
 
 ### Related Pages
 {:.no_toc}

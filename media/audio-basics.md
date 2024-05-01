@@ -1,0 +1,124 @@
+---
+title: Audio Basics
+breadcrumbs:
+- title: Media
+---
+{% include header.md %}
+
+- Bands (typical):
+    - Lows (ca. 20Hz-100Hz)
+    - Low midrange (ca. 100Hz-1kHz)
+    - High midrange (ca. 1kHz-10kHz)
+    - Highs (ca. 10kHz-20kHz)
+- Desibels (dBs):
+    - Formula: `S = 10 log_10(S_1 / S_2)`
+    - For comparing signal levels.
+    - The base formula and unit is purely for comparisons/changes.
+    - Volt is often used as the quantity measured. In such cases, **6dB** represents roughly a doubling in signal, **3dB** a doubling in power and **10dB** a doubling in perceived loudness (and negatives achieve halvings instead of doublings).
+    - Since a doubling in signal level results in a 6dB SPL change, a 16-bit digital sound representation gives 96dB of dynamic range.
+- Derivative dB-variants:
+    - Specific dB-variants exist for measurements in specific use cases, e.g. dBu, dBFS, dB SPL etc.
+    - dB SPL: For physical sound pressure level (SPL). Specifically `L_p = 20 log(p / p_0)` for RMS sound pressure `p` (in pascals) and reference sound pressure `p_0 = 20µPa`. Depends on the distance from the sound source (typically 1 meter), unless room noise is measured.
+    - dBu (aka +4dBu): For electrical audio levels in professional equipment, e.g. professional mixers.
+    - dBV (aka -10dBV): For electrical audio levels in consumer equipment, e.g. built-in sound cards. Not to be confused with dB**v** (lower-case). -10dBV is lower than +4dBu.
+    - dBFS: For digital audio levels, relative to full scale. 0dBFS is the maximum possible level and positive levels would cause overflow clipping.
+- Signal levels:
+    - (Note) This is the voltage (and somewhat impedance) inside cables/equipment.
+    - Mic level: Output from a microphone. Very weak, requires a preamp.
+    - Instrument level: Output from e.g. a guitar. Like mic level but slightly stronger.
+    - "Professional" line level (+4dBu): E.g. for professional audio mixers.
+    - "Consumer" line level (-10dBV): E.g. for consumer-grade sound cards in PCs.
+    - Speaker level: High-power signal going from an amplifier to a (passive) speaker.
+    - Phono: Old, for turntables etc. Much lower voltage than line level. Typically needs a phono preamp/stage with RIAA equalization.
+    - (Note) DI boxes may be used to convert unbalanced non-+4dBu input signals to balanced +4dBu signals.
+- Balance mode:
+    - Unbalanced: Ground and signal.
+    - Balanced: Ground and hot and cold signal with equal impedance. The cold signal is 0V but not (directly) connected to ground.
+    - Differential: Balanced but the cold signal is the opposite voltage of the hot signal instead of 0V.
+    - Balanced and unbalanced mono plugs/sockets can generally be connected together (with the loss of the balanced signal), but don't connect e.g. a stereo unbalanced TRS to a mono balanced TRS. It'll sound weird due to the signal mismatch.
+- Gain:
+    - For adjusting the input level of electrical signal sources, to make it more normalized wrt. other inputs and the supported signal range of the equipment.
+    - "Set and forget".
+    - For digital mixers, -18dBFS RMS may be used as an appropriate gain target.
+    - A similar function is *trim*, which is used more internally in systems to modify the signal level.
+- Equalization (EQ):
+    - Used to cut or boost the signal level of certain frequency ranges. Typically in the form of graphic or parametric EQs.
+    - Typical usages:
+        - To account for the acoustics in a room, applied to the PA/main mix.
+        - To make an instrument or microphone sound better.
+        - To cut certain frequency ranges on microphones to prevent feedback.
+    - Should rarely include more than a few points and more than a few dBs.
+- High-pass filtering (HPF) (aka low cut):
+    - For cutting frequencies below a set point, typically as a slope rather than a hard cut-off.
+    - Should very often be used with most inputs to avoid noise and similar in frequencies that input is not supposed to use.
+    - Also used to limit low frequencies sent to the PA which might cause speaker damage.
+    - Typical values:
+        - 40Hz at the output for typical PAs, or 20Hz if the subs support it. Alternatively set on inputs where no higher HPF is set.
+        - 100Hz for typical vocals and instruments without lows.
+- Ground loops:
+    - When there exists physical loop in the ground wires. Typically when devices are connected to different grounded power outlets.
+    - Different potentials in the loop will cause undesired current flow.
+    - Can be heard as a 50Hz/60Hz hum in the audio signal.
+    - Solutions:
+        - Use balanced signals.
+        - Connect all equipment to a single grounding point, i.e. a single power outlet.
+        - Break the shielding on one cable to break the loop. Different boxes, like DI units, may have this as a feature known as a ground lift. However, make sure all shields are connected at one end (don't lift everything). Don't break the shielding/earthing on devices that needs it for safety reasons!
+        - Use a ground loop isolation transformer.
+        - Group the ground cables together so no currents get induced into the cables.
+        - Use a resistor and/or a ferrite bead to limit AC current.
+- Phantom power:
+    - Applies 48V to XLR3 microphone inputs, for powering mics, DI boxes and similar.
+    - 48V is most common, typically labeled as "+48V".
+    - For XLR3 1/4" combo input jacks, typically only the XLR3 part will be applied phantom power to when enabled for the input.
+    - Applying this to devices which aren't made for it can break them (e.g. laptops sound cards and certain old microphone types).
+    - To make sure an input line isn't providing phantom power which would damage equipment on the other end, use the instrument (1/4") input jack (if present, since phantom power is typically only provided on the XLR jack), or a DI box or similar (which would consume the phantom power).
+    - 48V phantom power was first used in Norway in 1966 by NRK, as a hack to supply stable-voltage power from emergency lighting systems to a new type of Neumann-microphones. This was later standardized as the default phantom power voltage.
+- Impedance:
+    - Basically resistance but for AC.
+- Proximity effect:
+    - Increase of low frequency response when an audio source is close to a directional or cardioid microphone.
+- Comb filtering effect:
+    - Caused by adding a delayed version of a signal onto itself, causing interference.
+    - In practice, this e.g. happens depending on spatial position and frequency when playing the same signal from left and right PA columns. The way to avoid this is to *not* play the same signal from both columns, e.g. by sending different mics or instruments to different sides (or different volumes to each side for different instruments/mics to reduce the nulls).
+- Optimal SPL for mixing and listening:
+    - Optimal SPL for normal music mixing and listening is around 75 dB SPL (conversational level) for small rooms and 85 dB SPL for large rooms.
+    - The reason a specific SPL is optimal is due to equal-loudness contours, where the music actually sounds different at different volumes.
+    - Mixing at high volume may help for getting the correct feel of the low end, however.
+- Equal-loudness contours:
+    - The perceived loudness for a given SPL depends on the frequency.
+    - This is typically visualized as equal-loudness contours, with frequency on the first axis, SPL on the second axis and a set of equal-loudness curves.
+    - Fletcher–Munson curves is an early version of equal-loudness contours, but is still sometimes used to refer to the same thing.
+    - This is why low-volume music sounds so bass-less and why e.g. car stereos typically provide a "loudness" setting to try to correct it for low volume levels (and make it sound terrible for normal volume levels).
+- SPL meter weightings:
+    - Type A is used for noise measurements and cuts off lower and higher frequencies compared to type C.
+    - Type C has flatter response than type A and is often used for audio calibration.
+- Feedback:
+    - Happens when sound is fed from speakers back into a microphone (accidentally), at a high enough "loop gain" that the feedback noise level quickly escalates to annoying/damaging levels.
+    - Happens at certain resonating frequencies, depending on the micropone characteristics and venue acoustics.
+    - Keep in mind that room acoustics changes when the audience fills the room.
+    - Reverberations from e.g. untreated walls will contribute to causing feedback.
+    - Preventing feedback:
+        - Avoid placing microphones in front of speakers. Place speakers in front of the stage instead of behind it. For stage mics in front of monitors, use cardoid mics pointed directly away from the monitor speakers.
+        - Use appropriate microphones. Use directional/cardioid mics (i.e. dynamic mics) whenever possible.
+        - Use gating and low cut on vocals to avoid contribution from silent/inactive microphones.
+        - Use an parametric equalizer to cut feedback-inducing frequencies. To find the frequencies, test the setup at loud levels to try to induce it, then measure which frequency it's happening at (called "ringing out the microhpone/feedback").
+        - Don't use "feedback destroyers", they're crap.
+        - As a more permanent approach, find reflecting surfaces (walls, ceiling beams etc.) and cover them with acoustic treatment.
+- White and pink noise:
+    - White noise has equal energy per frequency. The frequency-SPL curve is flat.
+    - Pink noise has equal energy per octave. Since each octave has double the frequency of the previous (`log2(freq) = octave`), the frequency-SPL curve is decreasing. This makes pink noise appropriate for equalization for human hearing.
+- Haas panning:
+    - Unlike level panning, which changes the left-right level balance, Haas panning adds a few milliseconds of delay to either channel to give the sound a feeling of directionality.
+- Pan rule (or pan law):
+    - Determines how much louder either side of a stereo channel should get when panned all the way to that side, so that the perceived loudness stays the same.
+    - For an ideal loudspeaker system and ideal room acoustics, the loudness increase from playing an identical signal in both stereo channels should be around 6dB SPL, although in reality it's typically closer to 3dB to account for more realistic room acoustics.
+    - Most mixers use a pan rule of 3dB, to account for most realistic situations.
+- Aux-fed subs:
+    - **TODO** Find old, general notes.
+    - Allows more control over which instruments/sources are sent to the subs. E.g. vocals and hi-hats should maybe not be sent to subs to avoid sending "junk" like wind and mechanical noise not meant to be heard.
+- Special devices:
+    - DI boxes (direct input): Used to convert some unbalanced non-+4dBu input signal (e.g. microphone level, instrument level, consumer-grade line level, or speaker level) to a balanced +4dBu signal. Typically phantom powered, sometimes battery powered. Passive versions also exist, consisting mainly of a transformer to scale the output voltage.
+    - Ground lifts: Used to break ground loops (giving a distinct humming sound), by "lifting" (breaking) the ground in the cable/path and thus breaking the electrical ground loop. Often built into other devices like DI boxes. Often required when the devices are powered from different electrical outlets or similar which could create ground differentials. Should only be used when both sides are actually grounded to avoid risk of electric shock!
+    - Hum destroyers: Typically passive 1:1 transformers with isolated grounds. Basically fancy ground lifts, using transformers in addition to isolating/breaking the ground.
+
+{% include footer.md %}

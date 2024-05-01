@@ -12,7 +12,7 @@ breadcrumbs:
 - Arch Linux:
     - Install CLI: `sudo pacman -S azure-cli`
     - Download command completion: `sudo curl -L https://raw.githubusercontent.com/Azure/azure-cli/dev/az.completion -o /etc/bash_completion.d/az`
-        - First: To setup BASH command completion with ZSH, configure reading BASH profile configs and see `/etc/profile.d/completion.sh` in [Arch](personal-device/arch/). Create `/etc/bash_completion.d` if it doesn't exist yet.
+        - First: To setup BASH command completion with ZSH, configure reading BASH profile configs and see `/etc/profile.d/completion.sh` in [Arch](personal-devices/arch-i3/). Create `/etc/bash_completion.d` if it doesn't exist yet.
 
 ### Usage
 
@@ -286,51 +286,42 @@ Using Azure CLI and example resource names.
     - **TODO** Is `--pod-cidr=192.168.0.0/16` etc. required? IPv6 too.
 1. Add k8s credentials to local kubectl config: `az aks get-credentials --resource-group=test_rg --name=test_aks`
 
-#### TODO
+#### TODO First
 
-- Best practices: https://learn.microsoft.com/en-us/azure/aks/best-practices
-- k8s RBAC?
-- "In a production environment, we strongly recommend to deploy a private AKS cluster with Uptime SLA. For more information, see private AKS cluster with a Public DNS address."
-- Cilium with IPv6 network policies.
-- Network policy (Cilium for IPv6): https://learn.microsoft.com/en-us/azure/aks/use-network-policies#create-an-aks-cluster-and-enable-network-policy
+- General:
+    - Best practices: https://learn.microsoft.com/en-us/azure/aks/best-practices
+    - Uptime SLA?
+- Public/private cluster:
+    - Private cluster?
+    - Limit access to API server (public cluster): https://learn.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges
+- Upgrades:
+    - Security patches for node OS? https://learn.microsoft.com/en-us/azure/aks/concepts-vulnerability-management#worker-nodes
+    - Auto-upgrade: https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster
+    - Check upgrade/maintenance window settings.
+- Cilium:
+    - Validate status and connectivity: https://docs.cilium.io/en/latest/installation/k8s-install-aks/
+
+#### TODO Next
+
+- General:
+    - Test Cilium with IPv6 network policies.
+    - Storage: https://learn.microsoft.com/en-us/azure/aks/concepts-storage
 - Backup:
     - https://learn.microsoft.com/en-us/azure/backup/azure-kubernetes-service-backup-overview
     - https://learn.microsoft.com/en-us/azure/backup/quick-backup-aks
     - https://learn.microsoft.com/en-us/azure/backup/quick-install-backup-extension
-- Terraform:
-    - [Extra config](https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#deploy-an-azure-linux-aks-cluster-with-terraform)
-- [GitOps/Flux v2](https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2)
-- [Storage](https://learn.microsoft.com/en-us/azure/aks/concepts-storage)
-- Security patches for node OS? https://learn.microsoft.com/en-us/azure/aks/concepts-vulnerability-management#worker-nodes
-- Limit access to API server: https://learn.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges
-- `kubernetes.azure.com/set-kube-service-host-fqdn`
-- Auto-upgrade: https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster
-- Validate Cilium status and connectivity: https://docs.cilium.io/en/latest/installation/k8s-install-aks/
-- Check upgrade/maintenance window settings.
-- Network Observability add-on (Retina) to BYO Prometheus. Available by default? Check daemon sets. Check pre-built dashboards if not using managed Prom/Grafana.
-- Securing AKS stuff: https://www.youtube.com/watch?v=sNIDC0UylH4
-- Container stuff:
-    - External traffic policy (ETP):
-        - Details depend on the k8s/cloud provider.
-        - Azure: ETP Cluster:
-            - The LB sends incoming traffic to all nodes and kube-proxy on the nodes distributes it to healthy pods, possibly on different nodes.
-            - Generally gives even traffic distribution and is responsive to pod health changes.
-            - Long-lived connections may be impacted by cluster operations that change nodes the connections bounce throough.
-        - Azure: ETP Local:
-            - Traffic is only routed to nodes that are hosting the service.
-            - Requires probing which can cause some traffic to be blackholed for a few seconds after pod changes.
-            - Preserves source IP address.
-    - Pod disruption budget: Set up to avoid cluster-level operations like node upgrades don't kill everything, e.g. choosing how many instances of a container are allowed to be unavailable.
-    - Health probes:
-        - Startup probe: Signals when the application has finished starting up, so the other probes can start. Prevents the liveness probe from restarting the pod before it's up. Mainly for containers that take a very long time to start and are unable to respond to liveless probes during that time.
-        - Liveness probe: Signals if the container is healthy or if it should be restarted. Should check some internal logic, not just if the web endpoint is responding. Other containers in the pod like init containers are not restarted.
-        - Readiness probe: Signals that the container is ready to accept traffic from the load balancer. Used to stop traffic to pods that are temporarily unhealthy e.g. due to startup, overload (with auto-scaling) or internal disconnects.
+- Automation:
+    - Terraform: https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#deploy-an-azure-linux-aks-cluster-with-terraform
+- CI/CD:
+    - GitOps/Flux v2: https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2
+- Monitoring:
+    - Network Observability add-on (Retina) to BYO Prometheus. Available by default? Check daemon sets. Check pre-built dashboards if not using managed Prom/Grafana.
 
 ### Usage
 
 Using example resource names.
 
-- Kubernetes: See [Kubernetes](/virt/k8s/).
+- Kubernetes: See [Kubernetes](/containers/k8s/).
 - Cluster:
     - Show info: `az aks show --resource-group=test_rg --name=test_aks`
     - Create: See setup example.

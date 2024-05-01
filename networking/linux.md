@@ -1,7 +1,7 @@
 ---
 title: Linux Switching & Routing
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 
@@ -18,16 +18,11 @@ as a simple throughput test will not uncover bottlenecks related to large amount
 (which can be hard to test realistically in lab environments).
 Issues may also be related to stupid things like which ports you're using on the *same* NIC.
 
-### Related Pages
-{:.no_toc}
-
-- [Linux Server Networking](/linux-server/networking/)
-
 ## Setup (Debian)
 
 (In semi-random order.)
 
-- Setup the Linux node as described in [Debian Server: Basic Setup](/linux-server/debian-server/#basic-setup).
+- Setup the Linux node as described in [Debian Server: Basic Setup](/linux-servers/debian-server/#basic-setup).
 - Setup the firewall for filtering both forwarded traffic and input/output to the router.
 - Setup the firewall for NAT.
 - Enable IP forwarding in `/etc/sysctl.conf`, then run `sysctl -p`:

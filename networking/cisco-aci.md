@@ -1,9 +1,11 @@
 ---
 title: Cisco Application Centric Infrastructure (ACI)
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
+
+*I keep most of my Cisco notes elsewhere, sorry.*
 
 ## General
 

@@ -1,7 +1,7 @@
 ---
 title: TP-Link JetStream Switches
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

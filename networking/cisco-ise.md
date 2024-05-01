@@ -1,17 +1,11 @@
 ---
 title: Cisco Identity Services Engine (ISE)
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 
-## Scale
-
-**TODO**
-
-## Nodes
-
-**TODO**
+*I keep most of my Cisco notes elsewhere, sorry.*
 
 ## Certificate Administration
 

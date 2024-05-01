@@ -1,15 +1,14 @@
 ---
 title: Juniper SRX Series Firewalls
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 
 ### Related Pages
 {:.no_toc}
 
-- [Juniper Hardware](/network/juniper-hardware/)
-- [Juniper Junos OS](/network/juniper-junos/)
+- [Juniper Junos OS](/networking/juniper-junos/)
 
 ### Using
 {:.no_toc}

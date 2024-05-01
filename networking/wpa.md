@@ -1,7 +1,7 @@
 ---
 title: Wi-Fi Protected Access (WPA)
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

@@ -8,7 +8,7 @@ breadcrumbs:
 ### Related Pages
 {:.no_toc}
 
-- [Linux Switching & Routing](/network/linux/)
+- [Linux Switching & Routing](/networking/linux/)
 
 ## General
 
@@ -104,6 +104,6 @@ breadcrumbs:
 
 ## NVLink & NVSwitch
 
-See [CUDA](/se/general/cuda/).
+See [CUDA](/hpc/cuda/).
 
 {% include footer.md %}

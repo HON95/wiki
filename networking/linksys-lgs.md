@@ -1,7 +1,7 @@
 ---
 title: Linksys LGS Switches
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 

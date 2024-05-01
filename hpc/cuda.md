@@ -59,7 +59,7 @@ Downloads: [CUDA Toolkit Download (NVIDIA)](https://developer.nvidia.com/cuda-do
 
 Docker containers may run NVIDIA applications using the NVIDIA runtime for Docker.
 
-See [Docker](/virt/docker/).
+See [Docker](/containers/docker/).
 
 ### DCGM
 

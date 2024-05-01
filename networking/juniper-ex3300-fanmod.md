@@ -1,7 +1,7 @@
 ---
 title: Juniper EX3300 Fan Mod
 breadcrumbs:
-- title: Network
+- title: Networking
 header_image: ../files/juniper-ex3300-fanmod/switch-modded-2.jpg
 ---
 {% include header.md %}

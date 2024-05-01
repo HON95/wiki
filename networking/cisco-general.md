@@ -1,9 +1,11 @@
 ---
 title: Cisco General
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
+
+*I keep most of my Cisco notes elsewhere, sorry.*
 
 Stuff that mostly applies to all Cisco network equipment.
 

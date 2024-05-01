@@ -1,7 +1,7 @@
 ---
 title: FS FSOS Switches
 breadcrumbs:
-- title: Network
+- title: Networking
 ---
 {% include header.md %}
 
