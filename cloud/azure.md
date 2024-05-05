@@ -5,11 +5,20 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## General
+
+### IPv6
+
+- [Microsoft Learn: Overview for IPv6 for Azure Virtual Network](https://learn.microsoft.com/en-us/azure/virtual-network/ip-services/ipv6-overview)
+- _Many_ features in Azure do not support IPv6. Some support dual-stack. Very few (none?) support IPv6-only.
+- You're forced to use NAT (with an internal network conneted to the VM) both for IPv4 and IPv6 (_why?_).
+- ICMPv6 isn't supported by network security groups. You can't ping inbound over IPv6, path MTU discovery (PMTUD) is broken, etc. Broken PMTUD can be somewhat avoided by simply setting the VM NIC MTU from 1500 to 1280 (the minimum for IPv6), so _outbound_ traffic will not need PMTUD.
+
 ## Azure CLI
 
 ### Install
 
-- Arch Linux:
+- Arch:
     - Install CLI: `sudo pacman -S azure-cli`
     - Download command completion: `sudo curl -L https://raw.githubusercontent.com/Azure/azure-cli/dev/az.completion -o /etc/bash_completion.d/az`
         - First: To setup BASH command completion with ZSH, configure reading BASH profile configs and see `/etc/profile.d/completion.sh` in [Arch](personal-devices/arch-i3/). Create `/etc/bash_completion.d` if it doesn't exist yet.
@@ -21,7 +30,9 @@ breadcrumbs:
     - Interactively (web): `az login`
     - Logout: `az logout`
 - Subscriptions:
-    - Set active subscription (see `id` field from login output): `az account set --subscription <sub-id>`
+    - Show all subscriptions: `az account list`
+    - Show active subscription: `az account show`
+    - Set active subscription: `az account set --subscription <id>`
 - Service principals:
     - Create (with subscription ID from login): `az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/<sub-id>"`
     - Copy all the outputted value into the application that needs the credentials, including the inputted subscription ID.
@@ -39,21 +50,6 @@ breadcrumbs:
         - With filtering (example): `az vm list-sizes --location "Norway East" | jq '.[] | select(.numberOfCores <= 2) | select(.memoryInMB == 1024)'`
 
 ## Virtual Machine (VM)
-
-### Info
-
-#### Network
-
-- You're forced to use NAT (with an internal network conneted to the VM) both for IPv4 and IPv6 (_why?_).
-- Some guides may tell you that you need to create a load balancer in order to add IPv6 to VMs, but that's avoidable.
-- ICMPv6 is completely broken. You can't ping inbound over IPv6 (outbound works), path MTU discovery (PMTUD) is broken, etc. Broken PMTUD can be avoided by simply setting the link MTU from 1500 to 1280 (the minimum for IPv6).
-- The default ifupdown network config (which uses DHCP for v4 and v6) broke IPv6 connectivity for me after a while for some reason. Switching to systemd-networkd with DHCP and disabling Ifupdown (comment out everything in `/etc/network/interfaces` and mask `ifup@eth0.service`) solved this for me.
-- If you configure non-Azure DNS servers in the VM config, it will seemingly only add one of the configured servers to `/etc/resolv.conf`. **TODO** It stops overriding `/etc/resolv.conf` if using Azure DNS servers?
-- Adding IPv6 to VM:
-    1. (Note) This was written afterwards, I may be forgetting some steps.
-    1. Create an IPv4 address and an IPv6 address.
-    1. In the virtual network for the VM, add a ULA IPv6 address space (e.g. an `fdXX:XXXX:XXXX::/48`). Then modify the existing subnet (e.g. `default`), tick the "Add IPv6 address space" box and add a /64 subnet from the address space you just added.
-    1. In the network interface for the VM, configure the primary config to use the private IPv4 subnet and the public IPv4 address. Add a new secondary config for for the IPv6 (private) ULA subnet and the (public) GUA.
 
 ### Setup (Web Example)
 
@@ -126,12 +122,25 @@ This sets up a simple VM (called `Yolo`) in its own resource group and its own r
 
 - Show VMs (CLI): `az vm list`
 
+### Miscellanea
+
+- Some guides may tell you that you need to create a load balancer in order to add IPv6 to VMs, but that's avoidable.
+- The default ifupdown network config (which uses DHCP for v4 and v6) broke IPv6 connectivity for me after a while for some reason. Switching to systemd-networkd with DHCP and disabling Ifupdown (comment out everything in `/etc/network/interfaces` and mask `ifup@eth0.service`) solved this for me.
+- If you configure non-Azure DNS servers in the VM config, it will seemingly only add one of the configured servers to `/etc/resolv.conf`. **TODO** It stops overriding `/etc/resolv.conf` if using Azure DNS servers?
+- Adding IPv6 to VM:
+    1. (Note) This was written afterwards, I may be forgetting some steps.
+    1. Create an IPv4 address and an IPv6 address.
+    1. In the virtual network for the VM, add a ULA IPv6 address space (e.g. an `fdXX:XXXX:XXXX::/48`). Then modify the existing subnet (e.g. `default`), tick the "Add IPv6 address space" box and add a /64 subnet from the address space you just added.
+    1. In the network interface for the VM, configure the primary config to use the private IPv4 subnet and the public IPv4 address. Add a new secondary config for for the IPv6 (private) ULA subnet and the (public) GUA.
+
 ## Azure Kubernetes Service (AKS)
+
+**UPDATE:** I have given up on this ... To bad IPv6 support and an error when trying to deploy AKS using dual-stack Cilium, _just like how the guides show how to do it_. IPv4-only is not an option ...
 
 ### Resources
 
 - [Microsoft Learn: Quotas, virtual machine size restrictions, and region availability in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/quotas-skus-regions)
-- [Microsoft Learn: Control access to cluster resources using Kubernetes RBAC and Microsoft Entra identities in AKS](https://learn.microsoft.com/en-us/azure/aks/azure-ad-rbac)
+- [Microsoft Learn: Supported Kubernetes versions in Azure Kubernetes Service (AKS)](https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions)
 
 ### Info
 
@@ -269,53 +278,70 @@ Creates a public Linux AKS cluster, using dual-stack Azure CNI with Cilium netwo
 
 Using Azure CLI and example resource names.
 
-1. (Optional) Spin up an Azure Container Registry (ACR) first.
-    - Only if you need to build your own applications. But maybe use a free alternative like Docker Hub instead.
-1. Install k8s CLI:
-    - Arch Linux: `sudo pacman -S kubectl`
-    - Azure CLI (last resort): `sudo az aks install-cli`
-1. Create AKS cluster: `az aks create --resource-group=test_rg --name=test_aks --tier=standard --load-balancer-sku=standard --vm-set-type=VirtualMachineScaleSets -s Standard_DS2_v2 --node-count=3 --network-plugin=azure --network-plugin-mode=overlay --network-dataplane=cilium --ip-families=ipv4,ipv6 --generate-ssh-keys --api-server-authorized-ip-ranges=51.13.61.63,2603:1020:e01:2::85`
+1. Log into Azure CLI and set an active subscription.
+1. (**TODO** Maybe) Enable Cilium Preview for e.g. dual-stack support: `az feature register --namespace=microsoft.ContainerService --name=CiliumDataplanePreview`
+1. Create AKS cluster: `az aks create --resource-group=test_rg --name=test_aks --tier=standard --load-balancer-sku=standard --vm-set-type=VirtualMachineScaleSets -s Standard_B2als_v2 --node-count=3 --kubernetes-version=1.29 --network-plugin=azure --network-plugin-mode=overlay --network-dataplane=cilium --ip-families=ipv4,ipv6 --pod-cidrs=172.16.0.0/16,fdfb:4d1e:98bf::/48 --service-cidrs=10.0.0.0/16,fd92:d839:1c02::/108 --os-sku=AzureLinux --generate-ssh-keys --api-server-authorized-ip-ranges=a.b.c.d/e`
     - To give the cluster identity rights to pull images from an ACR (see the optional first step), add argument `--attach-acr=<acr_id>`. You need owner/admin privileges to orchestrate this.
     - `--tier=standard` is for production. Use `free` for simple testing.
     - `--load-balancer-sku=standard` is for using the recommended load balancer variant, which is required for e.g. authorized IP ranges and multiple node pools.
-    - `-s Standard_DS2_v2` is the default and has 2 vCPU, 7GiB RAM and 14GiB SSD temp storage.
+    - `-s Standard_DS2_v2` is the default and has 2 vCPU, 7GiB RAM and 14GiB SSD temp storage. `Standard_B2als_v2` is a cheaper B-series alternative with 4GiB RAM.
     - `--node-count=3` creates 3 nodes if specified size. As this node pool is the _system node pool_ hosting critical pods, it' simportant to have at least 3 nodes for proper redundancy.
     - `--node-osdisk-type=Ephemeral` uses a host-local OS disk instead of a network-attached disk, yielding better performance and zero cost. This only works if the VM cache for the given size is big enough for the VM image, which is not the case for small VM sizes.
     - `--ip-families=ipv4,ipv6` enables IPv6 support (only dual-stack supported for IPv6).
-    - `--api-server-authorized-ip-ranges=<cidr1>,[cidr2]...` is used to limit access to the k8s controller from any ranges you want access from. The cluster egress IP address is added to this list automatically. Up to 200 IP ranges can be specified.
-    - **TODO** Is `--pod-cidr=192.168.0.0/16` etc. required? IPv6 too.
+    - `--api-server-authorized-ip-ranges=<cidr1>,[cidr2]...` is used to limit access to the k8s controller from any ranges you want access from. The cluster egress IP address is added to this list automatically. Up to 200 IP ranges can be specified. Does not support IPv6.
+    - **TODO** "(UnsupportedDualStackNetworkPolicy) Network policy cilium is not supported for dual-stack clusters."
 1. Add k8s credentials to local kubectl config: `az aks get-credentials --resource-group=test_rg --name=test_aks`
+1. Check stuff:
+    - Show nodes: `kubectl get nodes -o wide`
+    - Show node resource usage: `kubectl top nodes`
+    - Show all pods: `kubectl get pods -A -o wide`
+    - Check Cilium status: `kubectl -n kube-system exec ds/cilium -- cilium status`
+    - Check Cilium health: `kubectl -n kube-system exec ds/cilium -- cilium-health status`
 
 #### TODO First
 
 - General:
     - Best practices: https://learn.microsoft.com/en-us/azure/aks/best-practices
     - Uptime SLA?
+    - "Image Cleaner" to purge old container images on ndoes.
+    - Disable SSH? Can still access node through kubectl debug mode (`kubectl debug node/mynode -it --image=ubuntu`), Azure CLI run command (`az aks command invoke --resource-group=myrg --name=mycluster --command="curl -kv 127.0.0.1"`) or by reenabling SSH.
 - Public/private cluster:
     - Private cluster?
     - Limit access to API server (public cluster): https://learn.microsoft.com/en-us/azure/aks/api-server-authorized-ip-ranges
 - Upgrades:
     - Security patches for node OS? https://learn.microsoft.com/en-us/azure/aks/concepts-vulnerability-management#worker-nodes
     - Auto-upgrade: https://learn.microsoft.com/en-us/azure/aks/auto-upgrade-cluster
+    - Kured: https://learn.microsoft.com/en-us/azure/aks/node-updates-kured
     - Check upgrade/maintenance window settings.
+    - "Security Patch Channel" under "NodeOSUpgradeChannel", to replace Unattended Update. Extra cost.
 - Cilium:
     - Validate status and connectivity: https://docs.cilium.io/en/latest/installation/k8s-install-aks/
+    - CLI on admin host: https://docs.cilium.io/en/v1.12/gettingstarted/k8s-install-default/#install-the-cilium-cli
 
 #### TODO Next
 
 - General:
     - Test Cilium with IPv6 network policies.
     - Storage: https://learn.microsoft.com/en-us/azure/aks/concepts-storage
+- Storage:
+    - https://learn.microsoft.com/en-us/azure/aks/operator-best-practices-storage
 - Backup:
     - https://learn.microsoft.com/en-us/azure/backup/azure-kubernetes-service-backup-overview
     - https://learn.microsoft.com/en-us/azure/backup/quick-backup-aks
     - https://learn.microsoft.com/en-us/azure/backup/quick-install-backup-extension
 - Automation:
     - Terraform: https://learn.microsoft.com/en-us/azure/aks/cluster-configuration#deploy-an-azure-linux-aks-cluster-with-terraform
+    - Terraform with Azure Linux: https://learn.microsoft.com/en-us/azure/azure-linux/quickstart-terraform
 - CI/CD:
     - GitOps/Flux v2: https://learn.microsoft.com/en-us/azure/azure-arc/kubernetes/conceptual-gitops-flux2
 - Monitoring:
     - Network Observability add-on (Retina) to BYO Prometheus. Available by default? Check daemon sets. Check pre-built dashboards if not using managed Prom/Grafana.
+- Security:
+    - https://learn.microsoft.com/en-us/azure/aks/operator-best-practices-network#securely-connect-to-nodes-through-a-bastion-host
+    - https://learn.microsoft.com/en-us/azure/aks/operator-best-practices-cluster-security?tabs=azure-cli
+- Scheduling/isolation:
+    - https://learn.microsoft.com/en-us/azure/aks/operator-best-practices-scheduler
+    - https://learn.microsoft.com/en-us/azure/aks/operator-best-practices-cluster-isolation
 
 ### Usage
 
