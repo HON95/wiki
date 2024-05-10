@@ -163,8 +163,13 @@ See [NTP](/services/ntp/) for more info about NTP.
 
 ### Usage
 
-- Check tracking: `chronyc tracking`
-- Check sources: `chronyc sources`
+- Note: Commands may need to be run as root.
+- Sources:
+    - Show tracking: `chronyc tracking`
+    - Show sources: `chronyc sources`
+    - Show sources (detailed): `chronyc ntpdata`
+- Show server stats: `chronyc serverstats`
+- Show clients: `chronyc clients`
 
 ## DDNS
 
@@ -882,6 +887,21 @@ See [Team Fortress 2 (TF2)](/game-servers/tf2/).
     - Select test: Test only the specified LBAs.
 - Run test: `smartctl -t <short|long|conveyance|select> [-C] <dev>`
     - `-C`: Foreground mode.
+
+## NetSNMP
+
+[Debian: SNMP](https://wiki.debian.org/SNMP)
+
+### Server
+
+#### Installation
+
+1. Install: `apt install snmpd`
+1. **TODO**: Do we need human-readable names on the _server_? See the guide.
+1. Update the config:
+    - Path: `/etc/snmp/snmpd.conf`
+    - Example: [snmpd.conf](https://github.com/HON95/configs/blob/master/netsnmp/snmpd.conf)
+1. Enable and start: `systemctl enable --now snmpd`
 
 ## SSHD
 
