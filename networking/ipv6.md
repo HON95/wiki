@@ -56,6 +56,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 | `ff05::1:3` | Site | All-DHCP-servers |
 | `ff02::6b` | Link | PTPv2 messages |
 | `ff02:0:0:0:0:1:ff00::/104` | Link | Solicited-node |
+| `ff0x::/96` | Any | Source-specific multicast (SSM) |
 
 ### Subnet Addresses
 

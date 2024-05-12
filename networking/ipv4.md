@@ -38,7 +38,7 @@ breadcrumbs:
 | `224.2.0.0/16` | Session Description Protocol/Session Announcement Protocol (SDP/SAP) |
 | `224.3.0.0/15` | AD-HOC II, see block I |
 | `224.5.0.0-224.255.255.255` | Reserved |
-| `232.0.0.0/8` | SSM range, locally assigned |
+| `232.0.0.0/8` | Source-specific multicsat (SSM), locally assigned |
 | `233.0.0.0-233.251.255.255` | GLOP, /24 blocks for 16-bit ASNs, experimental |
 | `233.252.0.0/14` | AD-HOC III, see block I |
 | `234.0.0.0-238.255.255.255` | Reserved |
