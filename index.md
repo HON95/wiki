@@ -100,6 +100,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Audio Basics](/media/audio-basics/)
 - [Behringer X32](/media/behringer-x32/)
 - [FFmpeg](/media/ffmpeg/)
+- [GoPro](/media/gopro/)
 - [Image Basics](/media/image-basics/)
 - [Network Device Interface (NDI)](/media/ndi/)
 - [Open Broadcaster Software (OBS)](/media/obs/)
