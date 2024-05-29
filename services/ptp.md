@@ -187,9 +187,9 @@ breadcrumbs:
 
 #### Media (AES67-2015)
 
-- For AES67 and Dante audio.
+- For AES67, Dante and RAVENNA audio, but they typically support the default profile too.
 - Used by newer Dante devices, while older ones use PTPv1. Certain Dante devices support both PTP versions, such that they can consume PTPv2 and supply PTPv1 to other devices in the same bridge domain (like a BC).
-- A variant of the default profile, with certain chosen parameters.
+- A variant of the default profile, with certain chosen parameters (e.g. faster sync messages).
 
 #### SMPTE (SMPTE 2059-2)
 
@@ -400,7 +400,7 @@ ptp priority1 255
 ##### General
 
 - Switch support:
-    - Requires second generation or later ACI switches.
+    - Requires second generation or later ACI switches. Se the config docs for an exact list.
     - Only BC mode with 2-step is supported.
     - Only multicast UDP transport mode is supported.
     - Does not support management messages.
@@ -411,7 +411,7 @@ ptp priority1 255
     - Supports *average mode* and *histogram mode*.
 - Topology:
     - To align with the PTP hierarchy of clocks and reduce the number of switches in the clock path, as well as reduce the difference in clock paths to leaf switches, the upstream clock should be connected to all spines.
-    - For multi-pod architectures, the inter-pod network (IPN) may be a fitting place to connect the upstream clock to, such that the IPN redistributed the time from the same GMC to the spines in all the pods.
+    - For multi-pod architectures, the inter-pod network (IPN) may be a fitting place to connect the upstream clock to, such that the IPN redistributed the time from the same GMC to the spines in all the pods. When PTP it enabled for the fabric, it's also enabled on IPN uplinks on the spines, such that PTPv2 from the IPN routers can be received on VLAN 4.
     - By default, all ACI switches use a priority 1 of 255, while a single spine in each pod that uses priority 254.
 - Resources:
     - [Cisco: Cisco ACI Latency and Precision Time Protocol](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/kb/b_Cisco_ACI_Latency_and_Precision_Time_Protocol.html)
@@ -445,6 +445,9 @@ ptp priority1 255
 
 ##### Troubleshooting
 
+- Validate PTP from IPN:
+    1. Log into all spines.
+    1. Run `show ptp brief` and validate that the IPN uplinks show as exactly one `Slave` and the rest as `Passive` (**TODO** check what it's actually called). All leaf downlinks should show as `Master`.
 - Show PTP info (switch CLI):
     - Show local clock: `show ptp clock`
     - Show parent clock: `show ptp parent`
