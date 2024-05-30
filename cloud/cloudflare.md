@@ -13,11 +13,11 @@ Mostly a list of how I like things in Cloudflare, for the very few features I us
 - DNS:
     - DNSSEC: Yes (no multi-signer)
 - Boilerplate records (using zone "example.net"):
-        - `CNAME @ "mario.example.net"` (where the main site is hosted)
-        - `CNAME www "mario.example.net"` (for redirect til non-www)
-        - `TXT @ "v=spf1 include:_spf.google.com ~all"` (including Google-mail, remove `include:` if not used)
-        - `TXT * "v=spf1 ~all"` (avoid mail from random subdomains)
-        - `TXT _dmarc "v=DMARC1; p=quarantine; pct=100;"`
+    - `CNAME @ "mario.example.net"` (where the main site is hosted)
+    - `CNAME www "mario.example.net"` (for redirect til non-www)
+    - `TXT @ "v=spf1 include:_spf.google.com ~all"` (including Google-mail, remove `include:` if not used)
+    - `TXT * "v=spf1 ~all"` (avoid mail from random subdomains)
+    - `TXT _dmarc "v=DMARC1; p=quarantine; pct=100;"`
 
 ## HTTP Reverse Proxy
 

@@ -21,6 +21,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 - [AWS](/cloud/aws/)
 - [Azure](/cloud/azure/)
+- [Cloudflare](/cloud/cloudflare/)
 
 ## Computers
 
