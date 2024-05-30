@@ -404,15 +404,23 @@ ptp priority1 255
     - Only BC mode with 2-step is supported.
     - Only multicast UDP transport mode is supported.
     - Does not support management messages.
+    - Only PTPv2 profiles with E2E delays are supported, so P2P TCs can't be connected to ACI.
+    - Supported PTPv2 profiles:
+        - IEEE 1588-2008 (default)
+        - AES67-2015 (media)
+        - SMPTE 2059-2
+        - ITU-T G.8275.1 (telecom)
 - Fabric latency measurements:
     - One of the main use cases for PTP within ACI.
     - May be used together with atomic counters for a fuller image of what is happening in the network.
     - Used for measuring ongoing TEP-to-TEP latency and on-demand tenant latency (see the docs for details and examples).
     - Supports *average mode* and *histogram mode*.
 - Topology:
+    - A single PTP domain is used for the whole fabric, with all switches operating in BC mode.
     - To align with the PTP hierarchy of clocks and reduce the number of switches in the clock path, as well as reduce the difference in clock paths to leaf switches, the upstream clock should be connected to all spines.
     - For multi-pod architectures, the inter-pod network (IPN) may be a fitting place to connect the upstream clock to, such that the IPN redistributed the time from the same GMC to the spines in all the pods. When PTP it enabled for the fabric, it's also enabled on IPN uplinks on the spines, such that PTPv2 from the IPN routers can be received on VLAN 4.
     - By default, all ACI switches use a priority 1 of 255, while a single spine in each pod that uses priority 254.
+    - **TODO** BD/EPG and L3Out ports. Master supported? Config?
 - Resources:
     - [Cisco: Cisco ACI Latency and Precision Time Protocol](https://www.cisco.com/c/en/us/td/docs/switches/datacenter/aci/apic/sw/kb/b_Cisco_ACI_Latency_and_Precision_Time_Protocol.html)
     - [Cisco: Cisco APIC System Management Configuration Guide, Release 6.0(x)](https://www.cisco.com/c/en/us/td/docs/dcn/aci/apic/6x/system-management-configuration/cisco-apic-system-management-configuration-guide-60x/precision-time-protocol-60x.html)
@@ -432,6 +440,8 @@ ptp priority1 255
         - Delay request interval: 1 (2s)
         - Announce timeout: 3s
     1. Go to the "Latency" tab and set "System Resolution" to 11.
+- Activate PTP on leaf ports:
+    1. **TODO**
 - Configure a latency measurement (when needed) (GUI):
     1. Go to "Tenants > the tenant > Policies > Troubleshooting > Atomic Counter and Latency".
     1. Click the configuration button and select the appropriate measurement type (e.g. EPG to EPG).
