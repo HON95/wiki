@@ -49,7 +49,7 @@ Mostly a list of how I like things in Cloudflare, for the very few features I us
             - Then: Dynamic, `concat("https://example.net", http.request.uri.path)`, 301 (permanent), preserve query string.
         - "Redirect to other site" (redirect rule) (if this domain doesn't have its own main site):
             - When: `Hostname equals "example.example"`
-            - Then: Static, `https://example.net)`, 303 (temporary).
+            - Then: Static, `https://example.net`, 303 (temporary, see other).
 - Network:
     - Websockets: On
     - gRPC: On
