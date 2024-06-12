@@ -151,6 +151,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Network Security](/networking/security/)
 - [Switching](/networking/switching/)
 - [TP-Link JetStream Switches](/networking/tplink-jetstream-switches/)
+- [Ubiquiti EdgeSwitch](/networking/ubiquiti-edgeswitch/)
 - [Ubiquiti UniFi Access Points](/networking/ubiquiti-unifi-aps/)
 - [Ubiquiti UniFi Controllers](/networking/ubiquiti-unifi-controllers/)
 - [VyOS](/networking/vyos/)
