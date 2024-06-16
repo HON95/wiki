@@ -57,12 +57,8 @@ Tested with an EdgeSwitch 16 XG, configured as a L2 core/distro switch (homelab)
         1. `lldp transmit-tlv sys-name`
         1. `lldp transmit-tlv sys-desc`
     1. Configure VLAN (example: VLAN 10):
-        1. **TODO**
         1. `switchport mode access`
         1. `switchport access vlan 10`
-        1. `vlan acceptframe admituntaggedonly`
-        1. `vlan participation include 10`
-        1. `vlan pvid 10`
     1. Configure STP:
         1. Set as edge port: `spanning-tree edgeport`
         1. (Optional) Enable BPDU filter: `spanning-tree bpdufilter`
@@ -72,13 +68,9 @@ Tested with an EdgeSwitch 16 XG, configured as a L2 core/distro switch (homelab)
         1. `storm-control multicast level 75`
 1. Setup L2 link ports (trunk link):
     1. Repeat relevant access port config.
-    1. Configure VLAN trunk (example: VLANs 10+50):
-        1. **TODO**
+    1. Configure VLAN trunk (example: all VLANs):
         1. `switchport mode trunk`
         1. `switchport trunk allowed vlan all`
-        1. `vlan acceptframe vlanonly`
-        1. `vlan participation include 10,50`
-        1. `vlan participation include 10,50`
     1. Configure STP:
         1. Enable root guard: `spanning-tree guard root`
 1. Setup AAA:
