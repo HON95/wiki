@@ -908,6 +908,7 @@ If the GRUB or initramfs commands didn't work (e.g. if it broke during an Pacman
     1. Reinstall: `pacman --sysroot /mnt -S --overwrite "*" - <tmp.txt`
 1. Fix boot dir perms: `chmod 700 /mnt/boot`
 1. Fix resolvconf: `ln -sf /run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf`
-1. Reboot.
+1. Reboot into fixed OS.
+1. Fix AUR packages: `yay -Qqm | yay -S -`
 
 {% include footer.md %}
