@@ -26,7 +26,7 @@ There are lots of ways to upgrade the firmware, but most are painful and typical
 1. Select local drive, select the USB drive and enter the filename on the drive.
 1. Success (maybe).
 
-### G12 and higher
+### G12 and Later
 
 Update through iDRAC 7 using HTTP site `downloads.dell.com`.
 
@@ -89,7 +89,7 @@ For max performance, use two dual-rank 1333MHz DIMMS in slots 1 and 2 for all ch
 
 - C-states and C1E: May significantly reduce power usage when idle.
 
-## Loudness
+## Fans
 
 Mostly based on empirical evidence.
 
@@ -97,7 +97,14 @@ Mostly based on empirical evidence.
 - The number of DIMMs doesn't seem to affect the fan speed.
 - For the R720, using 1600MHz DIMMs makes the server much louder than 1333MHz DIMMs.
 - For the R620 and R720, using a 10G SFP+ NIC module makes it louder than using a 1G copper module.
-- For the R320, using hard drives in the bays makes it much louder.
+- For the R320, using hard drives (non-Dell?) in the bays makes it much louder.
+
+### Disable 3rd-party Device Fan Response (G13 and later?)
+
+- This feature causes the fans to spin a bit faster when using 3rd-party PCIe devices, HDDs etc. It's annoying for homelabs. It can be disabled using IPMI.
+- Check status: `ipmitool -I lanplus -H <IPADDRESS> -U <USERNAME> -P <PASSWORD> raw 0x30 0xce 0x01 0x16 0x05 0x00 0x00 0x00` (`... 01 00 00` means disabled)
+- Enable fan response (default): `ipmitool -I lanplus -H <IPADDRESS> -U <USERNAME> -P <PASSWORD> raw 0x30 0xce 0x00 0x16 0x05 0x00 0x00 0x00 0x05 0x00 0x00 0x00 0x00`
+- Disable fan response (quiet): `ipmitool -I lanplus -H <IPADDRESS> -U <USERNAME> -P <PASSWORD> raw 0x30 0xce 0x00 0x16 0x05 0x00 0x00 0x00 0x05 0x00 0x01 0x00 0x00`
 
 ## Theory
 
