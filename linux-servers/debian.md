@@ -59,7 +59,8 @@ If creating a template VM, run the first instructions before saving the template
     1. Change to a template.
     1. Clone it into a new VM to be used hereafter.
     1. Boot the new VM and continue with the setup.
-1. (Optional) Update the IP addresses in `/etc/network/interfaces` (see the example below) and run `systemctl restart networking`.
+1. (Optional, for non-cloud) Set static IP addresses in `/etc/network/interfaces` (see the example below).
+1. Reboot.
 
 Example `/etc/network/interfaces`:
 
