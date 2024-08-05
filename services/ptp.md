@@ -440,7 +440,23 @@ ptp priority1 255
         - Delay request interval: 1 (2s)
         - Announce timeout: 3s
     1. Go to the "Latency" tab and set "System Resolution" to 11.
-- Activate PTP on leaf ports:
+- Configure a PTP user profile (example):
+    1. Note: This depends on the requirements of the clients. As ACI leaf switches act as BCs, it can "convert" to multiple different types. A "standard" profile based on the PTPv2 default profile can be useful for clients without strict requirements, as shown in the next steps.
+    1. Go to "Fabric > Access Policies > Policies > Global > PTP User Profile" and click "create".
+    1. Name: default_ptp
+    1. Profile: Default
+    1. Announce interval (2^x s): 1 (2s)
+    1. Sync interval (2^x s): -1 (0.5s)
+    1. Delay request interval (2^x s): 0 (1s)
+    1. Announce timeout (s): 3
+- Activate PTP on EPG static ports:
+    1. Go to the static port in the EPG.
+    1. Configure:
+        - PTP state: Enable
+        - PTP mode: Multicast master (always master!)
+        - PTP source address: Same as the BD GW (IPv4)
+        - PTP user profile: Select an appropriate one, maybe create a new one.
+- Activate PTP on L3Out ports:
     1. **TODO**
 - Configure a latency measurement (when needed) (GUI):
     1. Go to "Tenants > the tenant > Policies > Troubleshooting > Atomic Counter and Latency".
