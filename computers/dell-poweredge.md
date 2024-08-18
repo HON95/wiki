@@ -106,7 +106,14 @@ Mostly based on empirical evidence.
 - Enable fan response (default): `ipmitool -I lanplus -H <IPADDRESS> -U <USERNAME> -P <PASSWORD> raw 0x30 0xce 0x00 0x16 0x05 0x00 0x00 0x00 0x05 0x00 0x00 0x00 0x00`
 - Disable fan response (quiet): `ipmitool -I lanplus -H <IPADDRESS> -U <USERNAME> -P <PASSWORD> raw 0x30 0xce 0x00 0x16 0x05 0x00 0x00 0x00 0x05 0x00 0x01 0x00 0x00`
 
-## Theory
+## GPUs
+
+### GPGPUs in R730
+
+- Mounting GPUs requires GPU risers with power outlets (EPS-12V) and fan shroud with GPU airflow openings.
+- Certain GPGPUs like K80, M40, M60, P100, V100 uses EPS-12V inlets instead of PCIe inlets like normal GPUs. This requires a special EPS-12V GPU cable and not one that converts the pinout to PCIe. This cable also needs to be mounted the correct way to avoid short-circuiting and probably melting/burning the cable. If your cable has the black wires on the "clip side" of the connector, it's probably a PCIe pinout and won't work. The end with all-yellows on one side of the connector and all-blacks on the other side goes into the GPU, while the connector with one black on the yellow side goes into the riser.
+
+## Miscellanea
 
 ### Model Name Convention
 
