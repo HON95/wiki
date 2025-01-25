@@ -438,14 +438,16 @@ Note: Since Steam requires 32-bit (i386) variants of certain NVIDIA packages, an
 
 ## ZSH (Linux)
 
-This is my ZSH setup preference, using Oh-My-ZSH with the Powerlevel10k theme and some recommended font.
+This is my ZSH setup preference, using Oh-My-ZSH (warning: bloat) with the Powerlevel10k theme and some recommended font.
 
 1. Install ZSH:
-    1. `apt install zsh`
+    - Ubuntu: `apt install zsh`
+    - Arch: `pacman -S zsh`
 1. Install Oh-My-ZSH:
     1. See [ohmyz.sh](https://ohmyz.sh/).
     1. When it asks, set it as your default shell. This won't take effect until the next login.
 1. Setup fonts:
+    1. (Arch) See the Arch setup notes instead.
     1. Download and install the suggested fonts (MesloLGS NF): [Fonts (powerlevel10k)](https://github.com/romkatv/powerlevel10k#fonts)
         - For manual installation, move the `.ttf` files to `/usr/share/fonts/TTF/`.
         - For KDE Plasma, download and open with the font installer.
