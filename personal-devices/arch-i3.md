@@ -171,6 +171,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Using iwd (recommended):
         1. Install: `pacman -S iwd`
         1. Configure: See example config below for config `/etc/iwd/main.conf`.
+        1. Add your user to the network group: `sudo usermod -aG network <user>`
         1. Enable: `systemctl enable --now iwd.service`
             - If this fails, you may need to reboot.
         1. Setup the network config:
@@ -238,7 +239,8 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Recreate initramfs: `mkinitcpio -P`
     1. Add extra kernel parameters for the keyfile: In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptkey=rootfs:/var/lib/keys/luks/crypt_root`.
     1. Update GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
-    1. (Optional) Reboot to make sure it works. If not, it should fall back to the extra password prompt.
+    1. (Note) When rebooting, if it doesn't work it will/should/might fall back to the extra password prompt.
+1. (Optional) Reboot.
 1. Setup sudo:
     1. (Note) Both the `wheel` and `sudo` groups are commonly used for giving sudo access, but I personally prefer `sudo` since `wheel` _may_ also be used by polkit rules, su (`pam_wheel`), etc.
     1. Install: `pacman -S sudo`
@@ -246,10 +248,9 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Enter the config: `EDITOR=vim visudo`
     1. Add line to allow sudo group without password: `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`
 1. Add a personal admin user:
-    1. Create the user and add it to relevant groups (remove missing groups): `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video,netdev <user>`
+    1. Create the user and add it to relevant groups (remove missing groups): `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video,netdev <user>` (remove any missing groups)
     1. Set its password: `passwd <user>`
     1. (Optional) Relog to test the user.
-1. (Optional) Reboot.
 1. Install yay to access the AUR (as non-root):
     1. (Note) This needs to be done as non-root.
     1. Install requirements: `sudo pacman -S --needed base-devel git`
@@ -286,14 +287,6 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Modify it.
         - It currently defaults to Debian-specific stuff, so remove those lines and uncomment the Arch-specific lines.
     1. Run it: `sudo /etc/iptables/config.sh`
-1. (Optional) Setup colored man pages:
-    1. (Note) Most breaks on wide displays (e.g. UHD), so don't use it if that may be a problem.
-    1. Install the most pager: `sudo pacman -S most`
-    1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export PAGER=most`
-1. Setup a BASH command completion dir (also used by ZSH for CLI apps that don't support ZSH):
-    1. Create dir `/etc/bash_completion.d`.
-    1. Setup `/etc/profile.d/completion.sh`, see the example below.
-1. (Optional) Reboot.
 
 ### Setup the Xorg Display Server
 
@@ -321,10 +314,9 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 #### Ly (Alternative 2)
 
 1. Setup Ly:
-    1. (Note) The config file is `/etc/ly/config.ini`.
     1. Install: `yay -S ly`
     1. Enable: `sudo systemctl enable ly`
-    1. Add fire background: In the config, set `animate = true` and `hide_borders = true`.
+    1. In `/etc/ly/config.ini`, set `animation = CMatrix`.
 1. Enable numlock on by default in X11:
     1. Install: `sudo pacman -S numlockx`
     1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
@@ -546,6 +538,13 @@ See [PipeWire (Applications)](/personal-devices/applications/#pipewire) for more
 
 ### Setup Applications
 
+1. Setup a BASH command completion dir (also used by ZSH for CLI apps that don't support ZSH):
+    1. Create dir `/etc/bash_completion.d` (might already exist).
+    1. Setup `/etc/profile.d/completion.sh`, see the example below.
+1. (Optional) Setup colored man pages:
+    1. (Note) Most breaks on wide displays (e.g. UHD), so don't use it if that may be a problem.
+    1. Install the most pager: `sudo pacman -S most`
+    1. Set it as the default pager: In `.bashrc` and/or `.zshrc`, set `export PAGER=most`
 1. Setup terminal emulator:
     1. Already done.
 1. Setup the ZSH shell:
@@ -577,6 +576,8 @@ See [PipeWire (Applications)](/personal-devices/applications/#pipewire) for more
 1. Setup the 7-Zip CLI/GUI archiver:
     1. Install: `yay -S p7zip-gui`
     1. (Note) Don't use the `.7z` file format, it doesn't preserve owner info.
+1. Setup Remmina with RDP:
+    1. Install: `sudo pacman -S remmina freerdp`
 1. Setup network tools:
     1. Install: `sudo pacman -S nmap tcpdump wireshark-qt`
 1. Set default applications (after installation):
@@ -601,8 +602,9 @@ Name=en*
 [Network]
 DHCP=yes
 IPv6AcceptRA=yes
-IPv6PrivacyExtensions=yes
-#LLDP=yes
+IPv6PrivacyExtensions=no
+LLDP=yes
+EmitLLDP=no
 
 [DHCPv4]
 RouteMetric=1024
@@ -623,6 +625,7 @@ UseDomains=yes
 RouteMetric=1024
 UseDNS=yes
 UseDomains=yes
+Token=prefixstable
 ```
 
 ### iwd Config
