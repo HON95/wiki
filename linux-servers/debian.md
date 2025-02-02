@@ -5,7 +5,7 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-Using **Debian 11 (Bullseye)**.
+Using **Debian 12 (Bookworm)**.
 
 ## Basic Setup
 
@@ -14,8 +14,8 @@ Using **Debian 11 (Bullseye)**.
 - Always verify the downloaded installation image after downloading it.
 - If installing in a Proxmox VE VM, see [Proxmox VE: VMs: Initial Setup](/virt/proxmox-ve/#initial-setup).
 - Prefer UEFI if possible.
-- Use the non-graphical installer. It's basically the same as the graphical one.
-- If it asks to install non-free firmware, take note of the packages so they can be installed later.
+- Use the non-graphical installer. It's basically exactly the same as the graphical one.
+- If it mentions missing non-free firmware, take note of the packages so they can be installed later.
 - Localization:
     - For automation-managed systems: It doesn't matter.
     - Language: United States English.
@@ -34,27 +34,32 @@ Using **Debian 11 (Bullseye)**.
 - System disk partitioning:
     - Simple system: Guided, single partition, use all available space.
     - Advanced system: Manually partition, see [system storage](/linux-servers/storage/#system-storage).
-    - Swap can be set up later as a file or LVM volume.
+    - Swap can be set up later as a file or LVM volume. It isn't really that useful anymore.
     - When using LVM: Create the partition for the volume group, configure LVM (separate menu), configure the LVM volumes (filesystem and mount).
 - Package manager:
     - Just pick whatever it suggests.
 - Software selection:
-    - Select only "SSH server" and "standard system utilities".
-- GRUB bootloader:
+    - Just "SSH server", so e.g. Ansible can reach it.
+- GRUB bootloader (no longer asked):
     - Install to the suggested root disk (e.g. `/dev/sda`).
 
-### Prepare for Ansible Configuration
+### Prepare for Ansible Configuration (if Ansible)
 
 Do this if you're going to use Ansible to manage the system.
 This is mainly to make the system accessible by Ansible, which can then take over the configuration.
 If creating a template VM, run the first instructions before saving the template and then run the last instructions on cloned VMs.
 
 1. Upgrade all packages: `apt update && apt full-upgrade`
-1. If running in a QEMU VM (e.g. in Proxmox), install the agent: `apt install qemu-guest-agent`
-1. Setup sudo for the automation user: `apt install sudo && usermod -aG sudo ansible`
-1. (Optional) Convert the VM into a template and clone it into a new VM to be used hereafter.
-1. Update the IP addresses in `/etc/network/interfaces` (see the example below).
-1. Update the DNS server(s) in `/etc/resolv.conf`: `nameserver 1.1.1.1`
+    1. If anything significant was updated, restart the server.
+1. Install the required packages: `apt install openssh-server sudo python3 vim`
+    - If PVE/QEMU VM, install `qemu-guest-agent`.
+1. Setup sudo for Ansible: `usermod -aG sudo ansible`
+1. (Optional, for PVE VMs) Convert the VM into a template:
+    1. Shut down the VM.
+    1. Change to a template.
+    1. Clone it into a new VM to be used hereafter.
+    1. Boot the new VM and continue with the setup.
+1. (Optional, for non-cloud) Set static IP addresses in `/etc/network/interfaces` (see the example below).
 1. Reboot.
 
 Example `/etc/network/interfaces`:
@@ -75,7 +80,7 @@ iface ens18 inet6 static
     accept_ra 0
 ```
 
-### Manual Configuration
+### Manual Configuration (if not Ansible)
 
 The first steps (`(Skip)`) may be skipped if already configured during installation (i.e. not cloning a template VM).
 

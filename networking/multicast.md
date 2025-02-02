@@ -43,19 +43,25 @@ See the [IPv4](/networking/ipv4/) and [IPv6](/networking/ipv6/) pages.
 
 #### Operational Commands
 
-- Routing:
-    - Show mcast routing table: `show {ip|ipv6} mroute [group]`
+- "Routing" (mostly PIM):
+    - Show active groups: `show {ip|ipv6} [vrf <vrf>] mroute [group] [{verbose|count}]`
+    - Show RPF interface/destination: `show ip rpf [vrf <vrf>] <address>` (source or RP)
+- PIM:
+    - Show interfaces: `show ip pim interface brief`
+    - Show neighbors: `show ip pim neighbor`
 - IGMP (IPv4):
     - Show active groups: `show ip igmp groups`
     - Show routed interface info: `show ip igmp interface <interface>`
-- IGMP snooping (IPv4):
-    - Show basic info: `show ip igmp snooping`
-    - Show mrouter interfaces: `show ip igmp snooping mrouter`
-    - Show groups interfaces: `show ip igmp snooping groups`
 - MLD (IPv6):
     - Show routed interface info: `show ipv6 mld interface <interface>`
     - Show active groups (summary): `show ipv6 mld groups summary`
     - Show active groups (detail): `show ipv6 mld groups [group-address] [interface <interface>] [detail]`
+- IGMP snooping (IPv4):
+    - Show basic info: `show ip igmp snooping`
+    - Show mrouter interfaces: `show ip igmp snooping mrouter`
+    - Show groups interfaces: `show ip igmp snooping groups`
+- MLD snooping (IPv6):
+    - **TODO**
 
 #### Configuration
 

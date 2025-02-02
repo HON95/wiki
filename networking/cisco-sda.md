@@ -19,6 +19,10 @@ breadcrumbs:
 
 ## Useful Commands
 
+### Multicast (Native Mode)
+
+- Show overlay to underlay group mapping: `show ip multicast overlay-mapping lisp <group> <?> interface LISP0.<IID>`
+
 ### Wireless
 
 - Show AP tunnels for edge: `show access-tunnel summary`
@@ -64,11 +68,12 @@ breadcrumbs:
 - Multicast:
     - For IPv4, it supports head-end replication and native multicast.
     - For IPv6, it only supports head-end replication. (TODO: Does enabling native multicast for a site kill IPv6 multicast or will it continue to use head-end replication?)
-    - *Head-end replication* runs completely in the overlay and makes edge devices duplicate multicast streams into unicast streams to each edge device with subscribers. This causes increased overhead.
-    - *Native multicast* tunnels multicast streams inside underlay multicast packets and avoids head-end replication.
+    - *Head-end replication* runs completely in the overlay and makes edge devices duplicate multicast streams into unicast streams to each edge device with subscribers. This causes increased overhead. It supports at most 1000 groups (configurable?). This mode is not recommended after native multicast became available.
+    - *Native multicast* tunnels multicast streams inside underlay multicast packets and avoids head-end replication. It maps overlay multicast groups into 1000 underlay SSS groups (configurable-ish).
     - Supports sources both inside and outside the fabric.
     - Protocol Independent Multicast (PIM) with both any-source multicast (ASM) and any-source multicast (ASM) is supported in both the underlay and overlay.
     - For details around rendezvous points (RPs) and stuff, see the design guide.
+    - Multicast over Pub/Sub SDA transit is supported starting with DNCA 2.3.5 and IOS XE 17.10 (LISP/BGP SDA transit is not supported).
 - Layer 2 flooding:
     - Traffic that is normally flooded in traditionally networks, like ARP, is often handled differently and more efficiently in overlay technologies like SDA.
     - Certain applications and protocols requires layer 2 flooding to work. To address this, *layer 2 flooding* may be enabled for a VN/site (if really needed).
@@ -78,7 +83,7 @@ breadcrumbs:
         - Certain building management systems.
         - ???
     - This will reduce scalability of the VN/site, so it should only be used for /24 subnets and smaller.
-    - The L2 flooding is mapped to a dedicated multicast group in the underlay, using PIM-ASM. All edge nodes active for the VN must listen to this group.
+    - The L2 flooding is mapped to a dedicated multicast group in the underlay (239.0.17.1), using PIM ASM. All edge nodes active for the VN must listen to this group.
 - ARP:
     - When a client sends an ARP request, the edge looks up the RLOC/address for the edge the target resides at and then the ARP is unicasted to that edge.
 - DHCP relays:
@@ -90,6 +95,20 @@ breadcrumbs:
     - **TODO**
     - https://www.cisco.com/c/en/us/solutions/collateral/enterprise-networks/sd-access-wired-wireless-dg.html
     - https://www.cisco.com/c/en/us/td/docs/cloud-systems-management/network-automation-and-management/dna-center/1-3-1-0/user_guide/cisco_dna_service_for_bonjour/b_cisco-dna-service-for-bonjour_user_guide_2-1-2/m_deploying-wide-area-bonjour-for-cisco-sd-access-network.html
+- VLAN ID numbering (*outdated*):
+    - VLAN 1024-: Client-facing VLANs with anycast SVIs
+    - 2045: AP
+    - 2046: Voice
+    - 2047: Critical
+    - 3001-3500: Border uplinks (transit/peer)
+- LISP instance ID numbering:
+    - 4000 series: VNs (L3)
+    - 8000 series: VLANs (L2)
+- Loopback numbering:
+    - 0: Underlay loopback
+    - 1000 series: Anycast gateway loopbacks (borders) (same numbers as VLANs/SVIs on edges)
+    - 4000 series: Multicast loopback by LISP-instance (if multicast enabled for VN) (all nodes)
+    - 60000: Anycast-RP loopback (used by L2-flooding) (on RPs only)
 
 ### Locator ID Separation Protocol (LISP)
 
