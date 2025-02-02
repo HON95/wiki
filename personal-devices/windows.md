@@ -5,18 +5,15 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-### Using
-{:.no_toc}
-
-- Windows 10
-
 ## Installation
 
 - There's no need to provide a product/activation key. If the PC (motherboard?) has been activated before, it will automatically activate when starting the first time.
-- Use a local account. Link to a Microsoft account later if needed, but preferably only for Microsoft apps.
+- Use a local account. Link to a Microsoft account later if needed, but preferably only for Microsoft apps. **TODO** Only possible without an internet connection and with certain commands. Update this note later.
 - Say no to everything privacy related.
 
-## Setup
+## Setup (Windows 11)
+
+**TODO**: There notes are mostly from Win10 and has not been fully tested with Win11 yet.
 
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
@@ -50,8 +47,80 @@ breadcrumbs:
     - Run `netsh int tcp set global autotuninglevel=disabled` to disable it.
 - Change the computer name.
 - Check Windows Security.
-- Start menu:
-    - Remove useless tiles.
+- Sound settings:
+    - Go to "system settings -> sound -> more sound settings" to find the old sount control panel.
+    - Disable unused playback and recording devices.
+    - Set "format" for used devices.
+    - Set to do nothing when Windows detects communications activity.
+- Display settings:
+    - Disable scaling.
+- Windows Explorer:
+    - Set File Explorer to open to "this PC".
+    - Hide recently used files and folders in Quick access.
+    - Show known file endings and hidden files.
+    - Show merge conflicts.
+- Power settings:
+    - Use balanced mode (high performance mode is a waste of energy with no benefits).
+    - Extend periods for turning off stuff.
+    - Disable the sleep timer.
+    - Set the minimum processor state to 0% (for power saving with DVFS).
+- Device settings:
+    - Disable AutoPlay.
+- Keyboard settings:
+    - Disable the layout change shortcut:
+        1. Go to "Advanced keyboard settings" (settings), "Input language hot keys" (window), "Advanced key settings" (tab).
+        1. Press "change key sequence" for the "between input languages" entry and set both options to "no assigned".
+- Personalisation settings:
+    - Enable dark mode.
+    - Remove lock screen apps.
+    - In desktop icon settings, hide the recycle bin.
+    - Only show app list in start menu.
+    - Configure the taskbar.
+    - Configure the start menu.
+- Apps settings:
+    - Uninstall useless apps and programs.
+    - Change optional features and Windows features.
+- Accounts settings:
+    - (Optional) Add login PIN to avoid typing the password from the lock screen.
+- Gaming settings:
+    - Disable "Record \[...\] using Game bar".
+    - Keep Game Mode enabled.
+
+## Setup (Windows 10)
+
+- Install all available updates.
+- Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
+- Enable BitLocker drive encryption (requires Windows Pro edition):
+    - (Note) Using passwords and not TPM because I don't want my PC to decrypt itself without me and because I need to move disks between PCs.
+    - If you have a TPM module: Disable it in the BIOS settings.
+    - Allow using it without a TPM module:
+        - Open `gpedit.msc`.
+        - Go to: `Local Computer Policy/Computer Configuration/Administrative Templates/Windows Components/Bitlocker Drive Encryption/Operating System Drives`
+        - Edit "Require additional authentication at startup".
+            - Enable it.
+            - Allow without compatible TPM module.
+            - Do not allow TPM.
+        - Enable "allow enhanced PINs for startup".
+    - Setup BitLocker for drives:
+        - Enter the BitLocker management settings.
+        - Enable for all disks.
+        - Save the recovery keys somewhere safe, it's required sometimes to unlock the disk.
+        - Enable auto-unlock for other encrypted disks.
+- Disable the lock screen:
+    - Because it's annoying to wait before I can start typing the password.
+    - Open `regedit`.
+    - Set DWORD `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows/Personalization/NoLockScreen` to `1`.
+- Set hardware clock to use UTC:
+    - Because Linux uses it, so the Windows time will be wrong if dual booting.
+    - Open `regedit`.
+    - Set DWORD `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation\RealTimeIsUniversal` to `1`.
+- Disable network throttling:
+    - Open CMD as admin.
+    - Run `netsh int tcp show global` and look for "Receive Window Auto-Tuning Level". "enabled" means throttling is enabled.
+    - Run `netsh int tcp set global autotuninglevel=disabled` to disable it.
+- Change the computer name.
+- Check Windows Security.
+- Disable pointless startup apps (through the task manager).
 - Sound Control Panel:
     - Disable unused playback and recording devices.
     - Set "format" for used devices.
@@ -84,10 +153,11 @@ breadcrumbs:
 - Accounts settings:
     - (Optional) Add login PIN to avoid typing the password from the lock screen.
 - Gaming settings:
-    - Disable "Record \[...\] using Game bar".
-    - Keep Game Mode enabled.
+    - Under "captures", disable "record what happened".
 
 ## Windows Subsystem for Linux (WSL)
+
+**TODO** Update for Win11.
 
 ### Setup
 
