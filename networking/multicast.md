@@ -29,34 +29,12 @@ See the [IPv4](/networking/ipv4/) and [IPv6](/networking/ipv6/) pages.
 
 ### Internet Group Messaging Protocol (IGMP)
 
-- For cooordination between the host and the first-hop router for IPv4 multicast.
-- Has a designated _querier_ per subnet, often the default gateway router itself. The querier sends periodic queries to the hosts and the hosts report their group memberships.
-- IGMPv1 (RFC 988):
-    - Offers the basic query-and-response functionality to determine group memberships, sent to the all-hosts group 224.0.0.1.
-    - Doesn't support signaling to leave groups other than waiting for the timeout, meaning hosts quickly joining a large number of groups for an intended short period of time per group will end up with a lot of unwanted memberships waiting to time out and a large amount of pointless traffic.
-    - The querier is selected using PIM.
-    - Rarely used.
-- IGMPv2 (RFC 2236):
-    - Like v1 but with a leave process, group-queries, separated DR and querier role, querier election and the MRT field.
-    - Using the leave process, hosts can simply send a leave message to the querier to leave a group.
-    - Group queries are sent to specific groups instead of sending it to the all-hosts group. General queries are still sent to the all-hosts group to determine memberships of any group.
-    - The new querier election requires that all multicast routers send a general query to the all-hosts group and then by default chooses the router with the highest IP address as the dedicated router (DR) and the router with the lowest address ad the querier. PIM is no longer needed for the election.
-    - The new maximum response time (MRT) defines how long a host can wait before sending a membership report following a group query. When it receives a query, it will wait a random amount of time lower than the MRT and only send a report if no other host has done it yet, to avoid sending superfluous reports.
-    - Still supported by most routers.
-- IGMPv3 (RFCs 3376 and 4604):
-    - Added support for SSM. The header got expanded with a list of source addresses to subscribe to for a given group, or sources to exclude membership to.
-    - The max response time (MRT) got replaced by a max response code (MRC), which semantically still works the same but now supports much larger values due to a new, strange number format.
-- Version interoperability: With a mix of support on hosts on a subnet, the lowest common version is used.
-- IGMP snooping:
-    - Used by switches to snoop on group joins and leaves to track which ports to send multicast to, to avoid flooding on the L2 domain.
-    - Switches snoop on IGMP query messages and PIM hellos in order to map the group address to output interfaces in the CAM table.
-    - Ports connected to a multicast-capable router should be marked, as they require special treatment.
-    - The switch does not forward joins and leaves to the mcast router interface unless it it the first join or last leave.
-    - As an alternative to snooping, Cisco Group Management Protocol (CGMP) and Router-port Group Management Protocol (RGMP) were developed, but are rarely used.
+- For last-hop multicast subscription management in IPv4 networks.
+- See [IPv4](/networking/ipv4/).
 
 ### Multicast Listener Discovery (MLD)
 
-- For cooordination between the host and the first-hop router for IPv6 multicast, similarly to IGMP for IPv4.
+- For last-hop multicast subscription management in IPv6 networks.
 - See [IPv6](/networking/ipv6/).
 
 ## Vendor Support
