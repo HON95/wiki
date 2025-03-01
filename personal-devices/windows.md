@@ -155,6 +155,26 @@ breadcrumbs:
 - Gaming settings:
     - Under "captures", disable "record what happened".
 
+## Make Windows more Streaming/Presentation Friendly (Windows 10)
+
+- Disable Windows sounds:
+    1. Go to sound settings (e.g. left click the taskbar icon).
+    1. Go to the "sounds" tab.
+    1. Change to "no sounds".
+- Disable UAC desktop dimming (e.g. when installing stuff):
+    1. Open the UAC settings (search "UAC").
+    1. Change to "notify me only when [...] *(do not dim my desktop)*".\
+- Prevent the mouse from moving into the output display:
+    1. Go to the display settings (search or right click the desktop).
+    1. Move the output display to the upper right or left corner of the other displays.
+    1. Verify that you can't move the mouse into it through the corner.
+    1. If you sometimes need to access the display by mouse, offset the cornerign a little to leave a little gap to let the mouse through.
+- Disable the task view shortcut (zooms out all windows):
+    1. **TODO** How? Disable the shortcut?
+- Always keep the presentation window on top:
+    1. Install [PowerToys](https://learn.microsoft.com/en-us/windows/powertoys/) (official Windows software).
+    1. Use the ["Always On Top"](https://learn.microsoft.com/en-us/windows/powertoys/always-on-top) feature.
+
 ## Windows Subsystem for Linux (WSL)
 
 **TODO** Update for Win11.
