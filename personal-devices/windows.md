@@ -157,6 +157,10 @@ breadcrumbs:
 
 ## Make Windows more Streaming/Presentation Friendly (Windows 10)
 
+- Disable pointless or interrupting applications.
+- Disable sleeping:
+    1. Go to the power settings (search for it).
+    1. Set the sleep timer and display off timer to "never".
 - Disable Windows sounds:
     1. Go to sound settings (e.g. left click the taskbar icon).
     1. Go to the "sounds" tab.
@@ -173,7 +177,7 @@ breadcrumbs:
     1. **TODO** How? Disable the shortcut?
 - Always keep the presentation window on top:
     1. Install [PowerToys](https://learn.microsoft.com/en-us/windows/powertoys/) (official Windows software).
-    1. Use the ["Always On Top"](https://learn.microsoft.com/en-us/windows/powertoys/always-on-top) feature.
+    1. Use the ["Always On Top"](https://learn.microsoft.com/en-us/windows/powertoys/always-on-top) feature, by pressing `Win+Ctrl+T` when the window is active.
 
 ## Windows Subsystem for Linux (WSL)
 
