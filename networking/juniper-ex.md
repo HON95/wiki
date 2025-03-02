@@ -134,9 +134,9 @@ See the Junos general notes.
 1. (Optional) Prepare preprovisioned setup:
     1. Only accept preprovisioned members: `set virtual-chassis preprovisioned`
     1. Add members:
-        1. `set member 0 serial-number xxx role routing-engine`
-        1. `set member 1 serial-number xxx role routing-engine`
-        1. `set member 2 serial-number xxx role line-card`
+        1. `set virtual-chassis member 0 serial-number xxx role routing-engine`
+        1. `set virtual-chassis member 1 serial-number xxx role routing-engine`
+        1. `set virtual-chassis member 2 serial-number xxx role line-card`
 1. If using only two devices, disable split and merge: `set virtual-chassis no-split-detection`
 1. Enable implicit synchronized commit to all devices: `set system commit synchronize`
 1. Enable graceful routing engine switchover: `set chassis redundancy graceful-switchover`
