@@ -557,19 +557,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - 1:1 mapping between IPv4 and IPv6 addresses.
     - Sessions can be initiated from both sides.
 - Stateful NAT64 and DNS64:
-    - Appropriate for IPv6-only edge networks to connect to the IPv4 internet.
-    - Uses prefix `64:ff9b::/96` or a custom prefix.
-    - 1:N mapping between IPv4 and IPv6 addresses.
-    - Sessions can generally only be initiated from the IPv6 side.
-    - No changes are required in the IPv6 client in order to support it.
-    - If the DNS64 server does not find an AAAA record, it synthesizes a AAAA record within the NAT64 prefix.
-    - Limitations:
-        - See NAT44 limitations.
-        - All clients must be configured to use the the DNS64 server (e.g. through DHCP). Clients with statically configured public servers will not work.
-        - All IPv4 addresses must have an associated domain name which must be used in place of the address literal.
-          This may not always be the case, e.g. when people host stuff from home and use the IPv4 address directly.
-        - Some applications just don't support IPv6, or may use IPv4 literals (hardcoded or acquired dynamically). They won't work, period.
-        - Synthesized DNS records break DNSSEC. I'm not sure if typical clients validate DNSSEC, though.
+    - See section below.
 - XLAT464:
     - Uses stateful translation in the core and statekess translaton at the edge.
     - Uses a customer-side translator (CLAT) which translated between 1:1 private IPv4 addresses and global IPv6 addresses.
@@ -587,6 +575,41 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - NAT66 (IPv6 only):
     - Like NAT44, including all its problems.
     - Stateful.
+
+### Stateful NAT64
+
+- Appropriate for IPv6-mostly client networks that still need access to the IPv4 Internet.
+- Similar to typical NAT44, in the sense that multiple internal clients are dynamically mapped between a small pool of public IPv4 addresses.
+- NAT64 prefix:
+    - Uses the well-known prefix `64:ff9b::/96` or a custom prefix from your own address space (`/96`).
+    - Custom prefixes can be distributed to clients using two methods:
+        - Using DNS (RFC 7050): The special domain name `ipv4only.arpa.` may be queried to get the NTA64 prefix.
+        - Using PREF64 (RFC 8781): The PREF64 RA option contains the prefix to be used for NAT64.
+- DNS64:
+    - No changes are required in the IPv6 client in order to support it (i.e. no CLAT support is needed).
+    - If the DNS64 server does not find an AAAA record, it synthesizes a AAAA record within the NAT64 prefix.
+    - It can choose to not answer any A queries, if there are no IPv4 clients that need them (i.e. for IPv6-only networks and/or with clients with CLAT support).
+    - Should only be accessible from clients with IPv6 and reachability to the NAT64 translator.
+- CLAT (client-side translator):
+    - An implementation on many client OS-es that received IPv4 traffic and translates the destination to the NAT64 prefix.
+    - Removed the need for DNS64, which suffers from DNSSEC breakage and doesn't handle IPv4 literals in client programs.
+- DHCPv4 option 108:
+    - To tell IPv6-capable clients to disable their IPv4 stack for a certain period of time.
+    - Clients that don't support the option will simply continue with the DHCPv4 transaction to request an IPv4 address (if a pool is configured), such that IPv4-only devices will still work in the IPv6-mostly network.
+- Limitations:
+    - See NAT44 limitations.
+    - All clients must be configured to use the the DNS64 server (e.g. through DHCP). Clients with statically configured public servers (UDP 53, DoT or DoH) will not work.
+    - All IPv4 addresses must have an associated domain name which must be used in place of the address literal.
+        This may not always be the case, e.g. when people host stuff from home and use the IPv4 address directly.
+    - Some applications just don't support IPv6, or may use IPv4 literals (hardcoded or acquired dynamically). They won't work, period.
+    - Synthesized DNS records break DNSSEC. I'm not sure if typical clients validate DNSSEC, though.
+- Required components:
+    - The NAT64 prefix (well-known or custom): Typically the well-known one for simplicity.
+    - The NAT64 translator: Typically a firewall, as it requires state. Must be configured with the well-known NAT64 prefix (which must be routed to it) and an outside IPv4 pool to translate to.
+    - A DNS64 server: Self-hosted with well-known or custom prefix or public with well-known (i.e. Google).
+    - CLAT support in clients: Supported in Android, iOS, macOS. Partially supported on Windows and Linux. Not supported by most older and IoT devices.
+    - PREF64 support in RAs: To tell the client to enable its CLAT with the included prefix.
+    - Option 108 support in the DHCPv4 server: To tell IPv6-capable clients to disable their IPv4 stack for a certain period of time. Clients that don't support the option will simply continue with the DHCPv4 transaction to request an IPv4 address (if a pool is configured), such that IPv4-only devices will still work in the IPv6-mostly network.
 
 ## Security
 
