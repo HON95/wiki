@@ -45,7 +45,7 @@ Mostly a list of how I like things in Cloudflare, for the very few features I us
             - When: `URI Path starts with "/.well-known/acme-challenge/"`
             - Then: SSL mode Flexible.
         - "Remove WWW" (redirect rule):
-            - When: `Hostname starts with "www."`
+            - When: `Hostname equals "www.example.net"`
             - Then: Dynamic, `concat("https://example.net", http.request.uri.path)`, 301 (permanent), preserve query string.
         - "Redirect to other site" (redirect rule) (if this domain doesn't have its own main site):
             - When: `Hostname equals "example.example"`
