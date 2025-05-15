@@ -26,7 +26,7 @@ Mostly a list of how I like things in Cloudflare, for the very few features I us
 - SSL/TLS:
     - Mode: Full (strict) (with exception through page rules)
     - Always use HTTPS: Yes
-    - HSTS: On, no max-age, don't include subdomains, preload.
+    - HSTS: On, max-age 6 months, don't include subdomains, preload.
     - Minimum TLS version: 1.2
     - Origin certificates: Create for websites served through Cloudflare. Or just use Let's Encrypt (requires a non-HTTPS page rule for HTTP challenge).
     - Authenticated Origin Pulls: Yes. Must be configured on the hosting webserver too to prevent direct connections.
