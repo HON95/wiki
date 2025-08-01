@@ -53,10 +53,12 @@ Some important attributes:
 - Origin (well-known, mandatory): How the prefix entered BGP. 0/"i" means from IGP, 1/"e" means from EGP, 2/"?" means redistributed from other sources or static routes.
 - AS path (well-known, mandatory): The path of ASes to pass through in order to reach the destination. An eBGP peer prepends its own ASN before advertising it to other peers. ASes are free to append their ASN multiple times in series to artificially make the path longer (BGP prefers the shortest AS path during the path selection algorithm). If an AS aggregates prefixes from other ASes, it may use AS sets to indicate all ASes from which it aggregated the prefixes, giving an AS path like e.g. `100, {200, 201}`. The AS path is also used for loop avoidance, by checking for its own AS in the path.
 - Next hop (well-known, mandatory): The address of the nex hop towards the destination. eBGP peers will always change this to their own address but iBGP peers will never alter it.
-- Multi-exit discriminator (MED) (optional, non-transitive): When two ASes peer with multiple eBGP peerings, this number signals which of the two eBGP peerings should be used for incoming traffic (lower is preferred). This is only of significance between friendly ASes as ASes are selfish and free to ignore it (other alternatives for steering incoming traffic are AS path prepending, special communities and (as a very last resort) advertising more specific prefixes).
+- Multi-exit discriminator (MED) (optional, non-transitive): When two ASes peer with multiple eBGP peerings, this number signals which of the two eBGP peerings should be used for incoming traffic (lower is preferred). This is only of significance between friendly ASes as ASes are selfish and free to ignore it (other alternatives for steering incoming traffic are AS path prepending, special communities and advertising more specific prefixes).
+    - Cisco: Missing MED defaults to 0 (best). Set `bgp bestpath med missing-as-worst` to instead use the IETF recommendation.
 - Local preference (well-known, discretionary, non-transitive): A number used to prioritise outgoing paths to another AS (higher is preferred).
 - Weight (Cisco-proprietary): Like local pref., but not exchanged between iBGP peers.
 - Community (optional, transitive): A bit of extra information used to group routes that should be treated similarly within or between ASes.
+    - Cisco: Set `ip bgp-community new-format` to show the community number as two colon-separated numbers instead of one. Also set `send-community` on neighbors to send communities.
 
 ## Path Selection
 

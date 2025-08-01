@@ -1,16 +1,34 @@
 ---
-title: Arch (i3)
+title: Arch Linux
 breadcrumbs:
 - title: Personal Devieces
 ---
 {% include header.md %}
 
-For Arch with LUKS encrypted root, using the i3 window manager.
+Components:
+- LUKS encrypted root
+- Either the i3 window manager (Xorg) or the Hyprland compositor (Wayland)
+- PipeWire multimedia framework
+- iwd wireless daemon
+- Some default applications
 
-### Related Pages
-{:.no_toc}
+## TODO
 
-- [Applications: i3](/personal-devices/applications/#i3)
+- i3:
+    - The "i3 User's Guide"
+    - Plymouth
+    - picom compositor
+- Hyprland:
+    - Wayland
+    - Xwayland, xorg-xlsclients (xlsclients -l)
+    - Touchpad
+    - Tocuhscreen
+    - Display brightness
+    - Keyboard brightness
+    - Wofi
+    - Polybar equivalent
+    - NVIDIA stuff
+    - ... see i3 steps
 
 ## Resources
 
@@ -22,19 +40,16 @@ For Arch with LUKS encrypted root, using the i3 window manager.
 - [List of applications (Arch Wiki)](https://wiki.archlinux.org/title/List_of_applications)
 - [dm-crypt/Encrypting an entire system (Arch Wiki)](https://wiki.archlinux.org/title/Dm-crypt/Encrypting_an_entire_system)
 
+
 ### i3
 
 - [i3 User's Guide](https://i3wm.org/docs/userguide.html)
 
-## TODO
+### Hyprland
 
-- The "i3 User's Guide"
-- Plymouth
-- picom compositor
+- **TODO**
 
-## Installation
-
-Note: The use of `sudo` in the text below is a bit inconsistent, but you should know when you need it and when you don't.
+## Setup Basics
 
 ### Live Image Install
 
@@ -52,16 +67,20 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Verify the (UEFI) boot mode:
     1. Check `efivar --list` or `ls /sys/firmware/efi/efivars`. If either exists, it's in UEFI mode.
 1. Setup live-OS networking:
-    1. (Note) For cabled Ethernet with DHCP, it should already be working. For WLAN or exotic setups, check the wiki.
-    1. (Optional) Test it somehow (e.g. with `ping` or `curl`).
+    1. Wired with DHCP/SLAAC:
+        1. It should already be working.
+    1. WLAN (WPA 2/3 with PSK) and DHCP/SLAAC:
+        1. Setup config for SSID: `wpa_passphrase "<SSID>" "<PSK>" > /etc/wpa_supplicant/wpa_supplicant.conf`
+        1. Connect: `wpa_supplicant -B -c /etc/wpa_supplicant/wpa_supplicant.conf -i wlan0`
+    1. (Optional) Check your IP addresses with `ip a` and try a `ping -4 google.com` (and -6).
 1. Setup live-OS time:
     1. Enable NTP: `timedatectl set-ntp true`
     1. (Optional) Check the "synchronized" line from `timedatectl`.
-1. If your live-OS is outdated, update the keyring: `pacman -Sy && pacman -S archlinux-keyring`
+1. Make sure your live-OS is updated: `pacman -Sy && pacman -S archlinux-keyring`
 1. Partition the main disk (for LUKS encryption):
     1. Find the main disk: `lsblk`
-    1. (Optional) Overwrite the full disk to get rid of all traces of the previous install: `dd if=/dev/zero of=/dev/<disk> bs=1M conv=fsync status=progress`
-    1. (Note) Create these partitions by repeatedly running the steps below:
+    1. Overwrite the full disk to get rid of all traces of the previous partitioning table and OS: `dd if=/dev/zero of=/dev/<disk> bs=1M conv=fsync status=progress`
+    1. (Note) Create these partitions by repeatedly running the new partition steps below:
         - Partition 1: Size 512MiB, type ESP (type 1 in fdisk and EF00 in gdisk), mountpoint `/boot/efi/`.
         - Partition 2: Remaining space, type doesn't matter (leave as-is). Will contain the encrypted root filesystem.
         - **TODO** Maybe add an _encrypted_ swap partition. For hibernation support and stuff, idk.
@@ -93,7 +112,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt <packages>`
     - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip curl`
-    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind sipcalc`
+    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind`
     - Wireless networking packages: `iwd` (or `wpa_supplicant`)
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
@@ -115,21 +134,21 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. `passwd`
 1. Create the initial ramdisk:
     1. Add extra hooks: In `/etc/mkinitcpio.conf`, find the `HOOKS=()` line. Add `encrypt` after `block` and `keymap` after `keyboard` (ordering matters).
-    1. Create the initial ramdisk: `mkinitcpio -P`
+    1. Create the initial ramdisk (for each config change): `mkinitcpio -P`
 1. Setup GRUB:
     1. Install bootloader: `pacman -S grub efibootmgr`
     1. Enable encrypted disk support: In `/etc/default/grub`, set `GRUB_ENABLE_CRYPTODISK=y`.
     1. Find the `UUID` of the encrypted root _physical_ partition: `blkid`
     1. Add kernel parameters for the encrypted root (e.g. `/dev/sda2`): In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptdevice=UUID=<device-UUID>:crypt_root root=/dev/mapper/crypt_root`.
-    1. Install GRUB to ESP: `grub-install --target=x86_64-efi --efi-directory=/boot/efi`
-    1. Generate GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
+    1. Install GRUB to ESP (one time): `grub-install --target=x86_64-efi --efi-directory=/boot/efi`
+    1. Generate GRUB config (for each config change): `grub-mkconfig -o /boot/grub/grub.cfg`
 1. Exit the chroot and reboot:
     1. `exit`
     1. `reboot`
 1. Remove the installation media.
 1. Wait for the GRUB screen or decryption prompt.
 
-### Post Install Setup
+### Setup Post-Install Stuff
 
 1. Boot into the newly installed system:
     1. (Optional) Avoid broken display drivers (typically needed for NVIDIA cards): In the GRUB bootloader menu, press `E` on the main entry and add `nomodeset` at the end of the `linux` line. Press `Ctrl+X` to continue. After proper display drivers are installed, this is no longer required.
@@ -171,7 +190,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     - Using iwd (recommended):
         1. Install: `pacman -S iwd`
         1. Configure: See example config below for config `/etc/iwd/main.conf`.
-        1. Add your user to the network group: `sudo usermod -aG network <user>`
+        1. (Note) Add your user to the network group to allow managing IWD: `sudo usermod -aG network <user>` (**TODO** "netdev"?)
         1. Enable: `systemctl enable --now iwd.service`
             - If this fails, you may need to reboot.
         1. Setup the network config:
@@ -240,7 +259,7 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. Add extra kernel parameters for the keyfile: In `/etc/default/grub`, in the `GRUB_CMDLINE_LINUX` variable, add `cryptkey=rootfs:/var/lib/keys/luks/crypt_root`.
     1. Update GRUB config: `grub-mkconfig -o /boot/grub/grub.cfg`
     1. (Note) When rebooting, if it doesn't work it will/should/might fall back to the extra password prompt.
-1. (Optional) Reboot.
+1. (Optional) Reboot, check that booting works.
 1. Setup sudo:
     1. (Note) Both the `wheel` and `sudo` groups are commonly used for giving sudo access, but I personally prefer `sudo` since `wheel` _may_ also be used by polkit rules, su (`pam_wheel`), etc.
     1. Install: `pacman -S sudo`
@@ -272,8 +291,8 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
     1. (Optional) Configure static upstream DNS servers (don't use any provided by DHCP/SLAAC): In the confug, set `DNS=1.1.1.1 2606:4700:4700::1111`.
     1. (Optional) Set the domain/search string: In the config, set `Domains=<domains>`.
     1. Disable DNSSEC validation (enabling it may cause NTP problems): In the config, set `DNSSEC=no`.
-    1. Enable and start it: `systemctl enable --now systemd-resolved`
-    1. Setup `resolv.conf`: `ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
+    1. Enable and start it: `sudo systemctl enable --now systemd-resolved`
+    1. Setup `resolv.conf`: `sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf`
     1. Check: `resolvectl query vg.no` and `curl google.com`
 1. Setup the NTP client (systemd):
     1. (Note) The default server pool is fine.
@@ -288,38 +307,21 @@ Note: The use of `sudo` in the text below is a bit inconsistent, but you should 
         - It currently defaults to Debian-specific stuff, so remove those lines and uncomment the Arch-specific lines.
     1. Run it: `sudo /etc/iptables/config.sh`
 
-### Setup the Xorg Display Server
+## Setup Desktop Environment Basics
 
-1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr xorg-xinput`
-
-### Setup the LightDM or Ly Display Manager
-
-Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, not both. Ly is more minimalistic but doesn't work well with multiple monitors where you may want to specify the layout in Xorg.
-
-#### LightDM (Alternative 1)
-
-1. Setup LightDM:
-    1. (Note) User-local configuration/profile-stuff should be placed in `~/.xprofile`.
-    1. Install: `sudo pacman -S lightdm`
-    1. Enable: `systemctl enable lightdm`
-1. Setup the LightDM GTK+ greeter (aka login screen) (one of many):
-    1. (Note) The GTK+ greeter may be configured in `/etc/lightdm/lightdm-gtk-greeter.conf` or using the `lightdm-gtk-greeter-settings` GUI.
-    1. Install: `sudo pacman -S lightdm-gtk-greeter`
-    1. Set it as the default: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-session=lightdm-gtk-greeter`.
-    1. (Optional) Set the background: In `/etc/lightdm/lightdm-gtk-greeter.conf`, under the `[greeter]` section, set `background=<image-path>`. The `/usr/share/pixmaps` dir is recommended for storing backgrounds.
-1. Enable numlock on by default in X11:
-    1. Install: `sudo pacman -S numlockx`
-    1. Configure: In `/etc/lightdm/lightdm.conf`, under the `[Seat:*]` section, set `greeter-setup-script=/usr/bin/numlockx on`.
-
-#### Ly (Alternative 2)
-
-1. Setup Ly:
+1. Setup the Ly Display Manager (common for Xorg/Wayland):
     1. Install: `yay -S ly`
     1. Enable: `sudo systemctl enable ly`
     1. In `/etc/ly/config.ini`, set `animation = CMatrix`.
-1. Enable numlock on by default in X11:
-    1. Install: `sudo pacman -S numlockx`
-    1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
+1. Setup fonts:
+    1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
+
+## Setup i3
+
+### Setup the Display Server
+
+1. Setup Xorg Display Server:
+    1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr xorg-xinput`
 
 ### Setup the i3 Window Manager Basics
 
@@ -330,8 +332,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     - Use `Mod+Enter` to open a terminal.
     - Use the terminal to open the web browser, since launchers aren't set up yet.
     - `exec_always` config statements will be run again during reload but `exec`statements will only run when starting i3.
-1. Setup fonts:
-    1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
 1. Install i3:
     1. Install: `sudo pacman -S i3-wm`
     1. (Note) Vital parts are missing in the i3 config, follow the remaining steps before attempting to use i3.
@@ -341,7 +341,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Install terminal emulator and web browser: `sudo pacman -S alacritty firefox`
         - If asked, select `pipewire-jack` and `wireplumber`.
 1. Reboot.
-1. Arrive at window manager (LightDM/Ly).
+1. Arrive at window manager (Ly).
     - Use `Ctrl+Alt+F1` if you need to enter a terminal TTY (TTY1). Ly/LightDM uses one of the first TTYs, the rest are terminal TTYs.
 1. Select the i3 WM and log in.
 1. If prompted, follow the basic i3 setup wizard:
@@ -351,6 +351,9 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 
 ### Setup Post-Window Manager Stuff
 
+1. Enable numlock on by default in X11:
+    1. Install: `sudo pacman -S numlockx`
+    1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
 1. Setup displays:
     1. (Note) Using an xrandr script instead of Xorg config due to problems with 144Hz displays and reduced flexibility.
     1. (Note) DPMS (Display Power Management Signaling) is automatically enabled for all displays.
@@ -392,10 +395,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
             bindsym XF86MonBrightnessUp exec --no-startup-id /usr/local/bin/display-backlight +1
             bindsym XF86MonBrightnessDown exec --no-startup-id /usr/local/bin/display-backlight -1
             ```
-1. (Optional) Setup better console font:
-    1. (Note) Using the MesloLGS font. See [this](https://github.com/romkatv/powerlevel10k#fonts) for more info.
-    1. Create the TTF dir: `sudo mkdir -p /usr/share/fonts/TTF`
-    1. Download fonts: `for x in Regular Bold Italic Bold\ Italic; do sudo curl -sSfL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20${x/ /%20}.ttf" -o "/usr/share/fonts/TTF/$x.ttf"; done`
 1. Setup the Polybar system bar:
     1. (Note) i3bar, the default i3 system bar, shows workspaces and tray icons. It can include extra info like IP addresses and resource usage using i3status or i3blocks. Polybar is a replacement for i3bar.
     1. Disable i3bar: Comment the whole `bar` section of the i3 config.
@@ -412,13 +411,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         - Update the panel modules in the `modules-{left,center,right}` variables.
     1. Create a startup script: See the section below to use the new "main" bar. Make it executable.
     1. Add to i3: In the i3 config, add `exec_always --no-startup-id $HOME/.config/polybar/launch.sh`.
-1. Setup the Alacritty terminal emulator (or some other):
-    1. Install: `sudo pacman -S alacritty`
-    1. Create the config dir: `mkdir ~/.config/alacritty/`
-    1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.yml -o ~/.config/alacritty/dracula.yml`
-    1. Configure: Setup `~/.config/alacritty/alacritty.yml`, see the example config below.
-    1. Setup i3: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
-    1. (Note) Press `Ctrl+Shift+Space` to enter vi mode, allowing you to e.g. move around (and scroll up) using arrow keys and select text using `V` or `Shift+V`. Press `Ctrl+Shift+Space` again to exit.
 1. Setup the Rofi application launcher:
     1. Install: `sudo pacman -S rofi`
     1. Install rofimoji for emoji menu: `sudo pacman -S rofimoji xdotool`
@@ -429,10 +421,6 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
     1. Setup i3 drun shortcut: In the i3 config, set `bindsym $mod+d exec rofi -show drun`.
     1. Setup i3 window shortcut: In the i3 config, set `bindsym $mod+shift+d exec rofi -show window`.
     1. Setup i3 emoji shortcut: In the i3 config, set `bindsym $mod+mod1+d exec rofi -modi "emoji:rofimoji" -show emoji`.
-1. Setup background image:
-    1. Download a desktop image.
-    1. Install the FEH image viewer: `sudo pacman -S feh`
-    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/background.png` (example).
 1. (Optional) Disable mouse hover window focus (you can still click windows to focus):
     1. In the i3 config, set `focus_follows_mouse no`.
 1. (Optional) Setup i3 gaps:
@@ -443,7 +431,67 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
 1. Install clipboard manager:
     1. `sudo pacman -S xsel`
     1. **TODO** Fix this. Basic copy-pase doesn't require xsel. Copying from a terminal and closing it erases the copy content, which is undesirable.
-1. (Optional) Setup wireless networking tray icon and GUI (for iwd):
+1. Setup screen locking:
+    1. Install the `i3lock-color` screen locker: `yay -S i3lock-color`
+    1. Install the the `xss-lock` automatic locker: `sudo pacman -S xss-lock`
+    1. Set a variable to run i3lock in i3: In the i3 config, before anything i3lock related, set e.g. `set $i3lock i3lock --nofork --ignore-empty-password --pass-media-keys`, to avoid repetition.
+    1. (Optional) Specify an i3lock background image: To the above command, add e.g. `--image Pictures/background.png`.
+    1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id $i3lock`. This may conflict with some `focus` keybinds you probably don't need, so just remove those (i3 will tell you about it if you don't remove them).
+    1. Update i3 for automatic locking: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- $i3lock`. (Test with `loginctl lock-session` after restarting or relogging.)
+
+## Setup Hyprland
+
+1. Install:
+    1. Basics: `sudo pacman -S hyprland kitty brightnessctl xdg-desktop-portal-hyprland xdg-desktop-portal-gtk`
+    1. Laptop stuff: `sudo pacman -S `
+1. Fix NVIDIA stuff:
+    1. **TODO**: See the Hyprland wiki page.
+1. Start Hyprland:
+    1. Reboot the PC.
+    1. (Note) If you need a working terminal, just switch to another TTY.
+    1. In the Ly login select "Hyprland" (not "uwsasdasd? managed").
+    1. Open the terminal: `Super+Q`
+    1. (Note) The keyboard layout and stuff is probably all wrong at this point.
+1. Update config basics:
+    1. Open the config: `vim ~/.config/hypr/hyprland.conf`
+    1. (Note) Check the wiki for options: [Variables](https://wiki.hypr.land/Configuring/Variables/)
+    1. (Note) Hyprland updates immediately when the file is saved.
+    1. Set the keyboard layout: `input { kb_layout = no }` (Norway)
+    1. Set repeat rate/delay: `input { repeat_rate = 50 // repeat_delay = 500 }`
+    1. Enable gestures: `gestures { workspace_swipe = true // workspace_swipe_fingers = 3 }`
+    1. Set monitor mode: `monitor = eDP-1,1920x1080@60,0x0,1` (example for 1080p60, position 0x0, scaling 1x)
+        - Check current and available modes: `hyprctl monitors`
+        - To use auto mode instead: `monitor = ,preferred,auto,auto`
+1. Fix monitor resolution:
+    1. Check current mode (top) and available modes(bottom): `hyprctl monitors`
+    1. Update
+
+**TODO**:
+
+- Test music shortcuts.
+- Set keyboard lighting at boot or login: `brightnessctl -d "*::kbd_backlight" set 4`
+
+## Setup Extras
+
+### General
+
+1. (Optional) Setup better console font:
+    1. (Note) Using the MesloLGS font. See [this](https://github.com/romkatv/powerlevel10k#fonts) for more info.
+    1. Create the TTF dir: `sudo mkdir -p /usr/share/fonts/TTF`
+    1. Download fonts: `for x in Regular Bold Italic Bold\ Italic; do sudo curl -sSfL "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20${x/ /%20}.ttf" -o "/usr/share/fonts/TTF/$x.ttf"; done`
+1. Setup the Alacritty terminal emulator (or some other):
+    1. Install: `sudo pacman -S alacritty`
+    1. Create the config dir: `mkdir ~/.config/alacritty/`
+    1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.yml -o ~/.config/alacritty/dracula.yml`
+    1. Configure: Setup `~/.config/alacritty/alacritty.yml`, see the example config below.
+    1. Setup i3: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
+    1. (Note) Press `Ctrl+Shift+Space` to enter vi mode, allowing you to e.g. move around (and scroll up) using arrow keys and select text using `V` or `Shift+V`. Press `Ctrl+Shift+Space` again to exit.
+1. Setup background image:
+    1. Download a desktop image.
+    1. Install the FEH image viewer: `sudo pacman -S feh`
+    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/background.png` (example).
+1. (Optional) Setup iwd wireless networking tray icon and GUI:
+    1. **TODO**: i3/Xorg only? Try one of the other GUIs?
     1. (Note) Make sure your user is a member of the `netdev` group to allow controling iwd.
     1. Install (with snixembed compat library for Polybar): `yay -S iwgtk snixembed-git`
     1. Start snixembed in i3 config: `exec --no-startup-id snixembed`
@@ -460,14 +508,7 @@ Note: Install _either_ the LightDM (X11 GUI) or Ly (TTY TUI) display manager, no
         1. Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 8` (or 12 for high-res).
     1. Restart dunst (if any changes): `systemctl --user restart dunst`
     1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
-1. Setup screen locking:
-    1. Install the `i3lock-color` screen locker: `yay -S i3lock-color`
-    1. Install the the `xss-lock` automatic locker: `sudo pacman -S xss-lock`
-    1. Set a variable to run i3lock in i3: In the i3 config, before anything i3lock related, set e.g. `set $i3lock i3lock --nofork --ignore-empty-password --pass-media-keys`, to avoid repetition.
-    1. (Optional) Specify an i3lock background image: To the above command, add e.g. `--image Pictures/background.png`.
-    1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id $i3lock`. This may conflict with some `focus` keybinds you probably don't need, so just remove those (i3 will tell you about it if you don't remove them).
-    1. Update i3 for automatic locking: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- $i3lock`. (Test with `loginctl lock-session` after restarting or relogging.)
-1. Setup autostarting of desktop applications:
+1. Setup autostarting of desktop applications: (**TODO**: Wayland)
     1. (Note) Desktop applications are applications with `<name>.desktop` files. These applications may be autostarted using a tool like `dex`, following the XDG Autostart spec.
     1. (Note) To enable autostarting for a desktop application, find/create a `.desktop` entry file for it in `/etc/xdg/autostart` (system) `~/.config/autostart` (user). A simple method is to find the entry in e.g. `/usr/share/applications/` (system) or `~/.local/share/applications/` (user), then symlink it into the appropriate autostart directory (e.g. `ln -s /usr/share/applications/discord.desktop ~/.config/autostart`).
     1. Install dex: `sudo pacman -S dex`
@@ -492,11 +533,11 @@ See [PipeWire (Applications)](/personal-devices/applications/#pipewire) for more
 1. (Optional) Install useful audio applications:
     1. Install the Helvum patchbay to patch nodes and endpoints (inputs and outputs for all audio devices): `sudo pacman -S helvum`
     1. See the [PipeWire page (Arch Wiki)](https://wiki.archlinux.org/title/PipeWire).
-1. Setup media keys:
+1. Setup media keys: (**TODO**: Wayland)
     1. (Note) Install e.g. Spotify (`aur/spotify`, official) to test with.
     1. Install the playerctl utility for easy control: `sudo pacman -S playerctl`
     1. Add the following to the i3 config: See the i3 media keys config snippet below.
-1. Tweak audio volume keys:
+1. Tweak audio volume keys: (**TODO**: Wayland)
     1. Install `pamixer` (like ALSA's `amixer` but for PulseAudio): `sudo pacman -S pamixer`
     1. Open the i3 config and find the `bindsym XF86AudioRaiseVolume` and similar lines.
     1. See the config i3 volume keys snippet below.
@@ -566,7 +607,7 @@ See [PipeWire (Applications)](/personal-devices/applications/#pipewire) for more
     1. Install: `sudo pacman -S libreoffice-fresh`
 1. Setup the Okular PDF reader:
     1. Install: `sudo pacman -S okular`
-1. Setup the screenshot tool Maim (for keybinds and easy CLI usage):
+1. Setup the screenshot tool Maim (for keybinds and easy CLI usage): (**TODO**: Wayland)
     1. Install: `sudo pacman -S maim`
     1. Setup i3 keybinds: See the i3 config snippet below.
 1. Setup the screenshot tool Flameshot (for GUI and on-screen editing):
@@ -582,10 +623,6 @@ See [PipeWire (Applications)](/personal-devices/applications/#pipewire) for more
     1. Install: `sudo pacman -S nmap tcpdump wireshark-qt`
 1. Set default applications (after installation):
     1. Web browser: `xdg-settings set default-web-browser firefox.desktop`
-
-### Extra (Optional)
-
-- Setup secure boot using your own keys.
 
 ## Config Snippets
 

@@ -171,7 +171,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 - [Android](/personal-devices/android/)
 - [PC Applications](/personal-devices/applications/)
-- [Arch (i3)](/personal-devices/arch-i3/)
+- [Arch Linux](/personal-devices/arch/)
 - [Kubuntu](/personal-devices/kubuntu/)
 - [Linux](/personal-devices/linux/)
 - [Manjaro (KDE)](/personal-devices/manjaro-kde/)

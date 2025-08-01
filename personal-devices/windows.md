@@ -7,13 +7,18 @@ breadcrumbs:
 
 ## Installation
 
-- There's no need to provide a product/activation key. If the PC (motherboard?) has been activated before, it will automatically activate when starting the first time.
-- Use a local account. Link to a Microsoft account later if needed, but preferably only for Microsoft apps. **TODO** Only possible without an internet connection and with certain commands. Update this note later.
-- Say no to everything privacy related.
+- Product key:
+    - There's no need to provide a product/activation key. If the PC (motherboard?) has been activated before, it will automatically activate when starting the first time.
+- Local user account:
+    - Must be done early in the installation wizard.
+    - Press `Shift+F10` to open a terminal (including `Fn` if laptop).
+    - Disable the internet connection requirement (triggers a restart): `oobe\bypassnro`
+    - If a network interface is connected, it needs to be disconnected before proceeding with the wizard. Open the terminal again and enter `ipconfig /release`. If using Wi-FI, simply press "I don't have internet" instead.
+    - Link to a Microsoft account later if needed, but preferably only for Microsoft apps.
+- Options:
+    - Say no to everything privacy related.
 
-## Setup (Windows 11)
-
-**TODO**: There notes are mostly from Win10 and has not been fully tested with Win11 yet.
+## Setup
 
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
@@ -87,6 +92,8 @@ breadcrumbs:
     - Keep Game Mode enabled.
 
 ## Setup (Windows 10)
+
+*Possibly outdated.*
 
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
@@ -181,8 +188,6 @@ breadcrumbs:
 
 ## Windows Subsystem for Linux (WSL)
 
-**TODO** Update for Win11.
-
 ### Setup
 
 More info: [Windows Subsystem for Linux Installation Guide for Windows 10 (Microsoft Docs)](https://docs.microsoft.com/en-us/windows/wsl/install-win10)
@@ -190,6 +195,10 @@ More info: [Windows Subsystem for Linux Installation Guide for Windows 10 (Micro
 1. Prerequisites:
     - Intel VT-x or AMD SVM must be enabled in the BIOS settings. Check that the "Virtualization" field in the Task Manager CPU page says "Enabled" afterwards.
     - Hyper-V is not required.
+1. Allow using VirtualBox and WSL on the same PC:
+    1. Disable hypervisor launch (admin terminal): `bcdedit /set hypervisorlaunchtype off`
+    1. Disable "Hyper-V" and "Windows Sandbox" in the Windows Features.
+    1. **TODO**: Disable "Windows Hypervisor Platform" too for VirtualBox hardware virtualization mode to work? Breaks WSL?
 1. Install (Ubuntu, the default):
     1. Open the Windows command prompt or PowerShell in admin mode.
     1. Start installer: `wsl --install`

@@ -7,6 +7,22 @@ breadcrumbs:
 
 *Note: Unless specified, Debian/Ubuntu is assumed.*
 
+## Alacritty
+
+### Setup Notes (Windows)
+
+- Installation:
+    - Arch: `sudo pacman -S alacritty`
+    - Windows: Download from the website (GitHub release link)
+- Config file location:
+    - Arch: `~/.config/alacritty/alacritty.yml`
+    - Windows: **TODO**
+- Setup for Arch with i3:
+    - See [my Arch i3 setup notes](/personal-devices/arch-i3/) for steps and an example config.
+- Setup for Windows, using WSL:
+    - Alternative 1: Create a shortcut with WSL as the command: `"C:\path\to\alacritty\alacritty.exe" --command ubuntu` (assuming Ubuntu in WSL)
+    - Alternative 2: Modify the config to use WSL by default: `shell: {programs: ubuntu, args: {...}}` (pseudoconfig)
+
 ## Companion (for Streamdeck) (Linux)
 
 Installed such that its run by logged in users (no system service).
