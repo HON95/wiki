@@ -48,7 +48,9 @@ Components:
 
 ### Hyprland
 
-- **TODO**
+- [Hyprland Wiki](https://wiki.hypr.land/Useful-Utilities/Status-Bars/)
+- [Awesome Hyprland](https://github.com/hyprland-community/awesome-hyprland)
+- [Useful add ons for sway](https://github.com/swaywm/sway/wiki/Useful-add-ons-for-sway)
 
 ## Setup Basics
 
@@ -443,7 +445,7 @@ If not using Hyprland (Wayland).
 If not using i3 (X11).
 
 1. Install:
-    1. Basics: `sudo pacman -S hyprland kitty brightnessctl xdg-desktop-portal-hyprland xdg-desktop-portal-gtk hyprpolkitagent`
+    1. Basics: `sudo pacman -S hyprland kitty brightnessctl xdg-desktop-portal-hyprland xdg-desktop-portal-gtk hyprpolkitagent qt5-wayland qt6-wayland`
 1. Fix NVIDIA stuff:
     1. **TODO**: See the Hyprland wiki page.
 1. Start Hyprland:
