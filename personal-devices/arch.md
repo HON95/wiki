@@ -28,6 +28,7 @@ Components:
     - Wofi
     - Polybar equivalent
     - NVIDIA stuff
+    - UWSM?
     - ... see i3 steps
 
 ## Resources
@@ -316,15 +317,12 @@ Components:
 1. Setup fonts:
     1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
 
-## Setup i3
+## Setup i3 (Alternative)
 
-### Setup the Display Server
+If not using Hyprland (Wayland).
 
 1. Setup Xorg Display Server:
     1. Install: `sudo pacman -S xorg-server xorg-xinit xorg-xrandr xorg-xinput`
-
-### Setup the i3 Window Manager Basics
-
 1. (Note) Some notes about i3:
     - Se [i3](/personal-devices/applications/#i3) for more personal notes about i3.
     - Use `Mod+Shift+R` to reload the i3 config.
@@ -348,9 +346,6 @@ Components:
     1. Generate a new config.
     1. `Win` as default modifier.
 1. Press `Mod+Enter` to open a terminal.
-
-### Setup Post-Window Manager Stuff
-
 1. Enable numlock on by default in X11:
     1. Install: `sudo pacman -S numlockx`
     1. Configure: Create `/etc/X11/xinit/xinitrc.d/90-numlock.sh`, containing `#!/bin/sh` and `numlockx &`. Make it executable.
@@ -438,12 +433,17 @@ Components:
     1. (Optional) Specify an i3lock background image: To the above command, add e.g. `--image Pictures/background.png`.
     1. Set a locking keybind in i3: In the i3 config, add `bindsym $mod+l exec --no-startup-id $i3lock`. This may conflict with some `focus` keybinds you probably don't need, so just remove those (i3 will tell you about it if you don't remove them).
     1. Update i3 for automatic locking: In the i3 config, find the example `xss-lock` line and replace it with `exec --no-startup-id xss-lock --transfer-sleep-lock -- $i3lock`. (Test with `loginctl lock-session` after restarting or relogging.)
+1. Setup background image:
+    1. Download a desktop image.
+    1. Install the FEH image viewer: `sudo pacman -S feh`
+    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/background.png` (example).
 
-## Setup Hyprland
+## Setup Hyprland (Alternative)
+
+If not using i3 (X11).
 
 1. Install:
-    1. Basics: `sudo pacman -S hyprland kitty brightnessctl xdg-desktop-portal-hyprland xdg-desktop-portal-gtk`
-    1. Laptop stuff: `sudo pacman -S `
+    1. Basics: `sudo pacman -S hyprland kitty brightnessctl xdg-desktop-portal-hyprland xdg-desktop-portal-gtk hyprpolkitagent`
 1. Fix NVIDIA stuff:
     1. **TODO**: See the Hyprland wiki page.
 1. Start Hyprland:
@@ -458,18 +458,19 @@ Components:
     1. (Note) Hyprland updates immediately when the file is saved.
     1. Set the keyboard layout: `input { kb_layout = no }` (Norway)
     1. Set repeat rate/delay: `input { repeat_rate = 50 // repeat_delay = 500 }`
-    1. Enable gestures: `gestures { workspace_swipe = true // workspace_swipe_fingers = 3 }`
     1. Set monitor mode: `monitor = eDP-1,1920x1080@60,0x0,1` (example for 1080p60, position 0x0, scaling 1x)
         - Check current and available modes: `hyprctl monitors`
         - To use auto mode instead: `monitor = ,preferred,auto,auto`
-1. Fix monitor resolution:
-    1. Check current mode (top) and available modes(bottom): `hyprctl monitors`
-    1. Update
+    1. Fix other stuff: **TODO**: Example config.
+1. Fix XWayland and X11 apps:
+    1. Disable X11 scaling: In `hyprland.conf`, put `xwayland { force_zero_scaling = true }`.
+    1. Make Electron apps and VSCode use Wayland: Create `~/.config/{electron,code}-flags.conf` and add `--ozone-platform=wayland`.
 
 **TODO**:
 
+- Polybar equivalent.
 - Test music shortcuts.
-- Set keyboard lighting at boot or login: `brightnessctl -d "*::kbd_backlight" set 4`
+- Start hyprpolkitagent from Hyprland? https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/
 
 ## Setup Extras
 
@@ -482,14 +483,10 @@ Components:
 1. Setup the Alacritty terminal emulator (or some other):
     1. Install: `sudo pacman -S alacritty`
     1. Create the config dir: `mkdir ~/.config/alacritty/`
-    1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.yml -o ~/.config/alacritty/dracula.yml`
-    1. Configure: Setup `~/.config/alacritty/alacritty.yml`, see the example config below.
-    1. Setup i3: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
+    1. (Optional) Download the Dracula theme: `curl https://raw.githubusercontent.com/dracula/alacritty/master/dracula.toml -o ~/.config/alacritty/dracula.toml`
+    1. Configure: Setup `~/.config/alacritty/alacritty.toml`, see the example config [here](https://github.com/HON95/configs/blob/master/alacritty/alacritty.toml).
+    1. (i3) Setup terminal keybind: In the i3 config, replace the `bindsym $mod+Return ...` line with `bindsym $mod+Return exec alacritty`
     1. (Note) Press `Ctrl+Shift+Space` to enter vi mode, allowing you to e.g. move around (and scroll up) using arrow keys and select text using `V` or `Shift+V`. Press `Ctrl+Shift+Space` again to exit.
-1. Setup background image:
-    1. Download a desktop image.
-    1. Install the FEH image viewer: `sudo pacman -S feh`
-    1. Update i3: In the i3 config, set `exec_always --no-startup-id feh --bg-scale $HOME/Pictures/background.png` (example).
 1. (Optional) Setup iwd wireless networking tray icon and GUI:
     1. **TODO**: i3/Xorg only? Try one of the other GUIs?
     1. (Note) Make sure your user is a member of the `netdev` group to allow controling iwd.
@@ -499,18 +496,18 @@ Components:
     1. (Optional) Start tray icon in i3 config instead: `exec --no-startup-id iwgtk -i`
     1. (Example) Test: `iwgtk` (GUI) or `iwgtk -i` (tray icon)
         - Might fail until relog/reboot.
-1. Setup desktop notifications:
-    1. Install the `dunst` server and the `libnotify` support library: `sudo pacman -S dunst libnotify`
+1. Setup desktop notifications (dunst):
+    1. Install: `sudo pacman -S dunst libnotify`
     1. (Optional) Modify the config:
         1. (Note) The global config is `/etc/dunst/dunstrc`.
-        1. Create and open it: `mkdir -p ~/.config/dunst && vim ~/.config/dunst/dunstrc`
-        1. For high-res displays, fix scaling (doesn't affect text size): In the `global` section, set e.g. `scale = 2`.
-        1. Change the font and font size: In the `global` section, set e.g. `font = MesloLGS NF 8` (or 12 for high-res).
+        1. Create local config: `mkdir -p ~/.config/dunst && vim ~/.config/dunst/dunstrc`
+        1. See the example config below.
     1. Restart dunst (if any changes): `systemctl --user restart dunst`
     1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
-1. Setup autostarting of desktop applications: (**TODO**: Wayland)
+1. Setup autostarting of desktop applications:
+    1. **TODO**: Wayland?
     1. (Note) Desktop applications are applications with `<name>.desktop` files. These applications may be autostarted using a tool like `dex`, following the XDG Autostart spec.
-    1. (Note) To enable autostarting for a desktop application, find/create a `.desktop` entry file for it in `/etc/xdg/autostart` (system) `~/.config/autostart` (user). A simple method is to find the entry in e.g. `/usr/share/applications/` (system) or `~/.local/share/applications/` (user), then symlink it into the appropriate autostart directory (e.g. `ln -s /usr/share/applications/discord.desktop ~/.config/autostart`).
+    1. (Note) To enable autostarting for a desktop application, find/create a `.desktop` entry file for it in `/etc/xdg/autostart` (system) or `~/.config/autostart` (user). A simple method is to find the entry in e.g. `/usr/share/applications/` (system) or `~/.local/share/applications/` (user), then symlink it into the appropriate autostart directory (e.g. `ln -s /usr/share/applications/discord.desktop ~/.config/autostart/`).
     1. Install dex: `sudo pacman -S dex`
     1. Add this to your i3 config: `exec --no-startup-id dex --autostart --environment i3`
     1. (Optional) Test it: `dex --autostart --environment i3 &>/dev/null`
@@ -765,6 +762,21 @@ network={
 }
 ```
 
+### Dunst Config
+
+File: `~/.config/dunst/dunstrc`
+
+```ini
+[global]
+monitor = 1
+origin = top-left
+#scale = 1
+font = MesloLGS NF 8
+background = "#333"
+frame_color = "#888"
+foreground = "#eee"
+```
+
 ### Polybar Launch Script
 
 File: `~/.config/polybar/launch.sh`
@@ -790,25 +802,6 @@ format = <label>
 #exec = python /usr/share/polybar/scripts/spotify_status.py -f '[{artist}] {song}' -t 50 -q
 exec = python /usr/share/polybar/scripts/spotify_status.py -f '{song}' -t 25 -q
 format-underline = #1db954
-```
-
-### Alacritty Config
-
-File: `~/.config/alacritty/alacritty.yml`
-
-```yaml
-font:
-  # normal:
-  #   family: MesloLGS NF
-  #   style: Regular
-  size: 9
-
-env:
-  TERM: xterm-256color
-
-import:
-  # Theme
-  - ~/.config/alacritty/dracula.yml
 ```
 
 ### Rofi Config
