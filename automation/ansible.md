@@ -7,6 +7,7 @@ breadcrumbs:
 
 ## Usage
 
+- Use `ansible` for ad hoc runs or `ansible-playbook` for running playbooks.
 - Specify SSH password: `--ask-pass`
 - Specify sudo password: `--ask-become-pass`
 - Specify username: `-u <username>`
@@ -30,6 +31,11 @@ breadcrumbs:
 - Specify inventory file: `ansible-playbook -i <hosts> <playbook>`
 - Limit which groups/hosts to use (comma-separated): `ansible-playbook -l <group|host> <playbook>`
 - Limit which tasks to run using tags (comma-separated): `ansible-playbook -t <tag> <playbook>`
+
+### Inventory
+
+- See overview: `ansible-inventory -i <inventory-file> --graph`
+- See host details: `ansible-inventory -i <inventory-file> --list`
 
 ### Vault
 
