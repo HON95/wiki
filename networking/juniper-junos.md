@@ -131,6 +131,9 @@ Common setup for MX, SRX, QFX, EX.
     1. `wildcard range set interface ge-0/0/[0-7] disable`
     1. `set interface cl-1/0/0 disable`
     1. `set interface dl0 disable`
+1. Set up port channelization (breakout ports):
+    1. Should happen automatically, but not always. Not all quad ports support port channelization.
+    1. Manually set breakout ports: `set chassis fpc 0 pic 0 port 48 channel-speed 10g ` (example)
 1. (Optional) Setup interface-ranges (apply config to multiple configured interfaces):
     - Declare range: `edit interfaces interface-range <name>`
     - Add member ports: `member-range <begin-if> to <end-if>`
