@@ -189,11 +189,10 @@ Components:
             - `ip a` should show a `wlp*` interface for the device.
             - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
         1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
-        1. Create the `netdev` group to allow users to control iwd/wpa_supplicant: `groupadd -r netdev`
     - Using iwd (recommended):
         1. Install: `pacman -S iwd`
         1. Configure: See example config below for config `/etc/iwd/main.conf`.
-        1. (Note) Add your user to the network group to allow managing IWD: `sudo usermod -aG network <user>` (**TODO** "netdev"?)
+        1. (Note) Add your user to the network group to allow managing IWD: `sudo usermod -aG network <user>`
         1. Enable: `systemctl enable --now iwd.service`
             - If this fails, you may need to reboot.
         1. Setup the network config:
@@ -270,7 +269,7 @@ Components:
     1. Enter the config: `EDITOR=vim visudo`
     1. Add line to allow sudo group without password: `%sudo ALL=(ALL:ALL) NOPASSWD: ALL`
 1. Add a personal admin user:
-    1. Create the user and add it to relevant groups (remove missing groups): `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video,netdev <user>` (remove any missing groups)
+    1. Create the user and add it to relevant groups (remove missing groups): `useradd -m -G sudo,adm,sys,uucp,proc,systemd-journal,video,network <user>` (remove any missing groups)
     1. Set its password: `passwd <user>`
     1. (Optional) Relog to test the user.
 1. Install yay to access the AUR (as non-root):
@@ -491,7 +490,7 @@ If not using i3 (X11).
     1. (Note) Press `Ctrl+Shift+Space` to enter vi mode, allowing you to e.g. move around (and scroll up) using arrow keys and select text using `V` or `Shift+V`. Press `Ctrl+Shift+Space` again to exit.
 1. (Optional) Setup iwd wireless networking tray icon and GUI:
     1. **TODO**: i3/Xorg only? Try one of the other GUIs?
-    1. (Note) Make sure your user is a member of the `netdev` group to allow controling iwd.
+    1. (Note) Make sure your user is a member of the `network` group to allow controling iwd.
     1. Install (with snixembed compat library for Polybar): `yay -S iwgtk snixembed-git`
     1. Start snixembed in i3 config: `exec --no-startup-id snixembed`
     1. (Optional) Remove the XDG autostart file: `rm /etc/xdg/autostart/iwgtk-indicator.desktop`
@@ -720,7 +719,7 @@ File: `/etc/wpa_supplicant/wpa_supplicant.conf`
 
 ```
 ctrl_interface=/run/wpa_supplicant
-ctrl_interface_group=netdev
+ctrl_interface_group=network
 # Allow wpa_cli to add networks and change the config?
 # File permissions may get fucked.
 update_config=0
