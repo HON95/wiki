@@ -5,13 +5,22 @@ breadcrumbs:
 ---
 {% include header.md %}
 
-## Firmware Updates
+## Management
 
-### G11 and lower
+- Default credentials: User `root`, password `calvin`.
+- Password recommendations (mainly for older gens):
+    - No special symbols and no spaces. Dash should be fine.
+    - Case sensitivity is inconsistent, so always use lower-case.
+
+## Tasks
+
+### Firmware Updates
+
+#### G11 and lower
 
 There are lots of ways to upgrade the firmware, but most are painful and typically don't even work (e.g. loading firmware files in the Lifecycle Controller, Repository Manager custom ISOs, Repository Manager repositories, Repository Manager firmware files, and the Server Update Utility (SUU)). One way that *does* work is finding a pre-built bootable ISO and booting into it, but finding an ISO is getting harder.
 
-#### Upgrading From Files Using System Services
+##### Upgrading From Files Using System Services
 
 1. Download the file.
     - The one for Windows.
@@ -26,16 +35,18 @@ There are lots of ways to upgrade the firmware, but most are painful and typical
 1. Select local drive, select the USB drive and enter the filename on the drive.
 1. Success (maybe).
 
-### G12 and Later
+#### G12 and Later
 
 Update through iDRAC 7 using HTTP site `downloads.dell.com`.
 
-## Management
+### Reset iDRAC
 
-- Default credentials: User `root`, password `calvin`.
-- Password recommendations (mainly for older gens):
-    - No special symbols and no spaces. Dash should be fine.
-    - Case sensitivity is inconsistent, so always use lower-case.
+In case you entered the wrong password to many times in the web GUI or something.
+
+1. Log into the iDRAC using SSH (same credentials as web).
+1. Enter RACADM: `racadm`
+1. Reset iDRAC: `racadm racreset soft`
+1. Wait.
 
 ## Memory
 
