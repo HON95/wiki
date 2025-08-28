@@ -466,11 +466,26 @@ If not using i3 (X11).
 1. Fix XWayland and X11 apps:
     1. Disable X11 scaling: In `hyprland.conf`, put `xwayland { force_zero_scaling = true }`.
     1. Make Electron apps and VSCode use Wayland: Create `~/.config/{electron,code}-flags.conf` and add `--ozone-platform=wayland`.
+1. Setup application launcher (Rofi):
+    1. Install: `sudo pacman -S rofi rofimoji xdotool`
+    1. (Optional) Find a theme interactively (without selecting any): `rofi-theme-selector` (e.g. `glue_pro_blue`)
+    1. Configure Rofi: Create `~/.config/rofi/config.rasi`, see the example below.
+    1. Configure Rofimoji: Create `~/.config/rofimoji.rc` and set `action = copy` (copy to clipboard by default).
+    1. Setup Hyprland drun shortcut: In the i3 config, set `bind = SUPER, D, exec, rofi -show drun`.
+    1. Setup Hyprland window shortcut: In the i3 config, set `bind = SUPER SHIFT, D, exec, rofi -show window`.
+    1. Setup Hyprland emoji shortcut: In the i3 config, set `bind = SUPER ALT, D, exec, rofi -modi "emoji:rofimoji" -show emoji`.
+1. Setup status bar (Waybar):
+    1. Install: `sudo pacman -S waybar`
+    1. Add config files: `mkdir ~/.config/waybar/ ; cp /etc/xdg/waybar/* ~/.config/waybar/`
+    1. Customize it. E.g. replace `sway/workspaces` with `hyprland/workspaces`.
+    1. Make active workspace marked: Replace `#workspaces button.focused` with `#workspaces button.active` in `~/.config/waybar/style.css`.
+    1. Autostart: Add `exec-once = waybar` to the Hyprland-config.
+1. Setup screen locker (hyprlock):
+    1. Install: `sudo pacman -S hyprlock`
+    1. Add default config: `curl https://raw.githubusercontent.com/hyprwm/hyprlock/refs/heads/main/assets/example.conf -o ~/.config/hypr/hyprlock.conf`
 
 **TODO**:
 
-- Polybar equivalent.
-- Test music shortcuts.
 - Start hyprpolkitagent from Hyprland? https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/
 
 ## Setup Extras
