@@ -483,6 +483,9 @@ If not using i3 (X11).
 1. Setup screen locker (hyprlock):
     1. Install: `sudo pacman -S hyprlock`
     1. Add default config: `curl https://raw.githubusercontent.com/hyprwm/hyprlock/refs/heads/main/assets/example.conf -o ~/.config/hypr/hyprlock.conf`
+    1. Add Hyprland keybinds:
+        - Lock manually: `bind = SUPER, L, exec, hyprlock`
+        - Lock on lid close: `bindl = , switch:on:Lid Switch, exec, hyprlock --immediate`
 
 **TODO**:
 
@@ -623,10 +626,16 @@ See [PipeWire (Applications)](/personal-devices/applications/#pipewire) for more
 1. Setup the screenshot tool Maim (for keybinds and easy CLI usage): (**TODO**: Wayland)
     1. Install: `sudo pacman -S maim`
     1. Setup i3 keybinds: See the i3 config snippet below.
-1. Setup the screenshot tool Flameshot (for GUI and on-screen editing):
+1. (i3) Setup Flameshot screenshot/snippet utility:
     1. Install: `sudo pacman -S flameshot`
     1. (Usage) Start the tray icon: Run the "Fireshot" desktop application.
     1. (Usage) Directly open the capture GUI from the terminal: `fireshot gui`
+1. (Hyprland) Setup hyprshot screenshot/snippet utility:
+    1. Install: `sudo pacman -S hyprshot`
+    1. Add Hyprland keybinds:
+        - Screenshot a window: `bind = SUPER, PRINT, exec, hyprshot -m window --clipboard-only`
+        - Screenshot a monitor: `bind = , PRINT, exec, hyprshot -m output --clipboard-only`
+        - Screenshot a region: `bind = SUPER SHIFT, S, exec, hyprshot -m region --clipboard-only`
 1. Setup the 7-Zip CLI/GUI archiver:
     1. Install: `yay -S p7zip-gui`
     1. (Note) Don't use the `.7z` file format, it doesn't preserve owner info.
