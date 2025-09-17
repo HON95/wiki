@@ -486,6 +486,11 @@ If not using i3 (X11).
     1. Add Hyprland keybinds:
         - Lock manually: `bind = SUPER, L, exec, hyprlock`
         - Lock on lid close: `bindl = , switch:on:Lid Switch, exec, hyprlock --immediate`
+1. Setup desktop background (hyprpaper):
+    1. Install: `sudo pacman -S hyprpaper`
+    1. Find a background image somewhere: `cp yolo.jpg ~/Pictures/desktop.jpg`
+    1. Create the config file `~/.config/hypr/hyprpaper.conf`, see the example below.
+    1. Autostart: Add `exec-once = hyprpaper` to the Hyprland config.
 
 **TODO**:
 
@@ -935,6 +940,18 @@ Requires `maim`.
 # Capture screen (active window and full)
 bindsym $mod+Print exec maim -i $(xdotool getactivewindow) $HOME/Downloads/Screenshot_$(date -Iseconds).png
 bindsym $mod+Shift+Print exec maim $HOME/Downloads/Screenshot_$(date -Iseconds).png
+```
+
+### Hyprpaper
+
+File: `~/.config/hypr/hyprpaper.conf`
+
+```
+# Images to preload
+preload = ~/Pictures/desktop.jpg
+
+# Preloaded images to use on different screen (replace "monitor" or leave empty before comma to use on all)
+wallpaper = monitor, ~/Pictures/desktop.jpg
 ```
 
 ## Troubleshooting
