@@ -486,11 +486,19 @@ If not using i3 (X11).
     1. Add Hyprland keybinds:
         - Lock manually: `bind = SUPER, L, exec, hyprlock`
         - Lock on lid close: `bindl = , switch:on:Lid Switch, exec, hyprlock --immediate`
+1. Setup idle management daemon (hypridle):
+    1. Install: `sudo pacman -S hypridle`
+    1. Create the config file `~/.config/hypr/hypridle.conf`, see the example below.
+    1. Autostart: Add `exec-once = hypridle` to the Hyprland config.
 1. Setup desktop background (hyprpaper):
+    1. Disable default Hyprland wallpapers: Add `misc { disable_splash_rendering = true \n disable_hyprland_logo = true }` to the Hyprland config.
     1. Install: `sudo pacman -S hyprpaper`
     1. Find a background image somewhere: `cp yolo.jpg ~/Pictures/desktop.jpg`
     1. Create the config file `~/.config/hypr/hyprpaper.conf`, see the example below.
     1. Autostart: Add `exec-once = hyprpaper` to the Hyprland config.
+1. Setup color picker (hyprpicker):
+    1. Install: `sudo pacman -S hyprpicker`
+    1. Enable hotkey: Add `bind = SUPER SHIFT, C, exec, hyprpicker -ra` to the Hyprland config.
 
 **TODO**:
 
@@ -940,6 +948,51 @@ Requires `maim`.
 # Capture screen (active window and full)
 bindsym $mod+Print exec maim -i $(xdotool getactivewindow) $HOME/Downloads/Screenshot_$(date -Iseconds).png
 bindsym $mod+Shift+Print exec maim $HOME/Downloads/Screenshot_$(date -Iseconds).png
+```
+
+### Hypridle
+
+File: `~/.config/hypr/hypridle.conf`
+
+```
+general {
+    lock_cmd = pidof hyprlock || hyprlock
+    before_sleep_cmd = loginctl lock-session
+    after_sleep_cmd = hyprctl dispatch dpms on
+}
+
+# 10 minutes: Turn down monitor backlight
+listener {
+    timeout = 600
+    on-timeout = brightnessctl -s set 10
+    on-resume = brightnessctl -r
+}
+
+# 10 minutes: Turn off keyboard backlight
+listener {
+    timeout = 600
+    on-timeout = brightnessctl -sd *:kbd_backlight set 0
+    on-resume = brightnessctl -rd *:kbd_backlight
+}
+
+# 15 minutes: Lock screen
+listener {
+    timeout = 900
+    on-timeout = loginctl lock-session
+}
+
+# 20 minutes: Turn off screen
+listener {
+    timeout = 1200
+    on-timeout = hyprctl dispatch dpms off
+    on-resume = hyprctl dispatch dpms on && brightnessctl -r
+}
+
+# 30 minutes: Suspend PC
+listener {
+    timeout = 1800
+    on-timeout = systemctl suspend
+}
 ```
 
 ### Hyprpaper
