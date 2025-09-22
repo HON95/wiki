@@ -444,7 +444,8 @@ If not using Hyprland (Wayland).
 If not using i3 (X11).
 
 1. Install:
-    1. Basics: `sudo pacman -S hyprland kitty brightnessctl xdg-desktop-portal-hyprland xdg-desktop-portal-gtk hyprpolkitagent qt5-wayland qt6-wayland`
+    1. Install: `sudo pacman -S hyprland kitty brightnessctl xdg-desktop-portal-hyprland xdg-desktop-portal-gtk hyprpolkitagent qt5-wayland qt6-wayland`
+    1. Enable user services: `systemctl --user enable hyprpolkitagent`
 1. Fix NVIDIA stuff:
     1. **TODO**: See the Hyprland wiki page.
 1. Start Hyprland:
@@ -500,10 +501,6 @@ If not using i3 (X11).
     1. Install: `sudo pacman -S hyprpicker`
     1. Enable hotkey: Add `bind = SUPER SHIFT, C, exec, hyprpicker -ra` to the Hyprland config.
 
-**TODO**:
-
-- Start hyprpolkitagent from Hyprland? https://wiki.hypr.land/Hypr-Ecosystem/hyprpolkitagent/
-
 ## Setup Extras
 
 ### General
@@ -549,11 +546,9 @@ If not using i3 (X11).
 Note: We're using the PipeWire sound server, a modern, security-focused and compatible replacement for both PulseAudio and JACK.
 See [PipeWire (Applications)](/personal-devices/applications/#pipewire) for more config info.
 
-1. Install ALSA stuff:
+1. Install ALSA, PipeWire and other stuff:
     1. (Note) ALSA itself is already provided as built-in kernel modules and ALSA drivers will just work.
-    1. Install ALSA utils and firmware: `sudo pacman -S alsa-utils alsa-firmware`
-1. Install PipeWire (including WirePlumber and adapters):
-    1. Install: `sudo pacman -S pipewire pipewire-alsa pipewire-pulse pipewire-jack pipewire-v4l2 pipewire-x11-bell wireplumber pavucontrol`
+    1. Install: `sudo pacman -S alsa-firmware alsa-utils sof-firmware pipewire pipewire-alsa pipewire-pulse pipewire-jack pipewire-v4l2 pipewire-x11-bell wireplumber pavucontrol`
     1. Start the PulseAudio adapter (to avoid relogging): `systemctl --user start pipewire-pulse`
 1. Configure inputs and outputs:
     1. Run `pavucontrol` to configure volumes, inputs, outputs and stuff.
