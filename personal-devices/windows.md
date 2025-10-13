@@ -174,8 +174,13 @@ breadcrumbs:
     1. Change to "no sounds".
 - Disable UAC desktop dimming (e.g. when installing stuff):
     1. Open the UAC settings (search "UAC").
-    1. Change to "notify me only when [...] *(do not dim my desktop)*".\
-- Prevent the mouse from moving into the output display:
+    1. Change to "notify me only when [...] *(do not dim my desktop)*".
+- Disable automatic Windows updates:
+    1. Run `gpedit.msc`.
+    1. Navigate to "Computer Configuration > Administrative Templates > Windows Compoents > Windows Update > Manage end user experience > Configure Automatic Updates".
+    1. Enable it and set it to "Notify for fownload and auto install" (notify but don't auto install). Press "OK" and exit.
+    1. Open a command prompt and run "gpupdate /force" to apply.
+- (Optional) Prevent the mouse from moving into the output display:
     1. Go to the display settings (search or right click the desktop).
     1. Move the output display to the upper right or left corner of the other displays.
     1. Verify that you can't move the mouse into it through the corner.
