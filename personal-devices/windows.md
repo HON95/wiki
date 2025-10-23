@@ -22,7 +22,7 @@ breadcrumbs:
 
 - Install all available updates.
 - Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
-- Enable BitLocker drive encryption (requires Windows Pro edition):
+- (Optional) Enable BitLocker drive encryption (requires Windows Pro edition):
     - (Note) Using passwords and not TPM because I don't want my PC to decrypt itself without me and because I need to move disks between PCs.
     - If you have a TPM module: Disable it in the BIOS settings.
     - Allow using it without a TPM module:
@@ -41,8 +41,9 @@ breadcrumbs:
 - Disable the lock screen:
     - Because it's annoying to wait before I can start typing the password.
     - Open `regedit`.
-    - Set DWORD `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows/Personalization/NoLockScreen` to `1`.
-- Set hardware clock to use UTC:
+    - Create key `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows/Personalization`.
+    - Within it, create DWORD `NoLockScreen` and set it to `1`.
+- (Optional) Set hardware clock to use UTC:
     - Because Linux uses it, so the Windows time will be wrong if dual booting.
     - Open `regedit`.
     - Set DWORD `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation\RealTimeIsUniversal` to `1`.
@@ -87,9 +88,6 @@ breadcrumbs:
     - Change optional features and Windows features.
 - Accounts settings:
     - (Optional) Add login PIN to avoid typing the password from the lock screen.
-- Gaming settings:
-    - Disable "Record \[...\] using Game bar".
-    - Keep Game Mode enabled.
 
 ## Setup (Windows 10)
 
@@ -179,7 +177,7 @@ breadcrumbs:
     1. Run `gpedit.msc`.
     1. Navigate to "Computer Configuration > Administrative Templates > Windows Compoents > Windows Update > Manage end user experience > Configure Automatic Updates".
     1. Enable it and set it to "Notify for fownload and auto install" (notify but don't auto install). Press "OK" and exit.
-    1. Open a command prompt and run "gpupdate /force" to apply.
+    1. Open a command prompt and run `gpupdate /force` to apply.
 - (Optional) Prevent the mouse from moving into the output display:
     1. Go to the display settings (search or right click the desktop).
     1. Move the output display to the upper right or left corner of the other displays.
