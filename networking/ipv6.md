@@ -73,34 +73,33 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Since you'll need it some day, it's better to get familiar with it early.
     - While still needed for the full internet, internal networks may be IPv6-only.
 - Larger address space.
-    - Simpler and more structured address plans.
-    - All subnets are (shoul be) /64 regardless of the number of hosts/interfaces (excluding e.g. /127 linknets).
+    - Much simpler and more structured address plans. Hexadecimal representasion and subnetting on nibble boundaries means no more IP calculators are needed for simple calculations.
+    - All subnets are (should be) /64 regardless of the number of hosts/interfaces (even linknets!). No more planning for the number of hosts in a subnet.
     - Extra information can be embedded in the address.
 - No need for NAT.
     - Restores end-to-end princible.
     - Better peer-to-peer support.
-- Simpler design and operation.
 - Improved protocols like ICMPv6, NDP, MLD and DHCPv6.
-    - New features.
-    - Security features.
 - Native support for IPsec.
 - Stateless address autoconfiguration (SLAAC) reduces administrative overhead for simple networks.
 - Improved QoS.
 - Improved multicast.
-- Removed broadcast.
+- Removed broadcast (use-cases instead use multicast).
 - Interfaces can (and typically do) have multiple addresses.
     - One link-local address.
     - One or more addresses for each different advertised prefix from each local router.
-- More efficient routing due to better address aggregation (potentially).
+- More efficient routing due to better address aggregation (generally).
 - More efficient packet processing:
     - Streamlined fixed-length header with extension headers.
     - No fragmentation in routers.
     - No checksum.
+    - Although, variable number of extension headers, can make the packet header stack harder to check.
 
 ## Addressing
 
 - 128 bit addresses.
-- No broadcast.
+- No broadcast (uses multicast for those use-cases instead).
+- All subnets are /64, even point-to-point linknets.
 - Anycast:
     - Explicitly supported.
     - May use any unicast address.
@@ -164,6 +163,12 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Valid: Preferred or deprecated.
     - Invalid: Expired valid.
     - Optimistic: Like tenative but for Optimistic DAD. Can be used.
+- Point-to-point linknets:
+    - Use /64, not /127. "Everything is a /64" makes the address plan simpler, routing tables simpler and potentially improves TCAM utilization. Even if forced to use /127 on the link, reserve the whole /64 for the link.
+    - /127 was formerly recommended when certain vulnerabilities with /64 linknets was discovered (i.e. neighbor cache exhaustion, see RFC 6164). However, those vulnerabilities are now fixed (mainly ICMP error rate limits and memory limits) and /127 is no longer needed.
+    - In many early implementations, everything had to be a /64, including linknets and loopbacks, so using /127 and similar might break certain implementations.
+    - While the linknet *may* use ULA or even link-local (unnumbered), use GUA whenever you can. It makes the address plan and routing tables cleaner and allows traceroute and similar to work.
+    - Common address selections inside the linknet includes `a` and `b`. `0` and `1` is also often used, but `0` will generally be compressed away so that one of the addresses look weird.
 
 ## Packet Structure
 
@@ -764,7 +769,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - Neighbor cache exhaustion (DoS):
     - A DoS attack targeting the neighbor cache of routers on a /64 linknet. When the attacker sends a packet toward an address inside the /64 that does not belong to either of the linknet nodes, the router toward the linknet would attempt to look up the neighbor owning the address before marking the address as "INCOMPLETE" in its ND cache (as well as starting certain timers and stuff). Sending packets to a large number of addresses on the linknet will eventually exhaust the ND cache of the router and potentially steal a large portion of control plane processing power. For addresses hitting solicited-node multicast groups used by neighbors, the neighbors will potentially spend a large amount of control plane processing power on simply discarding the packets.
     - Rate limiting ICMP can help reduce the attack, but can in certain cases escalate the DoS if either router fails to form neighborships due to dropped ICMP messages.
-    - A simple mitigation is to use /127 networks for P2P links, or slightly larger if more than two nodes use the linknet.
+    - A simple mitigation is to use /127 networks for P2P links, or slightly larger if more than two nodes use the linknet. However, this is more of an old hack and is no longer recommended.
     - Another mitigation is a new feature implemented by multiple vendors, called "IPv6 Destination Guard" (Cisco). Instead of sending neighbor solicitationt on linknets, it uses ND gleaning and ND refresh timers to find neighbors.
 - Rogue DHCPv6 servers:
     - Just like rogue DHCPv4 servers, but requires the RA to have the M and/or O flag set to tell the host to use DHCP.
@@ -895,7 +900,7 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
     - Address conservation should not be taken into account, there's enough /64 prefixes.
     - Avoids pointless VLSM, a thing of the past.
     - Required by e.g. SLAAC and unicast-prefix-based IPv6 multicast addresses (RFC 3306).
-    - Even point-to-point links (/127) should get their own /64 reservation.
+    - Even point-to-point links should get their own /64 reservation.
 - Topology aggregation VS policy/service aggregation.
 - For LIRs, separate LIR infrastructure space from end user space (a few non-contiguous IP addresses should however be in LIR space).
 - Suggested information to include in the prefix:
