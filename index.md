@@ -131,6 +131,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 - [Network Architecture](/networking/architecture/)
 - [Border Gateway Protocol (BGP)](/networking/bgp/)
+- [BGP EVPN VXLAN Fabrics](/networking/bgp-evpn-vxlan/)
 - [Brocade FastIron Switches](/networking/brocade-fastiron-switches/)
 - [Cisco Application Centric Infrastructure (ACI)](/networking/cisco-aci/)
 - [Cisco General](/networking/cisco-general/)

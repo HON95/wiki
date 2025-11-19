@@ -5,6 +5,11 @@ breadcrumbs:
 ---
 {% include header.md %}
 
+## TODO
+
+- PIM-SM with Anycast-RP, often with MSDP or Cisco Nexus-specific Anycast-RP-set.
+- PIM-BiDir with Phantom-RP.
+
 ## Basics
 
 - Supports one-to-one, one-to-many, many-to-one and many-to-many communication. \*-to-many is generally the only useful variants, as \*-to-one is typically better solved using unicast.

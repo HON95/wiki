@@ -38,29 +38,6 @@ Reserved:
 - IEEE 802.1ad/802.1Q.
 - For tunneling VLANs using multiple layers of 802.1Q headers.
 
-### Virtual Extensible LAN (VXLAN)
-
-- RFC 7348.
-- For tunneling VLANs using a UDP overlay network (default port 4789).
-- Often used in L3 spine-leaf topologies or distant locations.
-- Often paired with BGP EVPN (VXLAN MP-BGP EVPN for short) as the data plane, to manage tunnels and improve BUM handling.
-- 24-bit VXLAN network identifiers (VNIs) identify bridge domains.
-- VXLAN tunnel endpoints (VTEPs) encapsulate/decapsulate the traffic.
-- VTEPs may be either on hosts or on switches/routers as gateways.
-- Address learning:
-    - Data plane learning: Flood and learn.
-    - Data plane learning: Uses BGP to route wrt. MAC addresses.
-- BUM handling using multicast:
-    - Requires multicast routing-enabled infrastructure.
-    - VNI are mapped to multicast groups (N:1).
-    - VTEPs joins the groups for its VNIs using IGMP.
-    - BUM traffic is only sent to the relevant groups.
-- BUM handling using head end replication:
-    - Requires BGP EVPN.
-    - Doesn't scale as well as when using multicast.
-    - BUM traffic is replicated and sent as unicast to each VTEP that supports the VNI.
-- Consider using jumbo frames on the underlay to avoid fragmentation.
-
 ## Spanning Tree Protocol (STP)
 
 ### Variants
