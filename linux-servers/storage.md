@@ -105,7 +105,7 @@ For a much simpler setup, just use a big root partition with a separate EFI part
 
 Attributes 1 (Raw Read Error Rate) and 7 (Seek Error Rate) can be a bit misleading, as a non-zero value does not mean there are errors. They are 48-bit values where the most significant 16 bits are the error count and the lower 32 bits are the number of operations (acting sort of like a fraction/rate).
 
-## Applications
+## Tools
 
 ### SMART
 
@@ -153,6 +153,16 @@ For HDDs, the following attributes should stay near 0 and should not be rising. 
       Use "native" unless you have a reason not to.
 1. Prepare it for removal: `isdct start -intelssd <target> -standby`
 1. Reconnect the drives or restart the system.
+
+### sg_format
+
+Format/resize disks, e.g. to change SCSI SSD blocksize from 520 to 512 bytes.
+
+- Install:
+    - Arch: `pacman -S sg3_utils`
+- Check current: `sg_format <disk>`
+- Change blocksize to 512: `sg_format -v --format --size=512 <disk>`
+    - Change many disks in parallel: `for disk in /dev/xxx*; do sg_format -v --format --size=512 $disk &; done; wait; echo "DONE!"`
 
 ## Volume Managers, File Systems, Etc.
 
