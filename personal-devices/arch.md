@@ -313,7 +313,8 @@ Components:
 
 1. Setup the Ly Display Manager (common for Xorg/Wayland):
     1. Install: `yay -S ly`
-    1. Enable: `sudo systemctl enable ly`
+    1. Disable Getty for TTY: `sudo systemctl disable getty@tty2`
+    1. Enable Ly for TTY: `sudo systemctl enable ly@tty2`
     1. In `/etc/ly/config.ini`, set `animation = CMatrix`.
 1. Setup fonts:
     1. Install basic font with emoji support: `sudo pacman -S noto-fonts noto-fonts-emoji`
