@@ -39,7 +39,7 @@ See [BGP](../bgp/).
 ## Virtual Extensible LAN (VXLAN)
 
 - RFC 7348.
-- For tunneling VLANs using a UDP overlay network (default port 4789).
+- For tunneling VLANs using a UDP overlay network.
 - Removes the VLAN tag during transport if present, as it's mapped to a VNI instead.
 - Removes the CRC of the original Ethernet frame, as the VXLAN frame will have its own CRC.
 - Based on LISP transport, but tunnels packets at the MAC-layer instead of the IP-layer.
@@ -48,7 +48,7 @@ See [BGP](../bgp/).
 - 24-bit VXLAN network identifiers (VNIs) identify bridge domains.
 - VXLAN tunnel endpoints (VTEPs) encapsulate/decapsulate the traffic.
 - VTEPs may be either on hosts or on switches/routers as gateways.
-- Used UDP transport with variable source port (based on inner header fields) allows better entropy for ECMP.
+- Used UDP transport with destination port 4789 and variable source port (based on inner header fields) for better entropy for ECMP.
 
 ## Ethernet VPN (EVPN)
 
@@ -61,14 +61,15 @@ See [BGP](../bgp/).
 
 ### EVPN Route Types
 
-| Route type | Used for | Use case |
+| Route type | Name | Description |
 |-|-|-|
-| Type 1 | Ethernet segment auto discovery | Suppor multihomed endpoints |
-| Type 2 | MAC, VNI, IP | Advertise reachability to MAC address and optional IP address |
-| Type 3 | VNI/VTEP association | Information about VTEPs and their VNIs to assist with flooding |
-| Type 4 | Multicast information | For multihomed endpoints, ensure that only one VTEP forwards multicast packets |
-| Type 5 | IP prefix, L3 VNI | Advertise IP prefixes |
-| Type 6 | Multicast group membership information | Information about what hosts are interested in receiving multicast (similar to IGMP) |
+| Type 1 | Ethernet auto-discovery | ? |
+| Type 2 | MAC/IP advertisement | Advertise MAC addresses and optionally associated IP addresses. |
+| Type 3 | Inclusive multicast ethernet tag | For BUM traffic delivery. |
+| Type 4 | Ethernet segment | Used for Designated Forwarder (DF) election in multi-homed scenarios, to decide which PE sends BUM traffic to the multi-homed CE. |
+| Type 5 | IP prefix | Advertise IP addresses/prefixes separately from MAC addresses. |
+| Type 6 | Selective multicast ethernet tag | For joining multicast groups (ASM og SSM). |
+| Type 7/8 | IGMP join/leave synchronization | For synchronizing IGMP state between all PEs for a multi-homed CE, including the DF. |
 
 ## Underlay Routing Protocol
 
