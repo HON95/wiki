@@ -9,6 +9,15 @@ breadcrumbs:
 
 - Product key:
     - There's no need to provide a product/activation key. If the PC (motherboard?) has been activated before, it will automatically activate when starting the first time.
+- Disable TPM and Secure Boot checks (if not supported by PC):
+    - Must be done early in the installation wizard.
+    - Press `Shift+F10` to open a terminal (including `Fn` if laptop).
+    - Run `regedit`.
+    - Go to `HKEY_LOCAL_MACHINE\SYSTEM\Setup`.
+    - Create new key `LabConfig` and enter it.
+    - Create new DWORD `BypassTPMCheck` with value 1.
+    - Create new DWORD `BypassSecureBootCheck` with value 1.
+    - Close regedit and the command prompt and continue with the installation.
 - Local user account:
     - Must be done early in the installation wizard.
     - Press `Shift+F10` to open a terminal (including `Fn` if laptop).
