@@ -501,6 +501,7 @@ If not using i3 (X11).
 1. Setup screen locker (hyprlock):
     1. Install: `sudo pacman -S hyprlock`
     1. Add default config: `curl https://raw.githubusercontent.com/hyprwm/hyprlock/refs/heads/main/assets/example.conf -o ~/.config/hypr/hyprlock.conf`
+    1. Add permission: Add `permission = /usr/bin/hyprlock, screencopy, allow` to the Hyprland config.
     1. Add Hyprland keybinds:
         - Lock manually: `bind = SUPER, L, exec, hyprlock`
         - Lock on lid close: `bindl = , switch:on:Lid Switch, exec, hyprlock --immediate`
