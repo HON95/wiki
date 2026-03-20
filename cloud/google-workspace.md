@@ -22,8 +22,13 @@ Basic stuff to remember to set up for workspaces for personal accounts or tiny b
     - Adjust sharing settings.
     - Disable Drive for Desktop?
 - Gmail:
-    - Setup a catch-all default routing rule: All recipients, add "X-GM" headers, "perform this action only on non-recognized addresses". Add a recipient with "change envelope recipient" to the address it should go to (e.g. "catch-all@example.net"), "suppress bounces from this recipient", add headers (again), prepend custom subject (e.g. "[Catch-All]"). Remember to add the recipient address as an alias to a user or group.
+    - Setup "End User Access":
+        - POP and IMAP access: Allow access from external clients?
+        - Automatic forwarding: Allow users to forward mail to another mailbox?
+        - Allow per-user outbount gateways: Should users be allowed to send from/through external accounts?
+        - Warn for external recipients: Keep annoying warning when contacting external addresses?
     - Setup mail authentication (DKIM). Copy the record to DNS. (Make sure DMARC and SPF is configured too.)
+    - (Optional) Setup a catch-all default routing rule: All recipients, add "X-GM" headers, "perform this action only on non-recognized addresses". Add a recipient with "change envelope recipient" to the address it should go to (e.g. "catch-all@example.net"), "suppress bounces from this recipient", add headers (again), prepend custom subject (e.g. "[Catch-All]"). Remember to add the recipient address as an alias to a user or group.
 
 ### Security
 
@@ -40,3 +45,5 @@ Basic stuff to remember to set up for workspaces for personal accounts or tiny b
     - Add SPF and DKIM DNS records for the domains. Make sure the DMARC DNS record is set up properly too.
 - Branding:
     - Add a personalization logo. PNG/GIF, 320x132, max 30kB.
+
+{% include footer.md %}
