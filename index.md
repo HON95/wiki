@@ -193,6 +193,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 ## Virtualization
 
 - [libvirt & KVM](/virtualization/libvirt-kvm/)
+- [OpenStack](/virtualization/openstack/)
 - [Proxmox VE](/virtualization/proxmox-ve/)
 - [VirtualBox](/virtualization/virtualbox/)
 
