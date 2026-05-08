@@ -12,6 +12,7 @@ breadcrumbs:
 - [IETF RFC 7755: SIIT-DC: Stateless IP/ICMP Translation for IPv6 Data Center Environments](https://www.rfc-editor.org/rfc/rfc7755.html)
 - [IETF RFC 7934 (BCP 204): Host Address Availability Recommendations](https://datatracker.ietf.org/doc/html/rfc7934)
 - [IETF RFC 8200 (STD 86): Internet Protocol, Version 6 (IPv6) Specification](https://datatracker.ietf.org/doc/html/rfc8200)
+- [RIPE: RIPE-690: Best Current Operational Practice for Operators: IPv6 prefix assignment for end-users - persistent vs non-persistent, and what size to choose](https://www.ripe.net/publications/docs/ripe-690/)
 - [APNIC: IPv6 Best Current Practices](https://www.apnic.net/community/ipv6-program/ipv6-bcp/)
 - [apenwarr: The world in which IPv6 was a good design](https://apenwarr.ca/log/20170810)
 
@@ -871,9 +872,9 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
         - Show status: `show ipv6 destination-guard policy <name>`
 - **TODO**
 
-## Address Planning and Implementation
+## Unorganized Notes
 
-### Random Notes
+### Address Planning and Implementation
 
 - It should support both IPv4 and IPv6, potentially IPv6-only if appropriate.
 - IPv6 should be native.
@@ -944,7 +945,14 @@ See the [IANA IPv6 Special-Purpose Address Registry](https://www.iana.org/assign
 - The recommended prefix length for a loopback interface is a /128.
 - It is recommended to reserve a /64 for each P2P link, even if you end up configuring a /127 on the router interface.
 - It is common to see POPs with a /48 address space as a minimum.
-It is common practice to assign to an End User a prefix size between /48 and /56.
+- It is common practice to assign to an End User a prefix size between /48 and /56.
+
+### RIPE-690: Best Current Operational Practice for Operators: IPv6 prefix assignment for end-users - persistent vs non-persistent, and what size to choose
+
+- IPv6 utilization is wrt. number of /64 subnets or number of endusers (typically /48s), unlike IPv4 where the number of addresses are taken into account.
+- Assigning prefixes longer than /56 to end-user is strongly discouraged. A simple and acceptable addressing plan is to assign a /48 to each end-user or to reserve a /48 but only assign a /56 to begin with.
+- CPE WAN links should be numbered using GUAs with one /64 per link, even if just a single /127 is user per /64. Link-local ("unnumbered") and ULA is discouraged. Using a /64 from the end-user prefix is also discouraged as it may cause issues with some DHCP-PD clients.
+- Non-persistent IPv6 prefixes for end-users is considered harmful and should be avoided. Persistent prefixes avoids renumbering, simplifies logging etc. It may also reduce downtime when there is a power outage and the whole end-user site needs to renumber all its clients (through DHCP-PD and RA), with varying support in client devices. Plus it allows the end-user site to use IPv6 without NAT/NPT for devices that don't support dynamic addressing (e.g. application services and server platforms).
 
 ### Philip Smith: IPv6 Address Planning (2012)
 
