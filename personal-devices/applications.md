@@ -102,8 +102,15 @@ KERNEL=="hidraw*", ATTRS{idVendor}=="0fd9", ATTRS{idProduct}=="008f", MODE="0660
 - Disable middle mouse paste: `middlemouse.paste = false`
 - Enable middle mouse "drag scrolling": `general.autoScroll = true`
 - Disable external media keys: `media.hardwaremediakeys.enabled = false`
-- Show punycode/IDNs to avoid IDN homograph attacks: `IDN_show_punycode = true`
+- Show punycode/IDNs to avoid IDN homograph attacks: `network.IDN_show_punycode = true`
+- Add compact density support: `browser.compactmode.show = true`
 - (Debian) Install missing language support: `apt install $(check-language-support)`
+
+#### Open All Tabs from Another Synced Device
+
+1. Go to the Firefox settings and disable "show sidebar" (the new sidebar doesn't have the needed option).
+1. Open the old sidebar and go to "synced tabs".
+1. Right click the device you want to open all tabs from and select "open all in tabs".
 
 ## CUPS
 
