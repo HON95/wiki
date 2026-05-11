@@ -95,7 +95,7 @@ Components:
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt <packages>`
     - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip curl whois`
-    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind time`
+    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind time tree`
     - Wireless networking packages: `iwd` (wireless) and/or `wpa_supplicant` (wired/wireless)
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
@@ -162,6 +162,61 @@ Components:
     1. Wait for connectivity.
         - `networkctl` should show the interface as anything but "unmanaged".
         - `ip a` should show a routable IP address after a few seconds if using DHCP/RA.
+1. (Optional) Setup wireless networking (excluding tray icon and GUI):
+    - Note: The remainder of the instructions assume you picked iwd here.
+    - Preparations:
+        1. Make sure a driver is loaded for the WLAN device:
+            - `ip a` should show a `wlp*` interface for the device.
+            - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
+        1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
+    - Using iwd (recommended for wireless):
+        1. Install: `pacman -S iwd`
+        1. Configure: See example config below for config `/etc/iwd/main.conf`.
+        1. Note: Add your user to the network group to allow managing IWD: `sudo usermod -aG network <user>`
+        1. Enable: `systemctl enable --now iwd.service`
+            - If this fails, you may need to reboot.
+        1. Setup the network config:
+            1. Create a systemd-network config similar to the one for the wired interface, but add `IgnoreCarrierLoss=5s` to the `Network` section to allow for roaming without disconnects.
+            1. Restart systemd-networkd.
+        1. (Example) Connect to WPA2/WPA3 personal network (using `iwctl`):
+            1. Note: `iwctl` has extenside tab-complete support.
+            1. Enter `iwctl`: `iwctl`
+            1. Show devices: `device list`
+            1. Show device info: `device <device> show`
+            1. Scan for networks: `station <device> scan`
+            1. Show networks: `station <device> get-networks`
+            1. Connect to network: `station <device> connect <SSID>`
+            1. Show connection info: `station <device> show`
+            1. Disconnect from the network: `station <device> disconnect`
+            1. Show known networks: `known-networks list`
+            1. Forget known network: `known-networks <SSID> forget`
+        1. (Example) Connect to eduroam:
+            1. Note: See the [wiki](https://wiki.archlinux.org/title/Iwd#eduroam) for more info.
+            1. Go to the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) to download a config script for your organization. **Don't run it**, it doesn't support `iwd`.
+            1. Create the private credentials dir: `mkdir /var/lib/iwd/ && chown root:root /var/lib/iwd/ && chmod 700 /var/lib/iwd/`
+            1. Create the config file `/var/lib/iwd/eduroam.8021x` (name-sensitive), containing the template snippet below with values found in the eduroam script.
+        1. (Extra) Troubleshooting (as root):
+            1. Run it in debug mode (stop the service first): `IWD_TLS_DEBUG=TRUE IWD_WSC_DEBUG_KEYS=1 /usr/lib/iwd/iwd`
+            1. Check the debug certificate file (if the log says it stored it): `cat /tmp/iwd-tls-debug-server-cert.pem`
+            1. Force it to try to connect (if nothing happens): `iwctl station wlan0 connect <SSID>`
+    - Using wpa_supplicant (recommended for wired):
+        1. Install: `sudo pacman -S wpa_supplicant`
+        1. Configure:
+            - Note: See example config below.
+            - Fix the permissions (it contains secrets): `sudo touch /etc/wpa_supplicant/wpa_supplicant.conf ; sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf`
+            - Create a place to put certs and protect it: `sudo mkdir -p /var/lib/wpa_supplicant/certs ; sudo chmod 700 /var/lib/wpa_supplicant`
+            - Using `update_config` allows it to update its config, which may change file permissions to something "readable by everyone", according to the Arch wiki. If you don't need this, set it to 0.
+            - Set `country` to your country code.
+        1. (Optional) Test the daemon and config:
+            1. Start it in debug mode: `sudo wpa_supplicant -B -i <interface> -c /etc/wpa_supplicant/wpa_supplicant.conf -d`
+            1. See if you successfully connect by running and watching `sudo wpa_cli`.
+            1. (Optional) Check that you can see all networks:
+                1. `sudo wpa_cli scan`
+                1. `sudo wpa_cli scan_results`
+            1. Kill it: `sudo pkill wpa_supplicant`
+        1. **TODO**:
+            - Update the main service to use the correct config and enable it.
+            - Configure for specific interfaces, e.g. for differente wired and wireless config? https://wiki.archlinux.org/title/wpa_supplicant#At_boot_(systemd)
 1. (Optional) Setup wireless networking with iwd (excluding tray icon and GUI):
     1. Make sure a driver is loaded for the WLAN device:
         - `ip a` should show a `wlp*` interface for the device.
