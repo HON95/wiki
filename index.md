@@ -4,7 +4,7 @@ no_toc: false
 ---
 {% include header.md %}
 
-Random collection of config notes and Miscellanea. _Technically not a wiki._
+Random collection of config notes and miscellanea.
 
 ## Authentication, Authorization and Accounting (AAA)
 
@@ -37,6 +37,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Docker](/containers/docker/)
 - [Kubernetes](/containers/k8s/)
 - [Podman](/containers/podman/)
+- [Singularity](/containers/singularity/)
 
 ## Crypto
 
@@ -84,7 +85,6 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Interconnects](/hpc/interconnects/)
 - [Open MPI](/hpc/openmpi/)
 - [ROCm](/hpc/rocm/)
-- [Singularity](/hpc/singularity/)
 - [Slurm](/hpc/slurm/)
 - [Vilje (Supercomputer)](/hpc/vilje/)
 

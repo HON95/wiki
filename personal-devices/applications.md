@@ -18,7 +18,7 @@ breadcrumbs:
     - Arch: `~/.config/alacritty/alacritty.yml`
     - Windows: **TODO**
 - Setup for Arch with i3:
-    - See [my Arch i3 setup notes](/personal-devices/arch-i3/) for steps and an example config.
+    - See [my Arch setup notes](/personal-devices/arch/) for steps and an example config.
 - Setup for Windows, using WSL:
     - Alternative 1: Create a shortcut with WSL as the command: `"C:\path\to\alacritty\alacritty.exe" --command ubuntu` (assuming Ubuntu in WSL)
     - Alternative 2: Modify the config to use WSL by default: `shell: {programs: ubuntu, args: {...}}` (pseudoconfig)
@@ -130,7 +130,7 @@ KERNEL=="hidraw*", ATTRS{idVendor}=="0fd9", ATTRS{idProduct}=="008f", MODE="0660
 
 ### Installation
 
-See my [Arch setup with i3](/personal-devices/arch-i3/).
+See my [Arch setup](/personal-devices/arch/).
 
 ### Configuration
 
@@ -223,7 +223,7 @@ Comes with adapters for compatibility with existing applications and such that e
 
 ### Installation
 
-See the [Arch (i3)](/personal-devices/arch-i3/) or [Kubuntu](/personal-devices/kubuntu/) config notes.
+See the [Arch](/personal-devices/arch/) or [Kubuntu](/personal-devices/kubuntu/) config notes.
 
 ### Configuration
 

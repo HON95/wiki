@@ -26,7 +26,7 @@ breadcrumbs:
 #### Resources
 
 - Homepage: [Singularity](https://singularity.hpcng.org/)
-- Config notes: [Singularity](/hpc/singularity/)
+- Config notes: [Singularity](/containers/singularity/)
 
 #### Information
 
