@@ -115,7 +115,7 @@ Components:
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt <packages>`
     - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip curl whois`
-    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind time`
+    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind time tree`
     - Wireless networking packages: `iwd` (or `wpa_supplicant`)
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
@@ -189,7 +189,7 @@ Components:
             - `ip a` should show a `wlp*` interface for the device.
             - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
         1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
-    - Using iwd (recommended):
+    - Using iwd (recommended for wireless):
         1. Install: `pacman -S iwd`
         1. Configure: See example config below for config `/etc/iwd/main.conf`.
         1. Note: Add your user to the network group to allow managing IWD: `sudo usermod -aG network <user>`
@@ -219,12 +219,12 @@ Components:
             1. Run it in debug mode (stop the service first): `IWD_TLS_DEBUG=TRUE IWD_WSC_DEBUG_KEYS=1 /usr/lib/iwd/iwd`
             1. Check the debug certificate file (if the log says it stored it): `cat /tmp/iwd-tls-debug-server-cert.pem`
             1. Force it to try to connect (if nothing happens): `iwctl station wlan0 connect <SSID>`
-    - Using wpa_supplicant (not recommended):
+    - Using wpa_supplicant (recommended for wired):
         1. Install: `sudo pacman -S wpa_supplicant`
         1. Configure:
-            - See example config below for config `/etc/wpa_supplicant/wpa_supplicant.conf`.
-            - Fix the permissions (it contains secrets): `sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf`
-            - Create a place to put certs and protect it: `sudo mkdir -p /var/lib/wpa_supplicant/certs; sudo chmod 700 /var/lib/wpa_supplicant`
+            - Note: See example config below.
+            - Fix the permissions (it contains secrets): `sudo touch /etc/wpa_supplicant/wpa_supplicant.conf ; sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf`
+            - Create a place to put certs and protect it: `sudo mkdir -p /var/lib/wpa_supplicant/certs ; sudo chmod 700 /var/lib/wpa_supplicant`
             - Using `update_config` allows it to update its config, which may change file permissions to something "readable by everyone", according to the Arch wiki. If you don't need this, set it to 0.
             - Set `country` to your country code.
         1. (Optional) Test the daemon and config:
