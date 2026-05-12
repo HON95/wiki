@@ -24,7 +24,7 @@ breadcrumbs:
 - Linux (Arch): `sudo pacman -S ffmpeg v4l-utils`
 - Windows: Download binaries from some FFmpeg mirror site.
 
-## General Usage
+## Usage
 
 ### Devices
 
@@ -52,16 +52,20 @@ breadcrumbs:
 - Record time lapse at 10x speed without audio:
     - Command: `ffmpeg -i http://localhost:5555/ -filter:v "setpts=0.1*PTS" -an out.mkv`
 
-## Specific Usage
+### Converting Audio
 
-### Concatenate Video Files
+- Convert WAV to MP3 (example): `ffmpeg -i input.wav -codec:a libmp3lame -b:a 192k output.mp3`
+
+### Miscellanea
+
+#### Concatenate Video Files
 
 Useful e.g. to recombine video files for recorders which automatically splits the recording.
 
 1. `ffmpeg -f concat -safe 0 -i <(for f in ./*.MP4; do echo "file '$PWD/$f'"; done) -c copy output.MP4`
     - For lexicographically sorted files ending in `.MP4`.
 
-### Speed Up/Slow Down Video, but Keep All Frames
+#### Speed Up/Slow Down Video, but Keep All Frames
 
 Useful e.g. to change the framerate of a video-only timelapse video.
 

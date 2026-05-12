@@ -108,6 +108,9 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 
 - [Audio Basics](/media/audio-basics/)
 - [Behringer X32](/media/behringer-x32/)
+- [Blackmagic Design: HyperDeck](/media/bmd-hyperdeck/)
+- [Blackmagic Design: Miscellanea](/media/bmd-misc/)
+- [Dante and AES67](/media/dante-aes67/)
 - [FFmpeg](/media/ffmpeg/)
 - [GoPro](/media/gopro/)
 - [Image Basics](/media/image-basics/)
@@ -119,6 +122,7 @@ Random collection of config notes and Miscellanea. _Technically not a wiki._
 - [Video Ripping](/media/video-ripping/)
 - [Video Streaming](/media/video-streaming/)
 - [VLC](/media/vlc/)
+- [Yamaha DM3](/media/yamaha-dm3/)
 - [youtube-dl](/media/youtube-dl/)
 
 ## Monitoring

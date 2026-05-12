@@ -10,10 +10,10 @@ breadcrumbs:
 - "Channel" types:
     - Channels (mono): Inputs, fed from physical inputs, stageboxes (AES50), sound cards etc.
     - Mix bus (mono): General mix buses, fed by inputs or effects.
-    - Effect groups (stereo): Fed by **TODO**
-    - Main LR (stereo): Main stereo bus, fed by **TODO**
-    - Main M/C (mono): Main mono/center bus, fed by **TODO**
-    - Matrices (mono): Fed by buses (incl. main LR+M), can't be fed from channels.
+    - Effect groups (stereo): For applying effects.
+    - Main LR (stereo): Main stereo bus.
+    - Main M/C (mono): Main mono/center bus.
+    - Matrices (mono): For applying different EQs, levels ans similar, can only be fed by buses (incl. main LR+M).
     - DCA groups: Doesn't carry audio but instead remote controls the level of a set of inputs.
 - Tap points:
     - Tap points are used for both mixbuses (typically pre-fader) and outputs (typically post-fader).
