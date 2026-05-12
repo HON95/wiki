@@ -12,25 +12,6 @@ Components:
 - iwd wireless daemon
 - Some default applications
 
-## TODO
-
-- i3:
-    - The "i3 User's Guide"
-    - Plymouth
-    - picom compositor
-- Hyprland:
-    - Wayland
-    - Xwayland, xorg-xlsclients (xlsclients -l)
-    - Touchpad
-    - Tocuhscreen
-    - Display brightness
-    - Keyboard brightness
-    - Wofi
-    - Polybar equivalent
-    - NVIDIA stuff
-    - UWSM?
-    - ... see i3 steps
-
 ## Resources
 
 ### Arch
@@ -40,7 +21,6 @@ Components:
 - [Frequently asked questions (Arch Wiki)](https://wiki.archlinux.org/title/Frequently_asked_questions)
 - [List of applications (Arch Wiki)](https://wiki.archlinux.org/title/List_of_applications)
 - [dm-crypt/Encrypting an entire system (Arch Wiki)](https://wiki.archlinux.org/title/Dm-crypt/Encrypting_an_entire_system)
-
 
 ### i3
 
@@ -115,8 +95,8 @@ Components:
 1. Install packages to the new root:
     - Base command and packages: `pacstrap /mnt <packages>`
     - Base packages: `base linux linux-firmware intel-ucode amd-ucode archlinux-keyring polkit sudo bash-completion man-db man-pages xdg-utils xdg-user-dirs vim tar zip unzip curl whois`
-    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind`
-    - Wireless networking packages: `iwd` (or `wpa_supplicant`)
+    - Extra packages: `smartmontools lm_sensors hwloc zsh htop base-devel git jq rsync openssh tmux screen usbutils tcpdump nmap inetutils bind time tree`
+    - Wireless networking packages: `iwd` (wireless) and/or `wpa_supplicant` (wired/wireless)
 1. Generate the fstab file:
     1. `genfstab -U /mnt >> /mnt/etc/fstab`
     1. Check it for errors or duplicates.
@@ -189,7 +169,7 @@ Components:
             - `ip a` should show a `wlp*` interface for the device.
             - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
         1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
-    - Using iwd (recommended):
+    - Using iwd (recommended for wireless):
         1. Install: `pacman -S iwd`
         1. Configure: See example config below for config `/etc/iwd/main.conf`.
         1. Note: Add your user to the network group to allow managing IWD: `sudo usermod -aG network <user>`
@@ -219,12 +199,12 @@ Components:
             1. Run it in debug mode (stop the service first): `IWD_TLS_DEBUG=TRUE IWD_WSC_DEBUG_KEYS=1 /usr/lib/iwd/iwd`
             1. Check the debug certificate file (if the log says it stored it): `cat /tmp/iwd-tls-debug-server-cert.pem`
             1. Force it to try to connect (if nothing happens): `iwctl station wlan0 connect <SSID>`
-    - Using wpa_supplicant (not recommended):
+    - Using wpa_supplicant (recommended for wired):
         1. Install: `sudo pacman -S wpa_supplicant`
         1. Configure:
-            - See example config below for config `/etc/wpa_supplicant/wpa_supplicant.conf`.
-            - Fix the permissions (it contains secrets): `sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf`
-            - Create a place to put certs and protect it: `sudo mkdir -p /var/lib/wpa_supplicant/certs; sudo chmod 700 /var/lib/wpa_supplicant`
+            - Note: See example config below.
+            - Fix the permissions (it contains secrets): `sudo touch /etc/wpa_supplicant/wpa_supplicant.conf ; sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant.conf`
+            - Create a place to put certs and protect it: `sudo mkdir -p /var/lib/wpa_supplicant/certs ; sudo chmod 700 /var/lib/wpa_supplicant`
             - Using `update_config` allows it to update its config, which may change file permissions to something "readable by everyone", according to the Arch wiki. If you don't need this, set it to 0.
             - Set `country` to your country code.
         1. (Optional) Test the daemon and config:
@@ -237,6 +217,53 @@ Components:
         1. **TODO**:
             - Update the main service to use the correct config and enable it.
             - Configure for specific interfaces, e.g. for differente wired and wireless config? https://wiki.archlinux.org/title/wpa_supplicant#At_boot_(systemd)
+1. (Optional) Setup wireless networking with iwd (excluding tray icon and GUI):
+    1. Make sure a driver is loaded for the WLAN device:
+        - `ip a` should show a `wlp*` interface for the device.
+        - `lspci -k` (for PCIe) or `lsusb -v` (for USB) should show a loaded module.
+    1. Make sure the radio device isn't blocked: `rfkill` (should show "unblocked")
+    1. Install: `pacman -S iwd`
+    1. Configure: See example config below for config `/etc/iwd/main.conf`.
+    1. Add your user to the network group to allow managing IWD: `sudo usermod -aG network $USER`
+    1. Create directory for network configs: `mkdir /var/lib/iwd/ && chown root:root /var/lib/iwd/ && chmod 700 /var/lib/iwd/`
+    1. Enable: `systemctl enable --now iwd.service`
+        - If this fails, you may need to reboot.
+    1. Setup the network config:
+        1. Create a systemd-network config similar to the one for the wired interface, but add `IgnoreCarrierLoss=5s` to the `Network` section to allow for roaming without disconnects.
+        1. Restart systemd-networkd.
+    1. (Example) Manually connect to WPA2/WPA3 personal network (using `iwctl`):
+        1. Note: `iwctl` has extenside tab-complete support.
+        1. Enter `iwctl`: `iwctl`
+        1. Show devices: `device list`
+        1. Show device info: `device <device> show`
+        1. Scan for networks: `station <device> scan`
+        1. Show networks: `station <device> get-networks`
+        1. Connect to network: `station <device> connect <SSID>`
+        1. Show connection info: `station <device> show`
+        1. Disconnect from the network: `station <device> disconnect`
+        1. Show known networks: `known-networks list`
+        1. Forget known network: `known-networks <SSID> forget`
+    1. (Example) Connect to eduroam:
+        1. Note: See the [wiki](https://wiki.archlinux.org/title/Iwd#eduroam) for more info.
+        1. Go to the [eduroam configuration assistant tool (CAT)](https://cat.eduroam.org/) to download a config script for your organization. **Don't run it**, it doesn't support `iwd`.
+        1. Create the config file `/var/lib/iwd/eduroam.8021x` (name-sensitive), containing the template snippet below with values found in the eduroam script.
+    1. (Extra) Troubleshooting (as root):
+        1. Run it in debug mode (stop the service first): `IWD_TLS_DEBUG=TRUE IWD_WSC_DEBUG_KEYS=1 /usr/lib/iwd/iwd`
+        1. Check the debug certificate file (if the log says it stored it): `cat /tmp/iwd-tls-debug-server-cert.pem`
+        1. Force it to try to connect (if nothing happens): `iwctl station wlan0 connect <SSID>`
+- (Optional) Setup wpa_supplicant for wired/wireless authentication:
+    1. Note: Do this if you need wired authentication (dot1x) or you prefer it over iwd for wireless authentication.
+    1. Note: The setup assumes wired config with a network interface `eno1`, which you need to change to your actual NIC ID and needs.
+    1. Install: `sudo pacman -S wpa_supplicant`
+    1. Configure:
+        - Note: See example config below.
+        - Create the config: `sudo touch /etc/wpa_supplicant/wpa_supplicant-wired-eno1.conf; sudo chmod 600 /etc/wpa_supplicant/wpa_supplicant-wired-eno1.conf` (where "enxxx" is the name if your NIC)
+        - Create a place to put certs and protect it: `sudo mkdir -p /var/lib/wpa_supplicant/certs ; sudo chmod 700 /var/lib/wpa_supplicant`
+    1. Start service: `sudo systemctl enable --now wpa_supplicant-wired@eno1.service`
+        - If already started: `sudo systemctl restart wpa_supplicant-wired@eno1.service`
+    1. Show status:
+        - Show log: `sudo journalctl -b0 -u wpa_supplicant-wired@eno1` (look for "EAP-MSCHAPV2: Authentication succeeded" or similar)
+        - Show IP status: `ip a sh eno1`
 1. Setup DNS server(s):
     1. `echo "nameserver 1.1.1.1" >> /etc/resolv.conf` (Cloudflare)
     1. `echo "nameserver 2606:4700:4700::1111" >> /etc/resolv.conf` (Cloudflare)
@@ -770,12 +797,18 @@ File: `/etc/wpa_supplicant/wpa_supplicant.conf`
 ```
 ctrl_interface=/run/wpa_supplicant
 ctrl_interface_group=network
-# Allow wpa_cli to add networks and change the config?
-# File permissions may get fucked.
+# Allow wpa_cli to add networks and change the config? File permissions may get fucked.
 update_config=0
+
+# Wireless settings (omit for wired configs)
+# Update to actual country code.
 country=NO
-# More agressive scanning for roaming
+# More agressive scanning for roaming.
 bgscan="simple:30:-70:3600"
+
+# Wired settings (omit for wireless configs)
+ap_scan=0
+eapol_version=2
 
 # Example networks below, omit these
 
@@ -793,23 +826,28 @@ network={
     group=CCMP TKIP
     eap=PEAP
     phase2="auth=MSCHAPV2"
-    # Point to actual EAP CA cert
+    # EAP CA cert
+    # Get NTNU eduroam cert: sudo wget https://crl.it.ntnu.no/certenroll/NTNU%20Root%20CA.crt -O /var/lib/wpa_supplicant/certs/eduroam.crt
     ca_cert="/var/lib/wpa_supplicant/certs/eduroam.crt"
     altsubject_match="DNS:radius.ntnu.no"
     anonymous_identity="@ntnu.no"
     # Your credentials
     identity="user@ntnu.no"
-    password="user_password"
+    # Generate (end with Ctrl+DD): iconv -t utf16le | openssl dgst -md4 -provider legacy
+    password=hash:TODO
 }
 
-# dot1x wired (PEAP-MSCHAPv2)
-# NOT TESTED
+# dot1x wired (PEAP-MSCHAPv2) (NTNU wired example, se notes for wireless)
 network={
     key_mgmt=IEEE8021X
     eap=PEAP
-    identity="user_name"
-    password="user_password"
+    phase1="peapver=0"
     phase2="autheap=MSCHAPV2"
+    ca_cert="/var/lib/wpa_supplicant/certs/eduroam.crt"
+    altsubject_match="DNS:radius.ntnu.no"
+    anonymous_identity="anon@ntnu.no"
+    identity="user@ntnu.no"
+    password=hash:TODO
 }
 ```
 

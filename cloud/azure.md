@@ -21,7 +21,7 @@ breadcrumbs:
 - Arch:
     - Install CLI: `sudo pacman -S azure-cli`
     - Download command completion: `sudo curl -L https://raw.githubusercontent.com/Azure/azure-cli/dev/az.completion -o /etc/bash_completion.d/az`
-        - First: To setup BASH command completion with ZSH, configure reading BASH profile configs and see `/etc/profile.d/completion.sh` in [Arch](personal-devices/arch-i3/). Create `/etc/bash_completion.d` if it doesn't exist yet.
+        - First: To setup BASH command completion with ZSH, configure reading BASH profile configs and see `/etc/profile.d/completion.sh` in [Arch](personal-devices/arch/). Create `/etc/bash_completion.d` if it doesn't exist yet.
 
 ### Usage
 

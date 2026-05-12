@@ -34,7 +34,7 @@ Network overlay fabric using BGP EVPN with VXLAN transport.
 
 ## Border Gateway Protocol (BGP)
 
-See [BGP](../bgp/).
+See [BGP](/networking/bgp/).
 
 ## Virtual Extensible LAN (VXLAN)
 
@@ -107,7 +107,7 @@ See [BGP](../bgp/).
 
 ## Cisco Nexus vPC
 
-- Background info and recommendations: [Cisco NX-OS Switches](/cisco-nxos-switches/)
+- Background info and recommendations: [Cisco NX-OS Switches](/networking/cisco-nxos-switches/)
 - For an alternative and less vendor-specific LACP approach, consider using ESIs.
 - Anycast VTEP:
     - An additional VTEP used so that the VTEPs on the switch pair appear as one from VXLAN/EVPN perspective.

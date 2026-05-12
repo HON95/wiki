@@ -1,7 +1,7 @@
 ---
 title: Singularity
 breadcrumbs:
-- title: High-Performance Computing (HPC)
+- title: Containers
 ---
 {% include header.md %}
 
