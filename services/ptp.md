@@ -187,13 +187,14 @@ breadcrumbs:
 
 #### Media (AES67-2015)
 
-- For AES67, Dante and RAVENNA audio, but they typically support the default profile too.
-- Used by newer Dante devices, while older ones use PTPv1. Certain Dante devices support both PTP versions, such that they can consume PTPv2 and supply PTPv1 to other devices in the same bridge domain (like a BC).
+- For AES67, including AES67-compatible Dante and RAVENNA devices, although they typically support the PTPv2 default profile too.
 - A variant of the default profile, with certain chosen parameters (e.g. faster sync messages).
+- Used by Dante devices in AES67 mode (or ST 2110 mode?) (normally uses PTPv1). For devices without AES67-compatible mode (only PTPv1 support), a Dante device in the PTPv2 domain may act as a BC to provide PTPv1 to those devices.
 
 #### SMPTE (SMPTE 2059-2)
 
 - For multimedia.
+- Supported by newer Dante devices (ST 2110 mode)?
 
 ## Implementations
 

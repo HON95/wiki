@@ -54,7 +54,7 @@ breadcrumbs:
     - Also used to limit low frequencies sent to the PA which might cause speaker damage.
     - Typical values:
         - 40Hz at the output for typical PAs, or 20Hz if the subs support it. Alternatively set on inputs where no higher HPF is set.
-        - 100Hz for typical vocals and instruments without lows.
+        - 70Hz or 100Hz for typical vocals and instruments without lows.
 - Ground loops:
     - When there exists physical loop in the ground wires. Typically when devices are connected to different grounded power outlets.
     - Different potentials in the loop will cause undesired current flow.
@@ -114,8 +114,10 @@ breadcrumbs:
     - For an ideal loudspeaker system and ideal room acoustics, the loudness increase from playing an identical signal in both stereo channels should be around 6dB SPL, although in reality it's typically closer to 3dB to account for more realistic room acoustics.
     - Most mixers use a pan rule of 3dB, to account for most realistic situations.
 - Aux-fed subs:
-    - **TODO** Find old, general notes.
-    - Allows more control over which instruments/sources are sent to the subs. E.g. vocals and hi-hats should maybe not be sent to subs to avoid sending "junk" like wind and mechanical noise not meant to be heard.
+    - A method for keeping the sub feed separate from the main feed, for greater control over which instruments/sources are sent to the subs.
+    - Vocals and certain instruments generally do not need to be played on subs, to avoid mechanical unnecessary bass noise and annoying plosives during speech.
+    - Means that more faders must be managed when changing the overall PA level, as the subs are no longer fed from the main bus.
+    - Alternatively, feed the subs from a matrix sourcing the main bus or just feed the subs directly from the main bus, whatever is more appropriate for the setup.
 - Special devices:
     - DI boxes (direct input): Used to convert some unbalanced non-+4dBu input signal (e.g. microphone level, instrument level, consumer-grade line level, or speaker level) to a balanced +4dBu signal. Typically phantom powered, sometimes battery powered. Passive versions also exist, consisting mainly of a transformer to scale the output voltage.
     - Ground lifts: Used to break ground loops (giving a distinct humming sound), by "lifting" (breaking) the ground in the cable/path and thus breaking the electrical ground loop. Often built into other devices like DI boxes. Often required when the devices are powered from different electrical outlets or similar which could create ground differentials. Should only be used when both sides are actually grounded to avoid risk of electric shock!

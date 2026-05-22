@@ -226,7 +226,10 @@ Comes with adapters for compatibility with existing applications and such that e
     - Show cards: `pactl list cards`
     - Show inputs: `pactl list sources`
     - Show outputs: `pactl list sinks`
-    - Show sound card info: `cat /proc/asound/UMC1820/stream0` (for card UMC1820)
+    - Show sound card info: `cat /proc/asound/<soundcard>/stream0`
+    - Show processes: `pw-top`
+- Miscellanea:
+    - Restart PipeWire++: `systemctl --user restart pipewire pipewire-pulse`
 
 ### Installation
 
@@ -248,7 +251,7 @@ Example contents of `/etc/pipewire/pipewire.conf.d/10-clock-rate.conf`:
 
 ```
 context.properties = {
-   default.clock.rate = 96000
+    default.clock.rate = 96000
 }
 ```
 
@@ -327,6 +330,10 @@ Snippets for `/etc/pipewire/media-session.d/media-session.conf`:
 
 #]
 ```
+
+#### Extra Configs
+
+See [my pipewire configs](https://github.com/HON95/configs/tree/master/pipewire).
 
 ## PuTTY (Windows)
 
