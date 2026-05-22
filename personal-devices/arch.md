@@ -499,8 +499,8 @@ If not using i3 (X11).
 1. Install extra plugins with Hyprland Plugin Manager (hyprpm):
     1. Note: See the official list of unofficial plugins here: [hypr.land/plugins/](https://hypr.land/plugins/)
     1. Note: To use a plugin, you need to add the plugin repo, enable the plugin and add plugin config (typically in the `plugin` stanza in the Hyprland config).
-    1. Make sure plugins are loaded at startup: Add `exec-once = hyprpm reload -n` to the beginning of the Hyprland config.
-    1. Maek sure hyprpm is allowed to load plugins at startup: Add `permission = /usr/(bin|local/bin)/hyprpm, plugin, allow` to the Hyprland config.
+    1. Make sure plugins are loaded at startup: Add `exec-once = hyprpm reload` to the beginning of the Hyprland config.
+    1. Maek sure hyprpm is allowed to load plugins at startup: Add `permission = /usr/(sbin|bin|local/bin)/hyprpm, plugin, allow` to the Hyprland config.
     1. Update: `hyprpm update`
     1. Add Hyprland plugins repo: `hyprpm add https://github.com/hyprwm/hyprland-plugins`
     1. Check the available plugins: `hyprpm list`
