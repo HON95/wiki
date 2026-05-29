@@ -14,7 +14,7 @@ breadcrumbs:
 
 ## Initial Configuration
 
-An example of a full configuration for Catalyst 3750G.
+An example of a full configuration for **Catalyst 3750G**. This is old and does not include modern features on e.g. the Catalyst 9000 series.
 
 1. Connect using serial.
 1. Don't enter initial configuration (it's useless).
@@ -210,11 +210,11 @@ An example of a full configuration for Catalyst 3750G.
 - Supported by certain Catalyst switches.
 - Uses special ports and proprietary cables.
 
-### Virtual Switching System (VSS) (aka StackWise Virtual)
+### Virtual Switching System (VSS) or StackWise Virtual (SWV)
 
-- Also called *Stackwise Virtual* as it is an evolution of StackWise.
-- Supported by certain Catalyst switches.
+- Supported by certain Catalyst switches, typically the higher-end Catalyst switches.
 - Uses conventional network ports.
+- Only supports two switches (active-passive), so it's most appropriate for gateways etc.
 
 ## Tasks
 
@@ -234,6 +234,14 @@ An example of a full configuration for Catalyst 3750G.
 #### Without CLI Access
 
 Hold the "mode" button for 30 seconds or until it says in the console that it's restarting and clearing the configuration.
+
+### Show Insecure Configuration (Cat9000)
+
+Link: [Cisco C9000 Switching IOS XE – Resilient Infrastructure Playbook](https://www.cisco.com/c/en/us/products/collateral/networking/switches/catalyst-9000-switches/c9000-ios-xe-resilient-infra-pb.html)
+
+Beginning with IOS XE 17.18.2, the system will log `%SYS-4-INSECURE_CONFIG` or `%SYS-4-INSECURE_DYNAMIC_WARNING` on boot.
+
+- Show insecure active configuration: `show system insecure configuration`
 
 ## Miscellanea
 
