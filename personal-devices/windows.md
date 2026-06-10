@@ -10,7 +10,7 @@ breadcrumbs:
 - Product key:
     - There's no need to provide a product/activation key. If the PC (motherboard?) has been activated before, it will automatically activate when starting the first time.
 - Disable TPM and Secure Boot checks (if not supported by PC):
-    - Must be done early in the installation wizard.
+    - Must be done early in the installation wizard (second phase).
     - Press `Shift+F10` to open a terminal (including `Fn` if laptop).
     - Run `regedit`.
     - Go to `HKEY_LOCAL_MACHINE\SYSTEM\Setup`.
@@ -19,7 +19,7 @@ breadcrumbs:
     - Create new DWORD `BypassSecureBootCheck` with value 1.
     - Close regedit and the command prompt and continue with the installation.
 - Local user account:
-    - Must be done early in the installation wizard.
+    - Must be done early in the installation wizard (second phase).
     - Press `Shift+F10` to open a terminal (including `Fn` if laptop).
     - Disable the internet connection requirement (triggers a restart): `oobe\bypassnro`
     - If a network interface is connected, it needs to be disconnected before proceeding with the wizard. Open the terminal again and enter `ipconfig /release`. If using Wi-FI, simply press "I don't have internet" instead.
@@ -87,6 +87,7 @@ breadcrumbs:
         1. Press "change key sequence" for the "between input languages" entry and set both options to "no assigned".
 - Personalisation settings:
     - Enable dark mode.
+    - Disable dynamic lighting (laptops).
     - Remove lock screen apps.
     - In desktop icon settings, hide the recycle bin.
     - Only show app list in start menu.
@@ -98,95 +99,33 @@ breadcrumbs:
 - Accounts settings:
     - (Optional) Add login PIN to avoid typing the password from the lock screen.
 
-## Setup (Windows 10)
-
-*Possibly outdated.*
-
-- Install all available updates.
-- Install graphics drivers and fix display frame rates, color ranges (use full range for PC displays and limited for TVs, generally) etc.
-- Enable BitLocker drive encryption (requires Windows Pro edition):
-    - (Note) Using passwords and not TPM because I don't want my PC to decrypt itself without me and because I need to move disks between PCs.
-    - If you have a TPM module: Disable it in the BIOS settings.
-    - Allow using it without a TPM module:
-        - Open `gpedit.msc`.
-        - Go to: `Local Computer Policy/Computer Configuration/Administrative Templates/Windows Components/Bitlocker Drive Encryption/Operating System Drives`
-        - Edit "Require additional authentication at startup".
-            - Enable it.
-            - Allow without compatible TPM module.
-            - Do not allow TPM.
-        - Enable "allow enhanced PINs for startup".
-    - Setup BitLocker for drives:
-        - Enter the BitLocker management settings.
-        - Enable for all disks.
-        - Save the recovery keys somewhere safe, it's required sometimes to unlock the disk.
-        - Enable auto-unlock for other encrypted disks.
-- Disable the lock screen:
-    - Because it's annoying to wait before I can start typing the password.
-    - Open `regedit`.
-    - Set DWORD `HKEY_LOCAL_MACHINE/SOFTWARE/Policies/Microsoft/Windows/Personalization/NoLockScreen` to `1`.
-- Set hardware clock to use UTC:
-    - Because Linux uses it, so the Windows time will be wrong if dual booting.
-    - Open `regedit`.
-    - Set DWORD `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation\RealTimeIsUniversal` to `1`.
-- Disable network throttling:
-    - Open CMD as admin.
-    - Run `netsh int tcp show global` and look for "Receive Window Auto-Tuning Level". "enabled" means throttling is enabled.
-    - Run `netsh int tcp set global autotuninglevel=disabled` to disable it.
-- Change the computer name.
-- Check Windows Security.
-- Disable pointless startup apps (through the task manager).
-- Sound Control Panel:
-    - Disable unused playback and recording devices.
-    - Set "format" for used devices.
-    - Set to do nothing when Windows detects communications activity.
-- Windows Explorer:
-    - Set File Explorer to open to "this PC".
-    - Hide recently used files and folders in Quick access.
-    - Show known file endings and hidden files.
-    - Show merge conflicts.
-- Power settings:
-    - Use balanced mode (high performance mode is a waste of energy with no benefits).
-    - Extend periods for turning off stuff.
-    - Disable the sleep timer.
-    - Set the minimum processor state to 0% (for power saving with DVFS).
-- Device settings:
-    - Disable AutoPlay.
-- Keyboard settings:
-    - Disable the layout change shortcut:
-        1. Go to "Advanced keyboard settings" (settings), "Input language hot keys" (window), "Advanced key settings" (tab).
-        1. Press "change key sequence" for the "between input languages" entry and set both options to "no assigned".
-- Personalisation settings:
-    - Enable dark mode.
-    - Remove lock screen apps.
-    - In desktop icon settings, hide the recycle bin.
-    - Only show app list in start menu.
-    - Configure the taskbar.
-- Apps settings:
-    - Uninstall useless apps and programs.
-    - Change optional features and Windows features.
-- Accounts settings:
-    - (Optional) Add login PIN to avoid typing the password from the lock screen.
-- Gaming settings:
-    - Under "captures", disable "record what happened".
-
-## Make Windows more Streaming/Presentation Friendly (Windows 10)
+## Make Windows more Streaming/Presentation Friendly
 
 - Disable pointless or interrupting applications.
-- Disable sleeping:
+- Change power settings:
     1. Go to the power settings (search for it).
-    1. Set the sleep timer and display off timer to "never".
+    1. Change power mode to "best performance" while on power.
+    1. Disable sleeping and turning off the display while on power.
 - Disable Windows sounds:
     1. Go to sound settings (e.g. left click the taskbar icon).
     1. Go to the "sounds" tab.
     1. Change to "no sounds".
+- Disable notifications:
+    1. Go to system settings, then notifications.
+    1. Disable notifications (checkbox on top).
 - Disable UAC desktop dimming (e.g. when installing stuff):
     1. Open the UAC settings (search "UAC").
     1. Change to "notify me only when [...] *(do not dim my desktop)*".
-- Disable automatic Windows updates:
+- Disable automatic Windows updates (Windows 11 Pro):
     1. Run `gpedit.msc`.
     1. Navigate to "Computer Configuration > Administrative Templates > Windows Compoents > Windows Update > Manage end user experience > Configure Automatic Updates".
     1. Enable it and set it to "Notify for fownload and auto install" (notify but don't auto install). Press "OK" and exit.
     1. Open a command prompt and run `gpupdate /force` to apply.
+- Disable automatic Windows updates (Windows 11 Home):
+    1. Note: This permanently disabled updates, but the Home edition does not include `gpedit.msc`. Change the service to "manual" again when you want to upgrade the system, then back to "disabled" afterwards.
+    1. Run `services.msc`.
+    1. Find "Windows Update", left click and select "properties".
+    1. Set startup type to "disabled".
 - (Optional) Prevent the mouse from moving into the output display:
     1. Go to the display settings (search or right click the desktop).
     1. Move the output display to the upper right or left corner of the other displays.
