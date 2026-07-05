@@ -108,6 +108,7 @@ Random collection of config notes and miscellanea.
 
 - [Audio Basics](/media/audio-basics/)
 - [Behringer X32](/media/behringer-x32/)
+- [Blackmagic Design: HyperDeck](/media/bmd-atem/)
 - [Blackmagic Design: HyperDeck](/media/bmd-hyperdeck/)
 - [Blackmagic Design: Miscellanea](/media/bmd-misc/)
 - [Dante and AES67](/media/dante-aes67/)

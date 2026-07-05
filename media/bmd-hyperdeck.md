@@ -32,7 +32,7 @@ Steps:
     - Connector <span style="background-color: blue; color: white;">blue</span>
       &mdash; fan <span style="background-color: blue; color: white;">blue</span>
 1. Mount the fan and connect the fan connector to the board. Make sure the fan is mounted the correct way (pushing air out of the unit) and that the fan cable is not in the way of the fan or other electronics (consider using a cable tie).
-1. Screw the top lod back on.
+1. Screw the top lid back on.
 1. Power on the device and make sure the fan is working.
 
 {% include footer.md %}

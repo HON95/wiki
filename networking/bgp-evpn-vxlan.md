@@ -18,7 +18,7 @@ Network overlay fabric using BGP EVPN with VXLAN transport.
     - A network "fabric" normally consisting of a routed (L3-only) underlay network and a tunneled (L2 and/or L3) overlay network.
     - Lets the underlay care about data transport and the overlay care about endpoints.
     - Normally supports multiple overlay VRFs, in addition to separating the overlay VRF(s) from the underlay VRF.
-    - Often used with spine-leaf networks.
+    - Often used with spine-leaf networks (2-tier folded clos).
 - The leafs typically use an anycast gateway with some static MAC- and IP-addresses used across all leafs. This means that inter-VLAN traffic on the same leaf may be routed directly on the leaf.
 - Limitations of L2 networks that overlay networks fix:
     - No need for STP, which limits forwarding paths and may cause e.g. instabilities or slow convergence on topology changes.
