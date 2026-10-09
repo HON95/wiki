@@ -25,21 +25,9 @@ Using ZFS on Linux (ZoL).
 
 ## Setup (Debian)
 
-### Installation (Debian 11)
+### Installation (Debian 13)
 
-1. Install: `apt install zfsutils-linux`
-
-### Installation (Debian 10)
-
-The backports repo is used to get the newest version of ZoL.
-
-1. Enable the Buster backports repo: See [Backports (Debian Wiki)](https://wiki.debian.org/Backports)
-    - Add the following lines to `/etc/apt/sources.list`
-        ```
-        deb http://deb.debian.org/debian buster-backports main contrib non-free
-        deb-src http://deb.debian.org/debian buster-backports main contrib non-free
-        ```
-1. Install: `apt install -t buster-backports zfsutils-linux`
+1. Install: `apt install linux-headers-amd64 zfsutils-linux`
 
 ### Configuration (Debian)
 
