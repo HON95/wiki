@@ -33,7 +33,8 @@ breadcrumbs:
 - Transport:
     - Ethernet (PTPoE) or IP/UDP.
     - Multicast or unicast, but most often multicast.
-    - Typically uses multicast with group 224.0.1.129 (default domain 0). These messages may be forwarded, according to the specific profile.
+    - Typically uses IPv4 multicast with group `224.0.1.129` (default domain 0). These messages may be forwarded, according to the specific profile.
+    - IPv6 typically uses group `FF0X:0:0:0:0:0:0:181` (defaultdomain 0), where the `X` is the multicast scope and can be any value.
     - Profiles using peer delay messages use group 224.0.0.107 for specifically those messages. These messages are not forwarded.
     - Time-critical event messages (sync) use UDP port 319, while general messages (announce, management etc.) use port 320. Delay messages are split across both ports according to the profile details.
 - Management messages:
@@ -50,6 +51,9 @@ breadcrumbs:
 
 ### Clock Types
 
+- Ordinary clicks (OCs):
+    - A clock that either transmits or receives time.
+    - Only part of one network (does not transmit time between networks).
 - Boundary clocks (BCs):
     - Terminate Sync messages from its master and acts as a master for its slaves. In alternative wording, it *recovers* time from its master and then *regenerates* time to its slaves.
     - Breaks up the PTP message and timing domains.
@@ -65,8 +69,9 @@ breadcrumbs:
     - End-to-end (E2E): Available in default profile.
     - Peer-to-peer (P2P): Available in Power and 802.1AS profiles.
     - Most switches default to TC mode. "Nothing" to configure.
-    - PTP limited to single VLAN.
+    - Limits PTP to a single VLAN.
     - E2E has scalability issues, should probably use some BCs in the hierarchy. If power utilities, P2P would be mandated.
+    - Might replace the time transmitter/receiver MAC/IP address with their own, for certain message types (e.g. Sync, Follow-Up and, Delay Request). Announce messages should typically not be altered by TCs, but some newer optional features may allow them to do so (which may break certain PTP profiles).
 - E2E TCs:
     - Passes Syncs directly through itself, but measures delays and stuff (adding its residence time) to assist slaves.
     - Listens to Sync messages to update its oscillator to tune its frequency, for more accurate residence time measurements.
@@ -116,6 +121,8 @@ breadcrumbs:
 #### PTPv2.1 (IEEE 1588-2019)
 
 - Includes some backwards-compatible improvements to the 2008 version.
+- Supports more flexibility in profile definitions, e.g. around features, parameters, BMCA etc.
+- Supports using unicast for bidirectional communication, to avoid sending multicast that only one node needs to receive.
 
 #### IEEE 1588g-2022 (IEEE Std 1588-2019 Amendment)
 
@@ -156,10 +163,39 @@ breadcrumbs:
     - As for Sync messages, the TCs record their residence times (tc) both toward the master (for Delay_Req) and back from the master (for Delay_Resp).
     - The Delay_Req message contains the identifier for the slave OC and a sequence number.
 
+#### High Accuracy Default (IEEE 1588-draft)
+
+- More focused on White Rabbit than the older Default profile, so it can allow for WR-like implementation and performance.
+- Compared to the older Default profile, it changes the required and prohibited optional features (more strict), plus adds default values and ranges for attributes of required options.
+- Requires cooperation between PTP *synchronization* and L1-based (e.g. SyncE) *syntonization*. This requires hardware support.
+- Requires configurable correction of timestamps for ingress latency and egress latency.
+- Requires calculation of delay asymmetry.
+- Requires a mechanism for external configuration of PTP port states, which bypasses BMCA. This also introduces master-only ports.
+- Prohibits isolation of PTP instances.
+- Interoperability with Default PTP profiles:
+    - Interoperates with Delay Request-Response profiles, P2P profiles, but does not support TCs (are P2P profiles not referring to TCs?).
+    - Should work fine?
+- More info: [CERN: The New High Accuracy Default PTP Profile in the IEEE 1588 Draft Revision](https://sagroups.ieee.org/1588/wp-content/uploads/sites/144/2020/04/HighAccuracyDefaultPTPProfile.pdf)
+
+#### Enterprise (RFC 9760)
+
+- For enterprise networks and datacenters.
+- There is also an Enterprise profile for PTPv1, but the following describes the PTPv2 variant. The two are not compatible.
+- Supports E2E TCs and BCs.
+- Supports one-step and two-step. Time receivers must support both and E2E delay measurement must be used.
+- Does *not* support P2P TCs, GC clusters and certain unicast message exchanges.
+- Must use UDP over either IPv4 or IPv6. If using multiple instances or if using both IPv4 and IPv6, they must use different PTP domains. Clocks may however transfer time between IPv4 and IPv6 networks.
+- Sync, Follow-Up and Announce messages use multicast. Delay Request may use either unicast or multicast, but Delay Response must use the same type as the Delay Request it answers.
+- Sync and Delay Request message rates must default to once per second, but may be in the interval from one message per 128 second to 128 messages per second. Announce messages must be once per second and the timeout must be three intervals for preferred time transmitters and four for other time transmitters.
+- Supports use of clocks that don't support the Enterprise profile to function as time receiver-only clocks, since time transmitter clocks must support multicast messages.
+- Clocks should support multiple domains, so they can support multiple simultaneous time transmitters for redundancy. This can help protect against faulty clocks reporting as healthy or on-path attacks (e.g. delay attacks). Timing messages from different domains should traverse different network paths, if possible.
+- Time receivers must support multiple time transmitters in multiple domains and should use information from all to determine the best time transmitter.
+- Can interoperate with the Default profile, as long as it's configured to use E2E TCs (not P2P) and unicast for management messages directed at a single clock. Can also interoparate with other profiles that follows the rules of the Enterprise profile.
+
 #### Power (IEEE C37.238)
 
 - Used for power utilities and substations.
-- Uses L2 multicast.
+- Uses L2 multicast (PTP over Ethernet).
 - <1µs over 16 P2P hops.
 - The older version C37.238-2011 is widely supported. The newer version C37-238.2017 is less widely supported.
 - Supports BCs and P2P TCs.
@@ -177,24 +213,47 @@ breadcrumbs:
 #### Generalized PTP (gPTP) (802.1AS-2011)
 
 - Used for Audio Video Bridging (AVB) and Time Sensitive Networks (TSN).
-- Uses L2 multicast.
+- Uses L2 multicast (PTP over Ethernet).
 - Does not allow non-PTP bridges in the path.
 - Implicitly supports P2P TCs (not configurable).
 
 #### Telecom (ITU-T G.8275.1)
 
 - Used for telecom and mobile backhaul.
+- Supports OCs and BCs, but not TCs.
 
-#### Media (AES67-2015)
+#### Enhanced Telecom (ITU-T G.8275.2)
 
-- For AES67, including AES67-compatible Dante and RAVENNA devices, although they typically support the PTPv2 default profile too.
+- Like the Telecom profile, but with newer features like partial timing support (PTS), unicast transport, TLVs, manual mode, aggregated Ethernet interfaces, loopback interfaces etc.
+
+#### Media – AES67 (AES67-2015)
+
+- For AES67 (audio over IP), including AES67-compatible Dante and RAVENNA devices (although they typically support the PTPv2 default profile too).
 - A variant of the default profile, with certain chosen parameters (e.g. faster sync messages).
-- Used by Dante devices in AES67 mode (or ST 2110 mode?) (normally uses PTPv1). For devices without AES67-compatible mode (only PTPv1 support), a Dante device in the PTPv2 domain may act as a BC to provide PTPv1 to those devices.
+- Used by Dante devices in AES67 mode. For devices without AES67-compatible mode (only PTPv1 support), a Dante device in the PTPv2 domain may act as a BC to provide PTPv1 to those devices.
 
-#### SMPTE (SMPTE 2059-2)
+#### Media – ST-2059-2 (SMPTE ST-2059-2)
 
-- For multimedia.
-- Supported by newer Dante devices (ST 2110 mode)?
+- For video over IP.
+- Supported by newer Dante devices (ST 2110 mode).
+
+#### Media – AES67 + ST-2059-2
+
+- Since both AES67 and ST-2059-2 are for media applications that are often used in the same network, this profile should work for both applications.
+- Uses UDP over multicast.
+
+## Relevant Technologies
+
+### Synchronous Ethernet (SyncE)
+
+- A physical layer technology for transferring frequency over Ethernet links.
+- Often supported in telecom routers due to its application in mobile radio access networks (e.g. LTE and 5G infrastructures).
+
+### White Rabbit
+
+- Even more precise than PTP, but requires even more specialized hardware.
+- The de-facto standard for timing and data acquisition in scientific applications, according to CERN.
+- Based on IEEE 802.3, 802.1Q and 1588 (PTP), with additional L1 synchronization (similar to SyncE), precise phase detection and calibration/estimation of asymmetries.
 
 ## Implementations
 
@@ -285,7 +344,7 @@ WantedBy=multi-user.target
     - Profiles: Default.
     - Clock modes: GMC, BC.
 - Nexus 9000 (later gens):
-    - Profiles: Default, AES67, SMPTE 2059-2.
+    - Profiles: Default, AES67, SMPTE ST-2059-2.
     - Clock modes: GMC, BC.
 - ASR 9000:
     - Profiles: Default, G.8265.1, multiprofile.
@@ -409,7 +468,7 @@ ptp priority1 255
     - Supported PTPv2 profiles:
         - IEEE 1588-2008 (default)
         - AES67-2015 (media)
-        - SMPTE 2059-2
+        - SMPTE ST-2059-2
         - ITU-T G.8275.1 (telecom)
 - Fabric latency measurements:
     - One of the main use cases for PTP within ACI.
