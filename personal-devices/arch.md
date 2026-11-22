@@ -578,6 +578,21 @@ If not using i3 (X11).
         1. See the example config below.
     1. Restart dunst (if any changes): `systemctl --user restart dunst`
     1. (Optional) Test it: `notify-send 'Hello world!' 'This is an example notification.' --icon=dialog-information`
+1. Setup Avahi for mDNS/DNS-SD:
+    1. Install: `sudo pacman -S avahi nss-mdns`
+    1. Enable: `sudo system enable --now avahi-daemon.service`
+    1. Update `/etc/nsswitch.conf` to make nss-mdns authoritative for the `.local` domain: For the `hosts` line, add `mdns_minimal [NOTFOUND=return]` before `resolve`.
+    1. Make sure UDP port 5353 to `224.0.0.251` or `ff02::fb` is open in the local firewall.
+    1. Usage examples:
+        1. Show discovered hosts: `avahi-browse --all --ignore-local --resolve --terminate`
+        1. Show discovered hosts in GUI: `avahi-discover`
+        1. Lookup specific hosts: `avahi-resolve-host-name <hostname>.local`
+1. Install CUPS for printing:
+    1. Install: `sudo pacman -S cups`
+    1. Enable: `sudo systemctl enable --now cups.service`
+    1. Set default paper size: Set `/etc/papersize` to contain only "A4".
+    1. Usage examples:
+        1. Access the web admin panel (login with your Linux user): [http://localhost:631/](http://localhost:631/)
 1. Setup autostarting of desktop applications:
     1. **TODO**: Wayland?
     1. Note: Desktop applications are applications with `<name>.desktop` files. These applications may be autostarted using a tool like `dex`, following the XDG Autostart spec.
